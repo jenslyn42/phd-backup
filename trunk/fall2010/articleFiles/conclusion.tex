@@ -1,0 +1,40 @@
+\section{Conclusion and Future Work}\label{sec:future}
+
+In this paper we develop a novel Privacy Profile which enable users to easily specify their privacy requirements both spatially and temporally for trajectories.
+
+To show the Privacy Profile usefull we develop framework with a high level of user privacy and providing a platform for service providers and traffic analysts to have high quality data to perform analysis and services on.
+
+We have argued that the Privacy Profile provide: 
+{\it Usability} The user can specify his privacy requirements both spatially and temporally, and at more than one level. Is {\it Practical} The user does not need to interact with the client once a Privacy Profile is set up. The data input format is the same as the data output format making the anonymized data usable by existing approaches working on trajectory datasets allowing the user to choose from more existing services. It is {\it Flexible} Users can specify sensitivity at several levels and they can make several profiles which are active at different times or in contexts.
+
+We have additionally introduced the system parameter $\mathbf{D}$ which guaranties a minimum level of data integrity, ensuring that analysis of the anonymized dataset can still be possible.
+
+In the future it would be interresting to test the approach on real world trajectory dataset to measure performance and examine which values of $D$ might be appropriate to ensure a level of data quality usable by existing classification approaches for trajectories.
+%We introduce three novel spatio-temporal protection schemes which are used as a parameter in our User Profiles, another concept we have introduced in enable user to control how, and how much, to protect a \poins, both spatially, as well as temporally.
+
+%As this paper represents a work in progress, the algorithm and performance study have not been included, and is left as future work.
+
+
+% In this paper we develop the, a client-server solution for detecting
+% proximity by inclusion of one user's location inside another user's vicinity, 
+% while offering users control over both location privacy and precision of 
+% proximity detection.
+% 
+% The client maps its location into a granule and finds all granules contained 
+% in his vicinity, which can be shaped arbitrarily. The client
+% then encrypts its location- and vicinity- granules and sends them to the server
+% which checks for proximity by checking for inclusion of $u_1$'s location granule
+% in the set of $u_2$'s vicinity granules. The server does the test blindly, without ever
+% knowing anything about user locations.
+% 
+% Experimental results showed that vl performs adequate for real world application
+% and it is scalable to high number of users.  Our presented optimization
+% techniques worked very well and in some cases cut the amount of data transferred by
+% approximately 90\%. Experiments showed, that vl' features such
+% as irregular shaped vicinities and adjustable precision do not give significant
+% overhead in terms of communication when compared with the ff. Note, that the
+% has none of the mentioned features.
+% 
+% In the future, we plan to explore the possibility to apply our approach on a 
+% road network such that user's vicinity is defined by all paths accessible from his 
+% current location within reach of $d$ meters. 

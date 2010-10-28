@@ -1,0 +1,164 @@
+\section{Related Work} \label{sec:rel_work}
+%
+In this section we review general location privacy preserving techniques 
+followed by the relevant work on location privacy in proximity detection
+services.
+
+\subsection{General Location Privacy Techniques}
+
+In the most common setting assumed in location-privacy research,
+an LBS server maintains a public set of points-of-interest (POI), e.g. gas
+stations. The goal is then to retrieve from the server the nearest POIs to the
+user, without revealing the user's location $q$ to the server. Many
+location privacy solutions exist for this setting and they can be broadly
+classified into two categories: spatial cloaking and transformation. 
+
+Spatial cloaking \cite{gruteser03,mca06,duckham05a,acdvs07} techniques
+generalize the user's exact location $q$ into a region $Q'$, which is then used
+for querying the server. The region $Q'$ is then sent to the LBS server, which
+returns all the results that are relevant to any point in $Q'$. Such technique
+ensures that even if the attacker knows locations of all users, the identity of
+the querying user can be inferred only with some probability. 
+
+The transformation approaches \cite{ks07,ghinita08} map the user's location $q$
+and all POIs to a transformed space, in which the LBS server evaluates queries
+blindly without knowing how to decode the corresponding real locations of the
+users.
+
+In contrast, in the proximity detection problem, the users' locations are both
+query locations and points-of-interest that must be kept secret. Thus the
+existing spatial cloaking and transformation techniques, that assume public
+datasets, cannot be directly applied for proximity detection. However the
+concepts of spatial cloaking and transformation can be, and are used in the
+existing privacy-aware proximity detection approaches.
+
+\subsection{Privacy-aware proximity detection methods}
+
+Ruppel et al. \cite{proxDetTrans} develop a centralized solution that supports
+proximity detection with a certain level of privacy. It applies a distance-preserving 
+mapping (a rotation followed by a translation) to convert the user's location $q$ into 
+a transformed location $q'$. Then, a centralized proximity detection method is 
+applied to detect the proximity among those transformed locations. However, Liu 
+et al. \cite{lgk06} points out that such distance-preserving mapping is not safe 
+and a attacker can easily derive the mapping function and compute the users' original 
+locations. 
+
+% maybe remove???
+Mascetti et al. present a centralized solution
+\texttt{Longitude} \cite{longitudePaper}.
+Here users apply spatial cloaking followed by modular transformation prior
+sending their 
+locations the server. The applied transformation prevents the disclosure of 
+location information, but introduces false proximity detections that do not occur in our 
+proposed approach.
+
+
+\hc, presented in \cite{pbsPaper}, is a privacy preserving solution which employ
+the filter-and-refine paradigm. First, users spatially cloak their locations and sent them the
+server. Then, the server computes a minimum and maximum distances (Fig. \ref{fig:relworkDemos}a)
+between these cloaking regions. Depending on the specified thresholds and computed distances, 
+the server classifies friends being in, not-in, or possibly-in proximity. The classification 
+result is immediately reported to users, and in case of uncertainty, two users have to perform 
+direct communication in order to refine their proximity status. 
+In the refinement step first two users map their locations 
+and vicinity regions into the some spatial subdivision, e.g. grid, and then they use secure 
+two-party computation protocol to check if the mapped location of one user lays inside the 
+mapped vicinity of other user. This can be performed with no need for the users 
+to expose their mapped locations and vicinities. Depending on the result of the 
+set-inclusion checking, either proximity or separation is detected. Figure
+\ref{fig:relworkDemos}b visualizes a scenario, where user $u_2$'s grid-mapped location
+(dark rectangle) intersect with $u_1$'s grid-mapped vicinity region. In this case, 
+the proximity between $u_1$ and $u_2$ is detected.
+
+Unlike in our approach, their proposal does not completely hide user locations
+from the central server as it always knows their cloaked regions. If strong
+privacy is required users are forced to perform user-to-user communication more
+frequently thus significantly increasing the amount of client communication due to
+an expensive secure two-party computation protocol. 
+
+
+
+\begin{figure}
+       \center
+       \begin{tabular}{cc}
+			   
+\includegraphics[width=0.25\textwidth]{vl/images/pbsDemo.pdf} &
+			   
+\includegraphics[width=0.18\textwidth]{vl/images/pbsDemo2.pdf} \\
+%	Filtering step & Refinement step \\
+          (a) & (b) \\
+\includegraphics[width=0.15\textwidth]{vl/images/proxDetDemo.pdf} &
+{\scriptsize %\footnotesize
+     \begin{tabular}[b]{| c | c |}\hline
+        \textbf{Col/ Row} & \textbf{$\mathbf{\Psi}$} \\  \hline
+        0 & $c_0$ (5)\\ \hline
+        1 & $c_1$ (9)\\ \hline
+        2 & $c_2$ (1)\\ \hline
+        3 & $c_3$ (7)\\ \hline	
+     \end{tabular}
+} \\
+          (c) & (d)
+       \end{tabular}
+       \caption{Behavior of \hc and \ff}
+            \label{fig:relworkDemos}
+\end{figure}
+
+
+
+\v{S}ik\v{s}nys et al. \cite{ffinder} have developed a centralized privacy-aware
+proximity detection method, called \ff, which provides strong privacy guaranties
+and employs a grid-based technique to optimize communication cost. 
+Users map their locations into 4 cells of the grid from a \textit{list of grids},
+and, prior sending to the server, encrypt them using shared, one-to-one mapping encryption function.
+The \textit{list of grids} globally defines a collection of grids, where cell sizes of distinct grids 
+monotonically decreases with respect to the \textit{level number}. The server is able to 
+perform a matching between encrypted coordinates of different users, for a shared
+level, and report the matching result. When matchings at all consecutive levels 1
+to $L_{max}$ are detected then actual proximity between two users is detected.
+Pairs of users individually choose $L_{max}$ value which yields a
+specific mutual vicinity radius for two users. The proximity is detected
+iteratively such that after each encrypted coordinate match, 
+the server checks if required level $L_{max}$ is reached. If so, then users are
+informed about their proximity, otherwise the server sends a message to one or
+both of the users asking them to use a finer grid, i.e., increase their current
+level, for the next matching iteration. 
+
+E.g. if the encryption function $\Psi$ is as defined in
+\ref{fig:relworkDemos}d, then encrypted coordinates of users $u_1$, $u_2$, and
+$u_3$ respectively are $(x:[c1,c2],y:[c0,c1])$, $(x:[c2,c3],y:[c1,c2])$,
+$(x:[c0,c1],y:[c2,c3])$. Assuming that level of grid in Fig.
+\ref{fig:relworkDemos}c is $L_{max}$, the user $u_1$ is in proximity with $u_2$,
+however $u_3$ is not in proximity with either.
+
+
+
+The limitation of the \ff is low, and uncontrollable, precision of the
+proximity detection. On the proximity notification the actual distance between
+two users can be any in the range from $d$ to $d + \lambda$, 
+where $d$ is width/height of grid cell at level $L_{max}$, 
+$\lambda = d(2\sqrt(2) - 1)$ is a service precision parameter. Note, 
+that in most other proximity detection approaches, unlike in \ff, the parameter 
+$\lambda$ can be chosen freely by users. 
+
+None of the existing privacy-aware approaches directly support the ``river'' 
+and the ``bar'' proximity detection scenarios (see Fig. 
+\ref{fig:suppVic}c/\ref{fig:suppVic}d) since they use static circular-shape vicinity. 
+However some solutions, like \hc \cite{pbsPaper}, might be adapted to support dynamic 
+vicinities, though current limitations will persist and introduce new problems 
+like e.g. how to efficiently update user locations and vicinities.
+
+
+
+
+\subsection{Our contribution}
+
+In this work we combine best features of the previously presented proximity
+detection approaches to build our solution, the \vl. The solution combines the
+ideas of encrypted coordinates, their blind matching at the server-side, and
+the vicinity mapping into multi-spatial subdivisions, e.g. list of grids.
+Our solution, unlike Mascetti et al. \cite{pbsPaper} proposal, employs only
+centralized architecture, where the server knows no users' spatial data. It
+allows users individually select preferable proximity detection precision and 
+supports irregular-shape, changing over time vicinities. Our proposal
+is will be targeted for 2D environment.
+It can however easily be generalized to n-dimension.

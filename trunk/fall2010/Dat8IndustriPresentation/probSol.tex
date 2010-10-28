@@ -1,0 +1,86 @@
+\section{Our Solution}
+\subsection{The Contribution}
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{The contribution}
+
+\begin{itemize}
+  \item Develop a user location secure proximity detection approach
+  \item Designed a Friend-finder service
+  \item Develop a prototype
+  \item Performed a prototype testing
+ \end{itemize}
+
+\end{frame}
+
+\subsection{The Problem}
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{The Problem}
+\begin{itemize}
+ \item We want a solution for friend-finder LBS
+ \item Solution must be strong against attempts to intercept exact locations of any user
+ \item The solution must be practical
+\end{itemize}
+\end{frame}
+
+\subsection{Proximity Detection Approach}
+\begin{frame}[red]
+\frametitle{Privacy-aware Proximity Detection Idea}
+\only<1>{ \includegraphics[page=7,scale=0.55]{images/imagesLRS.pdf}}
+\only<2>{ \includegraphics[page=8,scale=0.55]{images/imagesLRS.pdf}}
+\only<3>{ \includegraphics[page=9,scale=0.55]{images/imagesLRS.pdf}}
+\only<4>{ \includegraphics[page=10,scale=0.55]{images/imagesLRS.pdf}}
+\end{frame}
+
+\begin{frame}[red]
+\frametitle{Limitation and solutions of this approach}
+Limitations of this approach:
+\begin{enumerate}
+ \item It is inefficient for big number of users
+ \item A proximity detection distance is fixed $(2d\sqrt{2})$
+\end{enumerate}
+Solutions for problems:
+\begin{enumerate}
+ \item Grouping of friends
+ \item Dynamic grid approach
+\end{enumerate}
+\end{frame}
+
+\subsection{Solutions for Proximity Detection Approach Problems}
+\begin{frame}[red]
+\frametitle{Grouping of friends}
+\only<1>{
+	The solution:
+	\begin{itemize}
+	\item Users are grouped into friend-groups
+	\item A single grid is assigned for every friend-group
+	\end{itemize}
+	Consequences:
+	\begin{itemize}
+	\item When user location changes, less secret values must be delivered to LBS server
+	\end{itemize}
+}
+\only<2>{\includegraphics[page=11,scale=0.6]{images/imagesLRS.pdf}}
+\only<3>{\includegraphics[page=12,scale=0.6]{images/imagesLRS.pdf}}
+\end{frame}
+
+\begin{frame}[red]
+\frametitle{Dynamic Grid Approach}
+\only<1>{
+	The solution:
+	\begin{itemize}
+	\item Assign a list of grids with decreasing cell size for every friend-group
+	\item Extend a basic proximity detection approach to support list of grids
+	\end{itemize}
+	Consequences:
+	\begin{itemize}
+	\item Any pair of friends in friend-group will be able to choose a preferred proximity distance from a list
+	\end{itemize}
+}
+\only<2>{\includegraphics[page=13,scale=0.55]{images/imagesLRS.pdf}}
+\only<3>{\includegraphics[page=14,scale=0.55]{images/imagesLRS.pdf}}
+\only<4>{\includegraphics[page=15,scale=0.55]{images/imagesLRS.pdf}}
+\only<5>{\includegraphics[page=16,scale=0.55]{images/imagesLRS.pdf}}
+\only<6>{\includegraphics[page=17,scale=0.55]{images/imagesLRS.pdf}}
+\only<7>{\includegraphics[page=18,scale=0.55]{images/imagesLRS.pdf}}
+\only<8>{\includegraphics[page=19,scale=0.55]{images/imagesLRS.pdf}}
+\end{frame}

@@ -1,0 +1,27 @@
+\subsection{Grouping of Users}\label{subsec:grouping}
+
+Currently all users in $\mathbf{M}$ share a single encryption function $\Psi$.
+Security of $\Psi$ directly influence location privacy of all users in the
+system. An adversary knowing $\Psi$ can easily decipher encrypted
+granules of user current location and his vicinity. It is difficult to ensure
+that the function $\Psi$ will stay secret in case of a high number of users
+of the \vl service. Note that in case of leaked $\Psi$ users' minimum privacy 
+requirements, specified by $L_{max}$, are still guaranteed, although it is 
+desirable for users to obtain as much privacy as possible.
+
+In order to limit affected users in case of leaked $\Psi$
+\textit{grouping of users} can be enforced. Friend-grouping is
+introduced in the long-paper version of the \ff \cite{ffinder}. The idea is
+that all users in the system are grouped into possibly overlapping groups, so
+that each user is put into one or more groups. Both friends and non-friends can
+belong to the same group, but if two users are friends, they must be in at least
+one common group. Each such group $G$ is assigned a distinct $\Psi_G$ function
+and it is used by all members of $G$. Then if such $\Psi_G$ is leaked, only the
+location privacy of the users in group $G$ are compromised.
+
+Our presented algorithms of \vl can be easily modified to support friend
+groups. The client and the server should treat each group individually such
+that clients report their encrypted data for all groups that they are part of,
+and the server independently analyzes encrypted data for every distinct group. 
+In this paper, we do not consider how these groups are created. This can be done
+automatically or manually by the users themselves.

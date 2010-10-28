@@ -1,0 +1,22 @@
+\subsection{FL vs. VL}
+
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{FL vs. VL}
+Differences between \textsc{FriendLocator} and \textsc{VicinityLocator}:
+\begin{center}  
+\begin{tabular}{| p{3cm} | p{3.5cm} | p{3.5cm} |}
+\hline
+\textbf{Feature}    & \textbf{\textsc{FriendLocator}}  & \textbf{\textsc{VicinityLocator}}   \\ 	  
+  \hline
+Notion of proximity & $dist(a,b)<\epsilon$   
+\includegraphics[scale=0.4]{images/proxDet1.png}  & $loc(a) \in vic(b)$ \includegraphics[scale=0.2]{images/proxDet2.png} \\ 
+\hline
+User settings  & $\forall (a,b): \epsilon_{a,b}$ & $\forall a: vic(a)$, $\lambda(a)$,  \\
+\hline
+Quality of service (precision) & Depends on $\epsilon_{a,b}$	& $min(\lambda(a)$, $\lambda(b))$\\ 
+  \hline	
+Communication is traded for & $\epsilon$ and	precision & Precision   \\	
+  \hline	
+\end{tabular}
+\end{center}	
+\end{frame}

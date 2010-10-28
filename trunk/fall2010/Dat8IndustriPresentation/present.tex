@@ -1,0 +1,61 @@
+\documentclass[t,mathserif]{beamer}
+\setbeamertemplate{navigation symbols}{} %no nav symbols
+\usepackage{beamerthemeshadow}
+\usepackage{pgf,pgfarrows,pgfnodes}
+\usepackage{listing}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{multirow}
+\usetheme{Copenhagen} % Beamer theme v 3.0
+\usecolortheme{whale} % Beamer color theme
+
+
+\usepackage[boxed,linesnumbered,vlined,slide]{algorithm2eCustom}
+
+
+
+\title[DAT8\hspace{21em}\insertframenumber/\inserttotalframenumber]{Personalized Protection of Identifiers\\on Public Trajectories}
+\author[Jeppe R. Thomsen]{Jeppe R. Thomsen}%\\ \small{jenslyn@cs.aau.dk}}
+\institute{Aalborg University\\ Department of Computer Science}
+\begin{document}
+\begin{frame} % Cover slide
+\titlepage
+\end{frame}
+% Instead, you can use \frame{\titlepage}} (Beamer v 2.2 macro)
+
+%\input{intro.tex}
+%\input{gwt.tex}
+%\input{rpc.tex}
+\section{Introduction} % Bookmark information
+
+\begin{frame}[red]
+\frametitle{Overview}
+\Large
+Problem Setting
+
+\vspace{1em}
+
+Privacy Profile
+\vspace{1em}
+
+t-anonymity
+\vspace{1em}
+
+Conclusion
+
+\end{frame}
+\input{problem.tex}
+\input{introduction.tex}
+%\input{relwork.tex}
+%\input{ff_vs_vl.tex}
+
+%\input{ffDesign.tex}
+%\input{problem.tex}
+\input{basic_solution.tex}
+%\input{algorithms}
+%\input{adv_solution.tex}
+%\input{vl.tex}
+%\input{results.tex}
+\input{conclusion.tex}
+
+\end{document}

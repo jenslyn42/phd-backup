@@ -1,0 +1,24 @@
+\section{Conclusion}
+In this paper we develop the \vl, a client-server solution for detecting
+proximity by inclusion of one user's location inside another user's vicinity, 
+while offering users control over both location privacy and precision of 
+proximity detection.
+
+The client maps its location into a granule and finds all granules contained 
+in his vicinity, which can be shaped arbitrarily. The client
+then encrypts its location- and vicinity- granules and sends them to the server
+which checks for proximity by checking for inclusion of $u_1$'s location granule
+in the set of $u_2$'s vicinity granules. The server does the test blindly, without ever
+knowing anything about user locations.
+
+Experimental results showed that \vl performs adequate for real world application
+and it is scalable to high number of users.  Our presented optimization
+techniques worked very well and in some cases cut the amount of data transferred by
+approximately 90\%. Experiments showed, that \vl' features such
+as irregular shaped vicinities and adjustable precision do not give significant
+overhead in terms of communication when compared with the \ff. Note, that the
+\ff has none of the mentioned features.
+
+In the future, we plan to explore the possibility to apply our approach on a 
+road network such that user's vicinity is defined by all paths accessible from his 
+current location within reach of $d$ meters. 

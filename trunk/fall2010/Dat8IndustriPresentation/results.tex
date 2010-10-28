@@ -1,0 +1,90 @@
+\section{Experimental Results}
+
+\subsection{Testing Methodology} % Bookmark information, displayed in the progress tree
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{Testing Methodology}
+
+System Test Settings
+\begin{itemize}
+    \item 50000 users.
+    \item 40 timestamps per user.
+    \item All users partitioned into disjoint groups.
+    \item $L_{\epsilon}$ \& $L_{max}$: 6
+    \item $\epsilon$ \& $B(L_{max})$: 200 units
+\end{itemize}
+\end{frame}
+
+
+
+\subsection{Test on Levels}
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{Comparative message development}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+	\item Small groups, better message ratio
+	\item Communication efficient
+	\item Total messages per user, per update
+	\begin{itemize}
+		\item 0.0805, 0.0935, 0.1463, 0.2663
+	\end{itemize}
+\end{itemize}
+\vspace{5cm}
+\end{column}
+\begin{column}{0.5\textwidth}
+\pgfputat{\pgfxy(0,0)}{\pgfbox[left,top]{\includegraphics[width=1.1\textwidth]{images/lmax}}}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+\subsection{Comperison on Proximity Distance} % Bookmark information, displayed in the progress tree
+
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{Messages to LS}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+	\item less updates over time, on this data
+	\end{itemize}
+\vspace{5cm}
+\end{column}
+\begin{column}{0.5\textwidth}
+\pgfputat{\pgfxy(0,0.7)}{\pgfbox[left,top]{\includegraphics[width=0.92\textwidth]{images/radiusFFcompairMsg}}}
+\pgfputat{\pgfxy(0,-2.85)}{\pgfbox[left,top]{\includegraphics[width=0.9\textwidth]{images/radiusFFcompairGran}}}
+\end{column}
+\end{columns}
+\end{frame}
+
+
+
+
+
+
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{Effect of $\epsilon_L$}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\begin{itemize}
+\item Levels calculated
+\item Higher $\epsilon_L$, more communication
+\item Higher $\epsilon_L$, better tracking
+\end{itemize}
+\vspace{0.5cm}
+	\begin{tabular}{| c | c | c |}\hline
+		\multirow{2}{*}{User count} 
+  & \multicolumn{2}{| c |}{Messages} \\  \cline{2-3}
+	      &  FL  &   VL  \\ \hline
+				25000 & 2.69 &	2.92 \\ \hline
+				50000 & 2.46 &	2.93 \\ \hline
+				75000 & 2.38 &	2.94 \\ \hline  
+\end{tabular}
+
+\end{column}
+\begin{column}{0.5\textwidth}
+\pgfputat{\pgfxy(0,0)}{\pgfbox[left,top]{\includegraphics[width=1.1\textwidth]{images/manyUsers}}}
+\end{column}
+\end{columns}
+\end{frame}
+
+

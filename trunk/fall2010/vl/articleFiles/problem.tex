@@ -1,0 +1,58 @@
+\section{Problem Definition}\label{sec:problemdef}
+
+In this section we introduce relevant notations, formally define privacy
+requirements and the behavior of our proximity based service.
+
+We assume a setting where a set of mobile users form a social network. Every user
+uses a mobile device(\mdns) with positioning and communication capabilities, allowing 
+them to to be online, have access to a central location server (LS), and determine their own 
+location. The terms \textit{mobile device}, \textit{user}, and \textit{client} 
+are used interchangeably, denoting the set of all \mds by $\mathbf{M} \subset \mathbb{N}$. 
+The social network containing users from $\mathbf{M}$ is defined by the friend-ship 
+relation $\mathbf{F}$, where $\{(u,v), (v,u)\} \subseteq \mathbf{F}$ if $u,v \in \mathbf{M}$ 
+are friends. 
+
+Let us assume a 2D scenario, where users from $\mathbf{M}$ can freely move in
+Euclidean space and every user $u \in \mathbf{M}$ at the current time
+defines $loc(u)$ and $vic(u)$. Here $loc(u)=(loc(u).x, loc(u).y)$ represents
+$u$'s 2D location and $vic(u)$ specifies $u$'s dynamic \textit{vicinity region}.
+
+The vicinity region is a multi-parted
+(composition of 1$\leq$ circle, polygon, etc.) region around a user
+location and it can be understood as an infinite set of spatial points that
+changes over the time. 
+
+
+The privacy-aware proximity based service notifies user $u \in \mathbf{M}$ if
+any of his friends $v \in \mathbf{M} | (u, v) \in \mathbf{F}$ enters his
+vicinity region. More specifically, first all of $u$'s friends are classified to
+be in proximity or not by checking following conditions:
+\begin{enumerate}
+    \item if $loc(v) \in vic(u)$ user $v$ is in $u$'s proximity;
+    \item if $distLV(loc(v),vic(u)) > \lambda$, user $v$ is not in $u$'s
+proximity;
+    \item if $distLV(loc(v),vic(u)) \leq \lambda$, the service can freely choose
+to classify $v$ as being in $u$'s proximity or not.
+\end{enumerate}
+Here $distLV(l,v)$ denote a shortest Euclidean distance between location $l$ and
+vicinity region $v$. If $l$ is inside $v$ then $distLV(l,v) = 0$.The $\lambda
+\geq 0$ is a service precision parameter and introduces a degree of freedom in
+the detection of location-to-vicinity intersection. Note, that small values of
+$\lambda$ corresponds to higher precision. When the classification is complete,
+$u$ is provided with a set of proximate friends that now are classified as
+being in proximity while they were not in proximity before.
+Every user has to have ability to tweak their desirable service precision level
+$\lambda$ and the service has to possibly minimize amount of client
+communication depending on its $\lambda$ setting.
+
+In addition to that, for every user $u \in \mathbf{M}$ the service has to
+satisfy following location privacy requirements:
+\begin{itemize}
+ \item The exact location of $u$ is not disclosed to any party (e.g., any other
+user or the LS).
+ \item User $u$ allows nobody else but his friends to detect him in
+their vicinities.
+\end{itemize}
+
+The following section details our proposed proximity based service that
+meet these requirements.

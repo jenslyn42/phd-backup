@@ -1,0 +1,8 @@
+UserCount	GroupCount	UsersInGroups	MaxLevel	L_min	LevelZero	Radius	Timestamps	RoadFilteringOn	ServerOptimized	IncUpdate	ClientMsgs	ClientGranules	ServerMsgs	ProxMsg	ClientMsgU/TS	ClientGranulesU/TS	ServerMsgU/TS	ProxMsgU/TS
+10	1	10	0	200	200	500	40	False	True	False	403	12765	0	4	1.0075	31.9125	0	0.01
+10	1	10	1	200	400	500	40	False	True	False	391	5581	40	4	0.9775	13.9525	0.1	0.01
+10	1	10	2	200	800	500	40	False	True	False	350	3533	88	4	0.875	8.8325	0.22	0.01
+10	1	10	3	200	1600	500	40	False	True	False	324	3088	129	4	0.81	7.72	0.3225	0.01
+10	1	10	4	200	3200	500	40	False	True	False	323	3038	166	4	0.8075	7.595	0.415	0.01
+10	1	10	5	200	6400	500	40	False	True	False	366	3163	209	4	0.915	7.9075	0.5225	0.01
+10	1	10	6	200	12800	500	40	False	True	False	412	3293	255	4	1.03	8.2325	0.6375	0.01
