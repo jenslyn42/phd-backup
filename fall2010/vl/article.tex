@@ -1,0 +1,50 @@
+\documentclass{llncs} 
+\input{preample.tex}
+\input{articleFiles/macro.tex}
+
+%------------------------------------------------------------------------- 
+% take the % away on next line to produce the final camera-ready version 
+\pagestyle{plain}
+%
+%------------------------------------------------------------------------- 
+\begin{document}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+
+\SetKwBlockLRS{LRSBegin}
+
+
+\title{A Location Privacy Aware Friend Locator}
+\toctitle{A Location Privacy Aware Friend Locator}
+\titlerunning{A Location Privacy Aware Friend Locator}
+
+\author{Laurynas \v{S}ik\v{s}nys
+\and Jeppe R. Thomsen
+}
+\institute{Aalborg University\\ Department of Computer Science \\ Selma Lagerl\o fs Vej 300, DK-9220 Aalborg \O \\ Denmark}
+\maketitle
+
+\begin{abstract}
+ \input{articleFiles/abstract.tex}
+\end{abstract}
+\input{articleFiles/intro.tex}
+\input{articleFiles/relWork.tex}
+\input{articleFiles/problem.tex}%
+\input{articleFiles/contribution.tex}%
+\input{articleFiles/optimizations.tex}
+\input{articleFiles/grouping.tex}
+%\input{articleFiles/rasterapproach.tex}
+\input{articleFiles/vulnerbility.tex}
+\input{articleFiles/experiments.tex}
+%\input{articleFiles/discussion.tex}
+\input{articleFiles/conclusion.tex}
+
+%-------------------------------------------------------------------------
+
+\bibliographystyle{splncs}
+
+\bibliography{bibliography}
+
+\end{document}

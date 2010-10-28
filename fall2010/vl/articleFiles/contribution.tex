@@ -1,0 +1,449 @@
+\section{Our privacy-aware proximity based service} \label{sec:contribution}
+
+In this section we introduce base concepts employed in our proximity detection
+service, followed by client and server algorithms. 
+
+\subsection{Proximity detection idea}
+
+This section describes how the \ls can locate users in their friend's vicinity
+without disclosing their locations and vicinities. 
+
+Similarly to \textit{Incremental Proximity Detection Approach} \cite {ffinder},
+where all users in $\mathbf{M}$ share a list of grids, here we let all users in
+$\mathbf{M}$ share a \textit{list of granularities}. The list of granularities,
+denoted by $\Gamma$, contain finite or infinite number of granularities
+$\Gamma(l)| l=0, 1, 2,...$  A single granularity
+%\footnote{ Note, that a grid is a special case of granularity} 
+specifies a subdivision of the spatial domain
+into a number of non-overlapping regions, called granules\cite{pbsPaper}. The
+granularity's index $l \geq 0$ in the $\Gamma$ is termed \textit{the level of
+granularity}. Every granularity $\Gamma(l)$ at levels $l=0, 1, 2,...$ satisfies
+following three properties:
+\begin{itemize}
+ \item Every granule $g \in \Gamma(l)$ is identifiable by an index $id(g)
+\in \mathbb{N}$.
+ \item Every granule $g \in \Gamma(l)$ has a bounded, not higher than $L(l)$,
+size, i.e. $\forall g \in \Gamma(l), MaxDist(g) \leq L(l)$, where $MaxDist(g)$
+is maximal Euclidean distance between any two points of region $g$.
+ \item Granule sizes bound $L(l)$, in level $l>0$, is always lower than in level
+$l-1$, i.e. $L(l) < L(l-1)$.
+ \item Every granule in level $l>0$ is fully contained by some granule at 
+level $l-1$.
+\end{itemize}
+
+Figure \ref{fig:listOfGrids}a visualizes a valid granularity
+list, where uniform grids are used as granularities and grid cells are used as
+granules at levels $0$ to $2$. Note, that it only shows subsets of all
+available cells for every grid. The ``top-view'' projection of this list is
+provided in Fig. \ref{fig:listOfGrids}b. Solid, dashed and dotted lines depict
+boundaries of cells at levels $0$, $1$, $2$ respectively. Every cell $c$ in levels
+$l=0,1,2$ has defined $id(c)$ and its size $MaxDist(g)$ is lower-equal to $L(l)$. 
+For example, maximal distances between any two points of some 
+cells $c0$,$c1$, $c2$ at levels $0$,$1$,$2$ respectively are $70.71$, $35.36$, 
+$17.68$ and they correspond to levels' $L$ values in the uniform grids case. 
+Moreover, cells of lower level grids fully contain cells of higher level grids.
+
+\begin{figure}
+       \center
+       \begin{tabular}{c c c}			   
+	  \includegraphics[width=0.16\textwidth]{vl/images/dgLMGlist2.pdf} &	
+	  \includegraphics[width=0.14\textwidth]{vl/images/dgLMGlist3.pdf} & 
+	  \includegraphics[width=0.12\textwidth]{vl/images/proxDetVL.pdf} \\
+          (a) & (b) & (c)
+       \end{tabular}
+       \caption{The valid list of granularities and the
+behavior of the granularity-based classifier}
+            \label{fig:listOfGrids}
+\end{figure}
+
+Let us assume, that a list of granularities $\Gamma$ is globally defined in the
+system and thus fixed on all clients. 
+
+Similarity to FriendLocator \cite {ffinder}, we let all users in $\mathbf{M}$
+also share an encryption function $\Psi$. $\Psi: \mathbb{N} \mapsto \mathbb{N}$
+is one-to-one function that is used to map index $id(g)$ of some granule $g$ to
+corresponding encrypted representation. In practice $\Psi$ can be implemented as
+a keyed secure hash function (e.g. SHA-2) such that it is computationally
+infeasible for the attacker to break. A key of the hash function can be
+distributed among clients of $\mathbf{M}$ in peer-to-peer fashion or with help
+of some trusted third-party server.
+
+When $\Psi$ is known by clients, but not by the \ls, each client utilizing
+$\Psi$ can encrypt indices of granules that enclose their location and vicinity
+at some granularity. Encrypted representation of these indices can be compared
+on the \ls without need to disclose indices of granules and consequently the
+vicinity or location of any user. In particular, assume that two friends
+$u_1$, $u_2$ use granularity of some level $l$ (Fig. \ref{fig:listOfGrids}c) and
+the user $u_2$ finds his location containing granule $g_l$, applies $\Psi$ on
+its index $id(g_l)$ and sends encrypted representation, $e123$, to the \ls.
+Similarly user $u_1$ finds all his vicinity intersecting granules
+$\mathbf{g_v}$, applies $\Psi$ on their indices and send their encrypted
+representations, \{$e342$, $e433$, $e034$, $e211$, $e987$, $e123$\}, to the
+\ls. If encrypted index of $u_2$'s location granule, $e123$, can be found in
+encrypted indices set of user $u_1$ vicinity then we can conclude that user
+$u_2$ is in $u_1$'s vicinity. Let us call such location-vicinity intersection 
+detection approach by \textit{granularity-based classifier} and, based on the 
+knowledge about the list of granularities, Lemma \ref{lem1} can be derived.
+
+\begin{lemma}
+\label{lem1}
+ The granularity-based classifier can be used to classify the user $u_2$ as being
+in $u_1$'s proximity or not with the precision parameter setting
+$\lambda=L(l)$, defined in Section \ref{sec:problemdef}.
+\end{lemma}
+\begin{proof}
+ According the Section \ref{sec:problemdef}, in order for user $u_2$ to be in
+$u_1$'s proximity or not in proximity, respective conditions
+$distLV(loc(u_2),vic(u_1)) \leq \lambda$, and $loc(v) \notin vic(u)$ must hold.
+If the encrypted index of $u_2$'s location granule, e.g. $e123$, can be found in
+encrypted indices set of user $u_1$ vicinity, due to $\Psi$ is one-to-one
+mapping we can conclude that $u_2$ location containing granule $g_l$ is in
+$u_1$'s vicinity intersecting granules set $\mathbf{g_v}$. Then we know
+that granule $g_l$ both encloses $u_2$ location $loc(u_2)$ and intersects with
+$u_1$ vicinity $vic(u_1)$. Utilizing properties of granularity at level $l$,
+we know that maximal Euclidean distance between any two points within granule
+$g_l$ is lower-equal than $L(l)$, i.e. $MaxDist(g_l) \leq L(l)$. Thus the shortest
+Euclidean distance between location $loc(u_2)$ and the vicinity region
+$vic(u_1)$ cannot be higher than $L(l)$, i.e. $distLV(loc(u_2),vic(u_1)) \leq
+\lambda$. Similarly we can prove that if $g_l$ cannot be found in
+$\mathbf{g_v}$ then $loc(v) \notin vic(u)$.
+\end{proof}
+
+According to Lemma \ref{lem1}, the $\lambda$ value depends on granule sizes
+bound function $L$ and the granularity level $l$. We can observe that higher
+levels provide higher proximity detection precision such that $\lim_{l
+\to \infty} \lambda = \lim_{l \to \infty} L(l) = 0$. However as we go to
+higher levels the number of
+vicinity intersecting granules increases causing higher client
+communication. Thus we let for every user $u \in \mathbf{M}$ to select a
+constant $L_{max}(u)$ that has following meanings:
+\begin{itemize}
+ \item User $u$ will never use granularities of higher than
+$L_{max}(u)$ levels thus limiting his worts case communication.
+ \item User $u$ lets other users to detect him in a proximity with no higher
+than $\lambda=L(L_{max}(u))$ precision. Thus $L_{max}(u)$ can be used to 
+specify $u$'s minimum location privacy requirements.
+ \item User $u$ will be able to detect friends being in his proximity with no
+higher than $\lambda=L(L_{max}(u))$ precision.
+ \item Every encrypted coordinate of user that is sent to \ls will have no
+higher than $L(L_{max}(u))$ resolution, i.e., if the attacker brakes
+the encrypted coordinate, then deciphered value will correspond
+to cloaking region with maximum distance between two points no lower than
+$L(L_{max}(u))$.
+\end{itemize}
+
+Users can freely select such $L_{max}$ at runtime and upload it to the \ls.
+Note that this does not violate user location privacy as it does not reveal any
+spatial information.
+
+The introduced granularity-based classifier is integrated into our proximity
+detection service which is defined using client and server algorithms in the
+following section.
+
+
+\subsection{Client and Server algorithms}
+
+We define our proximity based service by providing handler algorithms for
+different type of software events on a \md and the \ls, in particular:
+
+
+- \textbf{onMsgReceived($msg$, $arg$)}
+	A handler is executed on a \md or the \ls each time one receives a message
+of type $msg$ with arguments $arg$ from other party. A summarizing list of
+employed messages with their arguments is presented in Table \ref{tblMessages}.
+
+
+- \textbf{onLocChange()}
+ A handler executed on a \md, each time its geographical location changes.
+
+\vspace{0.25cm}
+
+
+\begin{table}
+	\centering
+	\begin{tabular}{| p{0.95cm} | p{0.7cm} | p{0.6cm}| p{4cm} |}
+		 \hline
+	Message Type & Args & Sender & Description \\ \hline
+			  
+	$M_{el}$ & $u$, $l$, $g^*_l$, $\mathbf{g^*_v}$ & \md & \md with id equal
+to $u$ sends this type of message to the \ls in order to report his encrypted
+location $g^*_l$ and the vicinity $\mathbf{g^*_v}$ for level $l$. \\ \hline
+
+	$M_{prox}$ & $v, l$ & \ls & The \ls sends this type of message to a \md
+to inform that his friend $v$ is within his vicinity at granularity level $l$.
+\\ \hline
+
+	$M_{LevInc}$ & $l$ & \ls & The \ls sends this type of message to some
+\md to make it increase its level up to level $l$. \\ \hline
+			  
+	\end{tabular}
+	\caption{Client and server messages types}\label{tblMessages}
+\end{table}
+
+
+\begin{algorithm}[!Hbt]
+    \dontprintsemicolon
+    \SetVline
+\footnotesize
+    \KwData{
+  
+\footnotesize 
+    
+  $u \in \mathbf{M}$ - current user ID.
+
+	$loc(u)$ - user's current location.
+	
+  $vic(u)$ - user's vicinity region.
+
+  $GS$ - Stack of 2-tuples $\langle g_l$, $\mathbf{g_v} \rangle$, where positions on the stack corresponds to levels.
+    	$g_l$ is $loc(u)$ granule index at level $l$. 
+    	$\mathbf{g_v}$ is a indices set of $vic(u)$ intersecting granules at level $l$.
+			
+	$L_{max}(u)$ - user specified highest granularity level.
+    }
+
+\footnotesize 
+    \funcc{mapLocToGranularity}{\text{Level number } level}
+    {
+	$g_l \leftarrow \{id(g) | g \in \Gamma(level): loc(u) \in g\}$ ;
+
+	$\mathbf{g_v} \leftarrow \{id(g) | \forall g \in \Gamma(level): g
+\cap vic(u) \neq \emptyset\}$;
+
+	\textbf{return} ($g_l$, $\mathbf{g_v}$);
+    }
+
+\footnotesize
+    \funcc{pushAndSend}{}
+    {
+	($g_l$, $\mathbf{g_v}$) $\leftarrow$ $mapLocToGranularity(|GS|)$;
+
+        Push $\langle g_l$, $\mathbf{g_v} \rangle$ to stack $GS$;
+
+        Send to \ls $M_{el}(u, |CS|-1, \Psi(g_l), \{\Psi(g)| \forall g \in
+\mathbf{g_v}\})$;
+    }
+
+\footnotesize 
+
+    \funcc{onLocChange}{}
+    {
+        $wasPopped \leftarrow false$
+
+        \While {$|GS| > 0$ \text{ and } $top(GS) \neq
+mapLocToGranularity(|CS|-1)$}
+        {
+            Pop from stack $GS$;
+
+            $wasPopped \leftarrow true$;
+        }
+
+        \If {$wasPopped$ \text{ or } $|GS| = 0$}
+        {
+            \textbf{pushAndSend}()
+        }
+    }
+
+    \funcc{onMsgReceived}{M_{LevInc}, \text{Level } l}
+    {
+        \While{$|GS| \leq l$ \text{ and } $|GS| \leq L_{max}(u)$}
+        {
+            \textbf{pushAndSend}()
+        }
+    }
+
+    \funcc{onMsgReceived}{M_{prox}, \text{Friend }  v, \text{Level} l}
+    {
+        Output "Friend ",$v$," with precision ", $L(l)$, " is inside
+our vicinity!";
+    }
+
+\caption{The \md's event handlers in our proximity based service.} 
+\label{algCl}
+\end{algorithm}
+
+
+
+Algorithms \ref{algCl} and \ref{algSrv} specify the behavior of the \md and the
+\ls. They contains local data definitions, functions and software
+event handlers. 
+
+A \md $u$ remembers his last positioning unit reported geographical location
+$loc(u)$, and for granularity levels $l=0..(|GS|-1)$ (see Alg. \ref{algCl}) locally stores his
+location and vicinity mappings, i.e., indices of location and vicinity granules,
+in the stack $GS$. Once \md changes its location, the \textbf{onLocChange}
+handler is triggered. Then if user's location change invalidates current
+location or vicinity granules at levels $l=(|GS|-1) .. 0$, the \md removes
+respective elements from $GS$, thus reducing his employed current level
+$|GS|-1$. Note, that this corresponds to zero or more $u$'s switches from finer
+to coarser granularities. At least one current level reduction is always followed by
+$\textbf{pushAndSend}$ call, which computes new location and vicinity mappings
+for $|GS|$ (current + one level) and sends them to the \ls.
+ 
+Client granularity level shifts can be visualized by Fig. \ref{fig:VLdemo}a and
+\ref{fig:VLdemo}b, where user's $u_1$ vicinity and user's $u_2$ current location
+mapping into list of granularities (grids) are visualized at consecutive time
+snapshots. Note, that due to simplicity $u_1$'s current location and $u_2$'s
+vicinity mappings are not shown. User $u_1$ changes his location and shifts
+from level 1 to level 0 (Fig. \ref{fig:VLdemo}a and \ref{fig:VLdemo}b) because
+his location change invalidates his vicinity mappings at levels 1 and 0.
+In contrary, $u_2$ location change causes no location mappings changes in levels
+1 and 0, thus he stays in level 1.
+
+For every user $u$ the \ls locally stores $GL(u)$, which is an encrypted
+alternative for $GS$. It contains encrypted representations of $u$'s location
+and vicinity granule indices for levels $0 .. GL(u) - 1$. The $u$'s stack $GS$
+is synchronized with $GL(u)$ with help of $M_{el}$ message. When the \ls
+received this type of message, then the handler $\mathbf{onMsgReceived}$  is
+executed. It first updates the $GL(u)$ and later checks if any of $u$'s friends
+entered its vicinity or if user $u$ entered his friends vicinities. This is
+checked by searching if encrypted location granule $g^*_l$ can be found in the
+set of encrypted vicinity granules $\mathbf{g^*_v}$ for some friend $f$ at some
+level $l_m$. The level $l_m$ is the highest level, available in $GL(u)$
+and $GL(v)$ that does not exceed $L_{max}(u)$ and $L_{max}(v)$. If $g^*_l$ is
+found in the $\mathbf{g^*_v}$ but the $l_m$ is lower than $L_{max}(u)$ and
+$L_{max}(v)$, it means than the proximity detection precision can be still
+be increased as users specified $L_{max}$ values are not yet reached, thus the
+\ls sends $M_{LevInc}$ to one or both users, asking them to increase they
+current levels. Otherwise, if $g^*_l$ is found in the $\mathbf{g^*_v}$ and $l_m$
+is equal to $L_{max}(u)$ or $L_{max}(v)$ then the \ls sends $M_{prox}$ message,
+informing a user about a presence of friend in his vicinity.
+
+
+Let us assume that $L_{max}(u_1) = L_{max}(u_2) = 2$ in Fig. \ref{fig:VLdemo}
+example. The server finds that $g^*_l$ of user $u_2$ lays in $\mathbf{g^*_v}$
+of user $u_1$ at level 0 in Fig. \ref{fig:VLdemo}a, thus due to $0 = l_m$ is
+lower than $L_{max}(u_1)$ or $L_{max}(u_2)$ it sent $M_{LevInc}$ messages to
+both users asking them to increase their current levels. When they both deliver
+level 1 encrypted coordinates, that are higher than level 0 precision, the \ls
+no longer founds $g^*_l$ in $\mathbf{g^*_v}$ and then nothing happens until one
+of them starts moving. When $u_1$ sends his location data for level 0 in Fig.
+\ref{fig:VLdemo}b, the $l_m$ is set to $0$ and due to it is lower than
+$L_{max}(u_1)$ or $L_{max}(u_2)$ and user $u_2$ is at level 1 already, only
+the user $u_1$ is asked to switch to level 1. Similarly, when the \ls finds
+$g^*_l$ in $\mathbf{g^*_v}$ at level 1 in Fig. \ref{fig:VLdemo}c it asks both
+users increase their levels as $1 = l_m$ is still lower than $L_{max}(u_1)$ or
+$L_{max}(u_2)$. When two users deliver their encrypted location data to the \ls
+for level $2$ in Fig. \ref{fig:VLdemo}d, the $l_m = 2$ is equal to
+$L_{max}(u_1)$ and $L_{max}(u_u)$, then the user $u_1$ is informed about $u_2$
+proximity with message $M_{prox}$.
+
+\begin{figure}
+       \center
+        \includegraphics[width=0.4\textwidth]{vl/images/dgDemoVL.pdf}
+        \caption{Example of level changes and proximity detection within \vl} 
+       \label{fig:VLdemo}      
+\end{figure}
+
+Note that similarly to the \ff \cite{ffinder}, the presented algorithms
+implement a kind of adaptive region-based up-date policy. The clients updates
+their encrypted location data on the \ls only when location change triggers the
+change of location or vicinity granularity mappings, i.e. user location and
+vicinity enclosing granules, at their current levels. And if some user is far
+away from his friends, then he or she stays at a low-level granularity with large
+cells, which results in few encrypted location data updates as the user moves.
+Only when the user approaches one of the friends, is he asked to switch to
+higher levels with smaller granules. Thus, at a given time point, the users
+current communication cost is not affected by the total number of his or her
+friends, but by the distance of the closest friend. 
+
+Next we review several optimizations possibility that can help reduce client
+communication and server computation costs, followed by a technique to
+minimize privacy leakage if encryption function $\Psi$ is intercepted by an
+adversary.
+
+\begin{algorithm}[!Hbt]		
+    \dontprintsemicolon
+    \SetVline
+\footnotesize
+    \KwData
+    {    
+\footnotesize
+
+	$\mathbf{M}$ - a set of users;        
+
+	$\mathbf{F}$ - a friendship relation that represents a social network. 
+			
+	$L_{max}(u) \forall u \in \mathbf{M}$ - highest allowed granularity level specified by user $u$.
+                
+  $GL(u) \forall u \in \mathbf{M}$ - a stack of 2-tuples $\langle g^*_l,
+\mathbf{g^*_v} \rangle$, where every 2-tuple corresponds to level $l$.
+For level $l$ the $g^*_l$ is an encrypted index of granule containing $u$'s location. 
+The $\mathbf{g^*_v}$ is a indices set of encrypted granules, that intersect 
+$u$'s vicinity.
+      
+        $\mathbf{P(u)} \subseteq \mathbf{M}$ - a set of $u \in \mathbf{M}$'s
+currently proximate friends.
+	 }        
+
+\footnotesize 
+
+   \funcc{onMsgReceived}{M_{el}, \text{User } u, \text{Level }l, g^*_l, \mathbf{g^*_v}}
+    {
+        \While {$|GL(u)| > 0$ \text{ and } $|GL(u)|$ > $l$}
+        {
+            Pop from stack $GL(u)$;
+        }
+
+        Push $\langle g^*_l, \mathbf{g^*_v} \rangle$ to stack $GL(u)$;
+
+        \ForEach {$v \in \mathbf{M}$ \text{ such that } $v \neq u$ \text{ and }
+$|GL(v)| > 0$ \text{ and } $(u,v) \in \mathbf{F}$}
+        {
+            $l_m \leftarrow$ $min$($|GL(u)|-1$, $|GL(v)|-1$, $L_{max}(u)$,
+$L_{max}(v)$);
+
+	    $vInU$ $\leftarrow$ $get(GL(v), l_m).g^*_l \in get(GL(u),
+l_m).\mathbf{g^*_v}$;
+
+	    $uInV$ $\leftarrow$ $get(GL(u), l_m).g^*_l \in get(GL(v),
+l_m).\mathbf{g^*_v}$;
+
+            \If {$vInU=true$ \text{ or } $uInV=true$ }
+            {
+                \If {$l_m$ = $L_{max}(u)$ \text{ or } $l_m$ = $L_{max}(v)$ }
+                {
+                    \If{$vInU$ \text{ and } $v \notin \mathbf{P(u)}$}
+                    {
+                    insert $v$ into $\mathbf{P(u)}$;
+                    
+                    send $M_{prox}(v, l_m)$ to \md $u$;
+                    
+                    }
+
+                    \If{$uInV$ \text{ and } $u \notin \mathbf{P(v)}$}
+                    {
+                    insert $u$ into $\mathbf{P(v)}$;
+                    
+                    send $M_{prox}(u, l_m)$ to \md $v$;
+                    
+                    }
+                }
+                \Else
+                {
+                    \If {$l_m = |GL(u)|-1$}
+                    {
+                        send $M_{LevInc}$($l_m + 1$) to \md $u$
+                    }
+                    \If {$l_m = |GL(v)|-1$}
+                    {
+                        send $M_{LevInc}$($l_m + 1$) to \md $v$
+                    }
+                }
+            }
+	    \If {$vInU = false$}
+	    {
+		remove $v$ from $\mathbf{P(u)}$;
+	    }
+	    \If {$uInV = false$}
+	    {
+		remove $u$ from $\mathbf{P(v)}$;
+	    }
+        }
+    }
+    
+\caption{Event handler on the \ls.} \label{algSrv}
+\end{algorithm}
+
+
+

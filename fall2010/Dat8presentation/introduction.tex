@@ -1,0 +1,58 @@
+\subsection{Goals} % Bookmark information, displayed in the progress tree
+
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{Goals}
+
+At the service provider:
+\begin{itemize}
+\item Remove all user identifying information from trajectories.
+\item Preserve usability to users of public dataset
+\end{itemize}
+
+\vspace{3em}
+At the users side:\\
+
+\begin{itemize}
+\item  Provide {\bf Usability}. specifying privacy should be simple.
+\item Be {\bf Practical}. No user interaction during normal operation.
+\item Be {\bf Flexible}. Support several ways of defining privacy.
+\end{itemize}
+\end{frame}
+
+\subsection{Related work}
+
+\begin{frame}
+\frametitle{Related work}
+
+Protection of Trajectories
+\begin{itemize}
+\item Collapse trajectories and remove updates
+\item Only publish edges with k support.
+\vspace{1em}
+\item At each update compute MBR including k-1 updates
+\item Precompute regions before sending.
+\vspace{1em}
+\item Degrade public dataset so no sub-trajectory can be matched to it.
+
+%\item Trajectory classification
+\end{itemize}
+
+\end{frame}
+
+
+% \begin{frame}[red] %hmm.. thought i could change colour here :S
+% \frametitle{Protection of Identifiers on Trajectories}
+% Post processing of trajectories
+% 	\begin{itemize}	 
+% 	\item  Add information
+% 		\begin{itemize}
+% 			\item Add fake trajectories
+% 		\end{itemize}
+% 	\item Remove information 
+% 		\begin{itemize}
+% 			\item Remove sensitive segments of trajectories 
+% 			\item collapse similar trajectories into one
+% 		\end{itemize}
+% 	\end{itemize}
+% \end{frame}
+

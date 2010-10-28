@@ -1,0 +1,195 @@
+\section{Related work reference}
+
+reference support for related work section.
+
+\subsubsection{On effective presentation of graph patterns: a structural representative approach}
+They develop an approach that combine two focuses when mining patterns in graphs. 1. they introduce a method to relax the tightness of the pattern subgraph pattern matching, so they can have high support for subgraphs which are very similar, but not exact. 2. as many mining approaches return allot (often very similar) patterns, they propose a method to collapse similar patterns so the user is presented with something that is easier to get an overview of and gain an understanding of the data. \cite{napa08}
+
+
+% @inproceedings{napa08,
+%  author = {Chen, Chen and Lin, Cindy Xide and Yan, Xifeng and Han, Jiawei},
+%  title = {On effective presentation of graph patterns: a structural representative approach},
+%  booktitle = {CIKM '08: Proceeding of the 17th ACM conference on Information and knowledge management},
+%  year = {2008},
+%  isbn = {978-1-59593-991-3},
+%  pages = {299--308},
+%  location = {Napa Valley, California, USA},
+%  doi = {http://doi.acm.org/10.1145/1458082.1458124},
+%  publisher = {ACM},
+%  address = {New York, NY, USA},
+%  }
+
+
+\subsection{Cache Invalidation and Replacement Strategies for Location-Dependent Data in Mobile Environments}
+They develop two cache replacement and invalidation techniques for mobile clients communicating with a LBS. They argue that in the setting of spatial data and LBS then it is important to consider more than just the access time when doing cache replacement. They look at the spatial area where an object in the cache is valid as well as the direction the user is moving. They do this besides calculating the probability that this object will be accessed again.
+
+Assumes all POI objects are fixed size and no updates will be made. \cite{cirslddme}
+
+% @article{cirslddme,
+%  author = {Zheng, Baihua and Xu, Jianliang and Lee, Dik L.},
+%  title = {Cache Invalidation and Replacement Strategies for Location-Dependent Data in Mobile Environments},
+%  journal = {IEEE Trans. Comput.},
+%  volume = {51},
+%  number = {10},
+%  year = {2002},
+%  issn = {0018-9340},
+%  pages = {1141--1153},
+%  doi = {http://dx.doi.org/10.1109/TC.2002.1039841},
+%  publisher = {IEEE Computer Society},
+%  address = {Washington, DC, USA},
+%  }
+
+
+
+
+\subsection{Nearest-Neighbor Caching for Content-Match Applications}
+
+\cite{nnccma}
+% @inproceedings{nnccma,
+%  author = {Pandey, Sandeep and Broder, Andrei and Chierichetti, Flavio and Josifovski, Vanja and Kumar, Ravi and Vassilvitskii, Sergei},
+%  title = {Nearest-neighbor caching for content-match applications},
+%  booktitle = {WWW '09: Proceedings of the 18th international conference on World wide web},
+%  year = {2009},
+%  isbn = {978-1-60558-487-4},
+%  pages = {441--450},
+%  location = {Madrid, Spain},
+%  publisher = {ACM},
+%  address = {New York, NY, USA},
+%  }
+
+
+
+\subsection{Caching Content-based Queries for Robust and Efficient Image Retrieval}
+
+They study how to do caching with Content-based Image Retrieval, and they support range and kNN queries. They focus on how to do caching when many of the queries are similar, but not the same (e.g. picture cropped or color changes) without polluting the cache. Their approach works in metric space and they develop an approximate method to check if the result can be satisfied by the cache. They archive good results, getting few direct cache hits, but still satisfying many queries from similar queries in the cache.
+
+\cite{ccqreir}
+
+% @inproceedings{ccqreir,
+%  author = {Falchi, Fabrizio and Lucchese, Claudio and Orlando, Salvatore and Perego, Raffaele and Rabitti, Fausto},
+%  title = {Caching content-based queries for robust and efficient image retrieval},
+%  booktitle = {EDBT '09: Proceedings of the 12th International Conference on Extending Database Technology},
+%  year = {2009},
+%  isbn = {978-1-60558-422-5},
+%  pages = {780--790},
+%  location = {Saint Petersburg, Russia},
+%  publisher = {ACM},
+%  address = {New York, NY, USA},
+%  }
+
+
+
+\subsection{Caching Complementary Space for Location-Based Services}
+They develop the notion of Complementary Space(CS) to help better use a cache on a mobile client. CS is different levels for representing the objects on a map within MBRs. At the lowest level they just show the object, and as the levels go up they include more and more objects within MBRs, looking at the trade of in communication up/down link from a mobile client. They always have the entire world represented within the clients cache, at different levels, and offer no solution to how they will handle server updates to the map.
+
+This is very similar to \cite{pcsqm}, although the approach does not formally dependend on an R-tree, they still use one and offer no viable alternative, which lessens the difference even more. Their results are better than their competitors, including \cite{pcsqm}, though it seems that they stop their graphs just before \cite{pcsqm} beats them.
+
+% @incollection {ccslbs,
+%    author = {Lee, Ken and Lee, Wang-Chien and Zheng, Baihua and Xu, Jianliang},
+%    affiliation = {Pennsylvania State University, University Park USA USA},
+%    title = {Caching Complementary Space for Location-Based Services},
+%    booktitle = {Advances in Database Technology - EDBT 2006},
+%    series = {Lecture Notes in Computer Science},
+%    editor = {Ioannidis, Yannis and Scholl, Marc and Schmidt, Joachim and Matthes, Florian and Hatzopoulos, Mike and Boehm, Klemens and Kemper, Alfons and Grust, Torsten and Boehm, Christian},
+%    publisher = {Springer Berlin / Heidelberg},
+%    isbn = {},
+%    pages = {1020-1038},
+%    volume = {3896},
+%    year = {2006}
+% }
+
+
+\subsection{Proactive Caching for Spatial Queries in Mobile Environments}
+
+They develop an approach which uses the index of an R-tree to add context to a cache of spatial object on a mobile client. They develop several communication and space saving techniques by representing less important parts of the R-tree in more compact ways, or just not storing the lower nodes/leaves of the tree. They also formally prove the assymtotic bounds of their algorithms.
+
+\cite{pcsqm}
+% @inproceedings{pcsqm,
+%  author = {Hu, Haibo and Xu, Jianliang and Wong, Wing Sing and Zheng, Baihua and Lee, Dik Lun and Lee, Wang-Chien},
+%  title = {Proactive Caching for Spatial Queries in Mobile Environments},
+%  booktitle = {ICDE '05: Proceedings of the 21st International Conference on Data Engineering},
+%  year = {2005},
+%  isbn = {0-7695-2285-8},
+%  pages = {403--414},
+%  doi = {http://dx.doi.org/10.1109/ICDE.2005.113},
+%  publisher = {IEEE Computer Society},
+%  address = {Washington, DC, USA},
+%  }
+
+
+
+\subsection{Cache-Oblivious Data Structures and Algorithms for Undirected Breadth-First Search and Shortest Paths}
+
+\cite{codsa}
+% @incollection {codsa,
+%    author = {Brodal, Gerth Stølting and Fagerberg, Rolf and Meyer, Ulrich and Zeh, Norbert},
+%    affiliation = {BRICS, Department of Computer Science, University of Aarhus, DK-8000 Århus C Denmark},
+%    title = {Cache-Oblivious Data Structures and Algorithms for Undirected Breadth-First Search and Shortest Paths},
+%    booktitle = {Algorithm Theory - SWAT 2004},
+%    series = {Lecture Notes in Computer Science},
+%    editor = {Hagerup, Torben and Katajainen, Jyrki},
+%    publisher = {Springer Berlin / Heidelberg},
+%    isbn = {},
+%    pages = {480-492},
+%    volume = {3111},
+%    year = {2004}
+% }
+
+
+\subsection{Cached Shortest-Path Tree: An Approach to Reduce the Influence of Intra-Domain Routing Instability}
+
+They assume a network setting and try to reduce the time and computational load it takes when network topology changes, as well as prevent any links from being unreachable if the topology changes often. The propose a cache with shortest-path trees, arguing that even if the topology changes often, then it is mostly between the same configurations (e.g. a computer/router is turned off/on) meaning that a cache with the most common seen configurations will be able to drastically reduce the amount of computation needed to recalculate routing tables.
+
+\cite{csptri}
+% @article{csptri,
+% author="ZHANG,Shu and IIDA,Katsuyoshi and YAMAGUCHI,Suguru",
+% title="Cached Shortest-Path Tree : An Approach to Reduce the Influence of Intra-Domain Routing Instability",
+% journal="IEICE transactions on communications",
+% ISSN="09168516",
+% publisher="The Institute of Electronics, Information and Communication Engineers",
+% year="2003-12-01",
+% volume="86",
+% number="12",
+% pages="3590-3599",
+% URL="http://ci.nii.ac.jp/naid/110003221599/en/",
+% DOI="",
+% }
+
+
+
+\subsection{On Designing a Shortest-Path-Based Cache Replacement in a Transcoding Proxy}
+
+
+\cite{spcrtp}
+% @article {spcrtp,
+%    author = {Hung, Hao-Ping and Chen, Ming-Syan},
+%    affiliation = {National Taiwan University Graduate Institute of Communication Engineering Taipei Taiwan},
+%    title = {On designing a shortest-path-based cache replacement in a transcoding proxy},
+%    journal = {Multimedia Systems},
+%    publisher = {Springer Berlin / Heidelberg},
+%    issn = {0942-4962},
+%    keyword = {Computer Science},
+%    pages = {49-62},
+%    volume = {15},
+%    issue = {2},
+%    year = {2009}
+% }
+
+
+\subsection{Optimizing Graph Algorithms for Improved Cache Performance}
+
+\cite{ogaicp}
+
+% @article{ogaicp,
+%  author = {Park, Joon-Sang and Penner, Michael and Prasanna, Viktor K.},
+%  title = {Optimizing Graph Algorithms for Improved Cache Performance},
+%  journal = {IEEE Trans. Parallel Distrib. Syst.},
+%  volume = {15},
+%  number = {9},
+%  year = {2004},
+%  issn = {1045-9219},
+%  pages = {769--782},
+%  doi = {http://dx.doi.org/10.1109/TPDS.2004.44},
+%  publisher = {IEEE Press},
+%  address = {Piscataway, NJ, USA},
+%  }

@@ -1,0 +1,42 @@
+\subsection{Incremental update optimization}\label{sec:optIncUpd}
+
+According the protocol when one (or more) location or vicinity enclosing
+granule changes due to user movement, user's encrypted data must
+be updated on the \ls by sending a $M_{el}$ message. Thus, in most
+cases user's two consecutive $M_{el}$ messages would contain duplicated 
+encrypted granules. 
+
+The communication can be reduced by enabling so called \textit{incremental
+updates}(\iuns). Here we introduce new type of message $M_{elUpd}$ that clients 
+are allowed to send, instead of the $M_{el}$, when their locations change. 
+It contains old items $u$, $l$, $g^*_l$ from $M_{el}$ and new items 
+$\mathbf{g^*_{vDel}}$, $\mathbf{g^*_{vIns}}$, where $\mathbf{g^*_{vDel}}$, 
+$\mathbf{g^*_{vIns}}$ define encrypted granules that must be deleted and inserted 
+on the \ls in order to fully update some user $u$ encrypted data for level $l$. 
+More precisely, if $m_1$ and $m_2$ are two consequent messages of type 
+$M_{el}$ such that $m_1.u$=$m_2.u$ and $m_1.l = m_2.l$ then the
+client may send a message $m_3$ of type $M_{elUpd}$ instead of $m_2$, where
+$m_3.\mathbf{g^*_{vDel}}$ = $m_1.\mathbf{g^*_{v}}$
+$\backslash$ $m_2.\mathbf{g^*_{v}}$ and $m_3.\mathbf{g^*_{vIns}}$ =
+$m_2.\mathbf{g^*_{v}}$ $\backslash$ $m_1.\mathbf{g^*_{v}}$. 
+Figure \ref{fig:ui_rf}a visualizes locations, vicinities, and 
+vicinity-intersecting granules of user $u$ at two consequent 
+time steps 0 and 1. Darkened sets of cells $\mathbf{g_{vDel}}$ and 
+$\mathbf{g_{vIns}}$ visualize unencrypted representation of sets $g^*_{vDel}$ 
+and $g^*_{vIns}$. Note, that introduction of $m_3$ helps reducing communication
+only if $|m_3.\mathbf{g^*_{vDel}}|$ + $|m_3.\mathbf{g^*_{vIns}}|$ $<$
+$|m_2.\mathbf{g^*_{v}}|$. 
+
+
+Our presented client and server algorithms (See Alg. \ref{algCl}, \ref{algSrv})
+can be easily modified to support incremental updates. In the current
+implementation once a user goes from higher to lower levels (switches into
+coarser granularity) granules of active level are being removed from stacks
+on client and server ($GS$ and $GL$) without possibility to reuse them. The idea
+is to preserve these granules on both client and server such that it would be
+possible to update them utilizing $\mathbf{g_{vDel}}$, $\mathbf{g_{vIns}}$ or
+$\mathbf{g^*_{vDel}}$, $\mathbf{g^*_{vIns}}$. 
+
+The incremental updates impact on client communication is evaluated in 
+Sec. \ref{sec:performStudy}.
+

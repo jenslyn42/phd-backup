@@ -1,0 +1,69 @@
+\section{Introduction} \label{sec:intro}
+
+\subsection{Prepare for meeting}
+formulate problem
+ why cache?
+\begin{itemize}
+\item less computational load
+\item faster response time
+\item better use of bandwidth \ref{sec:intro}
+\item
+\end{itemize}
+
+Describe strait forward solution
+
+just store query results in cache and only cosider direct cache hit with a
+simpel cache policy like LRU or even FIFO
+
+
+Come up with some simple solutions
+
+prepare:
+\begin{itemize}
+\item The definition and problem setting of shortest path caching
+\item Some simple methods
+\item Running examples to shw how these methods work
+\item Identify advantages / disadvantages of these methods
+\end{itemize}
+
+
+\subsection{Problem}
+
+\subsubsection{Definitions and problem setting}
+We assume a setting where owners of mobile, positioning enabled, devices want route planning assistance. We assume users prefer online route planning services over offline solutions. 
+
+
+
+\subsubsection{methods}
+
+
+We assume a setting where all users are equipped
+with a Mobile Device (MD) able to communicate and
+report the users position. All MD’s are online and are
+continuesly reporting the users location at predeﬁned
+intervals. We use the terms user, mobile device, and
+client interchangeable and denote the set of MD’s by
+U ⊂ N. We expect a MD to be cabable of visualizing
+its current location.
+We assume a 2D scenario, where the movements of
+users u ∈ U are restricted to a road network G(V, E).
+V is the set of vertices, where each vertice v ∈ V
+represents either a street intersection or an important
+landmark. E is the set of directed edges augmented
+by edge length and type. Edges are represented by
+a begin/end vertice pair and each edge represents the
+smallest unit of a road segment. e ∈ E, each e being
+a tuple specifying id, start-/end-vertices, length, and
+Road Type (RT) (eid , vs , ve , elength , eRT ). RT is a
+hierarchy of the size/type of road i.e. highway, paved,
+or dirt road (Sec. 5.2).
+The simplest form of trajectory is a collection of tu-
+ples (time, longitude, latitude), ordered by the time
+attribute, but as we will work on a road network and
+in the spatio-temporal domain, such a basic notion of
+trajectories is not appropriate. We deﬁne T as the set
+of trajectories, where each trajectory consist of an id
+(tid ), and a sequence of tuples containing an edge and
+
+
+

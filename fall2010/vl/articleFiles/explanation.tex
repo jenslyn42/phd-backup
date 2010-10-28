@@ -1,0 +1,43 @@
+\ffh{kind of long and verbose subsection...}
+We the \ffns, developed in \cite{ffinder}
+as a competing solution.
+The \ff also utilizes the client-server paradigm and
+it offers users location privacy via grid-based spacial
+obfuscation techniques, and encryption.
+The \ff offers equivalent notions of a maximum level and groups.
+The \ff maps its location into its current grid column and row, as well
+as the column and row respectively to the right and above the user. The
+user then encrypts the two rows and columns for its current level, and send
+the 4 and level to the server.
+The \ff does proximity detection by letting the server detect if two users
+share, at least, one row and column. (See fig. \ref{fig:expFFbehaviour}).
+In figure \ref{fig:expFFbehaviour} the proximity detection by \ff
+is illustrated. In \ref{fig:expFFbehaviour}b{\&}c the two proximities
+possible is shown, in \ref{fig:expFFbehaviour}(b) two users detect proximity
+by overlapping corner cells and in \ref{fig:expFFbehaviour}c the proximity is
+detected by 4 overlapping cells of a side. in \ref{fig:expFFbehaviour}a u3 is 
+not in proximity with anyone because his area of detection does not overlap with
+anyone else.
+\ffh{need more here} 
+
+
+\begin{figure}
+       \center
+       \begin{tabular}{c c c c}
+			    \includegraphics[width=0.33\textwidth]{images/proxDetDemo.pdf} &
+			    \includegraphics[width=0.33\textwidth]{images/usrPosDemoA.pdf} & 
+			    \includegraphics[width=0.33\textwidth]{images/usrPosDemoB.pdf} & 
+			     \\
+          (a) & (b) & (c)
+       \end{tabular}
+       \caption{\ff Behavior}
+ \label{fig:expFFbehaviour}
+\end{figure}
+
+
+\subsection{Experimental Settings}
+For each of our implementations we have build a
+small parser, which in the case of the \vl is also
+able to read the road network files of Oldenburg,
+enableing roadnetwork constrictions in \vl.
+%, as well as some posibilities for visualisation.

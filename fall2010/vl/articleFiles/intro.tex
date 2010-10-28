@@ -1,0 +1,123 @@
+\section{Introduction} \label{sec:intro}
+%
+Mobile devices with geo-positioning capabilities are
+becoming cheaper and more popular \cite{gps1}. Disclosing their
+location information (e.g., via Wi-Fi, Bluetooth, or GPRS), mobile
+users can enjoy a variety of location-based services (LBSs). 
+One type of such services is a {\em friend-locator} service, which
+shows users their friends' locations on a map and/or helps identify
+nearby friends. Friend-locator together with other mobile social-networking
+services are predicted to become a multi-billion dollar industry over the next
+few years \cite{mobsn}. Thus several friend-locator services, like
+\textit{iPoki}, \textit{Google Latitude}, and \textit{Fire Eagle}\footnote{
+ipoki.com; \; google.com/latitude; \; fireeagle.yahoo.net} 
+are now available on the Internet.
+
+In existing friend-locator services, the detection of nearby friends can be done
+only manually by a user, e.g., by periodically checking a map on the
+mobile device screen. This works only if the user's friends agree to share their
+exact locations or at least obfuscated location regions (e.g., city center).
+However, LBS users often require some level of privacy and may even feel
+threatened \cite{stalk3} if it is not provided. If all user's friends require
+complete privacy, they have to disable their location sharing, thus also
+preventing the user from finding his or her nearby friends. Consequently, due to
+poor location-privacy support, nearby-friend detection is not always
+possible in existing friend-locator products.
+
+
+Nearby friends detection can be enabled to privacy-concerned users utilizing
+existing privacy-aware proximity detection methods 
+\cite{proxDetTrans,pbsPaper,ffinder,longitudePaper}.
+They allow two online users to determine if they are close to each other without
+requiring them to disclose their exact locations to a service provider or other
+friends. They track all users in the real-time and generate notifications when
+friends approach each other.
+
+
+% Todo: change fig
+% either an Euclidean distance between them is smaller than mutually-agreed
+% threshold (Fig. \ref{fig:new image}}, 
+% 
+
+Generally two users are close to each other if the
+\textit{vicinity region} of one user contains the location of other user. The
+vicinity region is the area around user's location that defines his ``scope of
+interest'' and it can be understood as parameter of spatial range query over his
+friends locations. E.g. figure \ref{fig:suppVic}a depicts two users $u_1$ and $u_2$
+with their distinctly specified circular-shape vicinities of radii $e_1$ and
+$e_2$. Here user $u_2$ is considered to be in $u_1$'s proximity as he falls into
+$u_1$ circle with radius $e_1$. On contrary, user $u_1$ is not in proximity of
+$u_2$ as he does not fall in $u_2$'s vicinity with radius $e_2$.
+
+
+Existing proximity detection methods only support static, circular-shaped,
+user-location-centered vicinities which radii are typically defined by
+\textit{distance thresholds}. Distance threshold is uniquely defined by every
+distinct user (Fig. \ref{fig:suppVic}a), or by every pair of friends (Fig.
+\ref{fig:suppVic}b). Consequently two friends are in proximity when
+Euclidean distance between their locations is no higher than the threshold. 
+
+
+Supported type of vicinities enable proximity detection only in non-constrained
+Euclidean space, e.g. football field with no obstacles, where on
+proximity notification users can walk in a straight line to each other. However
+if the distance between two users is constrained by the shortest path distance,
+that is not always equal to crow-fly distance, then the existing methods are not
+applicable. For example, if two users are located on different banks of the
+river (Fig. \ref{fig:suppVic}c) such that existing methods classify them being
+in proximity, then generated proximity notification might not be very useful for
+users. It might be complicated for users to meet each other, because the
+distance ($d_2$) of shortest path following the road-network could be much
+higher than the crow-fly distance ($d_1$). Moreover, fixed-shape vicinity
+based services do not allow users to choose ``areas of interest''. This could be
+inconvenient in some cases, e.g. if the user uses the service to find
+friends in some bar (Fig. \ref{fig:suppVic}d) while his friends are traveling
+along some nearby road with no plans entering the bar. Then the user is flooded
+with useless proximity notifications. This scenario is very likely if the user
+has many friends and the road is traffic-intensive.
+
+\begin{figure}
+       \center
+       \begin{tabular}{c c}
+			   
+\includegraphics[width=0.10\textwidth]{vl/images/vicDemo1.pdf} &
+			   
+\includegraphics[width=0.15\textwidth]{vl/images/vicDemo2.pdf} \\ 
+
+(a) & (b) \\
+			   
+\includegraphics[width=0.15\textwidth]{vl/images/rnDemo1.pdf} & 
+			   
+\includegraphics[width=0.15\textwidth]{vl/images/rnDemo2.pdf} \\
+ (c) & (d)
+       \end{tabular}
+       \caption{User vicinities and proximity detection scenarios}
+            \label{fig:suppVic}
+\end{figure}
+
+The introduced shortcoming of the scenarios can be eliminated if instead of
+static-shape, dynamic-shape vicinities were used. In the first case (Fig.
+\ref{fig:suppVic}c), if user $u_1$ at current time moment could select a
+vicinity region such that distance between every point of the region and $u_1$
+location following the road-network is less than some threshold, then $u_2$'s
+detection in $u_1$'s proximity can be avoided. Similarly in the second case
+(Fig. \ref{fig:suppVic}d), if user $u_1$ could preselect vicinity region,
+matching the bar as it is his ``area of interest'', then only user $u_2$ would
+be identified by the system. The challenge is to develop the proximity detection
+method that supports both user location privacy and dynamic-shape vicinities. 
+
+To address the challenge, we combine ideas from existing solutions and develop a
+client-server location-privacy aware proximity detection service, the \vl. The
+proposed solution is based on both spatial cloaking and encryption, where the
+central server checks users proximity blindly without knowing any spatial data. 
+Users individually are allowed to specify their dynamic vicinities and a
+combination of minimum location privacy and service precision. 
+Our \vl employs a flexible location-update policy forcing users to update their
+location data only when leaving some automatically adjustable regions that
+shrink and expand depending on the distance of a user's closest friend.
+
+The paper is organized as follows. The related work is reviewed in
+Section \ref{sec:rel_work} followed by our problem setting in
+Section \ref{sec:problemdef}. The \vl and experimental results are
+presented in Section \ref{sec:contribution} and \ref{sec:performStudy}
+respectively.

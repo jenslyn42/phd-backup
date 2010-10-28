@@ -1,0 +1,28 @@
+\section{Related Work} \label{sec:rel_work}
+
+In this section we review relevant work on trajectory generalization techniques and techniques for classifying and querying trajectories in GIS databases. Existing trajectory generalization techniques is used when we in section \ref{sec:algorithm} present the anonymization algorithm. The trajectory classification is related to the goal, stipulated in section~\ref{sec:problemdef}, of maintaining data integrity on the trajectory dataset after anonymization.
+
+
+\subsection{Trajectory Generalization}
+
+The aim of trajectory generalization techniques are in general to do post processing of user submitted location data, in order to guaranty some level of privacy to the users. This is most often done by identifying sensitive identifying information, and generalizing the information \cite{trajecGeneral09, semantic08} until privacy requirements have been satisfied. It has been proposed to generalize trajectories by removing information on some of the edges traversed in the road network until an attacker can't identify the next edge traversed above a user defined uncertainty threshold \cite{ccs07}. Such an approach is tempting to use, as it is simple and straightforward, it however degrades the quality of the trajectories, and in areas where few trajectories have been recorded this approach will remove too much information for the trajectories to be of any use for data mining purposes later on.
+
+Nergiz et al.\cite{trajecGeneral09} propose to link individual data points of trajectories within bounding boxes in a \mbox{k-anonymity} like scheme. This means that for a given vertice in the road network the choice of a single user at time $t_i$ is indistinguishable from k-1 other users. They also propose a method to generate trajectories from the anonymized data so there will be the same number, or more, trajectories, similar to those that originally were in the dataset. This allows a sort of reconstruction of the original database, but it only works when you do not care about the sub-trajectories in the dataset. 
+Silvestri et al. \cite{semantic08} suggest a straight forward obfuscation scheme for each reported location, augmented by prior knowledge of sensitive locations and places it is not possible to actually be, thus preventing an obfuscated region containing e.g. only a lake and a hospital, making it easy to deduce the users location. This approach anonymizes on to low a level, disregarding trajectories all together, making datamining afterwards near impossible.
+
+Terrovitis et al.\cite{privPrevTrajec} assumes a scenario where the attacker has knowledge of sub-trajectories and access to a public database of all trajectories, they develop a solution which anonymizes the public database and guaranties that no one can match a sub-trajectory to a full trajectory with certainty above $P$, a system parameter. This approach however also depends on degrading the individual trajectories, with no guarantied lower bound on the degrading.
+
+Dan Lin et. al \cite{dlin} proposes publishing only those parts of users trajectories which are shared by at least k-1 other users trajectories. They however focus mainly on the efficiency of the underlying datastructures and propose no bound on the amount information removed.
+
+As we anonymize the trajectories in the spatio-temporal domain and all of the existing approaches consideres only the spatial domain, none of them can be applied in our scenario.
+
+
+\subsection{Trajectory Classification}
+
+As briefly mentioned in section \ref{sec:intro} we use the same simple dataformat for both input and output of our approach, as well as having a lower limit on data deterioration after anonymization. These are introduced to increase the likelyhood that existing classification approaches will be able to work on anonymized trajectories with minimal or no modifications.
+
+The work done on the classification techniques that we support after anonymization are briefly outlined here.
+
+We want to be able to detect similar trajectories and sub-trajectories \cite{dymaware07, Li2007, napa08} so we e.g. can find the hot routes\cite{Li2007} that people use most. Trajcevski et al.\cite{dymaware07} finds how to compare two trajectories, or sub-trajectories, regardsless of their respective direction, spatial and temporal dimension. If the trajectories have similar speeds within some bounds and they have similar angles along the route then they are considered similar. 
+
+We also want to support mining of outliers \cite{outlier09, outlier08} to e.g. detect accidents or other events which require attention. Li et al. look at the load of road segments, taking into account historical information, in order to detect Temporal outliers in the traffic data. Lee et al. \cite{outlier08} develops a distance function for sub-trajectories and then apply it to classify outliers.

@@ -1,0 +1,110 @@
+\section{Vulnerabilities \& Points of Attack}\label{sec:vulnerability}
+We here address a few of the possible vulnerabilities
+of the \vl approach. We assume correct behavior of both
+the server and clients, and thus exclude attacks where an
+attacker may want to modify either server or client to
+e.g. trigger a ``spamming'' behavior.
+The attackers goal will for each attack be to 
+compromise the privacy of the largest possible number of
+clients in the \vl system. 
+
+
+\subsection{Compromised Client}\label{subsec:VulClient}
+If an attacker gains control over a client
+he will, for each group (see \ref{subsec:grouping})
+the client is member of, have the $\Psi$ function 
+used to calculate granules at the client.
+
+If the client itself is compromised by an attacker, the $\Psi$ function
+is not much help to him, since he cannot do much else than encode granules
+sent to the server, but if one imagines that the attacker only temporarily
+gains control, then he can use the $\Psi$ function to ``Clone'' the original
+client. This problem is however easily made void by changing the $\Psi$ 
+function regularly.
+
+By using the \textit{battleship} method 
+the attacker can guess the location of other users with same group 
+membership as the compromised client\footnote{In the game of \textit{battleships} 
+two opponents take turn to guess the location of the others battleships placed at 
+secret locations in a grid.}.
+
+One way an attacker may ``play battleship'' in order to find the location of
+other users (with same group membership) would be to send a 
+false vicinity covering the area he is interested in finding
+other users, the attacker will then be notified by the server if any other 
+user is within his false vicinity. The attacker then continues to cut the vicinity in half,
+doing a binary search until he has found the granules of all users within the larger area
+he initially sent his false vicinity for at the start\footnote{The amount of 
+granules needed to be searched in the worst case is $\frac{c^{l+1}-1}{c-1}$ 
+where $l$ is the number of levels needed to be traversed, and $c$ the number 
+of granules each granule at level $l$ is divided into at $l+1$}.
+
+By using groups this attack is already very limited, since each 
+client is assumed to have far fewer friends then the overall amount
+of users in the \vl system. Furthermore it is worth noticing that 
+the attacker can never get an actual location of a user, since all he can get
+a matching granule which corresponds to a spacial area and not a point.
+There is also a build in limit on the amount of precision the attacker 
+can achieve because each users $L_{max}$ is a limit on the precision that
+any user will reveal. 
+ 
+If we limit the attackers goal to only focus on a single friend, then 
+using the binary search method described will enable the attacker to
+track the single friend with the amount of vicinity splits he have to
+do in worst case being: $\Theta(Log(\frac{B(cg)}{B(max)}))$ where $B(cg)$ is the
+size of attackers current granule and $B(max)$ is the granule size at the maximum
+precision attacker can get, either by setting his own $L_{max}$ or reaching the 
+friends $L_{max}$.
+
+
+
+\subsection{Compromised Server \& Client}\label{subsec:VulCliServ}
+If the attacker has gained control over both the server and 
+client, he has all info from \ref{subsec:VulClient} as well as 
+all users encrypted center and vicinity granules, as well
+as their group memberships (see \ref{subsec:grouping}).
+
+The attacker can do the same as in \ref{subsec:VulClient}, 
+only now the attacker can skip the \textit{battleship} step and decode
+obfuscated location (center granules) of friends directly, making it
+actually feasible to track all friends, this however is still
+only valid for the groups that the compromised client is member of.
+
+This attack has the same limitations as \ref{subsec:VulClient}, except
+that since the attacker now skip the \textit{battleship} stage, it is 
+feasible for the attacker to track many users (as long as they are in the
+same group as the compromised client)
+%
+%\subsection{History}\label{subsec:VulHis} \ffh{not relevant, not risk}
+%\textbf{info:} All users encrypted center and granules, 
+%as well as their group memberships. The attacker collects data over time.
+%
+%\textbf{can do:} he can try to reason about how the center granule
+%moves, by assuming it only moves a cell at a time,
+%but this assumption does not hold so attacker can
+%really reason about routes unless he has extra info
+%about user (e.g. that user is from a specific region of a country,
+%then he can maybe brute force possibilities in relation to road networks)
+
+
+\subsection{Frequency}\label{subsec:VulFreq}
+In this attack the server is compromised, and thus the
+attacker knows all users encrypted center and granules, 
+stored on the server, as well as their group memberships. 
+
+The attacker can compare the frequency of users with same center and 
+vicinity granules, the attacker can then see if many users
+have the same granules, and reason about the actual location
+(e.g. if attacker knows the national soccer team is playing, and he can
+see many users suddenly all sharing granules).
+The attacker can possibly collect the data over time and maybe make this attack
+more efficient by looking for frequency in locations over time, e.g. if 
+there is a central place most people must pass during the day (city center/a bridge etc.), 
+the attacker can then use historical information to identify which granules 
+correspond to this location.
+
+There is a simple solution to thwart the effectiveness of this attack, and that is
+to change the $\Psi$ function as some interval, making it impossible for the attacker
+to compare granules from different intervals. If we furthermore assume that the server
+would not be informed when $\Psi$ function is changed, then this attack becomes void.
+

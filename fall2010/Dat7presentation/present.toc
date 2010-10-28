@@ -1,0 +1,12 @@
+\beamer@endinputifotherversion {3.07pt}
+\beamer@sectionintoc {1}{Introduction}{2}{0}{1}
+\beamer@subsectionintoc {1}{1}{Overview}{2}{0}{1}
+\beamer@subsectionintoc {1}{2}{Related work}{3}{0}{1}
+\beamer@subsectionintoc {1}{3}{Problem setting}{5}{0}{1}
+\beamer@sectionintoc {2}{User Profile}{6}{0}{2}
+\beamer@subsectionintoc {2}{1}{t-anonymity \& POI}{7}{0}{2}
+\beamer@subsectionintoc {2}{2}{Protection Schemes \& Types}{9}{0}{2}
+\beamer@subsectionintoc {2}{3}{Settings}{12}{0}{2}
+\beamer@sectionintoc {3}{Conclusion}{13}{0}{3}
+\beamer@subsectionintoc {3}{1}{Conclusion}{13}{0}{3}
+\beamer@subsectionintoc {3}{2}{Future Work}{14}{0}{3}

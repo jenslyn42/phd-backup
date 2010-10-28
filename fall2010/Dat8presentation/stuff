@@ -1,0 +1,12 @@
+The application is compiled to Javascript. Also included is an AJAX library and 
+widget set [2] that provides access to the DOM model of modern javascript-capable 
+web browsers. The AJAX library and the widget set library are a hybrid mix of 
+Python and Javascript. Just as with GWT, "Pyjamas is not its libraries", and 
+neither is it "yet another AJAX framework". AJAX Frameworks are strictly limited 
+to providing pre-prepared specific functionality, written almost exclusively in 
+tailor-made Javascript. Both GWT and Pyjamas, being Javascript compilers, allow 
+the developer to work in the language with which they are familiar (Java or Python, 
+respectively), to write their own custom widgets, either entirely from scratch 
+or based on the existing available widgets, yet still target the full range of 
+modern browers. So, far from presenting web developers with a fait-accomplit 
+AJAX Framework, Pyjamas gives you the freedom to develop your own.

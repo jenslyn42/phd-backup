@@ -1,0 +1,308 @@
+\section{GWT}
+
+\subsection{Code-, Debug-, Run Java}
+
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{Develop in Java}
+
+Use your favorite IDE
+\begin{itemize}
+	\item Eclipse 3.5
+	\item NetBeans 6.7
+	\item IDEA 8.1
+	\item IntelliJ 7+
+\end {itemize}
+
+Some standard libraries are emulated, others replaced by gwt libraries
+\begin{itemize}
+\item java.lang
+\item java.lang.annotation
+\item java.util
+\item java.io
+\item java.sql
+
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Reference - libraries 1/3}
+
+\begin{itemize}
+\item com.google.gwt.i18n.client.DateTimeFormat\\Replacement for the java.util.DateTime-
+Format class in normal Java. This replacement only supports a subset of the
+normal Java version.
+\item com.google.gwt.i18n.client.NumberFormat\\The same kind of replacement, but then
+for the java.util.NumberFormat, again providing only a subset of its features.
+\item com.google.gwt.user.client.Timer\\A simplified, browser-safe timer class that can be
+used to mimic a threaded environment, and which allows you to schedule tasks and
+actions. It’s a simplified version of the java.util.Timer class.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Reference - libraries 2/3}
+
+\begin{itemize}
+	\item java.lang
+	\begin{itemize}
+	\tiny
+		\item ArithmeticException
+		ArrayIndexOutOfBoundsException
+		ArrayStoreException
+		AssertionError
+		Boolean
+		Byte
+		CharSequence
+		Character
+		Class
+		ClassCastException
+		Cloneable
+		Comparable
+		Deprecated
+		Double
+		Enum
+		Error
+		Exception
+		Float
+		IllegalArgumentException
+		IllegalStateException
+		IndexOutOfBoundsException
+		Integer
+		Iterable
+		Long
+		Math
+		NegativeArraySizeException
+		NullPointerException
+		Number
+		NumberFormatException
+		Object
+		Override
+		Runnable
+		RuntimeException
+		Short
+		StackTraceElement
+		String
+		StringBuffer
+		StringBuilder
+		StringIndexOutOfBoundsException
+		SuppressWarnings
+		System
+		Throwable
+		UnsupportedOperationException
+		Void
+\end{itemize}
+	\item java.lang.annotation
+	\begin{itemize}
+	\tiny
+		\item Annotation
+		AnnotationFormatError
+		AnnotationTypeMismatchException
+		Documented
+		ElementType
+		IncompleteAnnotationException
+		Inherited
+		Retention
+		RetentionPolicy
+		Target
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Reference - libraries 3/3}
+
+\begin{itemize}
+	\item java.util
+	\begin{itemize}
+	\tiny
+		\item AbstractCollection
+		AbstractList
+		AbstractMap
+		AbstractQueue
+		AbstractSequentialList
+		AbstractSet
+		ArrayList
+		Arrays
+		Collection
+		Collections
+		Comparator
+		ConcurrentModificationException
+		Date
+		EmptyStackException
+		EnumMap
+		EnumSet
+		Enumeration
+		EventListener
+		EventObject
+		HashMap
+		HashSet
+		IdentityHashMap
+		Iterator
+		LinkedHashMap
+		LinkedHashSet
+		LinkedList
+		List
+		ListIterator
+		Map
+		Map.Entry
+		MissingResourceException
+		NoSuchElementException
+		PriorityQueue
+		Queue
+		RandomAccess
+		Set
+		SortedMap
+		SortedSet
+		Stack
+		TooManyListenersException
+		TreeMap
+		TreeSet
+		Vector
+	\end{itemize}
+	\item java.io
+	\begin{itemize}
+	\tiny
+		\item FilterOutputStream
+		OutputStream
+		PrintStream
+		Serializable
+	\end{itemize}
+	\item java.sql
+	\begin{itemize}
+	\tiny
+		\item Date
+		Time
+		Timestamp
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{Coding}
+\begin{itemize}
+\item Modify the DOM
+\item JSNI - The JavaScript Native Interface
+\end{itemize}
+\scriptsize{
+public class JSNIExample \{
+
+\hspace{0.5em}  static int myStaticField;\\
+\vspace{0.7em}
+  void instanceFoo(String s) \{ \}\\
+\vspace{0.7em}
+
+  public native void bar(JSNIExample x, String s) /*-\{\\
+\vspace{0.7em}\hspace{0.5em}   // Call instance method instanceFoo() on this\\
+\hspace{0.5em}    this.@com.google.gwt.examples.JSNIExample::instanceFoo(Ljava/lang/String;)(s);\\
+
+\vspace{0.7em}\hspace{0.5em}    // Call instance method instanceFoo() on x\\
+\hspace{0.5em}    x.@com.google.gwt.examples.JSNIExample::instanceFoo(Ljava/lang/String;)(s);\\
+
+\vspace{0.7em}\hspace{0.5em}    // Read static field (no qualifier)\\
+\hspace{0.5em}    @com.google.gwt.examples.JSNIExample::myStaticField = val + " and stuff";\\
+\hspace{0.5em}   \}-*/;\\
+\}
+}
+
+
+\end{frame}
+
+
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{Debug the Java code}
+Use hosted mode while developing. Only compile to JavaScript
+when done.
+
+\begin{itemize}
+\item Debug Java code as you normally would
+
+\item Code runs as bytecode and served using an internal Jetty instance
+
+\item Most times changes are immediately visible by just refreshing the integrated browser instead of relaunching hosted mode
+
+\item Use GWT.log() to log user behavior and exceptions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{Run the Java code}
+
+\begin{itemize}
+\item Compile to JavaScript when done developing the application
+
+\item Java code compiled to 6(7) permutations of JavaSript to ensure optimal 
+performance in most versions of major browsers
+\begin{itemize} \item IE\item Firefox\item Safari\item Opera\end{itemize}
+\item Size of JavaScript code minimal.
+\end{itemize}
+
+\end{frame}
+
+\subsection{Deploy Javascript}
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{Deploy the Javascript}
+\begin{itemize}
+\item Specify one or more $<$div$>$ elements in a .html file
+\begin{itemize}\item  JavaScript will use them to hook bits of GWT functionality into the existing page\end{itemize}
+
+\item Initial script will detect browser vendor and version
+\begin{itemize}\item  only download relevant permutation of JavaScript\end{itemize}
+
+
+\end{itemize}
+\vspace{1em}
+\scriptsize{
+public void onModuleLoad() \{\\
+ \hspace{0.7em}   final Button sendButton = new Button("Send");\\
+\hspace{0.7em}    final TextBox nameField = new TextBox();\\
+\hspace{0.7em}    nameField.setText("GWT User");\\
+
+\vspace{0.7em}\hspace{0.7em}   sendButton.addStyleName("sendButton");\\
+
+\vspace{0.7em}\hspace{0.7em}   RootPanel.get("nameFieldContainer").add(nameField);\\
+\hspace{0.7em}    RootPanel.get("sendButtonContainer").add(sendButton);\\
+\}
+}
+
+
+\end{frame}
+
+
+
+
+\subsection{Demo}
+
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{Demo}
+
+\huge 
+\begin{center}Ask if you want something \\specific demonstrated.\end{center}
+\end{frame}
+
+
+\subsection{Widgets \& Panels}
+
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{Basic Widgets}
+http://code.google.com/webtoolkit/doc/1.6/RefWidgetGallery.html\\
+http://gwt.google.com/samples/Showcase/Showcase.html
+
+\begin{center}
+  \includegraphics[scale=0.7]{images/deferedCommand-processing.jpeg} 
+\end{center}
+\end{frame}
+
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{Combining Widgets}
+
+All widgets can be combined and extended
+\begin{itemize}
+\item  support ease of use
+\item  allow reusing advanced and specialized widgets which still compile to efficient JavaScript
+\item Many advance widget libraries already exist (e.g. SmartGWT)
+\end{itemize}
+
+\end{frame}

@@ -1,0 +1,36 @@
+\begin{Verbatim}[commandchars=@\[\]]
+@PYay[public] @PYay[class] @PYaN[JSNIExample] @PYbe[{]
+
+  String myInstanceField@PYbe[;]
+  @PYay[static] @PYaI[int] myStaticField@PYbe[;]
+
+  @PYaI[void] @PYaK[instanceFoo]@PYbe[(]String s@PYbe[)] @PYbe[{]
+    @PYaD[// use s]
+  @PYbe[}]
+
+  @PYay[static] @PYaI[void] @PYaK[staticFoo]@PYbe[(]String s@PYbe[)] @PYbe[{]
+    @PYaD[// use s]
+  @PYbe[}]
+
+  @PYay[public] @PYay[native] @PYaI[void] @PYaK[bar]@PYbe[(]JSNIExample x@PYbe[,] String s@PYbe[)] @PYaD[/*-{]
+@PYaD[    // Call instance method instanceFoo() on this]
+@PYaD[    this.@at[]com.google.gwt.examples.JSNIExample::instanceFoo(Ljava/lang/String;)(s);]
+
+@PYaD[    // Call instance method instanceFoo() on x]
+@PYaD[    x.@at[]com.google.gwt.examples.JSNIExample::instanceFoo(Ljava/lang/String;)(s);]
+
+@PYaD[    // Call static method staticFoo()]
+@PYaD[    @at[]com.google.gwt.examples.JSNIExample::staticFoo(Ljava/lang/String;)(s);]
+
+@PYaD[    // Read instance field on this]
+@PYaD[    var val = this.@at[]com.google.gwt.examples.JSNIExample::myInstanceField;]
+
+@PYaD[    // Write instance field on x]
+@PYaD[    x.@at[]com.google.gwt.examples.JSNIExample::myInstanceField = val + " and stuff";]
+
+@PYaD[    // Read static field (no qualifier)]
+@PYaD[    @at[]com.google.gwt.examples.JSNIExample::myStaticField = val + " and stuff";]
+@PYaD[  }-*/]@PYbe[;]
+
+@PYbe[}] 
+\end{Verbatim}

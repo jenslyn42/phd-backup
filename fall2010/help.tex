@@ -1,0 +1,158 @@
+\section{HELP}
+
+
+
+
+% 
+% \section{Approach}
+% 
+% 
+% \subsection{Specifying Sensitivity}
+
+\section{what makes trajectories usable - usability}
+
+\subsection{users}
+They are good enough if the users privacy requirements are fulfilled
+
+\subsection{data consumers}
+
+If there is enough precision and data available such that the data consumers can make good services.
+
+
+
+
+
+
+
+\begin{verbatim}
+we rank spatial sensitivity:
+0. none
+1. low
+2. medium
+3. high
+
+We rank temporal sensitivity:
+0. none
+1. low
+2. medium
+3. high
+
+
+Identify type of POI 
+(can be given by user):
+1. Place/area (Hospital, Neighborhood, 
+   city.)
+2. Route w/o endpoints
+3. Route w. endpoints
+4. 
+
+
+Start with all routes w. endpoints, 
+then do all routes w/o endpoints and 
+last do all area/place POI
+
+
+case one:
+Rank POI
+\end{verbatim}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\begin{algorithm}[!Hbt]
+    \dontprintsemicolon
+    \SetVline
+
+    \KwData{ 
+
+  	$t \in \mathbf{T}$ - trajectory
+
+	$u_p$ - a user profile
+
+	$p \in \mathbf{P}$ - current POI
+
+	
+    }
+
+
+%	\funcc{
+
+    \funcc{poiTypeOne}{}
+    {
+	temporal \& spatial sensitivity
+	}
+
+	$g_l \leftarrow \{id(g) | g \in \Gamma(level): loc(u) \in g\}$ ;
+
+	$\mathbf{g_v} \leftarrow \{id(g) | \forall g \in \Gamma(level): g
+\cap vic(u) \neq \emptyset\}$;
+
+	\textbf{return} ($g_l$, $\mathbf{g_v}$);
+%    }
+% 
+    \funcc{poiTypeTwo}{}
+    {
+	$g_l \leftarrow \{id(g) | g \in \Gamma(level): loc(u) \in g\}$ ;
+
+	$\mathbf{g_v} \leftarrow \{id(g) | \forall g \in \Gamma(level): g
+\cap vic(u) \neq \emptyset\}$;
+
+	\textbf{return} ($g_l$, $\mathbf{g_v}$);
+    }
+% 
+    \funcc{poiTypeThree}{}
+    {
+	$g_l \leftarrow \{id(g) | g \in \Gamma(level): loc(u) \in g\}$ ;
+
+	$\mathbf{g_v} \leftarrow \{id(g) | \forall g \in \Gamma(level): g
+\cap vic(u) \neq \emptyset\}$;
+
+	\textbf{return} ($g_l$, $\mathbf{g_v}$);
+    }
+
+
+    \funcc{onLocChange}{}
+    {
+        $wasPopped \leftarrow false$
+
+        \While {$|GS| > 0$ \text{ and } $top(GS) \neq
+mapLocToGranularity(|CS|-1)$}
+        {
+            Pop from stack $GS$;
+
+            $wasPopped \leftarrow true$;
+        }
+
+        \If {$wasPopped$ \text{ or } $|GS| = 0$}
+        {
+            \textbf{pushAndSend}()
+        }
+    }
+
+    \funcc{onMsgReceived}{M_{LevInc}, \text{Level } l}
+    {
+        \While{$|GS| \leq l$ \text{ and } $|GS| \leq L_{max}(u)$}
+        {
+            \textbf{pushAndSend}()
+        }
+     }
+
+    \funcc{onMsgReceived}{M_{prox}, \text{Friend }  v, \text{Level} l}
+    {
+        Output "Friend ",$v$," with precision ", $L(l)$, " is inside
+our vicinity!";
+    }
+
+\caption{The md's event handlers in our proximity based service.} 
+\label{algCl}
+\end{algorithm}
