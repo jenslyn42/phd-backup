@@ -8,7 +8,7 @@
 % For each \poi edges will be removed until the trajectory is no longer within $m$ meters of the \poi. Temporal granularity is specified for a full trajectory, specifying the $min$ minutes into the future and past that the trajectory $t_i$ should no longer be identifiable from any other trajectories $t_j$ where $t_i \subseteq t_j | t_i \neq t_j \wedge t_i,t_j \in \mathbf{T}$.
 
 
-We first introduce the motivation for what we want to protect, and what possible privacy leaks we forsee as being possible. Afterwards we present the protection schemes and types which the user can specify depending on how often a \poi is sensitive. Secondly we describe the privacy profile and the parameters the user can adjust. 
+We first introduce the motivation for what we want to protect, and what possible privacy leaks we foresee as being possible. Afterwards we present the protection schemes and types which the user can specify depending on how often a \poi is sensitive. Secondly we describe the privacy profile and the parameters the user can adjust. 
 %In table \ref{tab:poiclass1} we lists the different \poi classifications
 
 
@@ -39,7 +39,7 @@ $e_{from}/e_{to}$ specifies on $e$ the start-/end-location covered by $p_{cover}
 $d_s, d_t, class \in \mathbb{N}$ is respectively the spatial sensitivity, the temporal sensitivity, and the \poi classification (Table~\ref{tab:poiclass1}).
 \end{deff}
 
-Our approach makes a trade off between the data quality of the published data and the degree of anonymization on the provided in the dataset. This trade off will be a parameter controlled by the service provider. If the service provider prioritize data integrity to high and thereby sacrefice user privacy, an adversary would have a higher chance of breaking user privacy, i.e. connect a specific user to a trajectory.
+Our approach makes a trade off between the data quality of the published data and the degree of anonymization on the provided in the dataset. This trade off will be a parameter controlled by the service provider. If the service provider prioritize data integrity to high and thereby sacrifice user privacy, an adversary would have a higher chance of breaking user privacy, i.e. connect a specific user to a trajectory.
 
 When a user specifies that a particular point, area, or trajectory is sensitive to him, we want him to visually draw the sensitive part ($p_{cover}$) and afterwards indicate how important it is to the user not to be identified as having been in the area($d_s$), as well as how important it is to hide $when$ he has been in the sensitive area ($d_t$). As the third thing we also want the user to choose a classification from a list of candidates (Table~\ref{tab:poiclass1}). The system will handle the how of the anonymizing in the way it finds most fit, without any user involvement. $d_s$ is specified as the number of other users a user $u$ want to be indistinguishable from, and $d_t$ is specified as the time period within which user $u$ does not want it to be known when exactly a trajectory was generated.
 
