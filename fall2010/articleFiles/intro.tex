@@ -37,35 +37,84 @@ Using a cache reduces the computational burden \cite{ref} on an online service, 
 We assume a scenario using only server side caching.
 
 
+\subsection{model}
+We use a uniform random model(URM) together with a simple 'map',the graph in figure \ref{fig:simplemap}, enable us to clearly argue about the advantages expected when using server side caching of shortest-path queries. By using the simple map (fig.\ref{fig:simplemap}) and a URM together with we can reason about the probabilities that a specific query will occur. Figure \ref{fig:queryprob} illustrates the number of queries possible for a map with 2,3, and 5 locations for figure \ref{fig:queryprob}A, \ref{fig:queryprob}B, and \ref{fig:queryprob}C respectively. Each line underneeth each of the simple graphs represents two possible queries (A->B, B<-A). The number of shortest-path queries possible on a tree-graph with n vertices is n*(n-1). The probability of seeing any one query, $q_i$ is then $P(q_i | n) = (n*n-1)^{-1}$
+
+
+
+%assume uniform random model
+%use simple map
+%probability of specific query is nodes*nodes-1
+
+\begin{figure}
+  \center
+	\includegraphics[width=0.25\textwidth]{figures/simplemap.pdf}
+	\caption{Simple map}
+  \label{fig:simplemap}
+\end{figure}
+
+\begin{figure}
+  \center
+	\includegraphics[width=0.25\textwidth]{figures/queryprob.pdf}
+	\caption{Simple map}
+  \label{fig:queryprob}
+\end{figure}
+
 \subsection{methods}
+
+For the sake of simplicity the methods presented in this section will all be based on figure \ref{fig:simplemap} and \ref{fig:simpleroutequery}. Figure \ref{fig:simplemap} shows a simple graph which we will use as our map and figure \ref{fig:simpleroutequery} shows the simple scenario in which a user (fig. \ref{fig:simplemap}A) issues a route-planning query from 1 to 4 (fig. \ref{fig:simplemap})  to an online route-planning server with a build in cache (fig. \ref{fig:simplemap}B).
 
 
 \subsubsection{Baseline}\label{baselinemethod}
-The strait forward baseline solution to implement a server side shortest path cache would be to store query results in the cache and only consider direct hits, and using a simple cache policy such as LRU or FIFO.
+The strait forward baseline solution is illustrated in figure \ref{fig:simpleroutequery}B. The idea is a server side shortest path cache which will store each query result in the cache and only consider exact query matches as cache hits, and to only use a simple cache policy such as LRU or FIFO.
 The advantage of this solution is clear: it is simple and easily implemented. 
-This simplicity is however obviously also it's main disadvange, as it is too simple and very inefficient in terms of the utility the cache provides. Using items in the cache only when there is an exact match makes it exceedingly unlikely to get a cache hit due to the nature of route planning (many people share parts of routes, but few the same start and end points) and the sheer number of start-/end-point combinations possible. The 
-%consider mentioning direct hit limitation.
+This simplicity is however obviously also it's main disadvantage, as it is too simple and very inefficient in terms of the utility the cache provides. Using items in the cache only when there is an exact match makes it exceedingly unlikely to get a cache hit due to the nature of route planning (many people share parts of routes, but few the same start and end points) and the sheer number of start-/end-point combinations possible.
 
-\subsubsection{Baseline, improved}\label{baselinemethodimp}
-One way to possible increase the utility of a naive cache as proposed in \ref{baselinemethod} would be to exploid the optimal substructure \cite{ref} property of the cache items.
-There is a significant increase in cache hits to be expected by utilizing the optimal substracture of shortest path cache items since it is unlikely many people wil plan a route from/to the same place, but it is very likely that some sub-parts will be shared among users, and some users' full path laying within a longer path already calculated.
-The disadvantage of doing this is the aditional computational resources required to examine the substructure of cached shortest path search results. It is currently not known if doing this is worth the efford, compaired to just calculating the route, possibly multiple times.
+\begin{figure}
+  \center
+	\includegraphics[width=0.5\textwidth]{figures/simpleroutequery.pdf}
+	\caption{simple graph}
+  \label{fig:simpleroutequery}
+\end{figure}
+
+\subsubsection{ImpBaseline}\label{baselinemethodimp}
+One way to possible increase the utility of a naive cache as proposed in \ref{baselinemethod} would be to exploit the optimal substructure property\cite{introalg} of the cache items.
+There is a significant increase in cache hits to be expected by utilizing the optimal substructure of shortest path cache items since it is unlikely many people will plan a route from/to the same place, but it is very likely that some sub-parts will be shared among users, and some users' full path laying within a longer path already calculated. The idea is illustrated in figure \ref{fig:cacheQueries} where the baseline method would be able to answer query Q1 from the cache, but not Q2. It is this specific disadvange which ImpBaseline addresses and ImpBaseline can therefor answer both Q1 and Q2 from the cache since the result of Q2 now exist as a solution to a subpath of cache item C3.
+The disadvantage of doing this is the aditional computational resources required to examine the substructure of each  cached shortest path search result. It is currently not known if doing this is worth the efford, compaired to just calculating the route, possibly multiple times.
+
+\begin{figure}
+  \center
+	\includegraphics[width=0.25\textwidth]{figures/cacheQueries.pdf}
+	\caption{Queries}
+  \label{fig:cacheQueries}
+\end{figure}
+
+\subsubsection{OSC}%optimal substructure cache
+OSC is more advanced than the two previous proposed solutions and therefor the scenario has been updated in figure \ref{fig:advancedroutequery}. 
+To further improve upon ImpBaseline we will again utilize the optimal substructure, making it possible to have much fewer items in cache and still retain a high cache hit percentage \cite{ref}. %(assumption, need test result or proof), 
+Results with sub-paths shared by many users and longer, rather than short, paths are prefered to increase the utility of the cached shortest-path results.
+
+By adding a more intuitive cache replacement policy which takes in to consideration both the usage of each cache item, as well as the coverage of previously often seen queries it is likely that the utility of the cache would be much higher. This addition is shown with the addition of the "`add to cache"' box in figure \ref{fig:advancedroutequery}B, added to show a huristic\footnote{the actual huristic will ofcause only be defined later} will be used instead of a very simple method like LRU.
 
 
-\subsubsection{Number 3}
-Using the optimal substructure of each cache item it is possible to have much fewer items in cache and still retain a high cache hit percentage (assumption, need test result or proof), this percentage can further be improved by prefering longer paths in cache over shorter ones. A further improvement is to also prefer paths with sub-paths shared by many users.
-By adding a more intuitive cache replacement policy which takes in to consideration both the usage of each cache item, as well as the coverage of previously often seen queries it is likely that the utility of the cache would be much higher.
+%\paragraph{\textbf{Number 3, ideas}}
+%use optimal substructure\\
+%prefer having longer paths in cache\\
+%prefer having paths with subpaths shared by many users\\
+%look at utility of cache items, not just usage when designing cache replacement policy.\\
+%\begin{itemize}
+%\item	prefer often used cache items
+%\item	prefer items which cover routes/areas often used in previous queries
+%\end{itemize}
 
 
-\paragraph{\textbf{Number 3, ideas}}
-use optimal substructure\\
-prefer having longer paths in cache\\
-prefer having paths with subpaths shared by many users\\
-look at utility of cache items, not just usage when designing cache replacement policy.\\
-\begin{itemize}
-\item	prefer often used cache items
-\item	prefer items which cover routes/areas often used in previous queries
-\end{itemize}
+\begin{figure}
+  \center
+	\includegraphics[width=0.5\textwidth]{figures/advancedroutequery.pdf}
+	\caption{Advanced graph}
+  \label{fig:advancedroutequery}
+\end{figure}
+
 
 
 %\paragraph{crap}
