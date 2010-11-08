@@ -38,7 +38,7 @@ We assume a scenario using only server side caching.
 
 
 \subsection{model}
-We use a uniform random model(URM) together with a simple 'map',the graph in figure \ref{fig:simplemap}, enable us to clearly argue about the advantages expected when using server side caching of shortest-path queries. By using the simple map (fig.\ref{fig:simplemap}) and a URM together with we can reason about the probabilities that a specific query will occur. Figure \ref{fig:queryprob} illustrates the number of queries possible for a map with 2,3, and 5 locations for figure \ref{fig:queryprob}A, \ref{fig:queryprob}B, and \ref{fig:queryprob}C respectively. Each line underneeth each of the simple graphs represents two possible queries (A->B, B<-A). The number of shortest-path queries possible on a tree-graph with n vertices is n*(n-1). The probability of seeing any one query, $q_i$ is then $P(q_i | n) = (n*n-1)^{-1}$
+We use a uniform random model(URM) together with a simple 'map',the graph in figure \ref{fig:simplemap}, enable us to clearly argue about the advantages expected when using server side caching of shortest-path queries. By using the simple map (fig.\ref{fig:simplemap}) and a URM together with we can reason about the probabilities that a specific query will occur. Figure \ref{fig:queryprob} illustrates the number of queries possible for a map with 2,3, and 5 locations for figure \ref{fig:queryprob}A, \ref{fig:queryprob}B, and \ref{fig:queryprob}C respectively. Each line underneeth each of the simple graphs represents two possible queries (A->B, B<-A). The number of shortest-path queries possible on a tree-graph with n vertices is $n*(n-1)$. The probability of seeing any one query, $q_i$ is then $P(q_i | n) = (n*n-1)^{-1}$
 
 
 
@@ -56,13 +56,13 @@ We use a uniform random model(URM) together with a simple 'map',the graph in fig
 \begin{figure}
   \center
 	\includegraphics[width=0.25\textwidth]{figures/queryprob.pdf}
-	\caption{Simple map}
+	\caption{Number of queries possible}
   \label{fig:queryprob}
 \end{figure}
 
 \subsection{methods}
 
-For the sake of simplicity the methods presented in this section will all be based on figure \ref{fig:simplemap} and \ref{fig:simpleroutequery}. Figure \ref{fig:simplemap} shows a simple graph which we will use as our map and figure \ref{fig:simpleroutequery} shows the simple scenario in which a user (fig. \ref{fig:simplemap}A) issues a route-planning query from 1 to 4 (fig. \ref{fig:simplemap})  to an online route-planning server with a build in cache (fig. \ref{fig:simplemap}B).
+For the sake of simplicity the methods presented in this section will all be based on figure \ref{fig:simplemap} and \ref{fig:simpleroutequery}. Figure \ref{fig:simplemap} shows a simple graph which we will use as our map and figure \ref{fig:simpleroutequery} shows the simple scenario in which a user (fig. \ref{fig:simpleroutequery}A) issues a route-planning query from 1 to 4 (fig. \ref{fig:simpleroutequery})  to an online route-planning server with a build in cache (fig. \ref{fig:simpleroutequery}B).
 
 
 \subsubsection{Baseline}\label{baselinemethod}
@@ -89,7 +89,7 @@ The disadvantage of doing this is the aditional computational resources required
   \label{fig:cacheQueries}
 \end{figure}
 
-\subsubsection{OSC}%optimal substructure cache
+\subsubsection{OSC - optimal substructure cache}
 OSC is more advanced than the two previous proposed solutions and therefor the scenario has been updated in figure \ref{fig:advancedroutequery}. 
 To further improve upon ImpBaseline we will again utilize the optimal substructure, making it possible to have much fewer items in cache and still retain a high cache hit percentage \cite{ref}. %(assumption, need test result or proof), 
 Results with sub-paths shared by many users and longer, rather than short, paths are prefered to increase the utility of the cached shortest-path results.
