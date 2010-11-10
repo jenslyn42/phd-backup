@@ -1,7 +1,7 @@
-\documentclass[t,mathserif]{beamer}
+\documentclass[t]{beamer}
 \setbeamertemplate{navigation symbols}{} %no nav symbols
 \usepackage{beamerthemeshadow}
-\usepackage{pgf,pgfarrows,pgfnodes}
+\usepackage{pgf}
 \usepackage{listing}
 \usepackage{listings}
 \usepackage{verbatim}
@@ -14,7 +14,7 @@
 
 
 
-\title[Fall2010\hspace{18em}\insertframenumber/\inserttotalframenumber]{Presentation...}
+\title[Fall Presentation 2010\hspace{14em}\insertframenumber/\inserttotalframenumber]{Proactive Caching for Spatial Queries in Mobile Environments \\\&\\ Cache Invalidation and Replacement Strategies for Location-Dependent Data in Mobile Environments}
 \author[Jeppe R. Thomsen]{Jeppe R. Thomsen}%\\ \small{jenslyn@cs.aau.dk}}
 \institute{Hong Kong Polytechnic University\\ Department of Computing}
 \begin{document}
@@ -28,23 +28,44 @@
 \begin{frame}[red]
 \frametitle{Overview}
 \Large
-Problem Setting
-
-\vspace{1em}
-
-Privacy Profile
-\vspace{1em}
-
-t-anonymity
-\vspace{1em}
-
-Conclusion
 
 \end{frame}
 
+\input{cacheInvalid}
+\input{proactiveCache}
 
+\input{FFTtutorial}
 %\input{problem.tex}
 %\input{introduction.tex}
 %\input{basic_solution.tex}
 %\input{conclusion.tex}
 \end{document}
+
+%General
+%
+%    * Is it clear where the paper was published and by whom?
+%    * Does the talk have a concrete motivating example very early?
+%    * Are unfamiliar abbreviations introduced and used appropriately?
+%    * Is the main problem addressed in the paper clearly stated?
+%    * Does the presentation have concrete and minimal examples of core ideas?
+%    * Are dynamics, e.g., searching a tree presented using animation techniques?
+%    * Are the listeners background use appropriately, e.g., no need to tell what an array is, however must tell what the XY++-Tree is?
+%    * Is there a reasonable number of slides in total in the presentation?
+%
+%Figures
+%
+%    * Are complicated figures presented in sufficient details?
+%    * Are the symbols used in the figures clear to the listeners?
+%
+%Performance Graphs
+%
+%    * Is data, queries, modification, and transactions appropriately introduced?
+%    * Are the axis on performance graphs clearly explained?
+%    * Are the main conclusion from the graph clearly stated?
+%    * Is there only one graph per slide (or are graphs compared)?
+%
+%Critique
+%
+%    * Is the critique relevant and fair?
+%    * Is the critique balanced?
+%    * Is the critique points concrete, i.e., not "it is a good paper"?
