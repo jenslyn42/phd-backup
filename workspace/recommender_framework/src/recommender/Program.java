@@ -20,15 +20,17 @@ class Program
 
 
 			ArrayList<ArrayList<Integer>> mTests = new ArrayList<ArrayList<Integer>>(); //<userID,movieID>
-
-			HashMap<Integer, HashMap<Integer, Movie>> mMovies = new HashMap<Integer, HashMap<Integer, Movie>>();			//<movieID,Movie>
-			loadMovies(mMovies, useCategories);
+			//<categoryID, HashMap<movieID, Movie object>>
+			HashMap<Integer, HashMap<Integer, Movie>> mMovies = new HashMap<Integer, HashMap<Integer, Movie>>();
+			//HashMap<movieID, categoryID>
+			HashMap<Integer, Integer> movieCat = new HashMap<Integer, Integer>();
+			loadMovies(mMovies, movieCat, useCategories);
 			HashMap<Integer, User> mUsers = new HashMap<Integer, User>();		        //<userID,User>
-			loadUsers(mUsers, mMovies);				                                    //create Users from ratings.training
+			loadUsers(mUsers, mMovies, movieCat, useCategories);	                                //create Users from ratings.training
 			loadTests(mUsers, mTests, useCategories);
 			processUsers(mUsers);                                                       //process Users statistics
-			processMovies(mMovies);                                                     //process Movies statistics
-			setSimilarity(mUsers, report);                                              //find Similar Users
+			processMovies(mMovies, useCategories);                                  //process Movies statistics
+			setSimilarity(mUsers, report);                                          //find Similar Users
 			predictPCC(mUsers, mTests, mMovies);                                    //make predictions
 
 			report.close();
@@ -39,12 +41,14 @@ class Program
 	}
 
 
-	/**
-	 * Fill in predicted ratings based on similar users and user/movie trends
-	 * 
-	 * @param mUsers map of users 
-	 */
-
+/**
+ * Fill in predicted ratings based on similar users and user/movie trends
+ * 
+ * @param mUsers map of users 
+ * @param mTests
+ * @param mMovies
+ * @throws IOException
+ */
 	static void predictPCC(HashMap<Integer, User> mUsers, ArrayList<ArrayList<Integer>> mTests ,HashMap<Integer, HashMap<Integer, Movie>> mMovies) throws IOException
 	{	
 		System.out.println("Calculating Test Case Predictions: ");
@@ -66,7 +70,7 @@ class Program
 			//			for (Map.Entry<String, Integer> entry : nameAndAges.entrySet())
 			//				for ( String key : h.keySet() )
 
-			for (Map.Entry<Integer, Double> Sim : testUser.Sims.entrySet())               //each User.Sims(<userID, simularity>)
+			for (Map.Entry<Integer, Double> Sim : testUser.Sims.entrySet())               //each User.Sims(<userID, Similarity>)
 			{
 				if (mUsers.get(Sim.getKey()).Ratings.containsKey(Test.get(1)))                //add to sum weighted values
 				{
@@ -83,9 +87,9 @@ class Program
 			else
 			{                                                                       //prediction based on User.ratingAverage and Movie.ratingAverage
 				double noSims = 0.0;
-				if (mMovies.get(Test.get(1)).ratingAverage > 0)
+				if (mMovies.get(Test.get(1)).get(0).ratingAverage > 0)
 				{
-					noSims = (((2 * testUser.ratingAverage) + mMovies.get(Test.get(1)).ratingAverage) / 3);
+					noSims = (((2 * testUser.ratingAverage) + mMovies.get(Test.get(1)).get(0).ratingAverage) / 3);
 				}
 				else
 				{
@@ -106,9 +110,15 @@ class Program
 	}
 
 
+	/**
+	 * 
+	 * 
+	 * @param mUsers
+	 * @param report
+	 * @throws IOException
+	 */
 	static void setSimilarity(HashMap<Integer, User> mUsers, BufferedWriter report) throws IOException
 	{
-		//Note if min/max is 0/718 will do all users
 		int maxThresh = 7500;    //100                                                   //min-max number user's movie rankings
 		int minThresh = 60;         //3
 		double minSimScore = 0.01;  //.2                                                 //min Similarity score
@@ -169,7 +179,7 @@ class Program
 							double simScore1 = (simScore * numRatings1 * numSims);
 							double simScore2 = (simScore * numRatings2 * numSims);
 
-							One.Sims.put(Two.userID, simScore2);                     //add to both User.Sims(<userID, simularity>)
+							One.Sims.put(Two.userID, simScore2);                     //add to both User.Sims(<userID, Similarity>)
 							Two.Sims.put(One.userID, simScore1);
 						}
 					} 
@@ -185,47 +195,81 @@ class Program
 		System.out.println("\n\t" + (userCounter) + " similarities processed");
 	}
 
-
-	/// <summary>
-	/// Process Movie information after all Ratings have been loaded
-	/// </summary>
-	/// <param name="mMovies"></param>
-	static void processMovies(HashMap<Integer, HashMap<Integer, Movie>> mMovies)
+	
+	/**
+	 * Process Movie information after all Ratings have been loaded
+	 * 
+	 * @param mMovies
+	 * @param category
+	 */
+	static void processMovies(HashMap<Integer, HashMap<Integer, Movie>> mMovies, Boolean category)
 	{
 		System.out.println("Processing Users: ");
 		int movieCounter = 0;
 
-		for (Movie mMovie : mMovies.values())                                         //each mMovies(<movieID,Movie>)
+		if(category)
 		{
-			int sumRating = -1;
+			for(HashMap<Integer, Movie> cat : mMovies.values())
+			{
+				//the code in this loop is exactly the same as the loop after the 'else'
+				for (Movie mMovie : cat.values())                                         //each mMovies(<movieID,Movie>)
+				{
+					int sumRating = -1;
 
-			//find Movie.ratingAverage
-			for (int rating : mMovie.Ratings)                                      //each mMovie.Ratings(<rating,rating,...>)
-			{
-				sumRating += rating;
-			}
-			mMovie.ratingAverage = 0.0;
-			double tempAverage = ((double)sumRating / (double)mMovie.Ratings.size());
-			if (tempAverage > mMovie.ratingAverage)
-			{
-				mMovie.ratingAverage = tempAverage;
-			}
+					//find Movie.ratingAverage
+					for (int rating : mMovie.Ratings)                                      //each mMovie.Ratings(<rating,rating,...>)
+					{
+						sumRating += rating;
+					}
+					mMovie.ratingAverage = 0.0;
+					double tempAverage = ((double)sumRating / (double)mMovie.Ratings.size());
+					if (tempAverage > mMovie.ratingAverage)
+					{
+						mMovie.ratingAverage = tempAverage;
+					}
 
-			//progress
-			movieCounter++;
-			if (movieCounter % 200 == 0)
+					//progress
+					movieCounter++;
+					if (movieCounter % 200 == 0)
+					{
+						System.out.println("*");
+					}
+				}
+			}
+		}else{
+			for (Movie mMovie : mMovies.get(0).values())                                         //each mMovies(<movieID,Movie>)
 			{
-				System.out.println("*");
+				int sumRating = -1;
+
+				//find Movie.ratingAverage
+				for (int rating : mMovie.Ratings)                                      //each mMovie.Ratings(<rating,rating,...>)
+				{
+					sumRating += rating;
+				}
+				mMovie.ratingAverage = 0.0;
+				double tempAverage = ((double)sumRating / (double)mMovie.Ratings.size());
+				if (tempAverage > mMovie.ratingAverage)
+				{
+					mMovie.ratingAverage = tempAverage;
+				}
+
+				//progress
+				movieCounter++;
+				if (movieCounter % 200 == 0)
+				{
+					System.out.println("*");
+				}
 			}
 		}
 		System.out.println("\n\t" + movieCounter + " Movies processed");
 	}
 
 
-	/// <summary>
-	/// Process User information after all Ratings have been loaded
-	/// </summary>
-	/// <param name="mUsers"></param>
+	/**
+	 * Process User information after all Ratings have been loaded
+	 * 
+	 * @param mUsers 
+	 */
 	static void processUsers(HashMap<Integer, User> mUsers)
 	{
 		System.out.println("Processing Users: ");
@@ -251,7 +295,7 @@ class Program
 				ratingCount = ratingCounter;
 			}
 			userCounter++;
-			if (userCounter % 200 == 0)
+			if (userCounter % 500 == 0)
 			{
 				System.out.println("*");
 			}
@@ -261,10 +305,14 @@ class Program
 	}
 
 
-	/// <summary>
-	/// Parse "ratings.test, populat mUser with info, and populate mTest with info
-	/// </summary>
-	/// <param name="mTest"></param>
+	
+	/**
+	 * Parse "ratings.test, populate mUser with info, and populate mTest with info
+	 * 
+	 * @param mUsers map <user id -> user object>
+	 * @param mTests List of Lists, each containing user id, movie id
+	 * @param category weather to categories or not
+	 */
 	static void loadTests(HashMap<Integer, User> mUsers, ArrayList<ArrayList<Integer>> mTests, Boolean category)
 	{
 		System.out.println("Loading Test Cases: ");
@@ -298,13 +346,16 @@ class Program
 		System.out.println("\n\t" + testList.get(0).size() + " Test Lines Read");
 	}
 
-
-	/// <summary>
-	/// Parse "ratings.training" via random bool, create User objects and add to mUsers, add ratings to mMovies
-	/// </summary>
-	/// <param name="mUsers"></param>
-	/// <param name="mMovies"></param>
-	static void loadUsers(HashMap<Integer, User> mUsers, HashMap<Integer, HashMap<Integer, Movie>> mMovies)
+	
+	/**
+	 * Parse "ratings.training" via random bool, create User objects and add to mUsers, add ratings to mMovies
+	 * 
+	 * @param mUsers map <user id -> user object>
+	 * @param mMovies map <movie id -> movie objects>
+	 * @param movieCategoryList <movie id -> id of movie category >
+	 * @param category whether to use categories
+	 */
+	static void loadUsers(HashMap<Integer, User> mUsers, HashMap<Integer, HashMap<Integer, Movie>> mMovies, HashMap<Integer, Integer> movieCategoryList, Boolean category)
 	{
 		System.out.println("Loading User Movie Ratings: ");
 
@@ -312,9 +363,11 @@ class Program
 
 		ArrayList<ArrayList<String>> trainingList = FileParser.mapFile("ratings.training");
 
-		int movieID; 
-		int userID; 
-		int rating;
+		int movieID = 0;
+		int userID = 0; 
+		int rating = 0;
+		
+		
 
 		for(int i = 0; i < trainingList.get(0).size(); i++)
 		{
@@ -328,10 +381,13 @@ class Program
 				User tempUser = new User(userID);                       //make user
 				mUsers.put(userID, tempUser);                           //add user to mUsers
 			}
-
+			
 			mUsers.get(userID).Ratings.put(movieID, rating);            //add rating to User.Ratings(<movieID, rating>)
-			mMovies.get(movieID).Ratings.add(rating);                   //add rating to Movie.Ratings(<rating,rating,...)
-
+			
+			if(category)
+				mMovies.get(movieCategoryList.get(movieID)).get(movieID).Ratings.add(rating);     //add rating to Movie.Ratings(<rating,rating,...)
+			else
+				mMovies.get(0).get(movieID).Ratings.add(rating);                   //add rating to Movie.Ratings(<rating,rating,...)
 		}
 		System.out.println("\n\t" + trainingList.get(0).size() + " User ratings");
 	}
@@ -342,8 +398,10 @@ class Program
 	 * Parse "movie_titles.txt", create Movie objects, then add them to mMovie dictionary
 	 * 
 	 * @param mMovies map of <id,movie objects>
+	 * @param movieCategoryList movie id -> movie category id 
+	 * @param category whether to use categories
 	 */
-	static void loadMovies(HashMap<Integer, HashMap<Integer, Movie>> mMovies, Boolean category)
+	static void loadMovies(HashMap<Integer, HashMap<Integer, Movie>> mMovies, HashMap<Integer, Integer> movieCategoryList, Boolean category)
 	{
 		System.out.println("Loading Movie Info: ");
 
@@ -356,7 +414,7 @@ class Program
 
 		if(category)
 		{
-			//		makes movie objects
+			//makes movie objects and adds them with their category to the movie list
 			for(int i = 0; i < movieList.get(0).size(); i++)
 			{
 				id = Integer.parseInt(movieList.get(0).get(i));
@@ -376,13 +434,14 @@ class Program
 				else{
 					mMovies.get(cat).put(tempMovie.movieID, tempMovie);          //Add to mMovies
 				}
-				  
+				
+				movieCategoryList.put(id, cat);
 			}
 		}
 		else{
-			
+			//makes movie objects and adds them with same default category to the movie list
 			HashMap<Integer, Movie> tmpMovie_ = new HashMap<Integer, Movie>();
-			tmpMovie.put(0, tmpMovie_);
+			mMovies.put(0, tmpMovie_);
 			
 			for(int i = 0; i < movieList.get(0).size(); i++)
 			{
