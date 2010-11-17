@@ -1,0 +1,5 @@
+movie_titles.txt	id, year, title, category id
+category.txt		id, title
+ratings.training	movie id, user id, rating
+rating.test			movie id, user id
+trust.txt			uid1, uid2, trust_rating, category
