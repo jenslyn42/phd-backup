@@ -77,10 +77,10 @@ This simplicity is however obviously also it's main disadvantage, as it is too s
   \label{fig:simpleroutequery}
 \end{figure}
 
-\subsubsection{ImpBaseline}\label{baselinemethodimp}
+\subsubsection{Improved Baseline}\label{baselinemethodimp}
 One way to possible increase the utility of a naive cache as proposed in \ref{baselinemethod} would be to exploit the optimal substructure property\cite{introalg} of the cache items.
 There is a significant increase in cache hits to be expected by utilizing the optimal substructure of shortest path cache items since it is unlikely many people will plan a route from/to the same place, but it is very likely that some sub-parts will be shared among users, and some users' full path laying within a longer path already calculated. The idea is illustrated in figure \ref{fig:cacheQueries} where the baseline method would be able to answer query Q1 from the cache, but not Q2. It is this specific disadvange which ImpBaseline addresses and ImpBaseline can therefor answer both Q1 and Q2 from the cache since the result of Q2 now exist as a solution to a subpath of cache item C3.
-The disadvantage of doing this is the aditional computational resources required to examine the substructure of each  cached shortest path search result. It is currently not known if doing this is worth the efford, compaired to just calculating the route, possibly multiple times.
+The disadvantage of doing this is the aditional computational resources required to examine the substructure of each  cached shortest path search result. It is currently not known if doing this is worth the effort, compared to just calculating the route, possibly multiple times.
 
 \begin{figure}
   \center
@@ -89,9 +89,9 @@ The disadvantage of doing this is the aditional computational resources required
   \label{fig:cacheQueries}
 \end{figure}
 
-\subsubsection{OSC - optimal substructure cache}
+\subsubsection{OSC - Optimal Substructure Cache}
 OSC is more advanced than the two previous proposed solutions and therefor the scenario has been updated in figure \ref{fig:advancedroutequery}. 
-To further improve upon ImpBaseline we will again utilize the optimal substructure, making it possible to have much fewer items in cache and still retain a high cache hit percentage \cite{ref}. %(assumption, need test result or proof), 
+To further improve upon Improved Baseline we will again utilize the optimal substructure, making it possible to have much fewer items in cache and still retain a high cache hit percentage \cite{ref}. %(assumption, need test result or proof), 
 Results with sub-paths shared by many users and longer, rather than short, paths are prefered to increase the utility of the cached shortest-path results.
 
 By adding a more intuitive cache replacement policy which takes in to consideration both the usage of each cache item, as well as the coverage of previously often seen queries it is likely that the utility of the cache would be much higher. This addition is shown with the addition of the "`add to cache"' box in figure \ref{fig:advancedroutequery}B, added to show a huristic\footnote{the actual huristic will ofcause only be defined later} will be used instead of a very simple method like LRU.
