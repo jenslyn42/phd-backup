@@ -38,6 +38,9 @@ We assume a scenario using only server side caching.
 
 
 \subsection{model}
+
+\ffh{add more examples on advantages/disadvantages of $\left\{ LRU,ImpBaseline,OSC \right\}$ }
+\ffh{Fig.\ref{fig:cacheQueries}- add about text: space per edge} \ffh{Fig.\ref{fig:cacheQueries}- add about text: probability cache item is useful}
 We use a uniform random model(URM) together with a simple 'map',the graph in figure \ref{fig:simplemap}, enable us to clearly argue about the advantages expected when using server side caching of shortest-path queries. By using the simple map (fig.\ref{fig:simplemap}) and a URM together with we can reason about the probabilities that a specific query will occur. Figure \ref{fig:queryprob} illustrates the number of queries possible for a map with 2,3, and 5 locations for figure \ref{fig:queryprob}A, \ref{fig:queryprob}B, and \ref{fig:queryprob}C respectively. Each line underneeth each of the simple graphs represents two possible queries (A->B, B<-A). The number of shortest-path queries possible on a tree-graph with n vertices is $n*(n-1)$. The probability of seeing any one query, $q_i$ is then $P(q_i | n) = (n*n-1)^{-1}$
 
 
@@ -78,9 +81,9 @@ This simplicity is however obviously also it's main disadvantage, as it is too s
 \end{figure}
 
 \subsubsection{Improved Baseline}\label{baselinemethodimp}
-One way to possible increase the utility of a naive cache as proposed in \ref{baselinemethod} would be to exploit the optimal substructure property\cite{introalg} of the cache items.
+One way to possible increase the utility of a naive cache as proposed in \ref{baselinemethod} would be to exploit the \textit{optimal substructure property}\cite{introalg} of the cache items.
 There is a significant increase in cache hits to be expected by utilizing the optimal substructure of shortest path cache items since it is unlikely many people will plan a route from/to the same place, but it is very likely that some sub-parts will be shared among users, and some users' full path laying within a longer path already calculated. The idea is illustrated in figure \ref{fig:cacheQueries} where the baseline method would be able to answer query Q1 from the cache, but not Q2. It is this specific disadvange which ImpBaseline addresses and ImpBaseline can therefor answer both Q1 and Q2 from the cache since the result of Q2 now exist as a solution to a subpath of cache item C3.
-The disadvantage of doing this is the aditional computational resources required to examine the substructure of each  cached shortest path search result. It is currently not known if doing this is worth the effort, compared to just calculating the route, possibly multiple times.
+Doing this adds a need for aditional computational resources \ffh{how many resources?} required to examine the substructure of each  cached shortest path search result. It is currently not known if doing this is worth the effort, compared to just calculating the route, possibly multiple times.
 
 \begin{figure}
   \center
