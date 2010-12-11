@@ -117,6 +117,51 @@ They develop an approach which uses the index of an R-tree to add context to a c
 %  }
 
 
+\subsection{Aggregate Aware Caching for Multi-dimensional Queries}
+
+They develop a method to re-use items in a cache for a data werehouse. They take advantage of the levels of aggregation which exist in OLAP query results and come up with a way where they can get aggregated results using full or partial more detailed data from the cache. The use most of the paper on showing and proving that their algorithms have a good running time and admit them selfes that the approach is not very mature, though they still manage to get resonable results.
+\cite{lncs2000}
+
+%@inproceedings{lncs2000,
+% author = {Deshpande, Prasad and Naughton, Jeffrey F.},
+% title = {Aggregate Aware Caching for Multi-Dimensional Queries},
+% booktitle = {Proceedings of the 7th International Conference on Extending Database Technology: Advances in Database Technology},
+% series = {EDBT '00},
+% year = {2000},
+% isbn = {3-540-67227-3},
+% pages = {167--182},
+% numpages = {16},
+% url = {http://portal.acm.org/citation.cfm?id=645339.650140},
+% acmid = {650140},
+% publisher = {Springer-Verlag},
+% address = {London, UK},
+%} 
+
+
+\subsection{DynaMat: A Dynamic View Management System for Data Warehouses}
+
+\textbf{abstract:} Pre-computation and materialization of views with aggregate functions is a common technique in Data Warehouses. Due to the complex structure of the warehouse and the different profiles of the users who submit queries, there is need for tools that will automate the selection and management of the materialized data. In this paper we present DynaMat, a system that dynamically materializes information at multiple levels of granularity in order to match the demand (workload) but also takes into account the maintenance restrictions for the warehouse, such as down time to update the views and space availability. DynaMat unifies the view selection and the view maintenance problems under a single framework using a novel ¡§goodness¡¨ measure for the materialized views. DynaMat constantly monitors incoming queri and materializes the best set of views subject to the space constraints. During updates, DynaMat reconciles the current materialized view selection and refreshes the most beneficial subset of it within a given maintenance window. We compare DynaMat against a system that is given all queries in advance and the pre-computed optimal static view selection. The comparison is made based on a new metric, the Detailed Cost Savings Ratio introduced for quantifying the benefits of view materialization against incoming queries. These experiments show that DynaMat's dynamic view selection outperforms the optimal static view selection and thus, any sub-optimal static algorithm that has appeared in the literature.
+\cite{dynamat99}
+
+%@inproceedings{dynamat99,
+%  author    = {Yannis Kotidis and
+%               Nick Roussopoulos},
+%  editor    = {Alex Delis and
+%               Christos Faloutsos and
+%               Shahram Ghandeharizadeh},
+%  title     = {DynaMat: A Dynamic View Management System for Data Warehouses},
+%  booktitle = {SIGMOD 1999, Proceedings ACM SIGMOD International Conference
+%               on Management of Data, June 1-3, 1999, Philadelphia, Pennsylvania,
+%               USA},
+%  publisher = {ACM Press},
+%  year      = {1999},
+%  isbn      = {1-58113-084-8},
+%  pages     = {371-382},
+%  ee        = {http://doi.acm.org/10.1145/304182.304215, db/conf/sigmod/KotidisR99.html},
+%  crossref  = {DBLP:conf/sigmod/99},
+%  bibsource = {DBLP, http://dblp.uni-trier.de}
+%}
+
 
 \subsection{Cache-Oblivious Data Structures and Algorithms for Undirected Breadth-First Search and Shortest Paths}
 
@@ -193,3 +238,5 @@ They assume a network setting and try to reduce the time and computational load 
 %  publisher = {IEEE Press},
 %  address = {Piscataway, NJ, USA},
 %  }
+
+
