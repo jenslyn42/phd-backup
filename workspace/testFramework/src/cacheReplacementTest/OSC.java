@@ -169,13 +169,20 @@ public class OSC { //Optimal Substructure Cache
 		}
 
 		if(qScore > removeCandidate.peekMin().t)
-		{
-			int cacheIndex = 0; 
-			CacheItem tmpRemove; 		
-			int cacheIndexOffset = 0;
+		{		
+			ArrayList<Integer> removeIndexes = new ArrayList<Integer>();
+			int tmpRemIndex = 0;
 			do{
 				if((cacheSize - cacheUsed) >= querySize)
 				{
+					//remove all cacheItems marked for removal
+					Collections.sort(removeIndexes, Collections.reverseOrder());
+					for(int i = 0; i < removeIndexes.size(); i++)
+					{
+						cache.remove(i);
+					}
+					
+					//add new cache item to cache
 					CacheItem e = new CacheItem(numTotalQueries, nodesInQueryResult);
 					cache.add(e);
 					cacheUsed = cacheUsed + e.size;
@@ -183,18 +190,15 @@ public class OSC { //Optimal Substructure Cache
 				}
 				else
 				{
-					Pair<Integer,Integer> tmp = removeCandidate.removemin();
-					cacheUsed -= cache.remove(tmp.s.intValue()).size;
-					cacheIndexOffset++;
-					
-//						for (Entry<Integer, Integer> i : removeCandidate.entrySet())
-//						{
-//							int tmp = i.getValue();
-//							if(tmp >= cacheIndex && tmp != 0)
-//								removeCandidate.put(i.getKey(), tmp-1);
-//						}
+					Pair<Integer,Integer> tmp = removeCandidate.removeMin();
+					tmpRemIndex = tmp.s.intValue();
+					//mark for removal later
+					removeIndexes.add(tmpRemIndex);
+					cacheUsed -= cache.get(tmpRemIndex).size;
 				}
 			}while(notEnoughSpace);
+			
+			
 		}
 	}
 
