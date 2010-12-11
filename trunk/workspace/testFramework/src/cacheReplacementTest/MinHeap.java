@@ -111,7 +111,7 @@ public class MinHeap {
 		System.out.println();
 	}
 
-	public Pair<Integer, Integer> removemin() throws Exception {
+	public Pair<Integer, Integer> removeMin() throws Exception {
 		if(isEmpty())
 			throw new Exception("Heap Empty!");
 		

@@ -97,7 +97,7 @@ public class RoadGraph {
 			tmp.add(s);
 			return tmp;
 		}
-			
+
 		Hashtable<Integer, Integer> M = new Hashtable<Integer, Integer>();
 		Hashtable<Integer, Integer> backtrace = new Hashtable<Integer, Integer>();
 		MinHeap H = new MinHeap(new Pair<Integer, Integer>(s,0), mapSize);
@@ -108,7 +108,7 @@ public class RoadGraph {
 		while(!H.isEmpty())
 		{
 			try {
-				entry = H.removemin();
+				entry = H.removeMin();
 			} catch (Exception e) {
 				System.err.println(e.getMessage());
 				e.printStackTrace();
