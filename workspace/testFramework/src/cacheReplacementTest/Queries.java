@@ -3,6 +3,7 @@ package cacheReplacementTest;
 import java.security.SecureRandom;
 import java.util.Random;
 
+@SuppressWarnings("unchecked")
 public class Queries {
 
 	TestSettings ts;
@@ -31,6 +32,7 @@ public class Queries {
 		else
 			return new Pair<Integer, Integer>(rangeStart+Math.abs(random.nextInt((rangeEnd-rangeStart))+1),rangeStart+Math.abs(random.nextInt((rangeEnd-rangeStart))+1));
 	}
+
 
 	public Pair<Integer, Integer>[] generateList(int numGenerate, int rangeStart, int rangeEnd)
 	{	
