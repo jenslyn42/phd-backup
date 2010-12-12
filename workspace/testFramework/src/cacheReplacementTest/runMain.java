@@ -16,12 +16,12 @@ public class runMain {
 		//		boolean useNodeScore, boolean useHitScore, boolean useGaussian, 
 		//		double sigma, int activeTests,String testName)
 
-		//		//CacheSize test
-//		final String cacheTestG025 = "cacheTest-G025.test";
+//		//CacheSize test
+		final String cacheTestG025 = "cacheTest-G025.test";
 //
-//		( new Thread() {
-//			public void run() {
-//				new testObj(10000, 100000, 100, false, false, true,true, true, true,0.25,all, cacheTestG025).runTest();//1 pct cache size		  
+		( new Thread() {
+			public void run() {
+				new testObj(10000, 100000, 100, false, false, true,true, true, true,0.25,all, cacheTestG025).runTest();//1 pct cache size		  
 //				new testObj(10000, 100000, 200, false, false, true,true, true, true,0.25,all, cacheTestG025).runTest();//2 pct cache size	  
 //				new testObj(10000, 100000, 500, false, false, true,true, true, true,0.25,all, cacheTestG025).runTest();//5 pct cache size	  
 //				new testObj(10000, 100000, 1000, false, false, true,true, true, true,0.25,all, cacheTestG025).runTest();//10 pct cache size  
@@ -34,8 +34,8 @@ public class runMain {
 //				new testObj(10000, 100000, 8000, false, false, true,true, true, true,0.25,all, cacheTestG025).runTest();//80 pct cache size
 //				new testObj(10000, 100000, 9000, false, false, true,true, true, true,0.25,all, cacheTestG025).runTest();//90 pct cache size
 //				new testObj(10000, 100000, 10000, false, false, true,true, true, true,0.25,all, cacheTestG025).runTest();//100 pct cache size
-//			}
-//		} ).start();
+			}
+		} ).start();
 //
 //		final String cacheTestNHSG025 = "cacheTestNoHitScore-G025.test";
 //		( new Thread() {
@@ -396,67 +396,67 @@ public class runMain {
 //			}
 //		} ).start();
 
-		final String GaussianEffect20pctCache = "GaussianEffect-20pctCache.test";
-		final String GaussianEffectNS20pctCache = "GaussianEffectNS-20pctCache.test";
-		final String GaussianEffectHS20pctCache = "GaussianEffectHS-20pctCache.test";
-		( new Thread() {
-			public void run() {
-				new testObj(10000, 1000000, 2000, false, false, true, true, true, true,0.25,all, GaussianEffect20pctCache).runTest();
-				new testObj(10000, 1000000, 2000, false, false, true, true, true, true,0.5,all, GaussianEffect20pctCache).runTest();
-				new testObj(10000, 1000000, 2000, false, false, true, true, true, true,1,all, GaussianEffect20pctCache).runTest();
-				new testObj(10000, 1000000, 2000, false, false, true, true, true, true,2,all, GaussianEffect20pctCache).runTest();
-				new testObj(10000, 1000000, 2000, false, false, true, true, true, true,4,all, GaussianEffect20pctCache).runTest();
-			}
-		} ).start();
-		( new Thread() {
-			public void run() {			
-				new testObj(10000, 1000000, 2000, false, false, true,true, false, true,0.25,t010, GaussianEffectNS20pctCache).runTest();	
-				new testObj(10000, 1000000, 2000, false, false, true,true, false, true,0.5,t010, GaussianEffectNS20pctCache).runTest();	
-				new testObj(10000, 1000000, 2000, false, false, true,true, false, true,1,t010, GaussianEffectNS20pctCache).runTest();	
-				new testObj(10000, 1000000, 2000, false, false, true,true, false, true,2,t010, GaussianEffectNS20pctCache).runTest();	
-				new testObj(10000, 1000000, 2000, false, false, true,true, false, true,4,t010, GaussianEffectNS20pctCache).runTest();	
-			}
-		} ).start();
-		( new Thread() {
-			public void run() {
-				new testObj(10000, 1000000, 2000, false, false, true,false, true, true,0.25,t010, GaussianEffectHS20pctCache).runTest();
-				new testObj(10000, 1000000, 2000, false, false, true,false, true, true,0.5,t010, GaussianEffectHS20pctCache).runTest();
-				new testObj(10000, 1000000, 2000, false, false, true,false, true, true,1,t010, GaussianEffectHS20pctCache).runTest();
-				new testObj(10000, 1000000, 2000, false, false, true,false, true, true,2,t010, GaussianEffectHS20pctCache).runTest();
-				new testObj(10000, 1000000, 2000, false, false, true,false, true, true,4,t010, GaussianEffectHS20pctCache).runTest();
-			}
-		} ).start();
-
-		final String GaussianEffect50pctCache = "GaussianEffect-50pctCache.test";
-		final String GaussianEffectNS50pctCache = "GaussianEffectNS-50pctCache.test";
-		final String GaussianEffectHS50pctCache = "GaussianEffectHS-50pctCache.test";
-		( new Thread() {
-			public void run() {
-				new testObj(10000, 1000000, 5000, false, false, true, true, true, true,0.25,all, GaussianEffect50pctCache).runTest();
-				new testObj(10000, 1000000, 5000, false, false, true, true, true, true,0.5,all, GaussianEffect50pctCache).runTest();
-				new testObj(10000, 1000000, 5000, false, false, true, true, true, true,1,all, GaussianEffect50pctCache).runTest();
-				new testObj(10000, 1000000, 5000, false, false, true, true, true, true,2,all, GaussianEffect50pctCache).runTest();
-				new testObj(10000, 1000000, 5000, false, false, true, true, true, true,4,all, GaussianEffect50pctCache).runTest();
-			}
-		} ).start();
-		( new Thread() {
-					public void run() {			
-				new testObj(10000, 1000000, 5000, false, false, true,true, false, true,0.25,t010, GaussianEffectNS50pctCache).runTest();	
-				new testObj(10000, 1000000, 5000, false, false, true,true, false, true,0.5,t010, GaussianEffectNS50pctCache).runTest();	
-				new testObj(10000, 1000000, 5000, false, false, true,true, false, true,1,t010, GaussianEffectNS50pctCache).runTest();	
-				new testObj(10000, 1000000, 5000, false, false, true,true, false, true,2,t010, GaussianEffectNS50pctCache).runTest();	
-				new testObj(10000, 1000000, 5000, false, false, true,true, false, true,4,t010, GaussianEffectNS50pctCache).runTest();	
-					}
-				} ).start();
-		( new Thread() {
-					public void run() {
-				new testObj(10000, 1000000, 5000, false, false, true,false, true, true,0.25,t010, GaussianEffectHS50pctCache).runTest();
-				new testObj(10000, 1000000, 5000, false, false, true,false, true, true,0.5,t010, GaussianEffectHS50pctCache).runTest();
-				new testObj(10000, 1000000, 5000, false, false, true,false, true, true,1,t010, GaussianEffectHS50pctCache).runTest();
-				new testObj(10000, 1000000, 5000, false, false, true,false, true, true,2,t010, GaussianEffectHS50pctCache).runTest();
-				new testObj(10000, 1000000, 5000, false, false, true,false, true, true,4,t010, GaussianEffectHS50pctCache).runTest();
-			}
-		} ).start();
+//		final String GaussianEffect20pctCache = "GaussianEffect-20pctCache.test";
+//		final String GaussianEffectNS20pctCache = "GaussianEffectNS-20pctCache.test";
+//		final String GaussianEffectHS20pctCache = "GaussianEffectHS-20pctCache.test";
+//		( new Thread() {
+//			public void run() {
+//				new testObj(10000, 1000000, 2000, false, false, true, true, true, true,0.25,all, GaussianEffect20pctCache).runTest();
+//				new testObj(10000, 1000000, 2000, false, false, true, true, true, true,0.5,all, GaussianEffect20pctCache).runTest();
+//				new testObj(10000, 1000000, 2000, false, false, true, true, true, true,1,all, GaussianEffect20pctCache).runTest();
+//				new testObj(10000, 1000000, 2000, false, false, true, true, true, true,2,all, GaussianEffect20pctCache).runTest();
+//				new testObj(10000, 1000000, 2000, false, false, true, true, true, true,4,all, GaussianEffect20pctCache).runTest();
+//			}
+//		} ).start();
+//		( new Thread() {
+//			public void run() {			
+//				new testObj(10000, 1000000, 2000, false, false, true,true, false, true,0.25,t010, GaussianEffectNS20pctCache).runTest();	
+//				new testObj(10000, 1000000, 2000, false, false, true,true, false, true,0.5,t010, GaussianEffectNS20pctCache).runTest();	
+//				new testObj(10000, 1000000, 2000, false, false, true,true, false, true,1,t010, GaussianEffectNS20pctCache).runTest();	
+//				new testObj(10000, 1000000, 2000, false, false, true,true, false, true,2,t010, GaussianEffectNS20pctCache).runTest();	
+//				new testObj(10000, 1000000, 2000, false, false, true,true, false, true,4,t010, GaussianEffectNS20pctCache).runTest();	
+//			}
+//		} ).start();
+//		( new Thread() {
+//			public void run() {
+//				new testObj(10000, 1000000, 2000, false, false, true,false, true, true,0.25,t010, GaussianEffectHS20pctCache).runTest();
+//				new testObj(10000, 1000000, 2000, false, false, true,false, true, true,0.5,t010, GaussianEffectHS20pctCache).runTest();
+//				new testObj(10000, 1000000, 2000, false, false, true,false, true, true,1,t010, GaussianEffectHS20pctCache).runTest();
+//				new testObj(10000, 1000000, 2000, false, false, true,false, true, true,2,t010, GaussianEffectHS20pctCache).runTest();
+//				new testObj(10000, 1000000, 2000, false, false, true,false, true, true,4,t010, GaussianEffectHS20pctCache).runTest();
+//			}
+//		} ).start();
+//
+//		final String GaussianEffect50pctCache = "GaussianEffect-50pctCache.test";
+//		final String GaussianEffectNS50pctCache = "GaussianEffectNS-50pctCache.test";
+//		final String GaussianEffectHS50pctCache = "GaussianEffectHS-50pctCache.test";
+//		( new Thread() {
+//			public void run() {
+//				new testObj(10000, 1000000, 5000, false, false, true, true, true, true,0.25,all, GaussianEffect50pctCache).runTest();
+//				new testObj(10000, 1000000, 5000, false, false, true, true, true, true,0.5,all, GaussianEffect50pctCache).runTest();
+//				new testObj(10000, 1000000, 5000, false, false, true, true, true, true,1,all, GaussianEffect50pctCache).runTest();
+//				new testObj(10000, 1000000, 5000, false, false, true, true, true, true,2,all, GaussianEffect50pctCache).runTest();
+//				new testObj(10000, 1000000, 5000, false, false, true, true, true, true,4,all, GaussianEffect50pctCache).runTest();
+//			}
+//		} ).start();
+//		( new Thread() {
+//					public void run() {			
+//				new testObj(10000, 1000000, 5000, false, false, true,true, false, true,0.25,t010, GaussianEffectNS50pctCache).runTest();	
+//				new testObj(10000, 1000000, 5000, false, false, true,true, false, true,0.5,t010, GaussianEffectNS50pctCache).runTest();	
+//				new testObj(10000, 1000000, 5000, false, false, true,true, false, true,1,t010, GaussianEffectNS50pctCache).runTest();	
+//				new testObj(10000, 1000000, 5000, false, false, true,true, false, true,2,t010, GaussianEffectNS50pctCache).runTest();	
+//				new testObj(10000, 1000000, 5000, false, false, true,true, false, true,4,t010, GaussianEffectNS50pctCache).runTest();	
+//					}
+//				} ).start();
+//		( new Thread() {
+//					public void run() {
+//				new testObj(10000, 1000000, 5000, false, false, true,false, true, true,0.25,t010, GaussianEffectHS50pctCache).runTest();
+//				new testObj(10000, 1000000, 5000, false, false, true,false, true, true,0.5,t010, GaussianEffectHS50pctCache).runTest();
+//				new testObj(10000, 1000000, 5000, false, false, true,false, true, true,1,t010, GaussianEffectHS50pctCache).runTest();
+//				new testObj(10000, 1000000, 5000, false, false, true,false, true, true,2,t010, GaussianEffectHS50pctCache).runTest();
+//				new testObj(10000, 1000000, 5000, false, false, true,false, true, true,4,t010, GaussianEffectHS50pctCache).runTest();
+//			}
+//		} ).start();
 
 	}
 }
