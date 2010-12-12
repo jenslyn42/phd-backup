@@ -103,9 +103,7 @@ public class OSC { //Optimal Substructure Cache
 	private void updateNodeHits(ArrayList<Integer> queryResult)
 	{
 		for(int i : queryResult)
-		{
 			nodeHits.set(i, nodeHits.get(i)+1);
-		}
 	}
 	
 	private void testToReplaceItem(int querySize, ArrayList<Integer> nodesInQueryResult) throws Exception
@@ -115,9 +113,7 @@ public class OSC { //Optimal Substructure Cache
 		int qScore = 0;
 		//calculate score for query		
 		for(int i : nodesInQueryResult)
-		{
 			qSum += nodeHits.get(i);
-		}
 
 		//Pair(cache index, score) - Min-heap property based on second value of Pair
 		MinHeap removeCandidate;

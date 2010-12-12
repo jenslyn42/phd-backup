@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class RoadGraph {
 
-	private static RoadGraph ref;
+	private static RoadGraph ref = null;
 
 	//Vertex id -> Vertex object
 	private Hashtable<Integer, Vertex> map = new Hashtable<Integer, Vertex>();
@@ -25,9 +25,10 @@ public class RoadGraph {
 	 */
 	public static synchronized RoadGraph getMapObject()
 	{
-		if (ref == null)
+		if (ref == null){
 			// it's ok, we can call this constructor
 			ref = new RoadGraph();		
+		}
 		return ref;
 	}
 
