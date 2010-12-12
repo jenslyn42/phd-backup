@@ -16,7 +16,7 @@ public class RoadGraph {
 	private Hashtable<Integer, Vertex> map = new Hashtable<Integer, Vertex>();
 	private int mapSize = 0;
 
-	private RoadGraph()	{readNetworkFile("map.txt");}
+	private RoadGraph()	{readNetworkFile("graph_small.txt");}
 
 	/**
 	 * Whoot!! for shizzle, this be a singleton object y'all
