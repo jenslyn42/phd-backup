@@ -3,6 +3,8 @@
  */
 package testCacheSuite;
 
+import java.util.ArrayList;
+
 import cacheReplacementTest.RoadGraph;
 import junit.framework.TestCase;
 
@@ -56,7 +58,12 @@ public class RoadGraphTest extends TestCase {
 	 * Test method for {@link cacheReplacementTest.RoadGraph#dijkstraSSSP(int, int)}.
 	 */
 	public final void testDijkstraSSSP() {
-//		fail("Not yet implemented"); // TODO
+		ArrayList<Integer> expected27 = new ArrayList();
+		expected27.add(2);
+		expected27.add(3);
+		expected27.add(7);
+		ArrayList<Integer> result = rg.dijkstraSSSP(2,7);
+		assertTrue(rg.dijkstraSSSP(2,7).containsAll(expected27));
 	}
 
 	/**

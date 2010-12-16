@@ -7,9 +7,9 @@ public class MinHeap {
 
 	public MinHeap(Pair<Integer, Integer> s, int max) {
 		maxsize = max;
-		Heap = new Pair[maxsize];
-		size = 0 ;
-		Heap[0] = s;
+		Heap = new Pair[maxsize+1];
+		size = 1;
+		Heap[1] = s;
 	}
 
 	private int leftchild(int pos) {
@@ -56,10 +56,13 @@ public class MinHeap {
 		Heap[size] = elem;
 		int current = size;
 
-		while (Heap[current].t < Heap[parent(current)].t) {
-			swap(current, parent(current));
-			current = parent(current);
-		}	
+		if(current > 1 ){
+			while (Heap[current].t < Heap[parent(current)].t) {
+				swap(current, parent(current));
+				if(current > 3 ) //to avoid comparing with position 0, which will contain null
+					current = parent(current);
+			}	
+		}
 	}
 
 	/**
@@ -114,12 +117,12 @@ public class MinHeap {
 	public Pair<Integer, Integer> removeMin() throws Exception {
 		if(isEmpty())
 			throw new Exception("Heap Empty!");
-		
-			swap(1,size);
-			size--;
-			if (size != 0)
-				pushdown(1);
-			return Heap[size+1];
+
+		swap(1,size);
+		size--;
+		if (size != 0)
+			pushdown(1);
+		return Heap[size+1];
 	}
 
 	/**
@@ -131,10 +134,10 @@ public class MinHeap {
 	public Pair<Integer, Integer> peekMin() throws Exception {
 		if(isEmpty())
 			throw new Exception("Heap Empty!");
-		
-			return Heap[0];
+
+		return Heap[1];
 	}
-	
+
 	private void pushdown(int position) {
 		int smallestchild;
 		while (!isleaf(position)) {
@@ -145,6 +148,17 @@ public class MinHeap {
 			swap(position,smallestchild);
 			position = smallestchild;
 		}
+	}
+
+	public String toString()
+	{
+		String h = ":";
+
+		for(int i=1; i<=size; i++)
+		{
+			h= h +Heap[i].t + "(" + Heap[i].s + ")";
+		}
+		return h;
 	}
 }
 
