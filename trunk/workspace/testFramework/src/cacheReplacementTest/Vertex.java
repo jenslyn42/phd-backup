@@ -1,14 +1,15 @@
 package cacheReplacementTest;
 
 import java.util.Hashtable;
+import java.util.Map;
 
 public class Vertex
 {
-	private int id;
+	private final int id;
 	//vertex id, edge weight
-	private Hashtable<Integer, Integer> Adjacencylist;
+	private Hashtable<Integer, Integer> Adjacencylist = new Hashtable<Integer, Integer>();
 
-	public Vertex(int id){this.id = id;}
+	private Vertex(int id){this.id = id;}
 	
 	public Vertex(int id, int nId, int weight)
 	{
@@ -32,5 +33,18 @@ public class Vertex
 	 */
 	public int getId() {
 		return id;
+	}
+	
+	public String toString()
+	{
+		String v = "id:"+id+"{";
+		for(Map.Entry<Integer, Integer> nb : Adjacencylist.entrySet())
+		{
+			v= v+nb.getKey()+"("+nb.getValue()+"),";
+		}
+		
+		v.substring(0,v.length()-1);
+		
+		return v.substring(0,v.length()-1)+"}";
 	}
 }

@@ -1,5 +1,7 @@
 package cacheReplacementTest;
 
+import java.util.ArrayList;
+
 
 public class runMain {
 
@@ -17,11 +19,22 @@ public class runMain {
 		//		double sigma, int activeTests,String testName)
 
 //		//CacheSize test
-		final String cacheTestG025 = "cacheTest-G025.test";
+		final String cacheTestG025 = "cacheTest-G025.test1";
 //
 		( new Thread() {
 			public void run() {
-				new testObj(10000, 100000, 100, false, false, true,true, true, true,0.25,all, cacheTestG025).runTest();//1 pct cache size		  
+				RoadGraph g = RoadGraph.getMapObject();
+				ArrayList<Integer> result = g.dijkstraSSSP(2,7);
+				for(Integer r : result)
+				{
+					System.out.println(r);
+				}
+				
+
+
+				int i = 8;
+				i = i+2;
+//				new testObj(10000, 100000, 100, false, false, true,true, true, true,0.25,all, cacheTestG025).runTest();//1 pct cache size		  
 //				new testObj(10000, 100000, 200, false, false, true,true, true, true,0.25,all, cacheTestG025).runTest();//2 pct cache size	  
 //				new testObj(10000, 100000, 500, false, false, true,true, true, true,0.25,all, cacheTestG025).runTest();//5 pct cache size	  
 //				new testObj(10000, 100000, 1000, false, false, true,true, true, true,0.25,all, cacheTestG025).runTest();//10 pct cache size  

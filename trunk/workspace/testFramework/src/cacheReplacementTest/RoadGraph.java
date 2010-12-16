@@ -27,14 +27,14 @@ public class RoadGraph {
 	{
 		if (ref == null){
 			// it's ok, we can call this constructor
-			ref = new RoadGraph();		
+			ref = new RoadGraph();	
 		}
 		return ref;
 	}
 
 	public Hashtable<Integer, Vertex> getMap()
 	{
-		return map;
+		return map;	
 	}
 
 	/**
@@ -47,12 +47,15 @@ public class RoadGraph {
 	 */
 	private void addEdge(int v1, int v2, int w)
 	{
-		if(!map.containsKey(v1))
+		if(!map.containsKey(v1)){ 
 			map.put(v1, new Vertex(v1, v2, w));
+		}
 		else
 			map.get(v1).addNeighbour(v2, w);
-		if(!map.containsKey(v2))
-			map.put(v1, new Vertex(v2, v1, w));
+
+		if(!map.containsKey(v2)){
+			map.put(v2, new Vertex(v2, v1, w));
+		}
 		else
 			map.get(v2).addNeighbour(v1, w);	
 	}
@@ -61,7 +64,8 @@ public class RoadGraph {
 	{
 		try { 
 			BufferedReader in = new BufferedReader(new FileReader(fn)); 
-			String str, tokens[];
+			String str; 
+			String tokens[] = new String[3];
 			while((str = in.readLine()) != null && str.split("\\s+").length < 3){}
 
 			do{ 
@@ -71,6 +75,7 @@ public class RoadGraph {
 
 			in.close(); 
 		} catch (IOException e) {System.out.println("failed reading map: "+e.getMessage()); } 
+		mapSize = map.size();
 	}
 
 	/**
@@ -116,7 +121,7 @@ public class RoadGraph {
 			} 
 			Vertex u = map.get(entry.s);
 
-			if(!M.containsKey(u.getId()) || M.get(u.getId()) > entry.t)
+			if(!M.containsKey(u.getId()))
 			{
 				M.put(u.getId(), entry.t);
 				Hashtable<Integer, Integer> adjacencylist = u.getAdjacencylist();
@@ -124,15 +129,14 @@ public class RoadGraph {
 				//Neighbor<vertex id, edge weight>
 				for (Map.Entry<Integer, Integer> neighbour : adjacencylist.entrySet()) 
 				{
-					if(!M.containsKey(u.getId()))
+					if(!M.containsKey(neighbour))
 					{
-						H.insert(new Pair<Integer, Integer>(neighbour.getKey(), entry.t+neighbour.getValue()));
-						backtrace.put(neighbour.getKey(), u.getId());
-					}
-					if (M.get(u.getId()) > entry.t)
-					{
-						H.updateEntry(u.getId(), entry.t);
-						backtrace.put(neighbour.getKey(), u.getId());
+						int k = neighbour.getKey();
+						int w = entry.t+neighbour.getValue();
+						Pair<Integer, Integer> nb = new Pair<Integer, Integer>(k, w);						
+						H.insert(nb);
+						if(!backtrace.contains(neighbour.getKey()))
+							backtrace.put(neighbour.getKey(), u.getId());
 					}
 				}
 			}
