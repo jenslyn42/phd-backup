@@ -7,13 +7,14 @@ import java.io.FileWriter;
 public class testObj {
 
 	private TestSettings ts = null;
+	
 
-	public testObj(int numRoadGraphNodes, int numQueries, int cacheSize, 
+	public testObj(int numQueries, int cacheSize, 
 			boolean fixedNumCacheBuckets, boolean skewedData, boolean useOptimalSubstructure, 
 			boolean useNodeScore, boolean useHitScore, boolean useGaussian, double sigma, 
 			int[] activeTests, String testName)
 	{
-		ts = new TestSettings(numRoadGraphNodes, numQueries, cacheSize, fixedNumCacheBuckets,
+		ts = new TestSettings(RoadGraph.getMapObject().getMapSize(),numQueries, cacheSize, fixedNumCacheBuckets,
 				skewedData, useOptimalSubstructure, useNodeScore, useHitScore, useGaussian, 
 				sigma, activeTests, testName);
 	}
@@ -34,8 +35,7 @@ public class testObj {
 		while(i != 0){
 			q = qGenerator.generateNext(ts.getQueryRangeStart(), ts.getQueryRangeEnd());
 
-			if(i%10000 == 0)
-				//				System.out.println("("+q.s+","+q.t+") "+i);
+			if(i%200 == 0)
 				System.out.print("*");
 			if(tests[0] == 1)
 				test1.readQuery(q);
@@ -70,8 +70,8 @@ public class testObj {
 			out.write(ts.getTestName()+"\t"+ts.getNumRoadGraphNodes()+"\t"+ts.getNumQueries()+"\t"+ts.getCacheSize()+"\t"+
 					(ts.getCacheSize()*100)/ts.getNumRoadGraphNodes()+"\t"+ts.getQueryRangeStart()+"\t"+
 					ts.getQueryRangeEnd()+"\t"+ts.isFixedNumCacheBuckets()+"\t"+ts.isSkewedData()+"\t"+
-					ts.isUseOptimalSubstructure()+ts.isUseGaussian()+"\t"+ts.getSigma()+"\t"+
-					"\t"+test1.getCacheHits()+"\t"+test2.getCacheHits()+"\t"+test3.getCacheHits()+"\t"+
+					ts.isUseOptimalSubstructure()+"\t"+ts.isUseGaussian()+"\t"+ts.getSigma()+"\t"+
+					test1.getCacheHits()+"\t"+test2.getCacheHits()+"\t"+test3.getCacheHits()+"\t"+
 					((double)test1.getCacheHits()*100)/(double)test1.getTotalQueries()+"\t"+
 					((double)test2.getCacheHits()*100)/(double)test2.getTotalQueries()+"\t"+
 					((double)test3.getCacheHits()*100)/(double)test3.getTotalQueries());

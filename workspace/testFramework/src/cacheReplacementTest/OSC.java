@@ -71,11 +71,11 @@ public class OSC { //Optimal Substructure Cache
 				cacheHit = true;
 				int matchFrom = ci.item.indexOf(query.s);
 				int matchTo = ci.item.indexOf(query.t);
-				ArrayList<Integer> itemSubMatch;
+				ArrayList<Integer> itemSubMatch = new ArrayList<Integer>();
 				if(matchFrom < matchTo)
-					itemSubMatch = (ArrayList<Integer>) ci.item.subList(matchFrom, matchTo);
+					ci.item.subList(matchFrom, matchTo).addAll(itemSubMatch);
 				else
-					itemSubMatch = (ArrayList<Integer>) ci.item.subList(matchTo,matchFrom);
+					ci.item.subList(matchTo, matchFrom).addAll(itemSubMatch);
 
 				updateNodeHits(itemSubMatch);
 				break;
@@ -115,6 +115,9 @@ public class OSC { //Optimal Substructure Cache
 		for(int i : nodesInQueryResult)
 			qSum += nodeHits.get(i);
 
+		if(querySize > cacheSize)
+			return;
+		
 		//Pair(cache index, score) - Min-heap property based on second value of Pair
 		MinHeap removeCandidate;
 		ArrayList<Integer> ci;
@@ -155,14 +158,14 @@ public class OSC { //Optimal Substructure Cache
 
 			//calculate score based on test flags
 			if(useNodeScore && useHitScore)
-				removeCandidate.insert(new Pair<Integer,Integer>(0,nodes+sum));
+				removeCandidate.insert(new Pair<Integer,Integer>(k,nodes+sum));
 			else if(useNodeScore)
-				removeCandidate.insert(new Pair<Integer,Integer>(0,nodes));
+				removeCandidate.insert(new Pair<Integer,Integer>(k,nodes));
 			else if(useHitScore)
-				removeCandidate.insert(new Pair<Integer,Integer>(0,sum));
+				removeCandidate.insert(new Pair<Integer,Integer>(k,sum));
 			else{
 				System.err.println("Can't set both nodeScore and hitScore to false, setting both true");
-				removeCandidate.insert(new Pair<Integer,Integer>(0,nodes+sum));
+				removeCandidate.insert(new Pair<Integer,Integer>(k,nodes+sum));
 			}
 		}
 
@@ -171,13 +174,13 @@ public class OSC { //Optimal Substructure Cache
 			ArrayList<Integer> removeIndexes = new ArrayList<Integer>();
 			int tmpRemIndex = 0;
 			do{
-				if((cacheSize - cacheUsed) >= querySize)
+				if((cacheSize - cacheUsed) >= querySize )
 				{
 					//remove all cacheItems marked for removal
 					Collections.sort(removeIndexes, Collections.reverseOrder());
 					for(int i = 0; i < removeIndexes.size(); i++)
 					{
-						cache.remove(i);
+						cache.remove(removeIndexes.get(i));
 					}
 					
 					//add new cache item to cache

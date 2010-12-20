@@ -15,7 +15,6 @@ public class FIFO {
 
 	private TestSettings ts;
 
-
 	public FIFO(TestSettings ts)
 	{
 		this.ts = new TestSettings(ts);
@@ -25,14 +24,7 @@ public class FIFO {
 
 	public void readQuery(Pair<Integer, Integer> query)
 	{
-		Pair<Integer, Integer> tmpQuery;
-
-		if(query.s > query.t){tmpQuery = new Pair<Integer, Integer>(query.t, query.s);}
-		else{tmpQuery = query;}
-
-		if(tmpQuery.s != tmpQuery.t && (tmpQuery.t-tmpQuery.s) <= cacheSize){
-			checkAndUpdateCache(tmpQuery);
-		}
+		checkAndUpdateCache(query);
 		numTotalQueries++;
 	}
 
@@ -47,45 +39,41 @@ public class FIFO {
 	public void checkAndUpdateCache(Pair<Integer, Integer> query)
 	{
 		boolean cacheHit = false;
-		int querySize = query.t-query.s;
 
-		if(querySize < cacheSize){
-			if(ts.isUseOptimalSubstructure()){
-				for(CacheItem ci : cache)
+
+		if(ts.isUseOptimalSubstructure()){
+			for(CacheItem ci : cache)
+			{
+				if(ci.item.contains(query.s) && ci.item.contains(query.t))
 				{
-					if(ci.item.contains(query.s) && ci.item.contains(query.t))
-					{
-						numCacheHits++;
-						cacheHit = true;
-						break;
-					}
-				}
-			}else{
-				for(CacheItem ci : cache)
-				{
-					if(ci.s == query.s && ci.t == query.t)
-					{
-						numCacheHits++;
-						cacheHit = true;
-						break;
-					}
+					numCacheHits++;
+					cacheHit = true;
+					break;
 				}
 			}
-			if(!cacheHit)
+		}else{
+			for(CacheItem ci : cache)
 			{
-				ArrayList<Integer> nodesInQueryResult = new ArrayList<Integer>(querySize);
+				if(ci.s == query.s && ci.t == query.t)
+				{
+					numCacheHits++;
+					cacheHit = true;
+					break;
+				}
+			}
+		}
+		
+		if(!cacheHit)
+		{
+			ArrayList<Integer> spResult = RoadGraph.getMapObject().dijkstraSSSP(query.s, query.t);
+			int querySize = spResult.size();
 
-				for(int i = query.s; i < query.t; i++)
-				{
-					nodesInQueryResult.add(i);
-				}
-				if(cache.size()!= 0 )
-					insertItem(querySize, nodesInQueryResult, query.s, query.t);
-				else
-				{
-					CacheItem e = new CacheItem(numTotalQueries, nodesInQueryResult, query.s, query.t);
-					cache.add(e);
-				}
+			if(cache.size()!= 0 )
+				insertItem(querySize, spResult, query.s, query.t);
+			else
+			{
+				CacheItem e = new CacheItem(numTotalQueries, spResult, query.s, query.t);
+				cache.add(e);
 			}
 		}
 	}
@@ -103,11 +91,13 @@ public class FIFO {
 				cacheUsed = cacheUsed + e.size;
 				notEnoughSpace = false;
 			}
-			else
+			else if(querySize < cacheSize)
 			{
 				int itemSize = cache.remove(cache.size()-1).size; 
 				cacheUsed = cacheUsed - itemSize;
 			}
+			else
+				break;
 		}while(notEnoughSpace);
 	}
 

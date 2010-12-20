@@ -6,7 +6,7 @@ public class Pair<S, T>
 	public final T t;
 
 	public Pair(S s, T t)
-	{
+	{			
 		this.s = s;
 		this.t = t;
 	}
