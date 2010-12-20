@@ -1,0 +1,15 @@
+TestName	MapSize	numQueries	Cache Size	Cache pct.	queryRange-S	queryRange-E	FixedNumBuckets	Skewed Data	UseOptimalSubstructure	LRU-CacheHits	OSC-CacheHits	FIFO-CacheHits	LRU-CacheHitrate	OSC-CacheHitrate	FIFO-CacheHitrate
+cacheTest-G050.test	10000	100000	100	1	0	10000	false	false	true	16	28	25	0.016	0.028	0.025
+cacheTest-G050.test	10000	100000	200	2	0	10000	false	false	true	43	76	45	0.043	0.076	0.045
+cacheTest-G050.test	10000	100000	500	5	0	10000	false	false	true	390	500	236	0.39	0.5	0.236
+cacheTest-G050.test	10000	100000	1000	10	0	10000	false	false	true	1165	1843	898	1.165	1.843	0.898
+cacheTest-G050.test	10000	100000	2000	20	0	10000	false	false	true	7187	7181	9504	7.187	7.181	9.504
+cacheTest-G050.test	10000	100000	3000	30	0	10000	false	false	true	12032	15594	12223	12.032	15.594	12.223
+cacheTest-G050.test	10000	100000	4000	40	0	10000	false	false	true	17728	27040	15875	17.728	27.04	15.875
+cacheTest-G050.test	10000	100000	5000	50	0	10000	false	false	true	23674	39502	20310	23.674	39.502	20.31
+cacheTest-G050.test	10000	100000	6000	60	0	10000	false	false	true	46256	53285	39037	46.256	53.285	39.037
+cacheTest-G050.test	10000	100000	7000	70	0	10000	false	false	true	53987	67963	44456	53.987	67.963	44.456
+cacheTest-G050.test	10000	100000	8000	80	0	10000	false	false	true	61021	80058	49598	61.021	80.058	49.598
+cacheTest-G050.test	10000	100000	9000	90	0	10000	false	false	true	67998	91102	55029	67.998	91.102	55.029
+cacheTest-G050.test	10000	100000	10000	100	0	10000	false	false	true	74376	98609	59959	74.376	98.609	59.959
+cacheTest-G050.test	6105	10000	4884	80	0	6105	false	false	true	true	0.5	126	383	121	1.26	3.83	1.21
