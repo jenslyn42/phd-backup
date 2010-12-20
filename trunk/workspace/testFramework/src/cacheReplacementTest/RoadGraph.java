@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -13,10 +14,11 @@ public class RoadGraph {
 	private static RoadGraph ref = null;
 
 	//Vertex id -> Vertex object
-	private Hashtable<Integer, Vertex> map = new Hashtable<Integer, Vertex>();
+	private Vertex[] map;
 	private int mapSize = 0;
+	private int edges = 0;
 
-	private RoadGraph()	{readNetworkFile("graph_small.txt");}
+	private RoadGraph()	{readNetworkFile("graph_large.txt");}
 
 	/**
 	 * Whoot!! for shizzle, this be a singleton object y'all
@@ -32,7 +34,7 @@ public class RoadGraph {
 		return ref;
 	}
 
-	public Hashtable<Integer, Vertex> getMap()
+	public Vertex[] getMap()
 	{
 		return map;	
 	}
@@ -46,18 +48,18 @@ public class RoadGraph {
 	 * @param w weight of edge
 	 */
 	private void addEdge(int v1, int v2, int w)
-	{
-		if(!map.containsKey(v1)){ 
-			map.put(v1, new Vertex(v1, v2, w));
+	{ 
+		if(map[v1] == null){
+			map[v1] = new Vertex(v1, v2, w);
 		}
 		else
-			map.get(v1).addNeighbour(v2, w);
+			map[v1].addNeighbour(v2, w);
 
-		if(!map.containsKey(v2)){
-			map.put(v2, new Vertex(v2, v1, w));
+		if(map[v2] == null){
+			map[v2] = new Vertex(v2, v1, w);
 		}
 		else
-			map.get(v2).addNeighbour(v1, w);	
+			map[v2].addNeighbour(v1, w);	
 	}
 
 	private void readNetworkFile(String fn)
@@ -66,6 +68,11 @@ public class RoadGraph {
 			BufferedReader in = new BufferedReader(new FileReader(fn)); 
 			String str; 
 			String tokens[] = new String[3];
+			mapSize = Integer.parseInt(in.readLine());
+			edges = Integer.parseInt(in.readLine());
+			map = new Vertex[mapSize+1];
+			Arrays.fill(map, null);
+			
 			while((str = in.readLine()) != null && str.split("\\s+").length < 3){}
 
 			do{ 
@@ -75,7 +82,6 @@ public class RoadGraph {
 
 			in.close(); 
 		} catch (IOException e) {System.out.println("failed reading map: "+e.getMessage()); } 
-		mapSize = map.size();
 	}
 
 	/**
@@ -84,12 +90,17 @@ public class RoadGraph {
 	 * @param s source vertex
 	 * @param t target vertex
 	 * @return vertices traversed between s and t inclusive, in the form (vertex, previous vertex)
-	 * @throws Exception if t or s is not valid vertex ids.
+	 * @throws Exception if t or s is not valid vertex id's.
 	 */
 	public ArrayList<Integer> dijkstraSSSP(int s, int t)
 	{
-		if(!map.containsKey(s) || !map.containsKey(t))
+		if(map[s] == null || map[t] == null || s > mapSize || t > mapSize)
 		{
+			if(map[s] == null)
+				System.out.println("source node invalid: "+s+"\n");
+			if(map[t] == null)
+				System.out.println("target node invalid: "+t+"\n");
+			
 			try {
 				throw new Exception("SSSP query contains source and/or target node not in map");
 			} catch (Exception e) {
@@ -106,7 +117,7 @@ public class RoadGraph {
 
 		Hashtable<Integer, Integer> M = new Hashtable<Integer, Integer>();
 		Hashtable<Integer, Integer> backtrace = new Hashtable<Integer, Integer>();
-		MinHeap H = new MinHeap(new Pair<Integer, Integer>(s,0), mapSize);
+		MinHeap H = new MinHeap(new Pair<Integer, Integer>(s,0), 2*edges);
 		ArrayList<Integer> sp = new ArrayList<Integer>(); 
 		//use pair to represent (vertex id, distance)
 		Pair<Integer, Integer> entry = null;
@@ -119,7 +130,7 @@ public class RoadGraph {
 				System.err.println(e.getMessage());
 				e.printStackTrace();
 			} 
-			Vertex u = map.get(entry.s);
+			Vertex u = map[entry.s];
 
 			if(!M.containsKey(u.getId()))
 			{
@@ -152,6 +163,13 @@ public class RoadGraph {
 			}
 		}
 		return sp;	
+	}
+	
+	/**
+	 * @return the map size
+	 */
+	public int getMapSize() {
+		return mapSize;
 	}
 
 	public Object clone() throws CloneNotSupportedException

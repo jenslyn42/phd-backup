@@ -17,7 +17,6 @@ public class Queries {
 		if(ts.isUseGaussian())
 		{
 			rand = new Random(tmp);
-
 		}
 			random = new SecureRandom();
 			random.setSeed(tmp);
@@ -27,7 +26,11 @@ public class Queries {
 	{		
 		if(ts.isUseGaussian())
 		{		
-			return new Pair<Integer, Integer>((int)gaussianInRange(ts.getSigma(), ts.getNumRoadGraphNodes()),(int)gaussianInRange(ts.getSigma(), ts.getNumRoadGraphNodes()));
+			int s = (int)gaussianInRange(ts.getSigma(), ts.getNumRoadGraphNodes());
+			int t = (int)gaussianInRange(ts.getSigma(), ts.getNumRoadGraphNodes());
+			if(s == 0 || t == 0)
+				System.out.println("wtf!!");
+			return new Pair<Integer, Integer>(s,t);
 		}
 		else
 			return new Pair<Integer, Integer>(rangeStart+Math.abs(random.nextInt((rangeEnd-rangeStart))+1),rangeStart+Math.abs(random.nextInt((rangeEnd-rangeStart))+1));
@@ -60,7 +63,7 @@ public class Queries {
 	       x = v1 * Math.sqrt( -2.0 * Math.log(s) / s);
 	       //  x is normally distributed with mean 0 and sigma 1.
 	       x = Math.abs(x * sigma);
-	       }while(x >= numNodes || 0 > x);
+	       }while(x >= numNodes || 1 >= x);
 	       return x;
 	}
 }

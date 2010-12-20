@@ -39,10 +39,8 @@ public class Vertex
 	{
 		String v = "id:"+id+"{";
 		for(Map.Entry<Integer, Integer> nb : Adjacencylist.entrySet())
-		{
 			v= v+nb.getKey()+"("+nb.getValue()+"),";
-		}
-		
+
 		v.substring(0,v.length()-1);
 		
 		return v.substring(0,v.length()-1)+"}";
