@@ -1,161 +1,34 @@
 \section{Introduction} \label{sec:intro}
-%
-%\subsection{Prepare for meeting}
-%formulate problem
-% why cache?
-%\begin{itemize}
-%\item less computational load
-%\item faster response time
-%\item better use of bandwidth \ref{sec:intro}
-%\item
-%\end{itemize}
-%
-%Describe strait forward solution
-%
-%just store query results in cache and only consider direct cache hit with a
-%simple cache policy like LRU or even FIFO
-%
-%
-%Come up with some simple solutions
-%
-%prepare:
-%\begin{itemize}
-%\item The definition and problem setting of shortest path caching
-%\item Some simple methods
-%\item Running examples to show how these methods work
-%\item Identify advantages / disadvantages of these methods
-%\end{itemize}
+
 \section{Motivation}
-Shortest Path (SP) calculation is much slower than retrieval from cache (\ffh{figure  out how by how much for each SP algorithm})
+Shortest Path (SP) calculation is much slower than retrieval from cache (\ffh{figure  out how by how much (possibly for more than one SP algorithm)})
 
+Users want fast responsetime (and \spath can do this cheaper with caching \cite{ref.})
 
-\begin{deff}
-A \textbf{SP Cache element} is a list $\left(v_s,v_{1},...,v_t\right)$ of vertices where $v_s/v_T$ are the start/end vertices of the list. $v_s$ is connected with $v_t$ by a shortest path defined by the vertices between $v_s$ and $v_T$ in the list.
-\end{deff}
+\spath service providers want to spend less money on hardware (less computation -> less hardware)
 
-The cache is a set $\left\{SP_0,...,SP_n\right\}$ of SP cache elements. 
+it is not feasable to store all possible \spaths (even if considering OSS)
 
-\begin{deff}
-Cache replacement: Given two otherwise equal SP results, i.e. having the same length and having the same \textbf{value} (by some scoring mechanism defined for cache replacement) the SP result already in the cache will stay in the cache.
-\end{deff}
+Develop a caching scheme useable in domains wiht large set of opssible cacheable items and little or no  locality in new items added to system, or suggested added to cache.
 
+No previous work has been done on cacheing \spath query results. interesting problem
 
-\ffh{what other SSSP algorithms might be useful in comparing speed difference between cache and SP calculation?}
-
-\ffh{Argue that since storing map data is cheap (little space required) but calculating SP is very expensive, then using the same, or more, space for cache than used for map data makes sense.}
-
-\subsection{SP Results - facts}
-
-\begin{itemize}
-\item number of times each node in query has been relevant to: 
-\begin{itemize}
-\item a cache hit
-\item a query result
-\end{itemize}
-\item number of times source/target -nodes has been used in a query
-\item sub-paths which are popular in query results (connected nodes which all "`score high"')
-
-\end{itemize}
-
-\subsection{Meeting}
-
-\begin{table}
-\begin{tabular}{l |l |l |l}
-i & item freq & item length & C(l) \\
-1 & 11 & 10 & 100 \\
-2 & 10 & 15 & 200 \\
-2* & 2 & 15 & 2000 \\
-\end{tabular}
-\end{table}
-
-C(l) calculates the number of vertices visited when finding a shortest path with Dijkstra
-
-\ffh{modify Dijkstra implementation to return this number}
-
-item length could be considered a factor instead of a score (replacing + with * when adding op the score with item frequency)
-
-\ffh{write argument why to use + or * when calculating score.}
-
-Item 1 has higher frequency than item 2, but the saving of putting item 2 in cache is much higher. 
-
-item one cost 11*100=1100 and  item 2 10*200=2000. 
-
-assuming cache hit cost 1, then adding item one would save = 1100-(100+10*1)=990, and item two would save 2000-(200+9*1=1791. the equation is: $(total\_cost\_without\_cache) - (cost\_of\_one\_Dijkstra\_run + (total\_runs-1 * cost\_of\_cache\_hit))$
-
-need to focus on arguing about archiving lowest possible run time, do not connect to strongly with one graph, argue independently of map/graph that cost model and methods will be good.
-\ffh{}
-
-\section{Problem}
-
-\subsection{Definitions and problem setting}
-We assume a setting where owners of mobile, positioning enabled, devices want route planning assistance. We assume users prefer online route planning services over offline solutions. 
-we expect users to use network enabled capable of determining and visualizing users location and route.
-Users want fast response times from online services, comparable to using an offline application \cite{ref}
-Using a cache reduces the computational burden \cite{ref} on an online service, providing faster end-user response time \cite{ref} by both freeing up computational resources to calculate new routes, as well as being able to immediately provide the shortest  path result from the cache.
-We assume a scenario using only server side caching.
-
-
-\subsection{model}
-
-\ffh{add more examples on advantages/disadvantages of $\left\{ LRU,ImpBaseline,OSC \right\}$ }
-\ffh{Fig.\ref{fig:cacheQueries}- add about text: space per edge} \ffh{Fig.\ref{fig:cacheQueries}- add about text: probability cache item is useful}
-We use a uniform random model(URM) together with a simple 'map',the graph in figure \ref{fig:simplemap}, enable us to clearly argue about the advantages expected when using server side caching of shortest-path queries. By using the simple map (fig.\ref{fig:simplemap}) and a URM together with we can reason about the probabilities that a specific query will occur. Figure \ref{fig:queryprob} illustrates the number of queries possible for a map with 2,3, and 5 locations for figure \ref{fig:queryprob}A, \ref{fig:queryprob}B, and \ref{fig:queryprob}C respectively. Each line underneath each of the simple graphs represents two possible queries (A->B, B<-A). The number of shortest-path queries possible on a tree-graph with n vertices is $n*(n-1)$. The probability of seeing any one query, $q_i$ is then $P(q_i | n) = (n*n-1)^{-1}$
+More users now have a GPS and Web enabled mobile devices which makes \spath services more popular, but also require them to serve much larger set of users.
 
 
 
-%assume uniform random model
-%use simple map
-%probability of specific query is nodes*nodes-1
-
-\begin{figure}
-  \center
-	\includegraphics[width=0.25\textwidth]{figures/simpleMap.pdf}
-	\caption{Simple map}
-  \label{fig:simplemap}
-\end{figure}
-
-\begin{figure}
-  \center
-	\includegraphics[width=0.25\textwidth]{figures/queryprob.pdf}
-	\caption{Number of queries possible}
-  \label{fig:queryprob}
-\end{figure}
-
-\subsection{methods}
-
-For the sake of simplicity the methods presented in this section will all be based on figure \ref{fig:simplemap} and \ref{fig:simpleroutequery}. Figure \ref{fig:simplemap} shows a simple graph which we will use as our map and figure \ref{fig:simpleroutequery} shows the simple scenario in which a user (fig. \ref{fig:simpleroutequery}A) issues a route-planning query from 1 to 4 (fig. \ref{fig:simpleroutequery})  to an online route-planning server with a build in cache (fig. \ref{fig:simpleroutequery}B).
 
 
-\subsubsection{Baseline}\label{baselinemethod}
-The strait forward baseline solution is illustrated in figure \ref{fig:simpleroutequery}B. The idea is a server side shortest path cache which will store each query result in the cache and only consider exact query matches as cache hits, and to only use a simple cache policy such as LRU or FIFO.
-The advantage of this solution is clear: it is simple and easily implemented. 
-This simplicity is however obviously also it's main disadvantage, as it is too simple and very inefficient in terms of the utility the cache provides. Using items in the cache only when there is an exact match makes it exceedingly unlikely to get a cache hit due to the nature of route planning (many people share parts of routes, but few the same start and end points) and the sheer number of start-/end-point combinations possible.
 
-\begin{figure}
-  \center
-	\includegraphics[width=0.5\textwidth]{figures/simpleroutequery.pdf}
-	\caption{simple graph}
-  \label{fig:simpleroutequery}
-\end{figure}
 
-\subsubsection{Improved Baseline}\label{baselinemethodimp}
-One way to possible increase the utility of a naive cache as proposed in \ref{baselinemethod} would be to exploit the \textit{optimal substructure property}\cite{introalg} of the cache items.
-There is a significant increase in cache hits to be expected by utilizing the optimal substructure of shortest path cache items since it is unlikely many people will plan a route from/to the same place, but it is very likely that some sub-parts will be shared among users, and some users' full path laying within a longer path already calculated. The idea is illustrated in figure \ref{fig:cacheQueries} where the baseline method would be able to answer query Q1 from the cache, but not Q2. It is this specific disadvantage which ImpBaseline addresses and ImpBaseline can therefor answer both Q1 and Q2 from the cache since the result of Q2 now exist as a solution to a subpath of cache item C3.
-Doing this adds a need for additional computational resources \ffh{how many resources?} required to examine the substructure of each  cached shortest path search result. It is currently not known if doing this is worth the effort, compared to just calculating the route, possibly multiple times.
 
-\begin{figure}
-  \center
-	\includegraphics[width=0.25\textwidth]{figures/cacheQueries.pdf}
-	\caption{Queries}
-  \label{fig:cacheQueries}
-\end{figure}
-
-\subsubsection{OSC - Optimal Substructure Cache}
-OSC is more advanced than the two previous proposed solutions and therefor the scenario has been updated in figure \ref{fig:advancedroutequery}. 
-To further improve upon Improved Baseline we will again utilize the optimal substructure, making it possible to have much fewer items in cache and still retain a high cache hit percentage \cite{ref}. %(assumption, need test result or proof), 
-Results with sub-paths shared by many users and longer, rather than short, paths are preferred to increase the utility of the cached shortest-path results.
-
-By adding a more intuitive cache replacement policy which takes in to consideration both the usage of each cache item, as well as the coverage of previously often seen queries it is likely that the utility of the cache would be much higher. This addition is shown with the addition of the "`add to cache"' box in figure \ref{fig:advancedroutequery}B, added to show a heuristic\footnote{the actual heuristic will of cause only be defined later} will be used instead of a very simple method like LRU.
+% 
+% \subsubsection{OSC - Optimal Substructure Cache}
+% OSC is more advanced than the two previous proposed solutions and therefor the scenario has been updated in figure . 
+% To further improve upon Improved Baseline we will again utilize the optimal substructure, making it possible to have much fewer items in cache and still retain a high cache hit percentage \cite{ref}. %(assumption, need test result or proof), 
+% Results with sub-paths shared by many users and longer, rather than short, paths are preferred to increase the utility of the cached shortest-path results.
+% 
+% By adding a more intuitive cache replacement policy which takes in to consideration both the usage of each cache item, as well as the coverage of previously often seen queries it is likely that the utility of the cache would be much higher. This addition is shown with the addition of the "`add to cache"' box in figure \ref{fig:advancedroutequery}B, added to show a heuristic\footnote{the actual heuristic will of cause only be defined later} will be used instead of a very simple method like LRU.
 
 
 %\paragraph{\textbf{Number 3, ideas}}
