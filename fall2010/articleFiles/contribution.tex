@@ -2,6 +2,13 @@
 To show the performance gain archived by our proposed solution in section \ref{sec:contribution} we use 2 baseline competitors.
 The 2 competitors are chosen as they use simple and well known caching techniques. Both competitors take advantage of the optimal substructure property of the cached shortest path items.
 
+\begin{figure}
+  \center
+	\includegraphics[width=0.4\textwidth]{figures/map10n.pdf}
+	\caption{Small map}
+  \label{fig:map10}
+\end{figure}
+
 \subsection{LRU}
 
 LRU - Least Recently Used. This competitor uses the LRU cache replacement policy which gives each cache item a timestamp when it is added to the cache, and updates the timestamp if the cache item contributes to a cache hit. When a \spath query does not generate a cache hit, the new \spath will trigger a cache replacement. LRU simply throws out the cache item with the lowest timestamp and adds the new cache item with the current timestamp.
@@ -84,6 +91,27 @@ partitioning of map into large region to quickly be able to discard items in the
 \item array, utilizing optimal substructure property of \spath items
 \item 2D array, to more quickly (and cheaper) identify cache hits (expensive to maintain)
 \end{itemize}
+
+\begin{figure}
+  \center
+	\includegraphics[width=0.4\textwidth]{figures/nodeType.pdf}
+	\caption{Node types}
+  \label{fig:nodetypes}
+\end{figure}
+
+\begin{figure}
+  \center
+	\includegraphics[width=0.55\textwidth]{figures/cacheSimple.pdf}
+	\caption{Direct cache access}
+  \label{fig:map10}
+\end{figure}
+
+\begin{figure}
+  \center
+	\includegraphics[width=0.55\textwidth]{figures/cacheTwoLayer.pdf}
+	\caption{Indirect cache access}
+  \label{fig:map10}
+\end{figure}
 
 
 % % % % % % % % \subsection{Text and ideas which may still be useful (not part of paper)}
