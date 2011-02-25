@@ -10,7 +10,16 @@ We consider only server side caching..
 
 
 \subsection{Architecture}
-\ffh{forgot what the purpose of this section is... as discussed in the last meeting}
+
+The system architecture of what we propose is shown in fig. \ref{fig:advancedroutequery} 
+
+
+\begin{figure}
+  \center
+	\includegraphics[width=0.5\textwidth]{figures/advancedroutequery.pdf}
+	\caption{Advanced graph}
+  \label{fig:advancedroutequery}
+\end{figure}
 
 \begin{table}
 \begin{tabular*}{\columnwidth}{|l||p{0.77\columnwidth}|}
@@ -29,9 +38,7 @@ OSC		& Set of edges \\\hline
 
 To enable us to better argue about the real performance, as well as the strong and weak points of our ideas, we use a gaussian distribution model for the queries together with a graph with 6100/7035 vertices/edges.
 
-
-\ffh{Fig.\ref{fig:cacheQueries}- add about text: space per edge} \ffh{Fig.\ref{fig:cacheQueries}- add about text: probability cache item is useful}
-
+\ffh{add about text: space per edge} 
 
 \subsection{Optimization goals}\label{subsec:goals}
 
