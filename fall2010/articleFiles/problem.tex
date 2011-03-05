@@ -9,15 +9,15 @@ We consider only server side caching..
 
 
 
-\subsection{Architecture}
+\subsection{Architecture}\label{sec:architec}
 
-The system architecture of what we propose is shown in fig. \ref{fig:advancedroutequery}B. 
+The system architecture of what we propose is shown in fig. \ref{fig:advancedroutequery}. The example architecture depicted in fig \ref{fig:advancedroutequery} shows every major step (fig. \ref{fig:advancedroutequery}A-E) that our system might execute when a new \spath query is submitted to the system (fig. \ref{fig:advancedroutequery}A). After a \spath query is submitted to the system (fig. \ref{fig:advancedroutequery}A), the cache (fig. \ref{fig:advancedroutequery}B) is then queried to check if the result is in the cache. If there is a cache hit the system will immidiately return the result from the cache (fig. \ref{fig:advancedroutequery}E). If the queried \spath result is not in the cache, the system will detect a cache miss and calculate the result (fig. \ref{fig:advancedroutequery}C) and immidiately return it to the user (fig. \ref{fig:advancedroutequery}E). After returning the calculated result the system will use its cache policy to evaluate if the new result should be added to the cache, possibly expunging some other result from the cache, or discarded (fig. \ref{fig:advancedroutequery}D)
 
 
 \begin{figure}
   \center
-	\includegraphics[width=0.55\textwidth]{figures/advancedroutequery.pdf}
-	\caption{Advanced graph}
+	\includegraphics[width=0.5\textwidth]{figures/advancedroutequery.pdf}
+	\caption{System architecture}
   \label{fig:advancedroutequery}
 \end{figure}
 
@@ -35,8 +35,6 @@ OSC		& Set of edges \\\hline
 \label{tab:symbols}
 \end{table}
 
-
-To enable us to better argue about the real performance, as well as the strong and weak points of our ideas, we use a gaussian distribution model for the queries together with a graph with 6100/7035 vertices/edges.
 
 \ffh{add about text: space per edge} 
 
