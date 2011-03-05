@@ -2,13 +2,6 @@
 To show the performance gain archived by our proposed solution in section \ref{sec:contribution} we use 2 baseline competitors.
 The 2 competitors are chosen as they use simple and well known caching techniques. Both competitors take advantage of the optimal substructure property of the cached shortest path items.
 
-\begin{figure}
-  \center
-	\includegraphics[width=0.4\textwidth]{figures/map10n.pdf}
-	\caption{Small map}
-  \label{fig:map10}
-\end{figure}
-
 \subsection{LRU}
 
 LRU - Least Recently Used. This competitor uses the LRU cache replacement policy which gives each cache item a timestamp when it is added to the cache, and updates the timestamp if the cache item contributes to a cache hit. When a \spath query does not generate a cache hit, the new \spath will trigger a cache replacement. LRU simply throws out the cache item with the lowest timestamp and adds the new cache item with the current timestamp.
@@ -22,28 +15,34 @@ FIFO - First In First Out. FIFO replaces, as the name suggests, the oldest cache
 
 \section{Contribution} \label{sec:contribution}
 
-\subsection{Solution Proposals}
-
 The techniques proposed here will each present how, and in what way, they can contribute to fulfilling the goals set out in section \ref{subsec:goals}.
 
 All cache replacement techniques presented takes advantage of the optimal substructure property of shortest path, so all items in the \spath cache can also answer queries which only need a part of the shortest path.
 
-
-\subsubsection{Cache Replacement Policies}
+% % The current section "5.1.1 Cache Replacement Policies"
+% %    should be divided into two subsections:
+% % 
+% % - 5.1.1 Optimal Substructure Cache
+% %   ( Here, you talk about the caching example on page 4)
+% % 
+% % - 5.1.2 Cache Replacement Policy
+% %   ( Here, you talk about the "scoring mechanism".  You can then add an example to illustrate how this policy works. )
+\subsection{Cache Replacement Policies}
 
 By using a cache a replacement policy, we try to directly shorten the total execution time by reducing the number of times the \spath algorithm has to be executed. 
 The execution time is shortened every time we have a cache hit since the \spath algorithm\footnote{This can be any \spath algorithm, and we a just referring to the general set of \spath algorithms} does not need to run, and \spath algorithms usually are quite expensive in terms of the number of calculations and/or comparisons it needs to do to produce a result.
 
 
-\paragraph{\osc}
+\subsubsection{\osc}
 
-\osc uses two scoring mechanisms which can both be added or multiplied to each other to assign each cache item a score. OSC does cache replacement based on the calculated score. If a new cache item get a lower score than any of the existing cache items it will not replace any existing cache items and will be discarded, if one or more items exist in the cache which have a lower score than some new candidate, then the item with the lowest score will be replaced.\ref{fig:advancedroutequery}
+The basis of \osc is two scoring mechanisms which can both be added or multiplied to each other to assign each cache item a score. \osc does cache replacement based on the calculated score. If a new cache item get a lower score than any of the existing cache items it will not replace any existing cache items and will be discarded, if one or more items exist in the cache which have a lower score than some new candidate, then the item with the lowest score will be replaced (Fig. \ref{fig:advancedroutequery}, step D).
 
-\ffh{write argument why to use + or * when calculating score.}
 
-The scoring is done by summing up: the number of times a cache item has formed the basis of a cache hit; the number of times each node in cache item has been the source/target nodes in a query, or member of a query result. By taking the length of the \spath in a cache item and multiplying it on the previously calculated sum we get the full score.
 
-\paragraph{Scoring Mechanism}
+\subsubsection{Scoring Mechanism}
+
+
+The scoring is done by summing up: the number of times a cache item has formed the basis of a cache hit; the number of times each node in cache item has been the source/target nodes in a query, or member of a query result. By taking the length of a cache item (number of nodes in the \spath) and multiplying it on the previously calculated sum we get the full score.
 
 In \osc we use a scoring mechanism to rank the usefulness of cached items. Table \ref{tab:score} shows 3 queries ($i$) seen at different frequency and with different length. C(l) calculates the number of vertices visited when finding a shortest path with a \spath algorithm. Based on these numbers it is then possible to calculate the benefit of adding one of these \spath queries to the cache. E.g. Item 1 has higher frequency than item 2, but the saving of putting item 2 in cache is much higher:
 
@@ -68,49 +67,74 @@ i & item freq & item length & C(l) \\
 
 
 
-\acresetall
-\subsubsection{\sps}
+\subsection{\sps}
 
 If space consumption is a very high priority then \sps is one option to alleviate the problem. \sps changes the cache structure from $n_1, ... , n_n$ to $CI_{k\left[s-node\right]},CI_{k\left[e-node\right]}, n_{e-node+1}, ... , n_n$.\footnote{This example only shows how to share something in the front of an item, though adding them after or in the middel does not matter.}
 I.e. including the start-/end-node of a range from another cache item. The advantage of doing this is a, possibly large, reduction in the space requirements for the cache. Maintaining such a cache would be quite expensive in terms of computation when changes occur, though the space saving would allow for more cache items which again would reduce the total running time. We will later show wether this overhead can really be offset by the additional number of cache items which would fit into the cache.
 
 
-how does it work?
-what goal does it fulfill?
-how does it fulfill the goal?
-\subsubsection{Partitioning Map}
+% how does it work?
+% what goal does it fulfill?
+% how does it fulfill the goal?
+\subsection{Partitioning Map}
 
-partitioning of map into large region to quickly be able to discard items in the cache, leading to less work when trying to find a cache hit. By discarding possible \spath cache candidates early we may save some time and computations.
+Partitioning of map into large region to quickly be able to discard items in the cache, leading to less work when trying to find a cache hit. By discarding possible \spath cache candidates early we may save some time and computations.
 
-
-\subsubsection{Cache structures}
-
-\ffh{flesh out, add figures to clarify the difference}
-\begin{itemize}
-\item array, no utilization of optimal substructure property of \spath items
-\item array, utilizing optimal substructure property of \spath items
-\item 2D array, to more quickly (and cheaper) identify cache hits (expensive to maintain)
-\end{itemize}
+\ffh{improve fig. \ref{fig:mappartition}}
 
 \begin{figure}
   \center
-	\includegraphics[width=0.4\textwidth]{figures/nodeType.pdf}
+	\includegraphics[width=0.30\textwidth]{figures/mapPartition.pdf}
+	\caption{Partitioned Map}
+  \label{fig:mappartition}
+\end{figure}
+
+\subsection{Cache structures}
+
+We will consider 3 basic cache structures, each with optional ways of using or implementing them. The 3 cache structures are briefly:
+\begin{itemize}
+\item A single array. A cache lookup means scanning the array.
+\item A map on an array, quickly identifying valid candidates for a cache hit.
+\item Using one of the two ideas already mentioned, but changing structure of the cache items (\spath results) to use \spsns, sharing sub-parts, to conserve space.
+\end{itemize}
+
+\subsubsection{Array, Direct Access}
+
+The simplest way to implement a cache is to just store all cache items in an array. An example of how the cache works is presented in  figure \ref{fig:cachestruc}, part A,D, and E. In figure \ref{fig:cachestruc}A two \spath queries, Q1 \& Q2, are submitted. By scanning the array in \ref{fig:cachestruc}D item 3 and 4 are identified as being able to answer Q1 and Q2. Cache item 3 contains a superset of the set of nodes needed to answer Q2 so in \ref{fig:cachestruc}E the answers are refined and sent back to the user.
+
+While this cache structure is very simple and there for incurs virtually no overhead in terms of maintaining the structure, then the array needs to be scanned each time a new query is submittet to the system, and the entire array will be scanned if the query can not be answered by the cache. This cache structure has a high overhead because it needs to scan the array, and if the cache is large it is not likely to be an efficient solution or fulfill subgoal 2 very well (see Sec. \ref{sec:architec}).
+
+
+\subsubsection{Array with Map, Indirect Access}
+By adding a map with an inverted list on top of the array, holding the cache items, we can answer queries in constant time. The inverted list maps node ids to the cache items in which they are present. Figure \ref{fig:cachestruc}A-E shows how this works. In \ref{fig:cachestruc}A two queries are submitted. For each query we make a lookup in the map (fig.\ref{fig:cachestruc}B) for the start and end node of the query. In \ref{fig:cachestruc}C We then take the intersection of the possible cache items containing a shortest path with the start and end nodes of each query. If the were to be empty we would immediately know the cache can not answer the query. In \ref{fig:cachestruc}D we directly access the cache items identified in \ref{fig:cachestruc}C and refine them in \ref{fig:cachestruc}E before sending the answer back to the user.
+
+This cache structure require some additional work to maintain, as the map needs to be updated each time the cache content changes i.e. when cache items are replaced, but otherwise incur very little overhead. This structure is expected to perform quite well and be very good at helping to fulfill subgoal 2 (see Sec. \ref{sec:architec}).
+
+\subsubsection{Array with Shared Sub-paths}
+To support the \sps idea presented before, new node type has been introduced (fig. \ref{fig:nodetypes}). Previously the cache items only consisted of a list of node ids. To support the idea of \sps two new node types has been introduced, node 0 and 1. Node type 0 is only a node id with a type 0. Node type 1 consist of a cache item id and the id of the start and end node which is shared between the two cache cache items.
+
+can be implemented on top of either of the two previously presented cache structures, as it only changes the internal way of storing the cache items. This idea incurs a substantial overhead each time a cache item has to be replaced, as it is needed to check whether the replaced cache item is sharing or being shared with other cache items. This method does however also free up more space, allowing for more cache items and hopefully fewer cache replacements.
+
+
+\begin{figure}
+  \center
+	\includegraphics[width=0.3\textwidth]{figures/map10n.pdf}
+	\caption{Map}
+  \label{fig:map10}
+\end{figure}
+
+\begin{figure}
+  \center
+	\includegraphics[width=0.3\textwidth]{figures/nodeType.pdf}
 	\caption{Node types}
   \label{fig:nodetypes}
 \end{figure}
 
 \begin{figure}
   \center
-	\includegraphics[width=0.55\textwidth]{figures/cacheSimple.pdf}
-	\caption{Direct cache access}
-  \label{fig:map10}
-\end{figure}
-
-\begin{figure}
-  \center
-	\includegraphics[width=0.55\textwidth]{figures/cacheTwoLayer.pdf}
-	\caption{Indirect cache access}
-  \label{fig:map10}
+	\includegraphics[width=0.52\textwidth]{figures/cacheTwoLayer.pdf}
+	\caption{Cache access}
+  \label{fig:cachestruc}
 \end{figure}
 
 
