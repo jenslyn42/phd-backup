@@ -37,6 +37,9 @@ The execution time is shortened every time we have a cache hit since the \spath 
 
 The basis of \osc is two scoring mechanisms which can both be added or multiplied to each other to assign each cache item a score. \osc does cache replacement based on the calculated score. If a new cache item get a lower score than any of the existing cache items it will not replace any existing cache items and will be discarded, if one or more items exist in the cache which have a lower score than some new candidate, then the item with the lowest score will be replaced (Fig. \ref{fig:advancedroutequery}, step D).
 
+\begin{lemma}{\it \textbf{\spath Optimal Substructure}}
+Given a weighted DAG $G = (V, E)$ let $p = \left< v_1, v_2,..., v_k \right>$ be a shortest path from vertex $v_1$ to vertex $v_k$ and, $\forall i,j | 1 \leq i \leq j \leq k$, let $p_{ij} = \left<v_i, v_{i+1},..., v_j \right>$ be the subpath of p from vertex $v_i$ to vertex $v_j$. Then, $p_{ij}$ is a shortest path from $v_i$ to $v_j$.
+\end{lemma}
 
 
 \subsubsection{Scoring Mechanism}
@@ -89,6 +92,24 @@ Partitioning of map into large region to quickly be able to discard items in the
   \label{fig:mappartition}
 \end{figure}
 
+\subsection{Partitioning Caching} 
+
+\begin{figure}
+  \center
+	\includegraphics[width=0.42\textwidth]{figures/partSPcacheB.pdf}
+	\caption{Normal SP searching area}
+  \label{fig:cachestruc}
+\end{figure}
+
+\begin{figure}
+  \center
+	\includegraphics[width=0.42\textwidth]{figures/partSPcacheA.pdf}
+	\caption{Reduced SP search area (1 \& 3) based on partition caching (2)}
+  \label{fig:cachestruc}
+\end{figure}
+
+
+
 \subsection{Cache structures}
 
 We will consider 3 basic cache structures, each with optional ways of using or implementing them. The 3 cache structures are briefly:
@@ -136,6 +157,7 @@ can be implemented on top of either of the two previously presented cache struct
 	\caption{Cache access}
   \label{fig:cachestruc}
 \end{figure}
+
 
 
 % % % % % % % % \subsection{Text and ideas which may still be useful (not part of paper)}
