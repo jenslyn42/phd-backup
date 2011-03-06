@@ -1,0 +1,109 @@
+/****************************************************************************************
+ *   Copyright (C) 2011 by Jeppe Rishede 						*
+ *   jenslyn42@gmail.com								*
+ *											*
+ *   All rights reserved.								*
+ *											*
+ *   Redistribution and use in source and binary forms, with or without 		*
+ *   modification, are permitted provided that the following conditions are met:	*
+ *   Redistributions of source code must retain the above copyright notice,		*
+ *   this list of conditions and the following disclaimer. 				*
+ *   Redistributions in binary form must reproduce the above copyright notice,		*
+ *   this list of conditions and the following disclaimer in the documentation		*
+ *   and/or other materials provided with the distribution. 				*
+ *   Neither the name of the <ORGANIZATION> nor the names of its contributors 		*
+ *   may be used to endorse or promote products derived from this software 		*
+ *   without specific prior written permission						*
+ *                                                                         		*
+ *   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS   		*
+ *   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT     		*
+ *   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR 		*
+ *   A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER		*
+ *   OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 		*
+ *   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,   		*
+ *   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR    		*
+ *   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 		*
+ *   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING  		*
+ *   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS    		*
+ *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          		*
+ ***************************************************************************************/
+
+#define BOOST_TEST_DYN_LINK
+#ifdef STAND_ALONE
+#   define BOOST_TEST_MODULE FifoModule
+#endif
+#include <boost/test/unit_test.hpp>
+#include "FIFO.cpp"
+#include "testsetting.cpp"
+#include "RoadGraph.cpp"
+#include "Vertex.cpp"
+#include <vector>
+#include <iostream>
+
+struct zeFixture
+{
+	int m;
+	testsetting ts;
+	FIFO ff;
+
+	string testname;
+	int numNodes, numqueries, cacheSize, queryRangeStart, queryRangeEnd;
+	vector< bool > atests;
+	bool gaussian, skewedData, useOptimalSubstructure, useNodeScore, useHitScore;
+	double sigma;
+
+
+	zeFixture() : m(2)
+	{
+        	BOOST_TEST_MESSAGE("Setup");
+
+		testname ="graph_small.txt";
+		numNodes=500, numqueries=3000, cacheSize=60, queryRangeStart=0, queryRangeEnd=500;
+		bool mybool[] = {true,false,false,false,true};
+		atests.assign(mybool, mybool + sizeof(mybool) / sizeof(bool) );
+		gaussian=true, skewedData=true, useOptimalSubstructure=true, useNodeScore=true, useHitScore = true;
+		sigma= 2.0;
+
+    		ts.setData(testname, numNodes, numqueries, cacheSize, queryRangeStart, queryRangeEnd, atests, gaussian, sigma, skewedData, useOptimalSubstructure, useNodeScore, useHitScore);
+		
+		FIFO tmp (ts);		
+    		ff = tmp; 
+
+	}
+
+    	~zeFixture()
+	{
+        	BOOST_TEST_MESSAGE("Teardown");
+	}
+};
+
+BOOST_FIXTURE_TEST_SUITE(ClassFifo, zeFixture)
+
+
+BOOST_AUTO_TEST_CASE(getTotalQueries)
+{
+// 	cout << ff.getTotalQueries() << "\n";
+	BOOST_CHECK(ff.getTotalQueries() == 0);
+}
+
+BOOST_AUTO_TEST_CASE(getCacheHits)
+{
+	BOOST_CHECK_EQUAL(ff.getCacheHits(), 0);
+}
+
+
+BOOST_AUTO_TEST_CASE(readQuery)
+{
+	int q = ff.getTotalQueries();
+	pair<int,int> p (2,3);
+	ff.readQuery(p);
+	BOOST_CHECK_EQUAL(ff.getTotalQueries(), q+1);
+}
+
+BOOST_AUTO_TEST_CASE(readQueryList)
+{
+	vector< std::pair<int,int> > ql;
+	ff.readQueryList(ql);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
