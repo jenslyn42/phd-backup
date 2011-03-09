@@ -34,7 +34,6 @@
 	@author Jeppe Rishede <jenslyn42@gmail.com>
 */
 
-//#include "string.h"
 #include <string>
 #include <vector>
 using namespace std;
@@ -45,7 +44,7 @@ public:
 	bool lru;
 	bool fifo;
 
-	activeTests();
+	activeTests(){ };
 	void setData(vector< bool > aTests);
 	~activeTests();
 };
@@ -62,6 +61,7 @@ public:
 class testsetting{
 private:
 	std::string testName;
+	std::string testFile;
 	int numRoadGraphNodes;
 	int numQueries;
 	int cacheSize;
@@ -77,14 +77,12 @@ private:
 	bool useNodeScore;
 	bool useHitScore;
 
-
-
 public:
 	testsetting(){ };
 
-	testsetting(string tconstestname, int numNodes, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, vector<bool> atests, bool gaussian, double sigma, bool skewedData, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore);
+	testsetting(string testname, string testfile, int numNodes, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, vector<bool> atests, bool gaussian, double sigma, bool skewedData, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore);
 
-	void setData(string testname, int numNodes, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, vector<bool> atests, bool gaussian, double sigma, bool skewedData, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore);
+	void setData(string testname, string testfile, int numNodes, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, vector<bool> atests, bool gaussian, double sigma, bool skewedData, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore);
 
 	~testsetting();
 
@@ -110,10 +108,7 @@ public:
 	int getQueryRangeStart() const{return queryRangeStart;}
 	int getQueryRangeEnd() const{return queryRangeEnd;}
 
-	
-	
-	
-	
+	std::string getTestFile() const{return testFile;}
 };
 
 #endif

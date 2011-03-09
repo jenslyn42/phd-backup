@@ -32,8 +32,13 @@
 
 #include "CacheItem.h"
 #include "testsetting.h"
+#include "RoadGraph.h"
+
+#include <algorithm>
 #include <vector>
 #include <utility>
+
+#include <boost/foreach.hpp>
 
 /**
 	@author Jeppe Rishede <jenslyn42@gmail.com>
@@ -41,6 +46,7 @@
 
 class LRU{
 public:
+	LRU(){ };
 	LRU(testsetting ts);
 	~LRU();
 
@@ -50,10 +56,12 @@ public:
 	void readQueryList(std::vector<std::pair<int,int> > queryList);
 	int getCacheHits(){return numCacheHits;}
 	int getTotalQueries(){return numTotalQueries;}
+	int getTotalDijkstraCalls(){return numDijkstraCalls;}
 
 private:
 	int numTotalQueries;
 	int numCacheHits;
+	int numDijkstraCalls;
 
 	int cacheSize;
 	int cacheUsed;

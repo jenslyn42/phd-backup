@@ -32,8 +32,15 @@
 
 #include "CacheItem.h"
 #include "testsetting.h"
+#include "RoadGraph.h"
+#include "fastheap.h"
+
 #include <vector>
 #include <utility>
+#include <algorithm>
+#include <iostream>
+
+#include <boost/foreach.hpp>
 
 typedef std::pair<int,int> intPair;
 
@@ -42,6 +49,7 @@ typedef std::pair<int,int> intPair;
 */
 class OSC{
 public:
+	OSC(){ };
 	OSC(testsetting ts);
 	~OSC();
 
@@ -51,15 +59,18 @@ public:
 	void readQueryList(std::vector<std::pair<int,int> > queryList);
 	int getCacheHits(){return numCacheHits;}
 	int getTotalQueries(){return numTotalQueries;}
+	int getTotalDijkstraCalls(){return numDijkstraCalls;}
 
 private:
 	int numTotalQueries;
 	int numCacheHits;
 	int cacheSize;
 	int cacheUsed;
+	int numDijkstraCalls;
 	bool useNodeScore;
 	bool useHitScore;
 	std::vector<int> nodeHits;
+	std::string testFile;
 
 	void checkAndUpdateCache(std::pair<int,int> query);
 	void updateNodeHits(std::vector<int> queryResult);

@@ -30,21 +30,31 @@
 #ifndef ROADGRAPH_H
 #define ROADGRAPH_H
 
-#include "string.h"
-#include "Vertex.h"
+#include <string>
 #include <vector>
-#include "boost/unordered_map.hpp"
+#include <iostream>
+#include <fstream>
+
+#include "Vertex.h"
 #include "fastheap.h"
+#include "testsetting.h"
+
+#include "boost/unordered_map.hpp"
+#include "boost/algorithm/string.hpp"
+#include "boost/foreach.hpp"
 
 typedef boost::unordered_map<int, int> unorderedIntMap;
 
 class RoadGraph
 {
 public:
-	static RoadGraph* mapObject();
+	static RoadGraph* mapObject(string testfile);
+	void setMapFile(string file);
 	std::vector<Vertex> getMap();
 	std::vector<int> dijkstraSSSP(int s, int t);
 	int getMapsize();
+	string checkMapFilename(){return filename;}
+	unorderedIntMap totalNodeCalls;
 	
 private:
 	RoadGraph(){};
@@ -55,8 +65,10 @@ private:
 	std::vector<Vertex> map;
 	int mapSize;
 	int edges;
+	std::string filename;
 	
 	void addEdge(int v1, int v2, int w);
 	void readNetworkFile(string fn);
 };
+
 #endif

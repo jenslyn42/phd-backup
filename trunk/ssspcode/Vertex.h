@@ -32,13 +32,17 @@
 
 #include "boost/unordered_map.hpp"
 #include "fastheap.h"
+#include <iostream>
 
 using namespace std;
 
 class Vertex
 {
 public:
+	Vertex(){ };
+	//Vertex(int id); should really implement this one..
 	Vertex(int id, int nId, int weight);
+	void updateVertexID(int id, int nId, int weight);
 	void addNeighbour(int id , int weight);
 	boost::unordered_map<int, int> getAdjacencylist();
 	int getId();

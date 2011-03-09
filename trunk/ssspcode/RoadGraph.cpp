@@ -27,26 +27,21 @@
  *   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS    	*
  *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          	*
  ********************************************************************************/
+#ifndef ROADGRAPH_CPP
+#define ROADGRAPH_CPP
 
 #include "RoadGraph.h"
-#include "string.h"
-#include <vector>
-#include <iostream>
-#include <fstream>
-#include "fastheap.h"
-
-#include "boost/unordered_map.hpp"
-#include "boost/algorithm/string.hpp"
-#include "boost/foreach.hpp"
-
+#define debug false
+//specifically for the dijkstraSSSP() method
+#define spDebug false 
 
 RoadGraph* RoadGraph::mapInstance = NULL;
 
-RoadGraph* RoadGraph::mapObject()
+RoadGraph* RoadGraph::mapObject(std::string testFile)
 {
 	if(!mapInstance){
 		mapInstance = new RoadGraph();
-		readNetworkFile(	
+		mapInstance->readNetworkFile(testFile);
 	}
 	return mapInstance;
 }
@@ -58,37 +53,38 @@ vector<Vertex> RoadGraph::getMap()
 
 vector<int> RoadGraph::dijkstraSSSP(int source, int dest)
 {	
-	bool debug = true;
-	if(debug) cout << "one, dijkstraSSSP! map:" << (int) map.size() << endl;
+	if(spDebug) cout << "one, dijkstraSSSP! map:" << (int) map.size() <<" s,t:" << source <<"," <<dest << endl;
 	
 	if(map[source].getId() == -1 || map[dest].getId() == -1 || source > mapSize || dest > mapSize)
 	{
-		if(debug) cout << "two, dijkstraSSSP!" << endl;
+		if(spDebug) cout << "two, dijkstraSSSP!" << endl;
 		if(map[source].getId() == -1)
 			cout << "Source node invalid: " << source << "\n";
 		if(map[dest].getId() == -1)
 			cout << "Destination node invalid: " << dest << "\n";
 	}
-	if(debug) cout << "three, dijkstraSSSP!" << endl;
+	if(spDebug) cout << "three, dijkstraSSSP!" << endl;
 	if(source == dest)
 	{
 		std::vector<int> tmp;
 		tmp.push_back(source);
 		return tmp;
 	}
-	if(debug) cout << "four, dijkstraSSSP!" << endl;
+	if(spDebug) cout << "four, dijkstraSSSP! " << endl;
 	Heap hp;
 	unorderedIntMap backtrace;
 	static BitStore isVisited;
 	isVisited.assign(getMapsize(),false);
 	std::vector<int> trace;
 
+	if(spDebug) cout << "five, dijkstraSSSP! "<< endl;
 	//insert source node
 	HeapEntry root_he;
 	root_he.id=source;
 	root_he.dist=0.0;    // dist. so far
 	hp.push(root_he);
 	
+	if(spDebug) cout << "six, dijkstraSSSP! " << endl;
 	while (hp.size()>0) {
 		HeapEntry he=hp.top();
 		hp.pop();
@@ -97,21 +93,34 @@ vector<int> RoadGraph::dijkstraSSSP(int source, int dest)
 		if (isVisited[curnode])
 		continue;
 
+		if(totalNodeCalls.find(curnode) == totalNodeCalls.end()){
+			totalNodeCalls[curnode] = 1;
+		}else{ totalNodeCalls[curnode] = totalNodeCalls.at(curnode)+1;
+		}
+		
 		isVisited[curnode]=true;
 		
+		if(spDebug) cout << "seven, dijkstraSSSP! "<< curnode << endl;
 		unorderedIntMap CurAdjList= map[curnode].getAdjacencylist();
+		if(spDebug) cout << "eight, dijkstraSSSP! " << endl;
 		BOOST_FOREACH (unorderedIntMap::value_type neighbour, CurAdjList)
 		{
+			if(spDebug && curnode == 3382) cout << "one: " << neighbour.first <<"," << neighbour.second << endl;
 			int NextNodeID= neighbour.first; //id
 			if (isVisited[NextNodeID]==false) {
 				HeapEntry new_he=he;    // copy ...
 				new_he.id= NextNodeID;
 				new_he.dist= he.dist+neighbour.second; //weight
 				hp.push(new_he);    // propagation
-				if(backtrace.find(neighbour.first) == backtrace.end()) //neighbour id not in backtrace
+				if(spDebug && curnode == 3382) cout << "two1: " << neighbour.first <<"," << neighbour.second << endl;
+				if(backtrace.find(neighbour.first) == backtrace.end()){ //neighbour id not in backtrace
+					if(spDebug && curnode == 3382) cout << "two11: " << neighbour.first <<"," <<he.id <<"," << (int)backtrace.size()<< endl;
 					backtrace[neighbour.first] = he.id;
+				}
+				if(spDebug && curnode == 3382) cout << "two2: " << neighbour.first <<"," << neighbour.second << endl;
 			}
 		}
+		//if(spDebug) cout << "nine, dijkstraSSSP! " << endl;
 		if(curnode==dest)
 		{
 			//he.dist; //contains distance source->dest.
@@ -134,30 +143,45 @@ int RoadGraph::getMapsize()
 
 void RoadGraph::addEdge(int v1, int v2, int w)
 {
-	if(map[v1].getId() == -1) 
-		map[v1] = Vertex(v1,v2,w);
-	else
+	if(debug) cout << "one, addEdge! (v1,v2,w): (" <<v1 <<"," << v2 <<"," << w <<") " << endl;
+	if(map[v1].getId() == -1){
+		if(debug) cout << "one1, addEdge! updateVertex (v1,v2,w): (" <<v2 <<"," << v1 <<"," << w <<") " << endl;
+		map[v1].updateVertexID(v1,v2,w);
+		if(debug) cout << "one2, addEdge! updateVertex (v1,v2,w): (" <<v2 <<"," << v1 <<"," << w <<") " << endl;
+	}else{
+		if(debug) cout << "one3, addEdge! addNeighbour (v2,w): (" << v1 << "," << w << ") " << endl;
 		map[v1].addNeighbour(v2,w);
+	}
 
-	if(map[v2].getId() == -1) 
-		map[v2] = Vertex(v2,v1,w);
-	else
+	if(debug) cout << "two, addEdge! (v2,v1,w): (" <<v2 <<"," << v1 <<"," << w <<") " << endl;
+	if(map[v2].getId() == -1) {
+		if(debug) cout << "two1, addEdge! updateVertex (v2,v1,w): (" <<v2 <<"," << v1 <<"," << w <<") " << endl;
+		map[v2].updateVertexID(v2,v1,w);
+		if(debug) cout << "two2, addEdge! updateVertex (v2,v1,w): (" <<v2 <<"," << v1 <<"," << w <<") " << endl;
+	}else{
+		if(debug) cout << "two3, addEdge! addNeighbour (v1,w): (" << v1 << "," << w << ") " << endl;
 		map[v2].addNeighbour(v1,w);
+	}
+	if(debug) cout << "three, addEdge!" << endl;
 }
 
 void RoadGraph::readNetworkFile(string fn)
 {
+	filename = fn;
 	string str;
 	std::vector<string> tokens;	
 	ifstream in_data (fn.c_str(), ios::in);
 	if(in_data.is_open())
 	{
+		if(debug) cout << "zero, readNetworkFile!" << endl;
 		getline(in_data, str);
 		mapSize = atoi(str.c_str());
 		map.reserve(mapSize+1);
+		if(debug) cout << "one, readNetworkFile! map:" << (int) map.size() <<" " << mapSize << endl;
 		for(int i = 0; i < mapSize+1; i++)
 			{
-				map[i] = Vertex(-1,0,0); //ugly, but do not know how to fill with null objects..
+				map.push_back(Vertex(-1,0,0)); //ugly, but do not know how to fill with null objects..
+				if(debug) cout << "two, readNetworkFile! map:" << (int) map.size() <<" " << mapSize <<"i: " << i << " map content: " << map[i].getId() << endl;
 			}
 
 		getline(in_data, str);
@@ -166,20 +190,27 @@ void RoadGraph::readNetworkFile(string fn)
 		while( tokens.size() < 3 )
 		{
 			getline(in_data, str);
+			if(debug) cout << "three, readNetworkFile! getline:" << str << endl;
+	
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());	
 		}
+		
+		if(debug) cout << "four, readNetworkFile! tokesn ([0],[1],[2]): (" << atoi(tokens[0].c_str()) << "," << atoi(tokens[1].c_str()) << "," << atoi(tokens[2].c_str()) << ")" << endl;
+	
 		addEdge(atoi(tokens[0].c_str()),atoi(tokens[1].c_str()),atoi(tokens[2].c_str()));
 
+		int check = 0;
 		while(getline(in_data, str))
 		{
+			if(debug) cout << "five, readNetworkFile! getline:" << str  << " check: " << check++ << endl;
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+			if(debug) cout << "five1, readNetworkFile! getline:" << str  << " check: "  << check << endl;
 			addEdge(atoi(tokens[0].c_str()),atoi(tokens[1].c_str()),atoi(tokens[2].c_str()));
+			if(debug) cout << "five2, readNetworkFile! getline:" << str  << " check: "  << check << endl;
 		}
-		
+		if(debug) cout << "six, readNetworkFile!" << endl;
 		in_data.close();
 	}
 }
 
-
-
-
+#endif

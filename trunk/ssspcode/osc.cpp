@@ -27,24 +27,27 @@
  *   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS    		*
  *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          		*
  ***************************************************************************************/
+#ifndef OSC_CPP
+#define OSC_CPP
 
 #include "osc.h"
-#include "testsetting.h"
-#include "RoadGraph.h"
-#include <boost/foreach.hpp>
-#include <algorithm>
-#include <iostream>
-#include "fastheap.h"
+#define debug true
 
 OSC::OSC(testsetting ts)
 {
 	cacheSize = ts.getCacheSize();
+	
 	nodeHits.reserve(ts.getQueryRangeEnd());
-
 	nodeHits.insert(nodeHits.begin(),ts.getQueryRangeEnd(),0);
 
+	numTotalQueries = 0;
+	numCacheHits = 0;
+	numDijkstraCalls = 0;
+	cacheSize = ts.getCacheSize();
+	cacheUsed = 0;
 	useNodeScore = ts.isUseNodeScore();
 	useHitScore = ts.isUseHitScore();
+	testFile = ts.getTestFile();
 }
 
 OSC::~ OSC()
@@ -53,7 +56,9 @@ OSC::~ OSC()
 
 void OSC::readQuery(std::pair< int, int > query)
 {
+	if(debug) cout << "one, OSC::readQuery: ("<< query.first <<","<<query.second <<")" <<endl;
 	checkAndUpdateCache(query);
+	if(debug) cout << "two, OSC::readQuery " <<endl;
 	numTotalQueries++;
 }
 
@@ -70,12 +75,14 @@ void OSC::checkAndUpdateCache(std::pair< int, int > query)
 	bool cacheHit = false;
 	vector<int> cIt;
 	vector<int> itemSubMatch;
+	if(debug) cout << "one, OSC::checkAndUpdateCache("<< query.first <<","<<query.second <<")" <<endl;
 
 	BOOST_FOREACH(CacheItem ci, cache)
 	{
 		cIt = ci.item;
 		if(find(cIt.begin(),cIt.end(), query.first) != cIt.end() && find(cIt.begin(),cIt.end(), query.second) != cIt.end())
 		{
+			if(debug) cout << "two, OSC::checkAndUpdateCache: cIt:" << cIt.size() <<endl;
 			numCacheHits++;
 			ci.updateKey(numTotalQueries);
 			sort(cache.begin(), cache.end());
@@ -94,23 +101,33 @@ void OSC::checkAndUpdateCache(std::pair< int, int > query)
 			break;
 		}
 	}
-
+	if(debug) cout << "three, OSC::checkAndUpdateCache, cacheHit:" << cacheHit <<endl;
+	
 	if(!cacheHit)
 	{
-		vector<int> spResult  = RoadGraph::mapObject()->dijkstraSSSP(query.first, query.second);
+		if(debug) cout << "four0, OSC::checkAndUpdateCache " << query.first <<"," << query.second <<endl;
+		vector<int> spResult  = RoadGraph::mapObject(testFile)->dijkstraSSSP(query.first, query.second);
+		numDijkstraCalls++;
+		if(debug) cout << "four1, OSC::checkAndUpdateCache" <<endl;
 		updateNodeHits(spResult);
 		int querySize = spResult.size();
+		if(debug) cout << "four2, OSC::checkAndUpdateCache" <<endl;
 		vector<int> nodesInQueryResult(spResult);
-		
+
+		if(debug) cout << "four3, OSC::checkAndUpdateCache" <<endl;	
 		if(cache.size() != 0)
 		{
+			if(debug) cout << "five1, OSC::checkAndUpdateCache" <<endl;
 			testToReplaceItem(querySize, nodesInQueryResult);
+			if(debug) cout << "five2, OSC::checkAndUpdateCache" <<endl;
 		}else{
 			CacheItem cIt (numTotalQueries, nodesInQueryResult);
+			if(debug) cout << "six1, OSC::checkAndUpdateCache" <<endl;
 			cache.push_back(cIt);
+			if(debug) cout << "six2, OSC::checkAndUpdateCache" <<endl;
 			cacheUsed = cacheUsed + cIt.size;
 		}
-		
+		if(debug) cout << "seven, OSC::checkAndUpdateCache" <<endl;
 	}
 }
 
@@ -126,21 +143,23 @@ bool compFunc(int i,int j) {return (i>j);} //support for reverse sort in testToR
 
 void OSC::testToReplaceItem(int querySize, std::vector< int > nodesInQueryResult)
 {
+	if(debug) cout << "zero, OSC::testToReplaceItem querySize:"<<querySize<<" cacheSize:" << cacheSize <<endl;
+	if(querySize > cacheSize) return;
+
 	bool notEnoughSpace = true;
 	int qSum = 0;
 	int qScore = 0;
+	if(debug) cout << "one, OSC::testToReplaceItem" <<endl;
 	//calculate score for query
 	BOOST_FOREACH(int node, nodesInQueryResult)
 		qSum += nodeHits.at(node);
-
-	if(querySize > cacheSize)
-		return;
 
 	Heap removeCandidate;
 	vector<int> ci (cache[0].item);
 	int nodes = ci.size();
 	int sum = 0;
 
+	if(debug) cout << "two, OSC::testToReplaceItem" <<endl;
 	BOOST_FOREACH(int node, ci)
 		sum += nodeHits.at(node);	
 
@@ -171,6 +190,7 @@ void OSC::testToReplaceItem(int querySize, std::vector< int > nodesInQueryResult
 		qScore = qSum+querySize;
 	}
 
+	if(debug) cout << "three, OSC::testToReplaceItem" <<endl;
 	for(int k=1; k < cache.size(); k++)
 	{
 		ci = cache[k].item;
@@ -204,6 +224,7 @@ void OSC::testToReplaceItem(int querySize, std::vector< int > nodesInQueryResult
 	
 	}
 
+	if(debug) cout << "four, OSC::testToReplaceItem" <<endl;
 	if(qScore > removeCandidate.top().dist)
 	{
 		vector<int> removeIndexes;
@@ -236,3 +257,5 @@ void OSC::testToReplaceItem(int querySize, std::vector< int > nodesInQueryResult
 		}while(notEnoughSpace);
 	}
 }
+
+#endif

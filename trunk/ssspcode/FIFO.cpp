@@ -28,11 +28,7 @@
 *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          	*
 ********************************************************************************/
 #include "FIFO.h"
-#include "testsetting.h"
-#include "RoadGraph.h"
-#include <boost/foreach.hpp>
-#include <algorithm>
-#include <iostream>
+#define debug false
 
 typedef std::pair<int,int> intPair;
 
@@ -46,6 +42,7 @@ FIFO::FIFO(testsetting ts)
 	cacheUsed = 0;
 	useNodeScore = ts.isUseHitScore();
 	useHitScore = ts.isUseNodeScore();
+	numDijkstraCalls = 0;
 }
 
 FIFO::~FIFO()
@@ -68,19 +65,18 @@ void FIFO::readQueryList(std::vector< std::pair < int , int > > queryList)
 
 void FIFO::checkAndUpdateCache(std::pair< int, int > query)
 {
-	bool debug = true;
 	bool cacheHit = false;
 	int ii = 0;
-	if(debug) cout << "@one, checkAndUpdateCache! " << ii << endl;
+	if(debug) cout << "one, fifo::checkAndUpdateCache! " << ii << endl;
 	if((int) cache.size() != 0)
 	{	
 		if(ts.isUseOptimalSubstructure()){
-			if(debug) cout << "@one1, checkAndUpdateCache! :cacheSize:" << (int) cache.size() <<"::"<< endl;
+			if(debug) cout << "one1, fifo::checkAndUpdateCache! :cacheSize:" << (int) cache.size() <<"::"<< endl;
 			BOOST_FOREACH(CacheItem ci, cache )
 			{
-				if(debug) cout << "@two2, checkAndUpdateCache! " << ++ii << endl;
+				if(debug) cout << "two2, fifo::checkAndUpdateCache! " << ++ii << endl;
 				find(ci.item.begin(),ci.item.end(), query.first);
-				if(debug) cout << "@two3, checkAndUpdateCache! " << ++ii << endl;
+				if(debug) cout << "two3, fifo::checkAndUpdateCache! " << ++ii << endl;
 				if(find(ci.item.begin(),ci.item.end(), query.first) != ci.item.end() && find(ci.item.begin(),ci.item.end(), query.second) != ci.item.end())
 				{
 					numCacheHits++;
@@ -91,7 +87,7 @@ void FIFO::checkAndUpdateCache(std::pair< int, int > query)
 		}else{
 			BOOST_FOREACH(CacheItem ci, cache )
 			{
-				if(debug) cout << "@three, checkAndUpdateCache! " << ++ii  << endl;
+				if(debug) cout << "three, fifo::checkAndUpdateCache! " << ++ii  << endl;
 				if(query.first == ci.s && query.second == ci.t)
 				{
 					numCacheHits++;
@@ -100,14 +96,15 @@ void FIFO::checkAndUpdateCache(std::pair< int, int > query)
 				}
 			}
 		}
-		if(debug) cout << "four, checkAndUpdateCache!" << endl;
+		if(debug) cout << "four, fifo::checkAndUpdateCache!" << endl;
 	}
-	if(debug) cout << "five, checkAndUpdateCache! cacheHit: " << cacheHit << endl;
+	if(debug) cout << "five, fifo::checkAndUpdateCache! cacheHit: " << cacheHit << endl;
 	if(!cacheHit)
 	{
-		if(debug) cout << "six, checkAndUpdateCache!" << endl;
-		vector<int> spResult = RoadGraph::mapObject()->dijkstraSSSP(query.first, query.second);
-		if(debug) cout << "seven, checkAndUpdateCache!" << endl;
+		if(debug) cout << "six, fifo::checkAndUpdateCache!" << endl;
+		vector<int> spResult = RoadGraph::mapObject(ts.getTestFile())->dijkstraSSSP(query.first, query.second);
+		numDijkstraCalls++;
+		if(debug) cout << "seven, fifo::checkAndUpdateCache!" << endl;
 		int querySize = spResult.size();
 		if(cache.size() != 0){
 			insertItem(querySize, spResult, query.first, query.second);
@@ -116,7 +113,7 @@ void FIFO::checkAndUpdateCache(std::pair< int, int > query)
 			cache.push_back(e);
 		}
 	}
-	if(debug) cout << "seven, checkAndUpdateCache!" << endl;
+	if(debug) cout << "eight, fifo::checkAndUpdateCache!" << endl;
 }
 
 void FIFO::insertItem(int querySize, std::vector< int > nodesInQueryResult, int sNode, int tNode)
