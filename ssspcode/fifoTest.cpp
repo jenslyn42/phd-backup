@@ -35,8 +35,8 @@
 #include <boost/test/unit_test.hpp>
 #include "FIFO.cpp"
 #include "testsetting.cpp"
-#include "RoadGraph.cpp"
-#include "Vertex.cpp"
+//#include "RoadGraph.cpp"
+//#include "Vertex.cpp"
 #include <vector>
 #include <iostream>
 
@@ -47,6 +47,7 @@ struct zeFixture
 	FIFO ff;
 
 	string testname;
+	string testfile;
 	int numNodes, numqueries, cacheSize, queryRangeStart, queryRangeEnd;
 	vector< bool > atests;
 	bool gaussian, skewedData, useOptimalSubstructure, useNodeScore, useHitScore;
@@ -57,14 +58,15 @@ struct zeFixture
 	{
         	BOOST_TEST_MESSAGE("Setup");
 
-		testname ="graph_small.txt";
+		testname ="fifoTest";
+		testfile ="graph_small.txt";
 		numNodes=500, numqueries=3000, cacheSize=60, queryRangeStart=0, queryRangeEnd=500;
 		bool mybool[] = {true,false,false,false,true};
 		atests.assign(mybool, mybool + sizeof(mybool) / sizeof(bool) );
 		gaussian=true, skewedData=true, useOptimalSubstructure=true, useNodeScore=true, useHitScore = true;
 		sigma= 2.0;
 
-    		ts.setData(testname, numNodes, numqueries, cacheSize, queryRangeStart, queryRangeEnd, atests, gaussian, sigma, skewedData, useOptimalSubstructure, useNodeScore, useHitScore);
+    		ts.setData(testname, testfile, numNodes, numqueries, cacheSize, queryRangeStart, queryRangeEnd, atests, gaussian, sigma, skewedData, useOptimalSubstructure, useNodeScore, useHitScore);
 		
 		FIFO tmp (ts);		
     		ff = tmp; 
@@ -102,8 +104,14 @@ BOOST_AUTO_TEST_CASE(readQuery)
 
 BOOST_AUTO_TEST_CASE(readQueryList)
 {
+	int q = ff.getTotalQueries();
 	vector< std::pair<int,int> > ql;
+	ql.push_back(pair<int,int>(2,1));
+	ql.push_back(pair<int,int>(2,7));
+	ql.push_back(pair<int,int>(1,4));
+	ql.push_back(pair<int,int>(6,1));
 	ff.readQueryList(ql);
+	BOOST_CHECK_EQUAL(ff.getTotalQueries(), q+4);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

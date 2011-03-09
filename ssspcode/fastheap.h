@@ -49,7 +49,6 @@ struct HeapEntryComp {
 	{ return left.dist > right.dist; }
 };
 
-
 template<typename _Tp, typename _Sequence, typename _Compare >
 
 class FAST_HEAP

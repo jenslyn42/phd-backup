@@ -53,7 +53,9 @@ am_cacheReplacement_OBJECTS = CacheItem.$(OBJEXT) FIFO.$(OBJEXT) \
 cacheReplacement_OBJECTS = $(am_cacheReplacement_OBJECTS)
 cacheReplacement_LDADD = $(LDADD)
 am_testCacheReplacement_OBJECTS = CacheItemTest.$(OBJEXT) \
-	boostTest.$(OBJEXT) boostTest11.$(OBJEXT) fifoTest.$(OBJEXT)
+	RoadGraphTest.$(OBJEXT) VertexTest.$(OBJEXT) \
+	boostTest.$(OBJEXT) boostTest11.$(OBJEXT) fifoTest.$(OBJEXT) \
+	lruTest.$(OBJEXT) oscTest.$(OBJEXT)
 testCacheReplacement_OBJECTS = $(am_testCacheReplacement_OBJECTS)
 testCacheReplacement_LDADD = $(LDADD)
 testCacheReplacement_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -193,8 +195,8 @@ cacheReplacement_SOURCES = CacheItem.cpp FIFO.cpp RoadGraph.cpp Vertex.cpp \
 
 noinst_HEADERS = FIFO.h RoadGraph.h Vertex.h lru.h osc.h testsetting.h
 _SOURCES = CacheItem.h
-testCacheReplacement_SOURCES = CacheItemTest.cpp boostTest.cpp boostTest11.cpp \
-	fifoTest.cpp
+testCacheReplacement_SOURCES = CacheItemTest.cpp RoadGraphTest.cpp \
+	VertexTest.cpp boostTest.cpp boostTest11.cpp fifoTest.cpp lruTest.cpp oscTest.cpp
 
 testCacheReplacement_LDFLAGS = -lboost_unit_test_framework
 all: all-am
@@ -275,13 +277,17 @@ include ./$(DEPDIR)/CacheItem.Po
 include ./$(DEPDIR)/CacheItemTest.Po
 include ./$(DEPDIR)/FIFO.Po
 include ./$(DEPDIR)/RoadGraph.Po
+include ./$(DEPDIR)/RoadGraphTest.Po
 include ./$(DEPDIR)/Vertex.Po
+include ./$(DEPDIR)/VertexTest.Po
 include ./$(DEPDIR)/boostTest.Po
 include ./$(DEPDIR)/boostTest11.Po
 include ./$(DEPDIR)/fifoTest.Po
 include ./$(DEPDIR)/lru.Po
+include ./$(DEPDIR)/lruTest.Po
 include ./$(DEPDIR)/main.Po
 include ./$(DEPDIR)/osc.Po
+include ./$(DEPDIR)/oscTest.Po
 include ./$(DEPDIR)/testsetting.Po
 
 .cpp.o:

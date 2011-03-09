@@ -27,12 +27,18 @@
  *   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS    	*
  *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          	*
  ********************************************************************************/
+#ifndef VERTEX_CPP
+#define VERTEX_CPP
 
 #include "Vertex.h"
-#include "boost/unordered_map.hpp"
-
+#define debug false
 
 Vertex::Vertex(int id, int nId, int weight)
+{
+	updateVertexID(id, nId, weight);
+}
+
+void Vertex::updateVertexID(int id, int nId, int weight)
 {
 	this->id = id;
 	addNeighbour(nId, weight);
@@ -40,9 +46,17 @@ Vertex::Vertex(int id, int nId, int weight)
 
 void Vertex::addNeighbour(int id, int weight)
 {
-	if(Adjacencylist.find(id) == Adjacencylist.end())
-	{
+	if(debug) std::cout << "one, vertex::addNeighbour! id: "<<id <<", w: " << weight << " size: " << Adjacencylist.size() << endl; 
+	if (debug){for(int d = 0; d < Adjacencylist.size(); d++) {cout << d << ":"<< Adjacencylist[d] << " "; cout << endl;}}
+	
+	if(Adjacencylist.find(id) == Adjacencylist.end()){
+		if(debug) std::cout << "two, vertex::addNeighbour!" << endl;
 		Adjacencylist[id] = weight;
+		if(debug) std::cout << "three, vertex::addNeighbour!" << endl;
+	}
+	if(debug){ 
+		std::cout << "four, vertex::addNeighbour!"<< endl;
+		for(int d = 0; d < Adjacencylist.size(); d++) {cout<< d << ":"<< Adjacencylist[d] << " ";cout << endl;}
 	}
 	
 }
@@ -62,3 +76,4 @@ string Vertex::toString()
 	//TODO: implement
 }
 
+#endif

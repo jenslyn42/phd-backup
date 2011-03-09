@@ -28,10 +28,7 @@
  *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          	*
  ********************************************************************************/
 #include "lru.h"
-#include "testsetting.h"
-#include "RoadGraph.h"
-#include <boost/foreach.hpp>
-#include <algorithm>
+#define debug false
 
 typedef std::pair<int , int> intPair;
 
@@ -39,6 +36,13 @@ LRU::LRU(testsetting ts)
 {
 	this->ts = ts;
 	cacheSize = ts.getCacheSize();
+	numTotalQueries = 0;
+	numCacheHits = 0;
+	cacheUsed = 0;
+	numDijkstraCalls = 0;
+
+	useNodeScore = ts.isUseNodeScore();
+	useHitScore = ts.isUseHitScore();
 }
 
 LRU::~ LRU()
@@ -66,8 +70,14 @@ void LRU::checkAndUpdateCache(std::pair< int, int > query)
 	if(ts.isUseOptimalSubstructure()){
 		BOOST_FOREACH(CacheItem ci, cache )
 		{
+			if(find(ci.item.begin(),ci.item.end(), query.first) != ci.item.end()) 
+				if(debug) cout << "LRU::checkAndUpdateCache FIRST TRUE" << endl;
+			if(find(ci.item.begin(),ci.item.end(), query.second) != ci.item.end())
+				if(debug) cout << "LRU::checkAndUpdateCache SECOND TRUE" << endl;
+
 			if(find(ci.item.begin(),ci.item.end(), query.first) != ci.item.end() && find(ci.item.begin(),ci.item.end(), query.second) != ci.item.end())
 			{
+				if(debug) cout << "LRU::checkAndUpdateCache BOTH TRUE" << endl;
 				numCacheHits++;
 				ci.updateKey(numTotalQueries);
 				sort(cache.begin(), cache.end());
@@ -75,6 +85,7 @@ void LRU::checkAndUpdateCache(std::pair< int, int > query)
 				break;
 			}
 		}
+		if(debug) cout << "LRU::checkAndUpdateCache " << endl;
 	}else{
 		BOOST_FOREACH(CacheItem ci, cache )
 		{
@@ -91,39 +102,49 @@ void LRU::checkAndUpdateCache(std::pair< int, int > query)
 
 	if(!cacheHit)
 	{
-		vector<int> spResult  = RoadGraph::mapObject()->dijkstraSSSP(query.first, query.second);
+		vector<int> spResult  = RoadGraph::mapObject(ts.getTestFile())->dijkstraSSSP(query.first, query.second);
+		numDijkstraCalls++;
 		int querySize = spResult.size();
 		if(cache.size() != 0){
+			if(debug) cout << "LRU::checkAndUpdateCache 1, querySize: "<<querySize << endl;
 			insertItem(querySize, spResult, query.first, query.second);
 		}else{
+			if(debug) cout << "LRU::checkAndUpdateCache 2, querySize: "<<querySize << endl;
 			CacheItem e (numTotalQueries, spResult, query.first, query.second);
 			cache.push_back(e);
 		}
+		if(debug) cout << "LRU::checkAndUpdateCache 3" << endl;
 	}
 }
 
 void LRU::insertItem(int querySize, std::vector< int > nodesInQueryResult, int sNode, int tNode)
 {
 	bool notEnoughSpace = true;
-
+	if(debug) cout << "one, LRU::insertItem(" <<querySize <<"," <<nodesInQueryResult.size() <<","<<sNode<<","<<tNode<<")" << endl;
 	//insert query into cache, will repeatedly remove items until there is enough space for the new item.
 	do{
 		if((cacheSize - cacheUsed) > querySize)
 		{
+			if(debug) cout << "two1, LRU::insertItem cacheSize,cacheUsed " << cacheSize <<"," << cacheUsed <<endl;
 			CacheItem cItem (numTotalQueries, nodesInQueryResult, sNode, tNode);
 			cache.push_back(cItem);
 			cacheUsed = cacheUsed + cItem.size;
 			notEnoughSpace = false;
+			if(debug) cout << "two2, LRU::insertItem cacheSize,cacheUsed " << cacheSize <<"," << cacheUsed <<endl;
 		}
 		else if(querySize < cacheSize)
 		{
+			if(debug) cout << "three1, LRU::insertItem" << cache.size() <<"," << cache[0].size <<endl;
+			if(debug) cout << "querySize,cacheSize,cacheUsed:" << querySize <<"," << cacheSize <<"," << cacheUsed << endl;
 			int itemSize = cache[0].size;
 			cache.erase(cache.begin());
 			cacheUsed = cacheUsed - itemSize;
+			if(debug) cout << "three2, LRU::insertItem" <<endl;
 		}
 		else
 			break;
 	}while(notEnoughSpace);
+	if(debug) cout << "four, LRU::insertItem" <<endl;
 }
 
 

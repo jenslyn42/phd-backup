@@ -30,9 +30,7 @@
 #ifndef CACHEITEM_H
 #define CACHEITEM_H
 
-
 #include <vector>
-
 
 class CacheItem {
 	int accessKey;
@@ -49,16 +47,6 @@ public:
 
 //    	friend bool operator< (CacheItem const& cItem1, CacheItem const& cItem2)const {return cItem1.key() < cItem2.key();}
  	inline bool operator< (CacheItem const& cItem)const {return (accessKey < cItem.key());}
-// 	friend inline bool operator> (CacheItem &cItem1, CacheItem &cItem2) {return cItem1.key() > cItem2.key();}
-//	inline bool operator<= (CacheItem &cItem) {return accessKey <= cItem.key();}
-// 	inline bool operator>= (CacheItem &cItem) {return accessKey >= cItem.key();}
-//	friend inline bool operator== (CacheItem &cItem1, CacheItem &cItem2) {return cItem1.key() == cItem2.key();}
 };
 
 #endif
-
-
-
-
-
-	

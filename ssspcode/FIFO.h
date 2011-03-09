@@ -34,6 +34,11 @@
 #include "testsetting.h"
 #include <vector>
 #include <utility>
+#include "RoadGraph.h"
+#include <boost/foreach.hpp>
+#include <algorithm>
+#include <iostream>
+#include <string>
 
 /**
 	@author Jeppe Rishede <jenslyn42@gmail.com>
@@ -51,10 +56,12 @@ public:
 	void readQueryList(std::vector< std::pair<int,int> > queryList);
 	int getCacheHits(){return numCacheHits;}
 	int getTotalQueries(){return numTotalQueries;}
+	int getTotalDijkstraCalls(){return numDijkstraCalls;}
 
 private:
 	int numTotalQueries;
 	int numCacheHits;
+	int numDijkstraCalls;
 
 	int cacheSize;
 	int cacheUsed;

@@ -27,15 +27,14 @@
  *   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS    	*
  *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          	*
  ********************************************************************************/
+#ifndef TESTSETTING_CPP
+#define TESTSETTING_CPP
+
 #include "testsetting.h"
 
-#include "string.h"
-#include <vector>
-
-
-testsetting::testsetting(string testname, int numNodes, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, vector< bool > atests, bool gaussian, double sigma, bool skewedData, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore)
+testsetting::testsetting(string testname, string testFile, int numNodes, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, vector< bool > atests, bool gaussian, double sigma, bool skewedData, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore)
 {
-	this->setData(testname, numNodes, numqueries, cacheSize, queryRangeStart, queryRangeEnd, atests, gaussian, sigma, skewedData, useOptimalSubstructure, useNodeScore, useHitScore);
+	this->setData(testname, testFile, numNodes, numqueries, cacheSize, queryRangeStart, queryRangeEnd, atests, gaussian, sigma, skewedData, useOptimalSubstructure, useNodeScore, useHitScore);
 }
 
 
@@ -55,9 +54,10 @@ testsetting::~testsetting()
 	useHitScore = false;
 }
 
-void testsetting::setData(string testname, int numNodes, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, vector< bool > atests, bool gaussian, double sigma, bool skewedData, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore)
+void testsetting::setData(string testname, string testfile, int numNodes, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, vector< bool > atests, bool gaussian, double sigma, bool skewedData, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore)
 {
 	testName = testname;
+	testFile = testfile;
 	numRoadGraphNodes = numNodes;
 	numQueries = numqueries;
 	this->cacheSize = cacheSize;
@@ -73,11 +73,6 @@ void testsetting::setData(string testname, int numNodes, int numqueries, int cac
 	this->useHitScore = useHitScore;
 }
 
-
-activeTests::activeTests()
-{
-
-}
 
 void activeTests::setData(vector< bool > aTests)
 {
@@ -104,3 +99,5 @@ gaussian::~ gaussian()
 	useGaussian = false;
 	sigma = 0.0;
 }
+
+#endif
