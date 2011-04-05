@@ -27,55 +27,68 @@
  *   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS    		*
  *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          		*
  ***************************************************************************************/
-#ifndef FIFO_H
-#define FIFO_H
 
-#include "CacheItem.h"
-#include "testsetting.h"
-#include "Test.h"
-#include "RoadGraph.h"
-
-#include <boost/foreach.hpp>
-
-#include <algorithm>
-#include <iostream>
-#include <string>
+#define BOOST_TEST_DYN_LINK
+#ifdef STAND_ALONE
+#   define BOOST_TEST_MODULE LRUModule
+#endif
+#include <boost/test/unit_test.hpp>
+#include "RoadGraph.cpp"
 #include <vector>
-#include <utility>
+#include <iostream>
 
-/**
-	@author Jeppe Rishede <jenslyn42@gmail.com>
-*/
+struct RgFixture
+{
+	int m;
+	std::string testFile;
+	RgFixture() : m(2)
+	{
+        	BOOST_TEST_MESSAGE("Setup");
 
-class FIFO: public Test{
-public:
-	FIFO(){ };
-	FIFO(testsetting ts);
-	~FIFO();
+		testFile = "graph_small.txt";
+	}
 
-	std::vector<CacheItem> cache;
-	
-	void readQuery(std::pair<int,int> query);
-	void readQueryList(std::vector< std::pair<int,int> > queryList);
-	int getCacheHits(){return numCacheHits;}
-	int getTotalQueries(){return numTotalQueries;}
-	int getTotalDijkstraCalls(){return numDijkstraCalls;}
-
-private:
-	int numTotalQueries;
-	int numCacheHits;
-	int numDijkstraCalls;
-
-	int cacheSize;
-	int cacheUsed;
-
-	bool useNodeScore;
-	bool useHitScore;
-	
-	testsetting ts;
-
-	void checkAndUpdateCache(std::pair<int,int> query);
-	void insertItem(int querySize, std::vector<int> nodesInQueryResult, int sNode, int tNode);
+    	~RgFixture()
+	{
+        	BOOST_TEST_MESSAGE("Teardown");
+	}
 };
 
-#endif
+BOOST_FIXTURE_TEST_SUITE(ClassRoadGraph, RgFixture)
+
+// 	static RoadGraph* mapObject();
+// 	std::vector<Vertex> getMap();
+// 	std::vector<int> dijkstraSSSP(int s, int t);
+// 	int getMapsize();
+BOOST_AUTO_TEST_CASE(checkMapFilename)
+{
+	std::string spResult  = RoadGraph::mapObject(testFile)->checkMapFilename();
+
+	BOOST_CHECK(spResult.compare(testFile) == 0);
+}
+
+BOOST_AUTO_TEST_CASE(getMap)
+{
+	std::vector<Vertex> spResult  = RoadGraph::mapObject(testFile)->getMap();
+
+	BOOST_CHECK(0 == 0);
+}
+
+BOOST_AUTO_TEST_CASE(dijkstraSSSPtest)
+{
+	std::vector<int> spResult  = RoadGraph::mapObject(testFile)->dijkstraSSSP(1, 6);
+
+	BOOST_CHECK(spResult.at(0) == 6);
+	BOOST_CHECK(spResult.at(1) == 5);
+	BOOST_CHECK(spResult.at(2) == 2);
+	BOOST_CHECK(spResult.at(3) == 1);
+	BOOST_CHECK((int)spResult.size() == 4);
+}
+
+BOOST_AUTO_TEST_CASE(getMapsize)
+{
+	int size  = RoadGraph::mapObject(testFile)->getMapsize();
+	BOOST_CHECK(size == 8);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

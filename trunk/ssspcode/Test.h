@@ -27,55 +27,28 @@
  *   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS    		*
  *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          		*
  ***************************************************************************************/
-#ifndef FIFO_H
-#define FIFO_H
+#ifndef TEST_H
+#define TEST_H
 
-#include "CacheItem.h"
-#include "testsetting.h"
-#include "Test.h"
-#include "RoadGraph.h"
-
-#include <boost/foreach.hpp>
-
-#include <algorithm>
-#include <iostream>
-#include <string>
-#include <vector>
 #include <utility>
+#include <vector>
+#include <iostream>
 
 /**
 	@author Jeppe Rishede <jenslyn42@gmail.com>
 */
 
-class FIFO: public Test{
+class Test{
+
 public:
-	FIFO(){ };
-	FIFO(testsetting ts);
-	~FIFO();
+	Test(){ };
+	~Test(){ };
 
-	std::vector<CacheItem> cache;
-	
-	void readQuery(std::pair<int,int> query);
-	void readQueryList(std::vector< std::pair<int,int> > queryList);
-	int getCacheHits(){return numCacheHits;}
-	int getTotalQueries(){return numTotalQueries;}
-	int getTotalDijkstraCalls(){return numDijkstraCalls;}
-
-private:
-	int numTotalQueries;
-	int numCacheHits;
-	int numDijkstraCalls;
-
-	int cacheSize;
-	int cacheUsed;
-
-	bool useNodeScore;
-	bool useHitScore;
-	
-	testsetting ts;
-
-	void checkAndUpdateCache(std::pair<int,int> query);
-	void insertItem(int querySize, std::vector<int> nodesInQueryResult, int sNode, int tNode);
+	virtual void readQuery(std::pair<int,int> query){std::cout << "3" <<std::endl;}
+	virtual void readQueryList(std::vector<std::pair<int,int> > queryList){ };
+	virtual int getCacheHits(){return 0;}
+	virtual int getTotalQueries(){return 0;}
+	virtual int getTotalDijkstraCalls(){return 0;}
 };
 
 #endif

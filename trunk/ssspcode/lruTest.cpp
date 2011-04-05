@@ -27,55 +27,86 @@
  *   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS    		*
  *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          		*
  ***************************************************************************************/
-#ifndef FIFO_H
-#define FIFO_H
 
-#include "CacheItem.h"
-#include "testsetting.h"
-#include "Test.h"
-#include "RoadGraph.h"
-
-#include <boost/foreach.hpp>
-
-#include <algorithm>
-#include <iostream>
-#include <string>
+#define BOOST_TEST_DYN_LINK
+#ifdef STAND_ALONE
+#   define BOOST_TEST_MODULE LRUModule
+#endif
+#include <boost/test/unit_test.hpp>
+#include "lru.cpp"
+// #include "testsetting.cpp"
+// #include "RoadGraph.cpp"
+// #include "Vertex.cpp"
 #include <vector>
-#include <utility>
+#include <iostream>
 
-/**
-	@author Jeppe Rishede <jenslyn42@gmail.com>
-*/
-
-class FIFO: public Test{
-public:
-	FIFO(){ };
-	FIFO(testsetting ts);
-	~FIFO();
-
-	std::vector<CacheItem> cache;
-	
-	void readQuery(std::pair<int,int> query);
-	void readQueryList(std::vector< std::pair<int,int> > queryList);
-	int getCacheHits(){return numCacheHits;}
-	int getTotalQueries(){return numTotalQueries;}
-	int getTotalDijkstraCalls(){return numDijkstraCalls;}
-
-private:
-	int numTotalQueries;
-	int numCacheHits;
-	int numDijkstraCalls;
-
-	int cacheSize;
-	int cacheUsed;
-
-	bool useNodeScore;
-	bool useHitScore;
-	
+struct zeFixture
+{
+	int m;
 	testsetting ts;
+	LRU ff;
 
-	void checkAndUpdateCache(std::pair<int,int> query);
-	void insertItem(int querySize, std::vector<int> nodesInQueryResult, int sNode, int tNode);
+	string testname;
+	string testfile;
+	int numNodes, numqueries, cacheSize, queryRangeStart, queryRangeEnd;
+	bool gaussian, useOptimalSubstructure, useNodeScore, useHitScore;
+	double sigma;
+
+
+	zeFixture() : m(2)
+	{
+        	BOOST_TEST_MESSAGE("Setup");
+
+		testname ="graph_small.txt";
+		testfile ="graph_small.txt";
+		numqueries=3000, cacheSize=60, queryRangeStart=0, queryRangeEnd=500;
+		gaussian=true, useOptimalSubstructure=true, useNodeScore=true, useHitScore = true;
+		sigma= 2.0;
+
+    		ts.setData(testname, testfile, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+		
+		LRU tmp (ts);		
+    		ff = tmp; 
+
+	}
+
+    	~zeFixture()
+	{
+        	BOOST_TEST_MESSAGE("Teardown");
+	}
 };
 
-#endif
+BOOST_FIXTURE_TEST_SUITE(ClassLRU, zeFixture)
+
+
+BOOST_AUTO_TEST_CASE(getTotalQueries)
+{
+	BOOST_CHECK(ff.getTotalQueries() == 0);
+}
+
+BOOST_AUTO_TEST_CASE(getCacheHits)
+{
+	BOOST_CHECK_EQUAL(ff.getCacheHits(), 0);
+}
+
+BOOST_AUTO_TEST_CASE(readQuery)
+{
+	int q = ff.getTotalQueries();
+	pair<int,int> p (2,3);
+	ff.readQuery(p);
+	BOOST_CHECK_EQUAL(ff.getTotalQueries(), q+1);
+}
+
+BOOST_AUTO_TEST_CASE(readQueryList)
+{
+	int q = ff.getTotalQueries();
+	vector< std::pair<int,int> > ql;
+	ql.push_back(pair<int,int>(2,1));
+	ql.push_back(pair<int,int>(2,7));
+	ql.push_back(pair<int,int>(1,4));
+	ql.push_back(pair<int,int>(6,1));
+	ff.readQueryList(ql);
+	BOOST_CHECK_EQUAL(ff.getTotalQueries(), q+4);
+}
+
+BOOST_AUTO_TEST_SUITE_END()

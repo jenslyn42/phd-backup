@@ -48,9 +48,9 @@ struct zeFixture
 
 	string testname;
 	string testfile;
-	int numNodes, numqueries, cacheSize, queryRangeStart, queryRangeEnd;
+	int numqueries, cacheSize, queryRangeStart, queryRangeEnd;
 	vector< bool > atests;
-	bool gaussian, skewedData, useOptimalSubstructure, useNodeScore, useHitScore;
+	bool gaussian, useOptimalSubstructure, useNodeScore, useHitScore;
 	double sigma;
 
 
@@ -60,13 +60,11 @@ struct zeFixture
 
 		testname ="fifoTest";
 		testfile ="graph_small.txt";
-		numNodes=500, numqueries=3000, cacheSize=60, queryRangeStart=0, queryRangeEnd=500;
-		bool mybool[] = {true,false,false,false,true};
-		atests.assign(mybool, mybool + sizeof(mybool) / sizeof(bool) );
-		gaussian=true, skewedData=true, useOptimalSubstructure=true, useNodeScore=true, useHitScore = true;
+		numqueries=3000, cacheSize=60, queryRangeStart=0, queryRangeEnd=100;
+		gaussian=true, useOptimalSubstructure=true, useNodeScore=true, useHitScore = true;
 		sigma= 2.0;
 
-    		ts.setData(testname, testfile, numNodes, numqueries, cacheSize, queryRangeStart, queryRangeEnd, atests, gaussian, sigma, skewedData, useOptimalSubstructure, useNodeScore, useHitScore);
+    		ts.setData(testname, testfile, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
 		
 		FIFO tmp (ts);		
     		ff = tmp; 

@@ -44,9 +44,15 @@ struct HeapEntry {
 	}
 };
 
+///For minHeap
 struct HeapEntryComp {
 	bool operator () (HeapEntry left, HeapEntry right) const
 	{ return left.dist > right.dist; }
+};
+///For MaxHeap
+struct HeapEntryCompMax {
+	bool operator () (HeapEntry left, HeapEntry right) const
+	{ return left.dist < right.dist; }
 };
 
 template<typename _Tp, typename _Sequence, typename _Compare >

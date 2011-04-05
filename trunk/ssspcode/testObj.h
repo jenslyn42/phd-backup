@@ -27,55 +27,51 @@
  *   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS    		*
  *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          		*
  ***************************************************************************************/
-#ifndef FIFO_H
-#define FIFO_H
 
-#include "CacheItem.h"
+#ifndef TESTOBJ_H
+#define TESTOBJ_H
+
 #include "testsetting.h"
 #include "Test.h"
-#include "RoadGraph.h"
+#include "osc.h"
+#include "lru.h"
+#include "FIFO.h"
+
+#include <ctime>
+#include <iostream>
+#include <cstdlib>
+#include <typeinfo>
 
 #include <boost/foreach.hpp>
-
-#include <algorithm>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <utility>
 
 /**
 	@author Jeppe Rishede <jenslyn42@gmail.com>
 */
 
-class FIFO: public Test{
+class testObj{
 public:
-	FIFO(){ };
-	FIFO(testsetting ts);
-	~FIFO();
+	testObj(){ };
+	testObj(testsetting settings, int testType);
+	testObj(testsetting settings, int testType, vector< pair<int,int> > queries);
+	~testObj();
 
-	std::vector<CacheItem> cache;
-	
-	void readQuery(std::pair<int,int> query);
-	void readQueryList(std::vector< std::pair<int,int> > queryList);
-	int getCacheHits(){return numCacheHits;}
-	int getTotalQueries(){return numTotalQueries;}
-	int getTotalDijkstraCalls(){return numDijkstraCalls;}
+	void generateQueries(int numQueries);
+	void runTest();
+	void testResults(clock_t s, clock_t e);
+
+	Test *test;
 
 private:
-	int numTotalQueries;
-	int numCacheHits;
-	int numDijkstraCalls;
-
-	int cacheSize;
-	int cacheUsed;
-
-	bool useNodeScore;
-	bool useHitScore;
-	
 	testsetting ts;
+	
+	clock_t start; 
+	clock_t end;
 
-	void checkAndUpdateCache(std::pair<int,int> query);
-	void insertItem(int querySize, std::vector<int> nodesInQueryResult, int sNode, int tNode);
+	///for query generation
+	vector<pair<int,int> > queries;
+	int s,t;
+	pair<int,int> p;
+
 };
 
 #endif

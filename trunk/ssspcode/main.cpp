@@ -39,6 +39,7 @@
 #include "lru.h"
 #include "FIFO.h"
 #include "RoadGraph.h"
+#include "testObj.h"
 
 #include "boost/math/common_factor.hpp"
 #include "boost/unordered_map.hpp"
@@ -64,51 +65,73 @@ vector<pair<int,int> > queries;
 int s,t;
 pair<int,int> p;
 
-for(int i=0; i<500; i++)
+for(int i=0; i<10000; i++)
 {
-	p.first = rand()%6105 +1;
-	p.second = rand()%6105 +1;
+
+	srand((int)rand());
+	p.first = (rand()%6104) +1;
+	p.second = (rand()%6104) +1;
 	queries.push_back(p);
 }
+
+// cout << "error check "<< queries.at(1045).first << "," << queries.at(1045).second << endl;
+// cout << "error check "<< queries.back().first << "," << queries.back().second << endl;
 
 ///Test settings. many options from here are not used directly yet
 testsetting ts;
 string testname = "test";
 string testfile ="graph_large.txt";
 OSC ff;	
-int numNodes=6105, numqueries=100, cacheSize=60000, queryRangeStart=0, queryRangeEnd=600;
-vector< bool > atests;
-bool gaussian, skewedData, useOptimalSubstructure, useNodeScore, useHitScore;
-double sigma = 2.0;
-bool mybool[] = {true,false,false,false,true};
-atests.assign(mybool, mybool + sizeof(mybool) / sizeof(bool) );
-gaussian=true, skewedData=true, useOptimalSubstructure=true, useNodeScore=true, useHitScore = true;
 
-ts.setData(testname, testfile, numNodes, numqueries, cacheSize, queryRangeStart, queryRangeEnd, atests, gaussian, sigma, skewedData, useOptimalSubstructure, useNodeScore, useHitScore);
+int numqueries=7000, cacheSize=10000000, queryRangeStart=0, queryRangeEnd=RoadGraph::mapObject(testfile)->getMapsize();
+bool gaussian, useOptimalSubstructure, useNodeScore, useHitScore;
+double sigma = 2.0;
+gaussian=true, useOptimalSubstructure=true, useNodeScore=true, useHitScore = true;
+
+ts.setData(testname, testfile, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
 
 ///To hold the start/end time of OSC,LRU,FIFO
 clock_t start, end;
 
+///exp test OSC with testObj
+// testObj *expTest = new testObj(ts,1, queries);
+// expTest->runTest();
+// expTest-> testObj::~testObj();
+
+
+///exp test LRU with testObj
+// testObj *expTest2 = new testObj(ts,2, queries);
+// expTest2->runTest();
+// expTest2-> testObj::~testObj();
+
+
+///exp test FIFO with testObj
+testObj *expTest3 = new testObj(ts,3, queries);
+expTest3->runTest();
+expTest3-> testObj::~testObj();
+
+
 ///test  OSC
-// // start = clock();
-// // OSC *methodone = new OSC(ts);
-// // BOOST_FOREACH( intPair qpair, queries )
-// // {
-// // 	cout << "OSC ("<< qpair.first <<","<<qpair.second <<")" << endl;
-// // 	methodone->readQuery(qpair);
-// // }
-// // end = clock();
-// // cout << "OSC time: " << double(diffclock(start,end)) << " sec. dc: " << methodone->getTotalDijkstraCalls() <<"," << methodone->getCacheHits()<< endl;
+
+// OSC *methodone = new OSC(ts);
+// start = clock();
+// BOOST_FOREACH( intPair qpair, queries )
+// {
+// //	cout << "OSC ("<< qpair.first <<","<<qpair.second <<")" << endl;
+// 	methodone->readQuery(qpair);
+// }
+// end = clock();
+// cout << "OSC time: " << double(diffclock(start,end)) << " sec. dc: " << methodone->getTotalDijkstraCalls() <<"," << methodone->getCacheHits()<< endl;
 
 ///Test LRU
-start = clock();
-LRU *methodtwo = new LRU(ts);
-BOOST_FOREACH( intPair qpair, queries )
-{
-	methodtwo->readQuery(qpair);
-}
-end = clock();
-cout << "LRU time: " << double(diffclock(start,end)) << " sec. dc: " << methodtwo->getTotalDijkstraCalls() <<"," << methodtwo->getCacheHits()<< endl;
+// start = clock();
+// LRU *methodtwo = new LRU(ts);
+// BOOST_FOREACH( intPair qpair, queries )
+// {
+// 	methodtwo->readQuery(qpair);
+// }
+// end = clock();
+// cout << "LRU time: " << double(diffclock(start,end)) << " sec. dc: " << methodtwo->getTotalDijkstraCalls() <<"," << methodtwo->getCacheHits()<< endl;
 
 ///Test FIFO
 // start = clock();
@@ -127,11 +150,11 @@ int totalcalls = 0;
 BOOST_FOREACH (unorderedIntMap::value_type node, nodecalls)
 {
 	//cout << node.first <<":" <<node.second << endl;
-	totalcalls += node.second;
-	if(node.second < 50) cout << "low: " << node.second << endl;
-	if(node.second > 410) cout << "high: " << node.second << endl;
+ 	totalcalls += node.second;
+// 	if(node.second < 50) cout << "low: " << node.second << endl;
+// 	if(node.second > 410) cout << "high: " << node.second << endl;
 }
-cout << "totalcalls: " << totalcalls << endl;
+cout << "Vertices visited: " << totalcalls << endl;
 
 return EXIT_SUCCESS;
 };
