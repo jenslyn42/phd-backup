@@ -13,9 +13,9 @@ FIFO - First In First Out. FIFO replaces, as the name suggests, the oldest cache
 
 
 
-\section{Contribution} \label{sec:contribution}
+\section{\spath algorithm speedup} \label{sec:contribution}
 
-The techniques proposed here will each present how, and in what way, they can contribute to fulfilling the goals set out in section \ref{subsec:goals}.
+The techniques proposed here will each present how, and in what way, they can contribute to fulfilling sub-goal 1, set out in section \ref{subsec:goals}.
 
 All cache replacement techniques presented takes advantage of the optimal substructure property of shortest path, so all items in the \spath cache can also answer queries which only need a part of the shortest path.
 
@@ -40,73 +40,6 @@ The basis of \osc is two scoring mechanisms which can both be added or multiplie
 \begin{lemma}{\it \textbf{\spath Optimal Substructure}}
 Given a weighted DAG $G = (V, E)$ let $p = \left< v_1, v_2,..., v_k \right>$ be a shortest path from vertex $v_1$ to vertex $v_k$ and, $\forall i,j | 1 \leq i \leq j \leq k$, let $p_{ij} = \left<v_i, v_{i+1},..., v_j \right>$ be the subpath of p from vertex $v_i$ to vertex $v_j$. Then, $p_{ij}$ is a shortest path from $v_i$ to $v_j$.
 \end{lemma}
-
-
-\subsubsection{Scoring Mechanism}
-
-
-The scoring is done by summing up: the number of times a cache item has formed the basis of a cache hit; the number of times each node in cache item has been the source/target nodes in a query, or member of a query result. By taking the length of a cache item (number of nodes in the \spath) and multiplying it on the previously calculated sum we get the full score.
-
-In \osc we use a scoring mechanism to rank the usefulness of cached items. Table \ref{tab:score} shows 3 queries ($i$) seen at different frequency and with different length. C(l) calculates the number of vertices visited when finding a shortest path with a \spath algorithm. Based on these numbers it is then possible to calculate the benefit of adding one of these \spath queries to the cache. E.g. Item 1 has higher frequency than item 2, but the saving of putting item 2 in cache is much higher:
-
-item one cost: $11*100=1100$ and item two cost: $10*200=2000$. Assuming a cache hit cost $1$, then adding item one would save = $1100-(100+10*1)=990$, and item two would save $2000-(200+9*1)=1791$. the equation is: $(total\_cost\_without\_cache) - (cost\_of\_one\_Dijkstra\_run + (total\_runs-1 * cost\_of\_cache\_hit))$
-
-
-\begin{table}
-\begin{center}
-\begin{tabular}{l |l |l |l}
-i & item freq & item length & C(l) \\
-1 & 11 & 10 & 100 \\
-2 & 10 & 15 & 200 \\
-3 & 2 & 15 & 2000 \\
-\end{tabular}
-\end{center}
-\caption{\spath queries ($i$), their frequency, length, and cost of calculating result($C(l)$)}
-\label{tab:score}
-\end{table}
-
-
-\ffh{C(l): modify Dijkstra implementation to return this number}
-
-
-
-\subsection{\sps}
-
-If space consumption is a very high priority then \sps is one option to alleviate the problem. \sps changes the cache structure from $n_1, ... , n_n$ to $CI_{k\left[s-node\right]},CI_{k\left[e-node\right]}, n_{e-node+1}, ... , n_n$.\footnote{This example only shows how to share something in the front of an item, though adding them after or in the middel does not matter.}
-I.e. including the start-/end-node of a range from another cache item. The advantage of doing this is a, possibly large, reduction in the space requirements for the cache. Maintaining such a cache would be quite expensive in terms of computation when changes occur, though the space saving would allow for more cache items which again would reduce the total running time. We will later show wether this overhead can really be offset by the additional number of cache items which would fit into the cache.
-
-
-% how does it work?
-% what goal does it fulfill?
-% how does it fulfill the goal?
-\subsection{Partitioning Map}
-
-Partitioning of map into large region to quickly be able to discard items in the cache, leading to less work when trying to find a cache hit. By discarding possible \spath cache candidates early we may save some time and computations.
-
-\ffh{improve fig. \ref{fig:mappartition}}
-
-\begin{figure}
-  \center
-	\includegraphics[width=0.30\textwidth]{figures/mapPartition.pdf}
-	\caption{Partitioned Map}
-  \label{fig:mappartition}
-\end{figure}
-
-\subsection{Partitioning Caching} 
-
-\begin{figure}
-  \center
-	\includegraphics[width=0.42\textwidth]{figures/partSPcacheB.pdf}
-	\caption{Normal SP searching area}
-  \label{fig:cachestruc}
-\end{figure}
-
-\begin{figure}
-  \center
-	\includegraphics[width=0.42\textwidth]{figures/partSPcacheA.pdf}
-	\caption{Reduced SP search area (1 \& 3) based on partition caching (2)}
-  \label{fig:cachestruc}
-\end{figure}
 
 
 
@@ -158,6 +91,78 @@ can be implemented on top of either of the two previously presented cache struct
   \label{fig:cachestruc}
 \end{figure}
 
+
+\section{Overhead reduction}
+The techniques proposed here will each present how, and in what way, they can contribute to fulfilling sub-goal 2, set out in section \ref{subsec:goals}.
+
+\subsubsection{Scoring Mechanism}
+
+
+The scoring is done by summing up: the number of times a cache item has formed the basis of a cache hit; the number of times each node in cache item has been the source/target nodes in a query, or member of a query result. By taking the length of a cache item (number of nodes in the \spath) and multiplying it on the previously calculated sum we get the full score.
+
+In \osc we use a scoring mechanism to rank the usefulness of cached items. Table \ref{tab:score} shows 3 queries ($i$) seen at different frequency and with different length. $C(l)$ calculates the number of vertices visited when finding a shortest path with a \spath algorithm. Based on these numbers it is then possible to calculate the benefit of adding one of these \spath queries to the cache. To calculate the savings gained from caching one of the 3 queries, first the cost of a cache hit $c_{hit}$ is multiplied with the item frequency, $i_{freq}$. This is then added to the value of $C(l)$ and substracted from the cost of the queries without a cache, $nocache$. E.g. Item 1 has higher frequency (item freq/$i_{freq}$) than item 2, but the saving of putting item 2 in cache is much higher:
+
+The cost (nocache) of item one is: $11*100=1100$ and item two cost: $10*200=2000$. Assuming a cache hit cost $1$, then adding item one to the cache would save = $1100-(100+10*1)=990$, and item two would save $2000-(200+9*1)=1791$. 
+
+\begin{equation}\label{eq:cachesaving}
+saving = nocache - (C(l) + (i_{freq} * c_{hit}))
+\end{equation}
+
+
+\begin{table}
+\begin{center}
+\begin{tabular}{l |l |l |l}
+i & item freq & item length & C(l) \\
+1 & 11 & 10 & 100 \\
+2 & 10 & 15 & 200 \\
+3 & 2 & 15 & 2000 \\
+\end{tabular}
+\end{center}
+\caption{\spath queries ($i$), their frequency, length, and cost of calculating result($C(l)$)}
+\label{tab:score}
+\end{table}
+
+
+\subsection{\sps}
+
+If space consumption is a very high priority then \sps is one option to alleviate the problem. \sps changes the cache structure from $n_1, ... , n_n$ to $CI_{k\left[s-node\right]},CI_{k\left[e-node\right]}, n_{e-node+1}, ... , n_n$.\footnote{This example only shows how to share something in the front of an item, though adding them after or in the middel does not matter.}
+I.e. including the start-/end-node of a range from another cache item. The advantage of doing this is a, possibly large, reduction in the space requirements for the cache. Maintaining such a cache would be quite expensive in terms of computation when changes occur, though the space saving would allow for more cache items which again would reduce the total running time. We will later show wether this overhead can really be offset by the additional number of cache items which would fit into the cache.
+
+
+% how does it work?
+% what goal does it fulfill?
+% how does it fulfill the goal?
+\subsection{Partitioning Map}\label{sec:partionmap}
+
+Partitioning of map into large region to quickly be able to discard items in the cache, leading to less work when trying to find a cache hit. By discarding possible \spath cache candidates early we may save some time and computations.
+
+\ffh{improve fig. \ref{fig:mappartition}}
+
+\begin{figure}
+  \center
+	\includegraphics[width=0.30\textwidth]{figures/mapPartition.pdf}
+	\caption{Partitioned Map}
+  \label{fig:mappartition}
+\end{figure}
+
+\subsection{Partitioning Caching} 
+
+The idea behind Partitioning caching builds opon the idea of partitioning the map (sec. \ref{sec:partionmap}), but takes one step further. If a map can be partitioned in such a way that there is only one connection between them, then the connection can be cached and there by greatly reduce the search space needed to calculate a route between the two map partitions. The idea is shown in fig \ref{fig:cacheB}, \ref{fig:cacheA} where the search space needed to calculate a route from A to B is greaty reduced in fig. \ref{fig:cacheA} by caching partition 2.
+\ffh{remember to equation to show by how much}
+
+\begin{figure}
+  \center
+	\includegraphics[width=0.42\textwidth]{figures/partSPcacheB.pdf}
+	\caption{Normal SP searching area}
+  \label{fig:cacheB}
+\end{figure}
+
+\begin{figure}
+  \center
+	\includegraphics[width=0.42\textwidth]{figures/partSPcacheA.pdf}
+	\caption{Reduced SP search area (1 \& 3) based on partition caching (2)}
+  \label{fig:cacheA}
+\end{figure}
 
 
 % % % % % % % % \subsection{Text and ideas which may still be useful (not part of paper)}
