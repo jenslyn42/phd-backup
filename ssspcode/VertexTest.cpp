@@ -27,55 +27,76 @@
  *   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS    		*
  *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          		*
  ***************************************************************************************/
-#ifndef FIFO_H
-#define FIFO_H
 
-#include "CacheItem.h"
-#include "testsetting.h"
-#include "Test.h"
-#include "RoadGraph.h"
-
-#include <boost/foreach.hpp>
-
-#include <algorithm>
-#include <iostream>
-#include <string>
+#define BOOST_TEST_DYN_LINK
+#ifdef STAND_ALONE
+#   define BOOST_TEST_MODULE FifoModule
+#endif
+#include <boost/test/unit_test.hpp>
+#include "Vertex.cpp"
+//#include "testsetting.cpp"
+//#include "RoadGraph.cpp"
 #include <vector>
-#include <utility>
+#include <iostream>
 
-/**
-	@author Jeppe Rishede <jenslyn42@gmail.com>
-*/
+struct zeFixture
+{
+	int id, nid, weight;
+	Vertex v;
 
-class FIFO: public Test{
-public:
-	FIFO(){ };
-	FIFO(testsetting ts);
-	~FIFO();
+	zeFixture() : id(2), nid(4), weight(5)
+	{
+        	BOOST_TEST_MESSAGE("Setup");
 
-	std::vector<CacheItem> cache;
-	
-	void readQuery(std::pair<int,int> query);
-	void readQueryList(std::vector< std::pair<int,int> > queryList);
-	int getCacheHits(){return numCacheHits;}
-	int getTotalQueries(){return numTotalQueries;}
-	int getTotalDijkstraCalls(){return numDijkstraCalls;}
+		v.updateVertexID(id,nid,weight);
+	}
 
-private:
-	int numTotalQueries;
-	int numCacheHits;
-	int numDijkstraCalls;
-
-	int cacheSize;
-	int cacheUsed;
-
-	bool useNodeScore;
-	bool useHitScore;
-	
-	testsetting ts;
-
-	void checkAndUpdateCache(std::pair<int,int> query);
-	void insertItem(int querySize, std::vector<int> nodesInQueryResult, int sNode, int tNode);
+    	~zeFixture()
+	{
+        	BOOST_TEST_MESSAGE("Teardown");
+		
+	}
 };
 
-#endif
+BOOST_FIXTURE_TEST_SUITE(ClassVertex, zeFixture)
+
+
+// 	void addNeighbour(int id , int weight);
+
+BOOST_AUTO_TEST_CASE(updateVertex)
+{
+	BOOST_CHECK_EQUAL(v.getId(), 2);
+	BOOST_CHECK_EQUAL(v.getAdjacencylist().size(), 1);
+	v.updateVertexID(4,6,2);
+	BOOST_CHECK_EQUAL(v.getAdjacencylist().size(), 2);
+	BOOST_CHECK_EQUAL(v.getId(), 4);
+}
+
+
+BOOST_AUTO_TEST_CASE(getAdjacencylist)
+{
+	BOOST_CHECK_EQUAL(v.getAdjacencylist()[4], 5);
+	BOOST_CHECK_EQUAL(v.getId(), 2);
+}
+
+BOOST_AUTO_TEST_CASE(addNeighbour)
+{
+	BOOST_CHECK_EQUAL(v.getAdjacencylist()[4], 5);
+	BOOST_CHECK_EQUAL(v.getAdjacencylist().size(), 1);
+
+	v.addNeighbour(12,6);
+	v.addNeighbour(13,10);
+	v.addNeighbour(14,15);
+	v.addNeighbour(15,21);
+
+	BOOST_CHECK_EQUAL(v.getAdjacencylist()[14], 15);
+	BOOST_CHECK_EQUAL(v.getAdjacencylist()[12], 6);
+	BOOST_CHECK_EQUAL(v.getAdjacencylist().size(), 5);
+}
+
+BOOST_AUTO_TEST_CASE(toString)
+{
+//TODO: after implementation, write this test
+}
+
+BOOST_AUTO_TEST_SUITE_END()

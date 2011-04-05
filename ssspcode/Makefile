@@ -33,7 +33,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-unknown-linux-gnu
 host_triplet = x86_64-unknown-linux-gnu
-bin_PROGRAMS = cacheReplacement$(EXEEXT) testCacheReplacement$(EXEEXT)
+bin_PROGRAMS = cacheReplacement$(EXEEXT) testCacheReplacement$(EXEEXT) \
+	testing$(EXEEXT)
 subdir = testFramework
 DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -49,9 +50,13 @@ binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_cacheReplacement_OBJECTS = CacheItem.$(OBJEXT) FIFO.$(OBJEXT) \
 	RoadGraph.$(OBJEXT) Vertex.$(OBJEXT) lru.$(OBJEXT) \
-	main.$(OBJEXT) osc.$(OBJEXT) testsetting.$(OBJEXT)
+	main.$(OBJEXT) osc.$(OBJEXT) testObj.$(OBJEXT) \
+	testsetting.$(OBJEXT)
 cacheReplacement_OBJECTS = $(am_cacheReplacement_OBJECTS)
 cacheReplacement_LDADD = $(LDADD)
+cacheReplacement_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(cacheReplacement_LDFLAGS) $(LDFLAGS) -o $@
 am_testCacheReplacement_OBJECTS = CacheItemTest.$(OBJEXT) \
 	RoadGraphTest.$(OBJEXT) VertexTest.$(OBJEXT) \
 	boostTest.$(OBJEXT) boostTest11.$(OBJEXT) fifoTest.$(OBJEXT) \
@@ -61,6 +66,12 @@ testCacheReplacement_LDADD = $(LDADD)
 testCacheReplacement_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(testCacheReplacement_LDFLAGS) $(LDFLAGS) -o $@
+am_testing_OBJECTS = program_options.$(OBJEXT)
+testing_OBJECTS = $(am_testing_OBJECTS)
+testing_LDADD = $(LDADD)
+testing_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) \
+	$(testing_LDFLAGS) $(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I. -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -73,9 +84,10 @@ CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(cacheReplacement_SOURCES) $(testCacheReplacement_SOURCES)
+SOURCES = $(cacheReplacement_SOURCES) $(testCacheReplacement_SOURCES) \
+	$(testing_SOURCES)
 DIST_SOURCES = $(cacheReplacement_SOURCES) \
-	$(testCacheReplacement_SOURCES)
+	$(testCacheReplacement_SOURCES) $(testing_SOURCES)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -191,14 +203,17 @@ top_srcdir = ..
 INCLUDES = 
 METASOURCES = AUTO
 cacheReplacement_SOURCES = CacheItem.cpp FIFO.cpp RoadGraph.cpp Vertex.cpp \
-	lru.cpp main.cpp osc.cpp testsetting.cpp
+	lru.cpp main.cpp osc.cpp testObj.cpp testsetting.cpp
 
 noinst_HEADERS = FIFO.h RoadGraph.h Vertex.h lru.h osc.h testsetting.h
-_SOURCES = CacheItem.h
+_SOURCES = Test.h
 testCacheReplacement_SOURCES = CacheItemTest.cpp RoadGraphTest.cpp \
 	VertexTest.cpp boostTest.cpp boostTest11.cpp fifoTest.cpp lruTest.cpp oscTest.cpp
 
 testCacheReplacement_LDFLAGS = -lboost_unit_test_framework
+testing_SOURCES = program_options.cpp
+testing_LDFLAGS = -lboost_program_options
+cacheReplacement_LDFLAGS = -g
 all: all-am
 
 .SUFFIXES:
@@ -262,10 +277,13 @@ clean-binPROGRAMS:
 	done
 cacheReplacement$(EXEEXT): $(cacheReplacement_OBJECTS) $(cacheReplacement_DEPENDENCIES) 
 	@rm -f cacheReplacement$(EXEEXT)
-	$(CXXLINK) $(cacheReplacement_OBJECTS) $(cacheReplacement_LDADD) $(LIBS)
+	$(cacheReplacement_LINK) $(cacheReplacement_OBJECTS) $(cacheReplacement_LDADD) $(LIBS)
 testCacheReplacement$(EXEEXT): $(testCacheReplacement_OBJECTS) $(testCacheReplacement_DEPENDENCIES) 
 	@rm -f testCacheReplacement$(EXEEXT)
 	$(testCacheReplacement_LINK) $(testCacheReplacement_OBJECTS) $(testCacheReplacement_LDADD) $(LIBS)
+testing$(EXEEXT): $(testing_OBJECTS) $(testing_DEPENDENCIES) 
+	@rm -f testing$(EXEEXT)
+	$(testing_LINK) $(testing_OBJECTS) $(testing_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -288,6 +306,8 @@ include ./$(DEPDIR)/lruTest.Po
 include ./$(DEPDIR)/main.Po
 include ./$(DEPDIR)/osc.Po
 include ./$(DEPDIR)/oscTest.Po
+include ./$(DEPDIR)/program_options.Po
+include ./$(DEPDIR)/testObj.Po
 include ./$(DEPDIR)/testsetting.Po
 
 .cpp.o:

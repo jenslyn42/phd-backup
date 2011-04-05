@@ -31,7 +31,7 @@
 #define OSC_CPP
 
 #include "osc.h"
-#define debug true
+#define debug false
 
 OSC::OSC(testsetting ts)
 {
@@ -84,6 +84,8 @@ void OSC::checkAndUpdateCache(std::pair< int, int > query)
 		{
 			if(debug) cout << "two, OSC::checkAndUpdateCache: cIt:" << cIt.size() <<endl;
 			numCacheHits++;
+			if(numTotalQueries < 0) cout << "ERROR 3 numTotalQueries: "<< numTotalQueries <<endl;
+
 			ci.updateKey(numTotalQueries);
 			sort(cache.begin(), cache.end());
 			cacheHit = true;
@@ -121,7 +123,10 @@ void OSC::checkAndUpdateCache(std::pair< int, int > query)
 			testToReplaceItem(querySize, nodesInQueryResult);
 			if(debug) cout << "five2, OSC::checkAndUpdateCache" <<endl;
 		}else{
+			if(numTotalQueries < 0) cout << "ERROR 2 numTotalQueries: "<< numTotalQueries << endl;
+
 			CacheItem cIt (numTotalQueries, nodesInQueryResult);
+
 			if(debug) cout << "six1, OSC::checkAndUpdateCache" <<endl;
 			cache.push_back(cIt);
 			if(debug) cout << "six2, OSC::checkAndUpdateCache" <<endl;
@@ -143,7 +148,7 @@ bool compFunc(int i,int j) {return (i>j);} //support for reverse sort in testToR
 
 void OSC::testToReplaceItem(int querySize, std::vector< int > nodesInQueryResult)
 {
-	if(debug) cout << "zero, OSC::testToReplaceItem querySize:"<<querySize<<" cacheSize:" << cacheSize <<endl;
+	if(debug) cout << "zero, OSC::testToReplaceItem querySize:"<<querySize<<" cacheSize:" << cacheSize <<" cacheUsed: " << cacheUsed <<endl;
 	if(querySize > cacheSize) return;
 
 	bool notEnoughSpace = true;
@@ -151,17 +156,23 @@ void OSC::testToReplaceItem(int querySize, std::vector< int > nodesInQueryResult
 	int qScore = 0;
 	if(debug) cout << "one, OSC::testToReplaceItem" <<endl;
 	//calculate score for query
-	BOOST_FOREACH(int node, nodesInQueryResult)
+	if(debug) cout << "one1" << endl;
+	BOOST_FOREACH(int node, nodesInQueryResult){
+		if(nodeHits.at(node) < 0 || qSum < 0) cout << "one2, OSC::testToReplaceItem node: " << node <<" qSum " <<qSum<< endl;
 		qSum += nodeHits.at(node);
+	}
 
+	if(debug) cout << "one3, qSum: "<< qSum << endl;
 	Heap removeCandidate;
 	vector<int> ci (cache[0].item);
 	int nodes = ci.size();
 	int sum = 0;
 
 	if(debug) cout << "two, OSC::testToReplaceItem" <<endl;
-	BOOST_FOREACH(int node, ci)
+	BOOST_FOREACH(int node, ci){
+		if(nodeHits.at(node) < 0 || sum < 0) cout << "two2, OSC::testToReplaceItem node: " << node <<" sum: " << sum<< endl;
 		sum += nodeHits.at(node);	
+	}
 
 	//calc score for current query based on test flags
 	if(useNodeScore && useHitScore)
@@ -197,8 +208,10 @@ void OSC::testToReplaceItem(int querySize, std::vector< int > nodesInQueryResult
 		nodes = ci.size();
 		sum = 0;
 
-		BOOST_FOREACH(int i, ci)
+		BOOST_FOREACH(int i, ci){
+			if(nodeHits.at(i) < 0 || sum < 0) cout << "three2, OSC::testToReplaceItem i: " << i <<" sum: " << sum<< endl;
 			sum += nodeHits.at(i);
+		}
 
 		if(useNodeScore && useHitScore)
 		{
@@ -235,21 +248,27 @@ void OSC::testToReplaceItem(int querySize, std::vector< int > nodesInQueryResult
 			{
 				//sort reverse order.
 				sort(removeIndexes.begin(), removeIndexes.end(), compFunc);
+
 				//remove all cacheItems marked for removal
 				BOOST_FOREACH(int i, removeIndexes)
 				{
-					cache.erase(cache.begin()+i-1);
+					if(i >= cache.size()) cout << "THIS WILL NOT WORK!!!" <<endl;
+					else cache.erase(cache.begin()+i); //used to have +i-1!!!
 				}
 				
 				//add new cache item to cache
-				CacheItem e (numTotalQueries, nodesInQueryResult);
-				cache.push_back(e);
-				cacheUsed = cacheUsed + e.size;
+				if(numTotalQueries <0) cout << "ERROR 1 numTotalQueries: "<< numTotalQueries <<endl;
+
+				CacheItem newCacheItem (numTotalQueries, nodesInQueryResult);
+				if(newCacheItem.s < -1 || newCacheItem.t < -1) cout << "ERROR 1 s: "<< newCacheItem.s << " t: " <<newCacheItem.t << endl;
+				cache.push_back(newCacheItem);
+				cacheUsed = cacheUsed + newCacheItem.size;
 				notEnoughSpace = false;
 			}else{
 				HeapEntry tmp = removeCandidate.top();
 				removeCandidate.pop();
 				tmpRemIndex = tmp.id;
+				//if(tmpRemIndex < 1) cout <<"WHOOOOT"<< tmp.dist <<"," <<tmp.id<<"; "<<removeCandidate.top().id<<","<<removeCandidate.top().dist << endl; 
 				//mark for removal later
 				removeIndexes.push_back(tmpRemIndex);
 				cacheUsed -= cache.at(tmpRemIndex).size;

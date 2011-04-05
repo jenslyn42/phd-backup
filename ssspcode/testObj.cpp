@@ -27,55 +27,80 @@
  *   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS    		*
  *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          		*
  ***************************************************************************************/
-#ifndef FIFO_H
-#define FIFO_H
+#include "testObj.h"
+#define debug false
 
-#include "CacheItem.h"
-#include "testsetting.h"
-#include "Test.h"
-#include "RoadGraph.h"
+testObj::testObj(testsetting settings, int testType)
+{
+	switch( testType ){
+		case 1:
+			if (debug) cout << "testObj:: constructor: OSC test choosen" <<endl;
+ 			test = new OSC(settings);
+			break; 
+		case 2:
+			if (debug) cout << "testObj:: constructor: LRU test choosen" <<endl;
+			test = new LRU(settings);
+			break; 
+		case 3:
+			if (debug) cout << "testObj:: constructor: FIFO test choosen" <<endl;
+			test = new FIFO(settings);
+			break;
+	}
 
-#include <boost/foreach.hpp>
+	generateQueries(settings.getNumQueries());
+}
 
-#include <algorithm>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <utility>
+testObj::testObj(testsetting settings, int testType, vector< pair<int,int> > _queries)
+{
+	switch( testType ){
+		case 1:
+			if (debug) cout << "testObj:: constructor: OSC test choosen" <<endl;			
+ 			test = new OSC(settings);
+			break; 
+		case 2:
+			if (debug) cout << "testObj:: constructor: LRU test choosen" <<endl;
+			test = new LRU(settings);
+			break; 
+		case 3:
+			if (debug) cout << "testObj:: constructor: FIFO test choosen" <<endl;
+			test = new FIFO(settings);
+			break; 
+	}
+	queries = _queries;
+}
 
-/**
-	@author Jeppe Rishede <jenslyn42@gmail.com>
-*/
+testObj::~ testObj()
+{	
+	delete test;
+}
 
-class FIFO: public Test{
-public:
-	FIFO(){ };
-	FIFO(testsetting ts);
-	~FIFO();
 
-	std::vector<CacheItem> cache;
-	
-	void readQuery(std::pair<int,int> query);
-	void readQueryList(std::vector< std::pair<int,int> > queryList);
-	int getCacheHits(){return numCacheHits;}
-	int getTotalQueries(){return numTotalQueries;}
-	int getTotalDijkstraCalls(){return numDijkstraCalls;}
+void testObj::generateQueries(int numQueries)
+{
+	for(int i=0; i<numQueries; i++)
+	{
+		p.first = rand()%6105 +1;
+		p.second = rand()%6105 +1;
+		queries.push_back(p);
+	}
+}
 
-private:
-	int numTotalQueries;
-	int numCacheHits;
-	int numDijkstraCalls;
+void testObj::runTest()
+{
+	if (debug) cout << "testObj::runTest: test started" <<endl;
+	int i = 0;
+	start = clock();
+	BOOST_FOREACH( intPair qpair, queries )
+	{
+		if( debug) cout << "query NUM: " << ++i << endl;
+		test->readQuery(qpair);
+	}
+	end = clock();
+ 	//if (debug) cout << "testObj::runTest: test ended" <<endl;
+	testResults(start,end);
+}
 
-	int cacheSize;
-	int cacheUsed;
-
-	bool useNodeScore;
-	bool useHitScore;
-	
-	testsetting ts;
-
-	void checkAndUpdateCache(std::pair<int,int> query);
-	void insertItem(int querySize, std::vector<int> nodesInQueryResult, int sNode, int tNode);
-};
-
-#endif
+void testObj::testResults(clock_t s, clock_t e)
+{
+cout << "Time: " << (double(e-s))/CLOCKS_PER_SEC << " sec. dc: " << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << " " << typeid(*test).name() << endl;
+}
