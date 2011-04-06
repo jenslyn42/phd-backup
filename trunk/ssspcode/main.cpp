@@ -65,12 +65,12 @@ vector<pair<int,int> > queries;
 int s,t;
 pair<int,int> p;
 
-for(int i=0; i<10000; i++)
+for(int i=0; i<100000; i++)
 {
 
 	srand((int)rand());
-	p.first = (rand()%6104) +1;
-	p.second = (rand()%6104) +1;
+	p.first = (rand()%15499) +1;
+	p.second = (rand()%15499) +1;
 	queries.push_back(p);
 }
 
@@ -80,10 +80,10 @@ for(int i=0; i<10000; i++)
 ///Test settings. many options from here are not used directly yet
 testsetting ts;
 string testname = "test";
-string testfile ="graph_large.txt";
+string testfile ="ppi.dat";
 OSC ff;	
 
-int numqueries=7000, cacheSize=10000000, queryRangeStart=0, queryRangeEnd=RoadGraph::mapObject(testfile)->getMapsize();
+int numqueries=7000, cacheSize=100000, queryRangeStart=0, queryRangeEnd=RoadGraph::mapObject(testfile)->getMapsize();
 bool gaussian, useOptimalSubstructure, useNodeScore, useHitScore;
 double sigma = 2.0;
 gaussian=true, useOptimalSubstructure=true, useNodeScore=true, useHitScore = true;
@@ -94,9 +94,9 @@ ts.setData(testname, testfile, numqueries, cacheSize, queryRangeStart, queryRang
 clock_t start, end;
 
 ///exp test OSC with testObj
-// testObj *expTest = new testObj(ts,1, queries);
-// expTest->runTest();
-// expTest-> testObj::~testObj();
+testObj *expTest = new testObj(ts,1, queries);
+expTest->runTest();
+expTest-> testObj::~testObj();
 
 
 ///exp test LRU with testObj
@@ -106,9 +106,9 @@ clock_t start, end;
 
 
 ///exp test FIFO with testObj
-testObj *expTest3 = new testObj(ts,3, queries);
-expTest3->runTest();
-expTest3-> testObj::~testObj();
+// testObj *expTest3 = new testObj(ts,3, queries);
+// expTest3->runTest();
+// expTest3-> testObj::~testObj();
 
 
 ///test  OSC
@@ -154,7 +154,7 @@ BOOST_FOREACH (unorderedIntMap::value_type node, nodecalls)
 // 	if(node.second < 50) cout << "low: " << node.second << endl;
 // 	if(node.second > 410) cout << "high: " << node.second << endl;
 }
-cout << "Vertices visited: " << totalcalls << endl;
+cout << "Vertices visited:\t" << totalcalls << "\tCachesize:\t"<<cacheSize << endl;
 
 return EXIT_SUCCESS;
 };
