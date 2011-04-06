@@ -102,5 +102,5 @@ void testObj::runTest()
 
 void testObj::testResults(clock_t s, clock_t e)
 {
-cout << "Time: " << (double(e-s))/CLOCKS_PER_SEC << " sec. dc: " << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << " " << typeid(*test).name() << endl;
+cout << "Time:\t" << (double(e-s))/CLOCKS_PER_SEC << " sec. cm,ch:\t" << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << " " << typeid(*test).name() << endl;
 }

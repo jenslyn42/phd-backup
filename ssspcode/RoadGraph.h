@@ -68,7 +68,8 @@ private:
 	std::string filename;
 	
 	void addEdge(int v1, int v2, int w);
-	void readNetworkFile(string fn);
+	void readRoadNetworkFile(string fn);
+	void readPPINetworkFile(string fn);	
 };
 
 #endif
