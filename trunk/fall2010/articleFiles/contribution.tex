@@ -56,7 +56,7 @@ We will consider 3 basic cache structures, each with optional ways of using or i
 
 The simplest way to implement a cache is to just store all cache items in an array. An example of how the cache works is presented in  figure \ref{fig:cachestruc}, part A,D, and E. In figure \ref{fig:cachestruc}A two \spath queries, Q1 \& Q2, are submitted. By scanning the array in \ref{fig:cachestruc}D item 3 and 4 are identified as being able to answer Q1 and Q2. Cache item 3 contains a superset of the set of nodes needed to answer Q2 so in \ref{fig:cachestruc}E the answers are refined and sent back to the user.
 
-While this cache structure is very simple and there for incurs virtually no overhead in terms of maintaining the structure, then the array needs to be scanned each time a new query is submittet to the system, and the entire array will be scanned if the query can not be answered by the cache. This cache structure has a high overhead because it needs to scan the array, and if the cache is large it is not likely to be an efficient solution or fulfill subgoal 2 very well (see Sec. \ref{sec:architec}).
+While this cache structure is very simple and there for incurs virtually no overhead in terms of maintaining the structure, then the array needs to be scanned each time a new query is submitted to the system, and the entire array will be scanned if the query can not be answered by the cache. This cache structure has a high overhead because it needs to scan the array, and if the cache is large it is not likely to be an efficient solution or fulfill subgoal 2 very well (see Sec. \ref{sec:architec}).
 
 
 \subsubsection{Array with Map, Indirect Access}
@@ -100,7 +100,7 @@ The techniques proposed here will each present how, and in what way, they can co
 
 The scoring is done by summing up: the number of times a cache item has formed the basis of a cache hit; the number of times each node in cache item has been the source/target nodes in a query, or member of a query result. By taking the length of a cache item (number of nodes in the \spath) and multiplying it on the previously calculated sum we get the full score.
 
-In \osc we use a scoring mechanism to rank the usefulness of cached items. Table \ref{tab:score} shows 3 queries ($i$) seen at different frequency and with different length. $C(l)$ calculates the number of vertices visited when finding a shortest path with a \spath algorithm. Based on these numbers it is then possible to calculate the benefit of adding one of these \spath queries to the cache. To calculate the savings gained from caching one of the 3 queries, first the cost of a cache hit $c_{hit}$ is multiplied with the item frequency, $i_{freq}$. This is then added to the value of $C(l)$ and substracted from the cost of the queries without a cache, $nocache$. E.g. Item 1 has higher frequency (item freq/$i_{freq}$) than item 2, but the saving of putting item 2 in cache is much higher:
+In \osc we use a scoring mechanism to rank the usefulness of cached items. Table \ref{tab:score} shows 3 queries ($i$) seen at different frequency and with different length. $C(l)$ calculates the number of vertices visited when finding a shortest path with a \spath algorithm. Based on these numbers it is then possible to calculate the benefit of adding one of these \spath queries to the cache. To calculate the savings gained from caching one of the 3 queries, first the cost of a cache hit $c_{hit}$ is multiplied with the item frequency, $i_{freq}$. This is then added to the value of $C(l)$ and subtracted from the cost of the queries without a cache, $nocache$. E.g. Item 1 has higher frequency (item freq/$i_{freq}$) than item 2, but the saving of putting item 2 in cache is much higher:
 
 The cost (nocache) of item one is: $11*100=1100$ and item two cost: $10*200=2000$. Assuming a cache hit cost $1$, then adding item one to the cache would save = $1100-(100+10*1)=990$, and item two would save $2000-(200+9*1)=1791$. 
 
@@ -125,8 +125,8 @@ i & item freq & item length & C(l) \\
 
 \subsection{\sps}
 
-If space consumption is a very high priority then \sps is one option to alleviate the problem. \sps changes the cache structure from $n_1, ... , n_n$ to $CI_{k\left[s-node\right]},CI_{k\left[e-node\right]}, n_{e-node+1}, ... , n_n$.\footnote{This example only shows how to share something in the front of an item, though adding them after or in the middel does not matter.}
-I.e. including the start-/end-node of a range from another cache item. The advantage of doing this is a, possibly large, reduction in the space requirements for the cache. Maintaining such a cache would be quite expensive in terms of computation when changes occur, though the space saving would allow for more cache items which again would reduce the total running time. We will later show wether this overhead can really be offset by the additional number of cache items which would fit into the cache.
+If space consumption is a very high priority then \sps is one option to alleviate the problem. \sps changes the cache structure from $n_1, ... , n_n$ to $CI_{k\left[s-node\right]},CI_{k\left[e-node\right]}, n_{e-node+1}, ... , n_n$.\footnote{This example only shows how to share something in the front of an item, though adding them after or in the middle does not matter.}
+I.e. including the start-/end-node of a range from another cache item. The advantage of doing this is a, possibly large, reduction in the space requirements for the cache. Maintaining such a cache would be quite expensive in terms of computation when changes occur, though the space saving would allow for more cache items which again would reduce the total running time. We will later show whether this overhead can really be offset by the additional number of cache items which would fit into the cache.
 
 
 % how does it work?
@@ -147,7 +147,7 @@ Partitioning of map into large region to quickly be able to discard items in the
 
 \subsection{Partitioning Caching} 
 
-The idea behind Partitioning caching builds opon the idea of partitioning the map (sec. \ref{sec:partionmap}), but takes one step further. If a map can be partitioned in such a way that there is only one connection between them, then the connection can be cached and there by greatly reduce the search space needed to calculate a route between the two map partitions. The idea is shown in fig \ref{fig:cacheB}, \ref{fig:cacheA} where the search space needed to calculate a route from A to B is greaty reduced in fig. \ref{fig:cacheA} by caching partition 2.
+The idea behind Partitioning caching builds upon the idea of partitioning the map (sec. \ref{sec:partionmap}), but takes one step further. If a map can be partitioned in such a way that there is only one connection between them, then the connection can be cached and there by greatly reduce the search space needed to calculate a route between the two map partitions. The idea is shown in fig \ref{fig:cacheB}, \ref{fig:cacheA} where the search space needed to calculate a route from A to B is greatly reduced in fig. \ref{fig:cacheA} by caching partition 2.
 \ffh{remember to equation to show by how much}
 
 \begin{figure}
