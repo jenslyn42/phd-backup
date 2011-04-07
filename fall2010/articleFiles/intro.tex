@@ -1,7 +1,7 @@
 \section{Introduction} \label{sec:intro}
 
 \subsection{idea for running example}
-A user issues two queries as seen in fig. \ref{fig:directcache}, \ref{fig:indirectcache}, and \ref{fig:advancedroutequery} . We can then argue, using these figures and the map in fig. \ref{fig:map10} about all the optimizations we plan to use. (same queries in all figures, and they corrospond to map)
+A user issues two queries as seen in fig. \ref{fig:advancedroutequery}. We can then argue, using this figures and the map in fig. \ref{fig:map10} about all the optimizations we plan to use. (same queries in all figures, and they correspond to map)
 
 
 
@@ -9,15 +9,15 @@ A user issues two queries as seen in fig. \ref{fig:directcache}, \ref{fig:indire
 \section{Motivation}
 Shortest Path (SP) calculation is much slower than retrieval from cache, as a cache can supply a \spath directly, where a \spath algorithm will on at most have to visit $AF^{AVN}$ nodes (see table of notation). 
 
-Users want fast responsetime (and \spath can do this cheaper with caching \cite{ref.})
+Users want fast response time (and \spath can do this cheaper with caching \cite{ref.})
 
 \spath service providers want to spend less money on hardware (less computation -> less hardware)
 
-it is not feasable to store all possible \spaths (even if considering OSS)
+it is not feasible to store all possible \spaths (even if considering OSS)
 
-Develop a caching scheme useable in domains wiht large set of opssible cacheable items and little or no  locality in new items added to system, or suggested added to cache.
+Develop a caching scheme usable in domains with large set of possible cacheable items and little or no  locality in new items added to system, or suggested added to cache.
 
-No previous work has been done on cacheing \spath query results. interesting problem
+No previous work has been done on cacheting \spath query results. interesting problem
 
 More users now have a GPS and Web enabled mobile devices which makes \spath services more popular, but also require them to serve much larger set of users.
 

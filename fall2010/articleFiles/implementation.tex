@@ -1,28 +1,41 @@
-\section{Eksperiments}
-To enable us to better argue about the real performance, as well as the strong and weak points of our ideas, we use a gaussian distribution model for the queries together with a graph with 6100/7035 vertices/edges.
+\section{Experiments}
+We perform experiments using two different datasets and compare our method to two baseline approaches. Our approach \osc is compared to \lru and \fifo
 
 \ffh{intro of section and what will be presented, and in which order}
 
-\ffh{brifly mention the implementation}
+\ffh{briefly mention the implementation}
 
-\ffh{if possible find a baseline to compair with.}
+\ffh{if possible find a baseline to compare with.}
 
 
 \subsection{Data Generation}
 
-\ffh{explain the Brinkhoff data generator, the facts about the Oldenburg map and the generator parameters}
+We generate queries with random start-/end-nodes in two ways: completely random and Gaussian distribution.
 
-\ffh{if time is used in the experiments, mention hardware it was run on}
+
+\ffh{Use Brinkhoff to generate realistic start-/end-pairs based on where people actually want to go (give OSC an advantage). Explain the Brinkhoff data generator, the facts about the Oldenburg map and the generator parameters}
+
+The test program has been implemented in C++ and the tests have been run on a Core2 Duo@2.8GHz with 4 GB memory. Timings has been measured using normal clock time, with mapdata preloaded into memory.
 
 
 \subsection{Test Parameters}
-\ffh{state all the parameters which will be used and make clear which will be held static unless otherwise stated in the experiments section}
+
+
+\begin{tabular*}{\columnwidth}{|l | p{0.77\columnwidth}|}
+\hline \textbf{Parameter} & \textbf{Purpose} \\\hline
+numqueries & number of queries used \\\hline
+cacheSize & Number of nodes which can fit in the cache \\\hline
+gaussian & Whether to use Gaussian distribution when generating queries \\\hline
+useNodeScore & use number of nodes in a cache element when calculating score in \osc \\\hline
+useHitScore & use number of cache hits of a cache element when calculating score in \osc \\\hline
+double sigma & sigma value when $gaussian$ is specified \\\hline
+\end{tabular*}
 
 
 
 
-\subsection{Eksperiments}
+\subsection{Experiments}
 
 \ffh{Write some test, generate graphs of them, explain graphs}
 
-\ffh{explain why we have choosen the tests we have}
+\ffh{explain why we have chosen the tests we have}
