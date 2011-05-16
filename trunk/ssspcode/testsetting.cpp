@@ -32,9 +32,9 @@
 
 #include "testsetting.h"
 
-testsetting::testsetting(string testname, string testFile, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore)
+testsetting::testsetting(string testname, string testFile, int testType, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore)
 {
-	this->setData(testname, testFile, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+	this->setData(testname, testFile, testType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
 }
 
 
@@ -42,6 +42,7 @@ testsetting::~testsetting()
 {
 	testName = "";
 	testFile = "";
+	testType = 0;
 	numQueries = 0;
 	cacheSize = 0;
 	queryRangeStart = 0;
@@ -54,10 +55,11 @@ testsetting::~testsetting()
 	useHitScore = false;
 }
 
-void testsetting::setData(string testname, string testfile, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore)
+void testsetting::setData(string testname, string testfile, int testType, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore)
 {
 	testName = testname;
 	testFile = testfile;
+	this->testType = testType;
 	numQueries = numqueries;
 	this->cacheSize = cacheSize;
 	this->queryRangeStart = queryRangeStart;

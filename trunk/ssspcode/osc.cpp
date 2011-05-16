@@ -48,6 +48,7 @@ OSC::OSC(testsetting ts)
 	useNodeScore = ts.isUseNodeScore();
 	useHitScore = ts.isUseHitScore();
 	testFile = ts.getTestFile();
+	testType = ts.getTestType();
 }
 
 OSC::~ OSC()
@@ -108,7 +109,7 @@ void OSC::checkAndUpdateCache(std::pair< int, int > query)
 	if(!cacheHit)
 	{
 		if(debug) cout << "four0, OSC::checkAndUpdateCache " << query.first <<"," << query.second <<endl;
-		vector<int> spResult  = RoadGraph::mapObject(testFile)->dijkstraSSSP(query.first, query.second);
+		vector<int> spResult  = RoadGraph::mapObject(testFile,testType)->dijkstraSSSP(query.first, query.second);
 		numDijkstraCalls++;
 		if(debug) cout << "four1, OSC::checkAndUpdateCache" <<endl;
 		updateNodeHits(spResult);
@@ -129,7 +130,6 @@ void OSC::checkAndUpdateCache(std::pair< int, int > query)
 
 			if(debug) cout << "six1, OSC::checkAndUpdateCache" <<endl;
 			cache.push_back(cIt);
-			if(debug) cout << "six2, OSC::checkAndUpdateCache" <<endl;
 			cacheUsed = cacheUsed + cIt.size;
 		}
 		if(debug) cout << "seven, OSC::checkAndUpdateCache" <<endl;
@@ -202,6 +202,7 @@ void OSC::testToReplaceItem(int querySize, std::vector< int > nodesInQueryResult
 	}
 
 	if(debug) cout << "three, OSC::testToReplaceItem" <<endl;
+	/** calculate scores of all items, and place them in min-heap */
 	for(int k=1; k < cache.size(); k++)
 	{
 		ci = cache[k].item;
@@ -265,11 +266,10 @@ void OSC::testToReplaceItem(int querySize, std::vector< int > nodesInQueryResult
 				cacheUsed = cacheUsed + newCacheItem.size;
 				notEnoughSpace = false;
 			}else{
+				if(!cacheFull){queryNumCacheFull = numTotalQueries; cacheFull = true;}
 				HeapEntry tmp = removeCandidate.top();
 				removeCandidate.pop();
 				tmpRemIndex = tmp.id;
-				//if(tmpRemIndex < 1) cout <<"WHOOOOT"<< tmp.dist <<"," <<tmp.id<<"; "<<removeCandidate.top().id<<","<<removeCandidate.top().dist << endl; 
-				//mark for removal later
 				removeIndexes.push_back(tmpRemIndex);
 				cacheUsed -= cache.at(tmpRemIndex).size;
 			}

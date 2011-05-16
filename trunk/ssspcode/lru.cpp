@@ -70,10 +70,10 @@ void LRU::checkAndUpdateCache(std::pair< int, int > query)
 	if(ts.isUseOptimalSubstructure()){
 		BOOST_FOREACH(CacheItem ci, cache )
 		{
-			if(find(ci.item.begin(),ci.item.end(), query.first) != ci.item.end()) 
-				if(debug) cout << "LRU::checkAndUpdateCache FIRST TRUE" << endl;
-			if(find(ci.item.begin(),ci.item.end(), query.second) != ci.item.end())
-				if(debug) cout << "LRU::checkAndUpdateCache SECOND TRUE" << endl;
+// 			if(find(ci.item.begin(),ci.item.end(), query.first) != ci.item.end()) 
+// 				if(debug) cout << "LRU::checkAndUpdateCache FIRST TRUE" << endl;
+// 			if(find(ci.item.begin(),ci.item.end(), query.second) != ci.item.end())
+// 				if(debug) cout << "LRU::checkAndUpdateCache SECOND TRUE" << endl;
 
 			if(find(ci.item.begin(),ci.item.end(), query.first) != ci.item.end() && find(ci.item.begin(),ci.item.end(), query.second) != ci.item.end())
 			{
@@ -102,7 +102,7 @@ void LRU::checkAndUpdateCache(std::pair< int, int > query)
 
 	if(!cacheHit)
 	{
-		vector<int> spResult  = RoadGraph::mapObject(ts.getTestFile())->dijkstraSSSP(query.first, query.second);
+		vector<int> spResult = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->dijkstraSSSP(query.first, query.second);
 		numDijkstraCalls++;
 		int querySize = spResult.size();
 		if(cache.size() != 0){
@@ -134,6 +134,7 @@ void LRU::insertItem(int querySize, std::vector< int > nodesInQueryResult, int s
 		}
 		else if(querySize < cacheSize)
 		{
+			if(!cacheFull){queryNumCacheFull = numTotalQueries; cacheFull = true;}
 			if(debug) cout << "three1, LRU::insertItem" << cache.size() <<"," << cache[0].size <<endl;
 			if(debug) cout << "querySize,cacheSize,cacheUsed:" << querySize <<"," << cacheSize <<"," << cacheUsed << endl;
 			int itemSize = cache[0].size;

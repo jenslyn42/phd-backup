@@ -36,9 +36,11 @@
 #include "osc.h"
 #include "lru.h"
 #include "FIFO.h"
+#include "scache.h"
 
 #include <ctime>
 #include <iostream>
+#include <fstream>
 #include <cstdlib>
 #include <typeinfo>
 
@@ -57,6 +59,7 @@ public:
 
 	void generateQueries(int numQueries);
 	void runTest();
+	void runStaticTest();
 	void testResults(clock_t s, clock_t e);
 
 	Test *test;

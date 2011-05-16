@@ -62,21 +62,21 @@ BOOST_FIXTURE_TEST_SUITE(ClassRoadGraph, RgFixture)
 // 	int getMapsize();
 BOOST_AUTO_TEST_CASE(checkMapFilename)
 {
-	std::string spResult  = RoadGraph::mapObject(testFile)->checkMapFilename();
+	std::string spResult  = RoadGraph::mapObject(testFile,1)->checkMapFilename();
 
 	BOOST_CHECK(spResult.compare(testFile) == 0);
 }
 
 BOOST_AUTO_TEST_CASE(getMap)
 {
-	std::vector<Vertex> spResult  = RoadGraph::mapObject(testFile)->getMap();
+	std::vector<Vertex> spResult  = RoadGraph::mapObject(testFile,1)->getMap();
 
 	BOOST_CHECK(0 == 0);
 }
 
 BOOST_AUTO_TEST_CASE(dijkstraSSSPtest)
 {
-	std::vector<int> spResult  = RoadGraph::mapObject(testFile)->dijkstraSSSP(1, 6);
+	std::vector<int> spResult  = RoadGraph::mapObject(testFile,1)->dijkstraSSSP(1, 6);
 
 	BOOST_CHECK(spResult.at(0) == 6);
 	BOOST_CHECK(spResult.at(1) == 5);
@@ -87,8 +87,13 @@ BOOST_AUTO_TEST_CASE(dijkstraSSSPtest)
 
 BOOST_AUTO_TEST_CASE(getMapsize)
 {
-	int size  = RoadGraph::mapObject(testFile)->getMapsize();
+	int size  = RoadGraph::mapObject(testFile,1)->getMapsize();
 	BOOST_CHECK(size == 8);
 }
 
+BOOST_AUTO_TEST_CASE(changeTestType) //needs to be made...
+{
+// 	int size  = RoadGraph::mapObject(testFile)->getMapsize();
+// 	BOOST_CHECK(size == 8);
+}
 BOOST_AUTO_TEST_SUITE_END()

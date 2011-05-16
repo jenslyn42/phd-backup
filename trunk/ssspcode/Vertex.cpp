@@ -33,18 +33,18 @@
 #include "Vertex.h"
 #define debug false
 
-Vertex::Vertex(int id, int nId, int weight)
+Vertex::Vertex(int id, int nId, double weight)
 {
 	updateVertexID(id, nId, weight);
 }
 
-void Vertex::updateVertexID(int id, int nId, int weight)
+void Vertex::updateVertexID(int id, int nId, double weight)
 {
 	this->id = id;
 	addNeighbour(nId, weight);
 }
 
-void Vertex::addNeighbour(int id, int weight)
+void Vertex::addNeighbour(int id, double weight)
 {
 	if(debug) std::cout << "one, vertex::addNeighbour! id: "<<id <<", w: " << weight << " size: " << Adjacencylist.size() << endl; 
 	if (debug){for(int d = 0; d < Adjacencylist.size(); d++) {cout << d << ":"<< Adjacencylist[d] << " "; cout << endl;}}
@@ -61,7 +61,7 @@ void Vertex::addNeighbour(int id, int weight)
 	
 }
 
-boost::unordered_map<int, int>  Vertex::getAdjacencylist()
+boost::unordered_map<int, double>  Vertex::getAdjacencylist()
 {
 	return Adjacencylist;
 }

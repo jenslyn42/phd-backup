@@ -33,6 +33,7 @@
 #include <utility>
 #include <vector>
 #include <iostream>
+#include <string>
 
 /**
 	@author Jeppe Rishede <jenslyn42@gmail.com>
@@ -44,11 +45,14 @@ public:
 	Test(){ };
 	~Test(){ };
 
-	virtual void readQuery(std::pair<int,int> query){std::cout << "3" <<std::endl;}
+	virtual void readQuery(std::pair<int,int> query){std::cout << "Error, executing Test() object" <<std::endl;}
 	virtual void readQueryList(std::vector<std::pair<int,int> > queryList){ };
 	virtual int getCacheHits(){return 0;}
 	virtual int getTotalQueries(){return 0;}
 	virtual int getTotalDijkstraCalls(){return 0;}
+	virtual int getQueryNumCacheFull(){return 0;}
+	//for static tests
+	virtual void readQueries(int numQueries, std::string inFn){ };
 };
 
 #endif

@@ -35,15 +35,38 @@
 //specifically for the dijkstraSSSP() method
 #define spDebug false 
 
+#include "limits.h"
+
 RoadGraph* RoadGraph::mapInstance = NULL;
 
-RoadGraph* RoadGraph::mapObject(std::string testFile)
+RoadGraph* RoadGraph::mapObject(std::string testFile, int pt)
 {
 	if(!mapInstance){
 		mapInstance = new RoadGraph();
-// 		mapInstance->readRoadNetworkFile(testFile);
-		mapInstance->readPPINetworkFile(testFile);
+		mapInstance->parseFileType = pt;
+
+		switch( (mapInstance->parseFileType) ){
+			case 1:
+			cout << "mapObject[case1], parseFileType: " << mapInstance->parseFileType << endl;
+ 			mapInstance->readRoadNetworkFile(testFile);
+			break;
+			case 2:
+			cout << "mapObject[case2], parseFileType: " << mapInstance->parseFileType << endl;
+ 			mapInstance->readPPINetworkFile(testFile);
+			break;
+			case 3:
+ 			cout << "mapObject[case3], parseFileType: " << mapInstance->parseFileType << endl;
+ 			mapInstance->readCedgeNetworkFile(testFile);
+ 			cout << "mapObject[case3], parseFileType: " << mapInstance->parseFileType << " done" << endl;
+			break;
+		}
 	}
+	else if((mapInstance->parseFileType) != pt)
+	{
+		RoadGraph::mapInstance = NULL; //if type of file to  be parsed changes, delete mapInstance
+		RoadGraph::mapObject(testFile, pt);
+	}
+
 	return mapInstance;
 }
 
@@ -73,7 +96,7 @@ vector<int> RoadGraph::dijkstraSSSP(int source, int dest)
 	}
 	if(spDebug) cout << "four, dijkstraSSSP! " << endl;
 	Heap hp;
-	unorderedIntMap backtrace;
+	boost::unordered_map<int, int> backtrace;
 	static BitStore isVisited;
 	isVisited.assign(getMapsize(),false);
 	std::vector<int> trace;
@@ -102,9 +125,9 @@ vector<int> RoadGraph::dijkstraSSSP(int source, int dest)
 		isVisited[curnode]=true;
 		
 		if(spDebug) cout << "seven, dijkstraSSSP! "<< curnode << endl;
-		unorderedIntMap CurAdjList= map[curnode].getAdjacencylist();
+		intDoubleMap CurAdjList= map[curnode].getAdjacencylist();
 		if(spDebug) cout << "eight, dijkstraSSSP! " << endl;
-		BOOST_FOREACH (unorderedIntMap::value_type neighbour, CurAdjList)
+		BOOST_FOREACH (intDoubleMap::value_type neighbour, CurAdjList)
 		{
 			int NextNodeID= neighbour.first; //id
 			if (isVisited[NextNodeID]==false) {
@@ -120,7 +143,6 @@ vector<int> RoadGraph::dijkstraSSSP(int source, int dest)
 		//if(spDebug) cout << "nine, dijkstraSSSP! " << endl;
 		if(curnode==dest)
 		{
-			//he.dist; //contains distance source->dest.
 			int prevNode = dest;
 			trace.push_back(prevNode);
 			do{
@@ -138,7 +160,7 @@ int RoadGraph::getMapsize()
 	return mapSize;
 }
 
-void RoadGraph::addEdge(int v1, int v2, int w)
+void RoadGraph::addEdge(int v1, int v2, double w)
 {
 	//if(debug) cout << "one, addEdge! (v1,v2,w): (" <<v1 <<"," << v2 <<"," << w <<") " << endl;
 	if(map[v1].getId() == -1){
@@ -177,7 +199,7 @@ void RoadGraph::readRoadNetworkFile(string fn)
 		if(debug) cout << "one, readNetworkFile! map:" << (int) map.size() <<" " << mapSize << endl;
 		for(int i = 0; i < mapSize+1; i++)
 			{
-				map.push_back(Vertex(-1,0,0)); //ugly, but do not know how to fill with null objects..
+				map.push_back(Vertex(-1,0,0.0)); //ugly, but do not know how to fill with null objects..
 				if(debug) cout << "two, readNetworkFile! map:" << (int) map.size() <<" " << mapSize <<"i: " << i << " map content: " << map[i].getId() << endl;
 			}
 
@@ -192,9 +214,9 @@ void RoadGraph::readRoadNetworkFile(string fn)
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());	
 		}
 		
-		if(debug) cout << "four, readNetworkFile! tokesn ([0],[1],[2]): (" << atoi(tokens[0].c_str()) << "," << atoi(tokens[1].c_str()) << "," << atoi(tokens[2].c_str()) << ")" << endl;
+		if(debug) cout << "four, readNetworkFile! tokens ([0],[1],[2]): (" << atoi(tokens[0].c_str()) << "," << atoi(tokens[1].c_str()) << "," << atof(tokens[2].c_str()) << ")" << endl;
 	
-		addEdge(atoi(tokens[0].c_str()),atoi(tokens[1].c_str()),atoi(tokens[2].c_str()));
+		addEdge(atoi(tokens[0].c_str()),atoi(tokens[1].c_str()),atof(tokens[2].c_str()));
 
 		int check = 0;
 		while(getline(in_data, str))
@@ -202,7 +224,7 @@ void RoadGraph::readRoadNetworkFile(string fn)
 			if(debug) cout << "five, readNetworkFile! getline:" << str  << " check: " << check++ << endl;
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 			if(debug) cout << "five1, readNetworkFile! getline:" << str  << " check: "  << check << endl;
-			addEdge(atoi(tokens[0].c_str()),atoi(tokens[1].c_str()),atoi(tokens[2].c_str()));
+			addEdge(atoi(tokens[0].c_str()),atoi(tokens[1].c_str()),atof(tokens[2].c_str()));
 			if(debug) cout << "five2, readNetworkFile! getline:" << str  << " check: "  << check << endl;
 		}
 		if(debug) cout << "six, readNetworkFile!" << endl;
@@ -229,7 +251,7 @@ void RoadGraph::readPPINetworkFile(string fn)
 		if(debug) cout << "one, readPPINetworkFile! map:" << (int) map.size() <<" " << mapSize << endl;
 		for(int i = 0; i < mapSize+1; i++)
 			{
-				map.push_back(Vertex(-1,0,0)); //ugly, but do not know how to fill with null objects..
+				map.push_back(Vertex(-1,0,0.0)); //ugly, but do not know how to fill with null objects..
 				//if(debug) cout << "two, readPPINetworkFile! map:" << (int) map.size() <<" " << mapSize <<"i: " << i << " map content: " << map[i].getId() << endl;
 			}
 
@@ -242,13 +264,89 @@ void RoadGraph::readPPINetworkFile(string fn)
 			for(int i = 1; i< tokens.size(); i++)
 			{
 				//if(debug) cout << "five1, readPPINetworkFile! getline:" << str << " check: " << check<< endl;
-				addEdge(atoi(tokens[0].c_str()),atoi(tokens[i].c_str())+woffset,1); //default weight of 1 since data does not provide any edge weights
+				addEdge(atoi(tokens[0].c_str()),atoi(tokens[i].c_str())+woffset,1.0); //default weight of 1 since data does not provide any edge weights
 				//if(debug) cout << "five2, readPPINetworkFile! getline:" << str << " check: " << check<< endl;
 			}
 		}
 		if(debug) cout << "six, readPPINetworkFile!" << endl;
 		in_data.close();
 	}
+}
+
+void RoadGraph::readCedgeNetworkFile(string fn)
+{
+///fileformat .cedge: 0 0 1 1.182663
+	filename = fn;
+	string str;
+	string nodeFN = fn;
+	nodeFN.replace ((nodeFN.size()-4), 4, "node"); //change file extention from .cedge to .cnode
+	std::vector<string> tokens;	
+	ifstream in_data (fn.c_str(), ios::in);
+	if(debug) cout << "s1, readCedgeNetworkFile! nodeFN: " <<nodeFN << endl;
+	if(in_data.is_open())
+	{
+		if(debug) cout << "zero, readCedgeNetworkFile! int maxsize: " << INT_MAX << endl;
+
+ 		getLastLine((nodeFN.c_str()),str); //find last line
+		boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //split last line of *.cnode file
+		mapSize = atoi(tokens[0].c_str()); //mapSize = number of nodes (using the highest node id to determine)
+
+		map.reserve(mapSize+1);
+		if(debug) cout << "one, readCedgeNetworkFile! map:" << (int) map.size() <<" " << mapSize << endl;
+		for(int i = 0; i < mapSize+1; i++)
+			{
+				map.push_back(Vertex(-1,0,0.0)); //ugly, but do not know how to fill with null objects...
+				//if(debug) cout << "two, readCedgeNetworkFile! map:" << (int) map.size() <<" " << mapSize <<"i: " << i << " map content: " << map[i].getId() << endl;
+			}
+		if(debug) cout << "three, readCedgeNetworkFile! map:" << (int) map.size() <<" " << mapSize << endl;
+		int check = 0;
+		while(getline(in_data, str))
+		{
+// 			cout << "five, readCedgeNetworkFile! getline:" << str  << " check: " << check++ << endl;
+			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+			//if(debug) cout << "five1, readCedgeNetworkFile! getline:" << str << " check: " << check<< endl;
+			addEdge(atoi(tokens[1].c_str()),atoi(tokens[2].c_str()),atof(tokens[3].c_str()));
+			//if(debug) cout << "five2, readCedgeNetworkFile! getline:" << str << " check: " << check<< endl;
+		}
+		if(debug) cout << "six, readCedgeNetworkFile!" << endl;
+		in_data.close();
+	}
+}
+
+bool RoadGraph::getLastLine(const char *filename, string &lastLine)
+{
+	#define _LL_BUFFSIZE_ 2048
+	if(debug) cout << "one, getLastLine! filename: "<<filename << endl;
+	lastLine.clear(); // regardless, zero out our return string
+	if (!filename || !*filename) // if no file to work on, return false
+	return false;
+
+	char buff[_LL_BUFFSIZE_]; // our temporary input buffer
+
+	ifstream is;
+	is.open(filename);
+
+	if (!is) // return false if couldn't open file
+	return false;
+
+	is.seekg (0, ios::end); // go to end of file
+	int length = is.tellg(); // find out how large it is
+	is.seekg(length-min(length,_LL_BUFFSIZE_),ios::beg); // seek back from end a short ways
+
+	// read in each line of the file until we're done
+	buff[0]=0;
+	do {
+	// uncomment if you want to skip empty lines or lines that start with whitespace
+	// fancier logic is probably called for
+
+	if (!isspace(buff[0]) && buff[0] != 0)
+	lastLine = buff;
+
+	} while (is.getline(buff, _LL_BUFFSIZE_));
+
+	is.close();
+
+	return true;
 }
 
 #endif

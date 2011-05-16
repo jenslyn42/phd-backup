@@ -61,6 +61,8 @@ public:
 	int getCacheHits(){return numCacheHits;}
 	int getTotalQueries(){return numTotalQueries;}
 	int getTotalDijkstraCalls(){return numDijkstraCalls;}
+	int getQueryNumCacheFull(){return queryNumCacheFull;}
+
 
 private:
 	int numTotalQueries;
@@ -68,11 +70,14 @@ private:
 	int cacheSize;
 	int cacheUsed;
 	int numDijkstraCalls;
+	int queryNumCacheFull;
+	int testType;
 	bool useNodeScore;
 	bool useHitScore;
+	bool cacheFull;
 	std::vector<int> nodeHits;
 	std::string testFile;
-
+	
 	void checkAndUpdateCache(std::pair<int,int> query);
 	void updateNodeHits(std::vector<int> queryResult);
 	void testToReplaceItem(int querySize, std::vector<int> nodesInQueryResult);
