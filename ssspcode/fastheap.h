@@ -36,7 +36,7 @@
 
 struct HeapEntry {
 	int id;
-	int dist;
+	double dist;
 	HeapEntry(){};
 	HeapEntry(int id, int d){
 		this->id = id;

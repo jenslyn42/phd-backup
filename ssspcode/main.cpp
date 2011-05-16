@@ -35,11 +35,13 @@
 #include <ctime>
 #include <vector>
 #include <utility>
+
 #include "osc.h"
 #include "lru.h"
 #include "FIFO.h"
 #include "RoadGraph.h"
 #include "testObj.h"
+#include "scache.h"
 
 #include "boost/math/common_factor.hpp"
 #include "boost/unordered_map.hpp"
@@ -50,54 +52,72 @@ using namespace std;
 typedef std::pair<int,int> intPair;
 
 ///Calculates the time in seconds
-double diffclock(clock_t clock1, clock_t clock2)
-{
-	double diff= clock2-clock1;
-	double diffsec= (diff*10)/CLOCKS_PER_SEC;
-	return diffsec;
-}
+// double diffclock(clock_t clock1, clock_t clock2)
+// {
+// 	double diff= clock2-clock1;
+// 	double diffsec= (diff*10)/CLOCKS_PER_SEC;
+// 	return diffsec;
+// }
 
 int main(int argc, char *argv[])
 {
+
+///Test settings. 
+testsetting ts;
+string testname = "glRandLongStatic22.test";
+string testfile = "graph_large.txt";
+// string testfile ="ppi.dat";
+// string testfile ="OL.cedge";
+int testType = 1;
+int numqueries = 10000;
+ts.queryFileName = "queriesRandLongGL1E6"; //needed for static test
 
 ///Generate queries
 vector<pair<int,int> > queries;
 int s,t;
 pair<int,int> p;
 
-for(int i=0; i<100000; i++)
+for(int i=0; i<numqueries; i++)
 {
 
-	srand((int)rand());
-	p.first = (rand()%15499) +1;
-	p.second = (rand()%15499) +1;
+	srand((int)rand());/*
+	p.first = (rand()%15499) +1; //ppi.dat
+	p.second = (rand()%15499) +1;*/
+// 	p.first = (rand()%85286) +1; //arg.cedge, arg.enode
+// 	p.second = (rand()%85286) +1;
+// 	p.first = (rand()%190913) +1; //caida.cedge, caida.cnode
+// 	p.second = (rand()%190913) +1;
+	p.first = (rand()%6104) +1; //graph_large.txt
+	p.second = (rand()%6104) +1;
+// 	p.first = (rand()%63730) +1; //facebook.cedge, facebook.cnode
+// 	p.second = (rand()%63730) +1;
 	queries.push_back(p);
 }
 
 // cout << "error check "<< queries.at(1045).first << "," << queries.at(1045).second << endl;
 // cout << "error check "<< queries.back().first << "," << queries.back().second << endl;
 
-///Test settings. many options from here are not used directly yet
-testsetting ts;
-string testname = "test";
-string testfile ="ppi.dat";
-OSC ff;	
+	
 
-int numqueries=7000, cacheSize=100000, queryRangeStart=0, queryRangeEnd=RoadGraph::mapObject(testfile)->getMapsize();
+int numQ=numqueries, cacheSize=1000, queryRangeStart=0, queryRangeEnd= RoadGraph::mapObject(testfile, testType)->getMapsize();
 bool gaussian, useOptimalSubstructure, useNodeScore, useHitScore;
 double sigma = 2.0;
 gaussian=true, useOptimalSubstructure=true, useNodeScore=true, useHitScore = true;
 
-ts.setData(testname, testfile, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+ts.setData(testname, testfile, testType, numQ, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
 
-///To hold the start/end time of OSC,LRU,FIFO
-clock_t start, end;
+
+
+
+cout << std::numeric_limits<int>::max() << endl;
+cout << std::numeric_limits<long>::max() << endl;
+cout << std::numeric_limits<unsigned int>::max() << endl;
+
 
 ///exp test OSC with testObj
-testObj *expTest = new testObj(ts,1, queries);
-expTest->runTest();
-expTest-> testObj::~testObj();
-
+// testObj *expTest = new testObj(ts,1, queries);
+// expTest->runTest();
+// expTest-> testObj::~testObj();
 
 ///exp test LRU with testObj
 // testObj *expTest2 = new testObj(ts,2, queries);
@@ -106,55 +126,43 @@ expTest-> testObj::~testObj();
 
 
 ///exp test FIFO with testObj
-// testObj *expTest3 = new testObj(ts,3, queries);
-// expTest3->runTest();
-// expTest3-> testObj::~testObj();
+testObj *expTest3 = new testObj(ts,4, queries);
+expTest3->runStaticTest();
+expTest3-> testObj::~testObj();
 
 
-///test  OSC
+//cacheSize
+cacheSize = 10000;
+ts.setData(testname, testfile, testType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
 
-// OSC *methodone = new OSC(ts);
-// start = clock();
-// BOOST_FOREACH( intPair qpair, queries )
-// {
-// //	cout << "OSC ("<< qpair.first <<","<<qpair.second <<")" << endl;
-// 	methodone->readQuery(qpair);
-// }
-// end = clock();
-// cout << "OSC time: " << double(diffclock(start,end)) << " sec. dc: " << methodone->getTotalDijkstraCalls() <<"," << methodone->getCacheHits()<< endl;
-
-///Test LRU
-// start = clock();
-// LRU *methodtwo = new LRU(ts);
-// BOOST_FOREACH( intPair qpair, queries )
-// {
-// 	methodtwo->readQuery(qpair);
-// }
-// end = clock();
-// cout << "LRU time: " << double(diffclock(start,end)) << " sec. dc: " << methodtwo->getTotalDijkstraCalls() <<"," << methodtwo->getCacheHits()<< endl;
-
-///Test FIFO
-// start = clock();
-// FIFO *methodthree = new  FIFO(ts);
-// BOOST_FOREACH( intPair qpair, queries )
-// {
-// 	methodthree->readQuery(qpair);
-// }
-// end = clock();
-// cout << "FIFO time: " << double(diffclock(start,end)) << " sec. dc: " << methodthree->getTotalDijkstraCalls() <<"," << methodthree->getCacheHits()<< endl;
+expTest3 = new testObj(ts,4, queries);
+expTest3->runStaticTest();
+expTest3-> testObj::~testObj();
 
 
-///Write out test information from the SP algorithm
-unorderedIntMap nodecalls =  RoadGraph::mapObject(ts.getTestFile())->totalNodeCalls;
-int totalcalls = 0;
-BOOST_FOREACH (unorderedIntMap::value_type node, nodecalls)
-{
-	//cout << node.first <<":" <<node.second << endl;
- 	totalcalls += node.second;
-// 	if(node.second < 50) cout << "low: " << node.second << endl;
-// 	if(node.second > 410) cout << "high: " << node.second << endl;
-}
-cout << "Vertices visited:\t" << totalcalls << "\tCachesize:\t"<<cacheSize << endl;
+cacheSize = 100000;
+ts.setData(testname, testfile, testType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+
+expTest3 = new testObj(ts,4, queries);
+expTest3->runStaticTest();
+expTest3-> testObj::~testObj();
+
+
+cacheSize = 1000000;
+ts.setData(testname, testfile, testType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+
+expTest3 = new testObj(ts,4, queries);
+expTest3->runStaticTest();
+expTest3-> testObj::~testObj();
+
+
+cacheSize = 10000000;
+ts.setData(testname, testfile, testType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+
+expTest3 = new testObj(ts,4, queries);
+expTest3->runStaticTest();
+expTest3-> testObj::~testObj();
+
 
 return EXIT_SUCCESS;
 };

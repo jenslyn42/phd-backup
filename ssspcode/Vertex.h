@@ -41,15 +41,15 @@ class Vertex
 public:
 	Vertex(){ };
 	//Vertex(int id); should really implement this one..
-	Vertex(int id, int nId, int weight);
-	void updateVertexID(int id, int nId, int weight);
-	void addNeighbour(int id , int weight);
-	boost::unordered_map<int, int> getAdjacencylist();
+	Vertex(int id, int nId, double weight);
+	void updateVertexID(int id, int nId, double weight);
+	void addNeighbour(int id , double weight);
+	boost::unordered_map<int, double> getAdjacencylist();
 	int getId();
 	string toString();
 	
 private:
 	int id;
-	boost::unordered_map<int, int> Adjacencylist;
+	boost::unordered_map<int, double> Adjacencylist;
 };
 #endif

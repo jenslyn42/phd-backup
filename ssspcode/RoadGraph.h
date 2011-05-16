@@ -43,21 +43,24 @@
 #include "boost/algorithm/string.hpp"
 #include "boost/foreach.hpp"
 
+typedef boost::unordered_map<int, double> intDoubleMap;
 typedef boost::unordered_map<int, int> unorderedIntMap;
+
 
 class RoadGraph
 {
 public:
-	static RoadGraph* mapObject(string testfile);
+	static RoadGraph* mapObject(string testfile, int parseType);
 	void setMapFile(string file);
 	std::vector<Vertex> getMap();
 	std::vector<int> dijkstraSSSP(int s, int t);
 	int getMapsize();
 	string checkMapFilename(){return filename;}
-	unorderedIntMap totalNodeCalls;
-	
+	boost::unordered_map<int, int> totalNodeCalls;
+	void resetRoadGraph(){mapInstance = NULL;}
+
 private:
-	RoadGraph(){};
+	RoadGraph(){ };
 	~RoadGraph(){delete mapInstance;}
 	RoadGraph(RoadGraph const&){}; //privatre copy constructor
 	RoadGraph& operator=(RoadGraph const&){}; //private assignment operator
@@ -65,11 +68,15 @@ private:
 	std::vector<Vertex> map;
 	int mapSize;
 	int edges;
+	int parseFileType;
 	std::string filename;
 	
-	void addEdge(int v1, int v2, int w);
+	void parseType(int pt);
+	void addEdge(int v1, int v2, double w);
 	void readRoadNetworkFile(string fn);
-	void readPPINetworkFile(string fn);	
+	void readPPINetworkFile(string fn);
+	void readCedgeNetworkFile(string fn);	
+	bool getLastLine(const char *filename, string &lastLine);
 };
 
 #endif

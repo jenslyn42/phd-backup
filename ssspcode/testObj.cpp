@@ -28,10 +28,12 @@
  *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          		*
  ***************************************************************************************/
 #include "testObj.h"
-#define debug false
+#define debug true
 
 testObj::testObj(testsetting settings, int testType)
 {
+	ts = settings;
+
 	switch( testType ){
 		case 1:
 			if (debug) cout << "testObj:: constructor: OSC test choosen" <<endl;
@@ -45,6 +47,10 @@ testObj::testObj(testsetting settings, int testType)
 			if (debug) cout << "testObj:: constructor: FIFO test choosen" <<endl;
 			test = new FIFO(settings);
 			break;
+		case 4:
+			if (debug) cout << "testObj:: constructor: STATIC test choosen" <<endl;
+			test = new scache(settings);
+			break;
 	}
 
 	generateQueries(settings.getNumQueries());
@@ -52,6 +58,8 @@ testObj::testObj(testsetting settings, int testType)
 
 testObj::testObj(testsetting settings, int testType, vector< pair<int,int> > _queries)
 {
+	ts = settings;
+
 	switch( testType ){
 		case 1:
 			if (debug) cout << "testObj:: constructor: OSC test choosen" <<endl;			
@@ -64,7 +72,11 @@ testObj::testObj(testsetting settings, int testType, vector< pair<int,int> > _qu
 		case 3:
 			if (debug) cout << "testObj:: constructor: FIFO test choosen" <<endl;
 			test = new FIFO(settings);
-			break; 
+			break;
+		case 4:
+			if (debug) cout << "testObj:: constructor: STATIC test choosen" <<endl;
+			test = new scache(settings);
+			break;
 	}
 	queries = _queries;
 }
@@ -98,9 +110,42 @@ void testObj::runTest()
 	end = clock();
  	//if (debug) cout << "testObj::runTest: test ended" <<endl;
 	testResults(start,end);
+	
+	RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->resetRoadGraph();
+}
+
+void testObj::runStaticTest()
+{
+	if (debug) cout << "testObj::runStaticTest: static test started" <<endl;
+	test->readQueries(ts.getNumQueries(), ts.queryFileName);
+	if (debug) cout << "testObj::runStaticTest: queries read" <<endl;
+ 	start = clock();
+ 	test->readQueryList(queries); //the argument is not used here, rather the queries var from the test obj is used.
+ 	end = clock();
+  	if (debug) cout << "testObj::runStaticTest: static test ended" <<endl;
+ 	testResults(start,end);
+ 	
+ 	RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->resetRoadGraph();
 }
 
 void testObj::testResults(clock_t s, clock_t e)
 {
-cout << "Time:\t" << (double(e-s))/CLOCKS_PER_SEC << " sec. cm,ch:\t" << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << " " << typeid(*test).name() << endl;
+	///Console output
+	unorderedIntMap nodecalls =  RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->totalNodeCalls;
+	long totalcalls = 0;
+	BOOST_FOREACH (unorderedIntMap::value_type node, nodecalls){totalcalls += (long)node.second;}
+	
+	cout << "Time:\t" << (double(e-s))/CLOCKS_PER_SEC << " sec. cm,ch:\t" << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << " " << typeid(*test).name() <<  "\tQueryNum Cache full:\t" << test->getQueryNumCacheFull() << endl;
+	
+	cout << "Vertices visited:\t" << totalcalls << "\tCachesize:\t"<<ts.getCacheSize() << "\n\n" << endl;
+	
+	///file output
+	ofstream resultfile;
+	resultfile.open((ts.getTestName()).c_str(), ios::out | ios::ate | ios::app);
+	
+	resultfile << "Time:\t" << (double(e-s))/CLOCKS_PER_SEC << " sec. cm,ch:\t" << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << " " << typeid(*test).name() <<  "\tQueryNum Cache full:\t" << test->getQueryNumCacheFull() << endl;
+	
+	resultfile << "Vertices visited:\t" << totalcalls << "\tCachesize:\t"<<ts.getCacheSize() << "\n" << endl;
+	
+	resultfile.close();
 }

@@ -39,10 +39,13 @@
 #include <vector>
 using namespace std;
 
+typedef std::pair<int,int> intPair;
+
 class testsetting{
 private:
 	std::string testName;
 	std::string testFile;
+	int testType;
 	int numQueries;
 	int cacheSize;
 	int queryRangeStart;
@@ -58,12 +61,13 @@ private:
 public:
 	testsetting(){ };
 
-	testsetting(string testname, string testfile, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore);
+	testsetting(string testname, string testfile, int testType, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore);
 
-	void setData(string testname, string testfile, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore);
+	void setData(string testname, string testfile, int testType, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore);
 
 	~testsetting();
 
+	std::string queryFileName;
 // 	void setTestName (const std::string& theValue ) {testName = theValue;}
 	std::string getTestName() const {return testName;}
 
@@ -88,6 +92,9 @@ public:
 	int getQueryRangeEnd() const{return queryRangeEnd;}
 
 	std::string getTestFile() const{return testFile;}
+
+	void setTestType (int theValue){testType = theValue;}
+	int getTestType() const{return testType;}	
 };
 
 #endif

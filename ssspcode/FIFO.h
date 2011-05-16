@@ -60,17 +60,20 @@ public:
 	int getCacheHits(){return numCacheHits;}
 	int getTotalQueries(){return numTotalQueries;}
 	int getTotalDijkstraCalls(){return numDijkstraCalls;}
+	int getQueryNumCacheFull(){return queryNumCacheFull;}
 
 private:
 	int numTotalQueries;
 	int numCacheHits;
 	int numDijkstraCalls;
+	int queryNumCacheFull;
 
 	int cacheSize;
 	int cacheUsed;
 
 	bool useNodeScore;
 	bool useHitScore;
+	bool cacheFull;
 	
 	testsetting ts;
 

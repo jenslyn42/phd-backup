@@ -48,7 +48,7 @@ struct oscFixture
 
 	string testname;
 	string testfile;
-	int numqueries, cacheSize, queryRangeStart, queryRangeEnd;
+	int numqueries, cacheSize, queryRangeStart, queryRangeEnd, testType;
 	vector< bool > atests;
 	bool gaussian, useOptimalSubstructure, useNodeScore, useHitScore;
 	double sigma;
@@ -60,11 +60,12 @@ struct oscFixture
 
 		testname ="osc test";
 		testfile ="graph_small.txt";
+		testType = 1;
 		numqueries=3000, cacheSize=60, queryRangeStart=0, queryRangeEnd=6105;
 		gaussian=true, useOptimalSubstructure=true, useNodeScore=true, useHitScore = true;
 		sigma= 2.0;
 
-    		ts.setData(testname, testfile, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+    		ts.setData(testname, testfile, testType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
 		
 		OSC tmp (ts);		
     		ff = tmp; 

@@ -43,6 +43,8 @@ FIFO::FIFO(testsetting ts)
 	useNodeScore = ts.isUseHitScore();
 	useHitScore = ts.isUseNodeScore();
 	numDijkstraCalls = 0;
+	queryNumCacheFull = -1;
+	cacheFull = false;
 }
 
 FIFO::~FIFO()
@@ -74,9 +76,6 @@ void FIFO::checkAndUpdateCache(std::pair< int, int > query)
 			if(debug) cout << "one1, fifo::checkAndUpdateCache! :cacheSize:" << (int) cache.size() <<"::"<< endl;
 			BOOST_FOREACH(CacheItem ci, cache )
 			{
-				if(debug) cout << "two2, fifo::checkAndUpdateCache! " << ++ii << endl;
-				find(ci.item.begin(),ci.item.end(), query.first);
-				if(debug) cout << "two3, fifo::checkAndUpdateCache! " << ++ii << endl;
 				if(find(ci.item.begin(),ci.item.end(), query.first) != ci.item.end() && find(ci.item.begin(),ci.item.end(), query.second) != ci.item.end())
 				{
 					numCacheHits++;
@@ -102,7 +101,7 @@ void FIFO::checkAndUpdateCache(std::pair< int, int > query)
 	if(!cacheHit)
 	{
 		if(debug) cout << "six, fifo::checkAndUpdateCache!" << endl;
-		vector<int> spResult = RoadGraph::mapObject(ts.getTestFile())->dijkstraSSSP(query.first, query.second);
+		vector<int> spResult = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->dijkstraSSSP(query.first, query.second);
 		numDijkstraCalls++;
 		if(debug) cout << "seven, fifo::checkAndUpdateCache!" << endl;
 		int querySize = spResult.size();
@@ -131,6 +130,7 @@ void FIFO::insertItem(int querySize, std::vector< int > nodesInQueryResult, int 
 		}
 		else if(querySize < cacheSize)
 		{
+			if(!cacheFull){queryNumCacheFull = numTotalQueries; cacheFull = true;}
 			cacheUsed = cacheUsed - cache.back().size;
 			cache.pop_back();
 		}
