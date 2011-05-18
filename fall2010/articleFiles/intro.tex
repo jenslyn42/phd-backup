@@ -7,17 +7,18 @@ A user issues two queries as seen in fig. \ref{fig:advancedroutequery}. We can t
 
 
 \section{Motivation}
-Shortest Path (SP) calculation is much slower than retrieval from cache, as a cache can supply a \spath directly, where a \spath algorithm will on at most have to visit $AF^{AVN}$ nodes (see table of notation). 
+Previous work on caching focus on domains which usually has two key characteristics: data locality and limited set of possible items which can be cached (\cite{ref.}). 
+There has not been any previous work done developing a caching scheme usable in domains with large set of possible cacheable items and little or no locality in new items added to system, or suggested added to cache. \spath caching is one such domain. 
 
-Users want fast response time (and \spath can do this cheaper with caching \cite{ref.})
+\spath calculation is much slower than retrieval from cache, as a cache can supply a \spath directly. 
+%where a \spath algorithm will on at most have to visit $AF^{AVN}$ nodes (see table of notation). 
+\spath service providers want to spend less money on hardware (\cite{ref.}) and users want fast response time which (\cite{ref.}), when compared to investing in more hardware and bandwith, can be archived in a much cheaper and scalable way by implementing a \spath cache.
 
-\spath service providers want to spend less money on hardware (less computation -> less hardware)
+Returning a precomputed \spath result is faster, however, it is not feasible to store all possible \spaths. The cache replacement policy of a \spath cache ensures that most queries can be answered by the cache, ensuring as many queries as possible is answered with the space available to the \spath cache.
 
-it is not feasible to store all possible \spaths (even if considering OSS)
 
-Develop a caching scheme usable in domains with large set of possible cacheable items and little or no  locality in new items added to system, or suggested added to cache.
 
-No previous work has been done on cacheting \spath query results. interesting problem
+No previous work has been done on caching \spath query results. interesting problem
 
 More users now have a GPS and Web enabled mobile devices which makes \spath services more popular, but also require them to serve much larger set of users.
 
@@ -76,7 +77,7 @@ More users now have a GPS and Web enabled mobile devices which makes \spath serv
 %ples (time, longitude, latitude), ordered by the time
 %attribute, but as we will work on a road network and
 %in the spatio-temporal domain, such a basic notion of
-%trajectories is not appropriate. We de�ne T as the set
+%trajectories is not appropriate. We define T as the set
 %of trajectories, where each trajectory consist of an id
 %(tid ), and a sequence of tuples containing an edge and
 

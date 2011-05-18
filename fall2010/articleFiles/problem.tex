@@ -11,7 +11,7 @@ We consider only server side caching..
 
 \subsection{Architecture}\label{sec:architec}
 
-The system architecture of what we propose is shown in fig. \ref{fig:advancedroutequery}. The example architecture depicted in fig \ref{fig:advancedroutequery} shows every major step (fig. \ref{fig:advancedroutequery}A-E) that our system might execute when a new \spath query is submitted to the system (fig. \ref{fig:advancedroutequery}A). After a \spath query is submitted to the system (fig. \ref{fig:advancedroutequery}A), the cache (fig. \ref{fig:advancedroutequery}B) is then queried to check if the result is in the cache. If there is a cache hit the system will immidiately return the result from the cache (fig. \ref{fig:advancedroutequery}E). If the queried \spath result is not in the cache, the system will detect a cache miss and calculate the result (fig. \ref{fig:advancedroutequery}C) and immidiately return it to the user (fig. \ref{fig:advancedroutequery}E). After returning the calculated result the system will use its cache policy to evaluate if the new result should be added to the cache, possibly expunging some other result from the cache, or discarded (fig. \ref{fig:advancedroutequery}D)
+The architecture of our system is shown in fig. \ref{fig:advancedroutequery}. The example architecture depicted in fig \ref{fig:advancedroutequery} shows every major step (fig. \ref{fig:advancedroutequery}A-E) that our system might execute when a new \spath query is submitted to the system (fig. \ref{fig:advancedroutequery}A). After a \spath query is submitted to the system (fig. \ref{fig:advancedroutequery}A), the cache (fig. \ref{fig:advancedroutequery}B) is then queried to check if the result is in the cache. If there is a cache hit the system will immidiately return the result from the cache (fig. \ref{fig:advancedroutequery}E). If the queried \spath result is not in the cache, the system will detect a cache miss and calculate the result (fig. \ref{fig:advancedroutequery}C) and immidiately return it to the user (fig. \ref{fig:advancedroutequery}E). After returning the calculated result the system will use its cache policy to evaluate if the new result should be added to the cache, possibly expunging some other result from the cache, or discarded (fig. \ref{fig:advancedroutequery}D)
 
 
 \begin{figure}
@@ -55,9 +55,9 @@ We will be working on optimizing two sub-goals:
 \end{enumerate}
 
 
-As stated in sub-goal \ref{it:sptime} we want to reduce reduce the time spent executing the \spath algorithm. We choose this goal as the \spath algorithm is usually the single most CPU intensive task at a \spath service \cite{ref.} and by using a cache we should be able to find a direct correspondence between cache hits and the total CPU time of the \spath algorithm.
+As stated in sub-goal \ref{it:sptime} we want to reduce the time spent executing the \spath algorithm. We choose this goal as the \spath algorithm is usually the single most CPU intensive task at a \spath service \cite{ref.} and by using a cache we should be able to find a direct correspondence between cache hits and the total CPU time of the \spath algorithm.
 
-In a \spath service without a cache there should a small amount of overhead related mainly to handling the incoming queries and system maintenance. Sub-goal \ref{it:ovtime} is about reducing this overhead. We want to reduce the overhead as adding a cache to a \spath system may add more overhead related to maintaining the cache integrity.
+In a \spath service without a cache there should be a small amount of overhead related mainly to handling the incoming queries and system maintenance. Sub-goal \ref{it:ovtime} is related to the reduction of this overhead. We want to reduce the overhead as adding a cache to a \spath system may add additional overhead related to maintaining the cache integrity.
 
 It is important that the increase in overhead does not grow larger than savings archived from the reduced time the \spath algorithm needs to be run.
 
