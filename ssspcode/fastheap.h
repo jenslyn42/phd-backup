@@ -96,5 +96,6 @@ class FAST_HEAP
 };
 //typedef    priority_queue<HeapEntry,vector<HeapEntry>,HeapEntryComp> Heap;
 typedef    FAST_HEAP<HeapEntry, std::vector<HeapEntry>, HeapEntryComp> Heap;
+typedef    FAST_HEAP<HeapEntry, std::vector<HeapEntry>, HeapEntryCompMax> maxHeap;
 
 #endif

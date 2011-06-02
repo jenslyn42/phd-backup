@@ -30,6 +30,9 @@
 
 #include "CacheItem.h"
 
+
+CacheItem::CacheItem(){};
+
 CacheItem::CacheItem(int key, std::vector<int> item)
 {
 	this->id = key;

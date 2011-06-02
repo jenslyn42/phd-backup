@@ -51,7 +51,7 @@ PROGRAMS = $(bin_PROGRAMS)
 am_cacheReplacement_OBJECTS = CacheItem.$(OBJEXT) FIFO.$(OBJEXT) \
 	RoadGraph.$(OBJEXT) Vertex.$(OBJEXT) lru.$(OBJEXT) \
 	main.$(OBJEXT) osc.$(OBJEXT) scache.$(OBJEXT) \
-	testObj.$(OBJEXT) testsetting.$(OBJEXT)
+	support.$(OBJEXT) testObj.$(OBJEXT) testsetting.$(OBJEXT)
 cacheReplacement_OBJECTS = $(am_cacheReplacement_OBJECTS)
 cacheReplacement_LDADD = $(LDADD)
 cacheReplacement_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -203,10 +203,10 @@ top_srcdir = ..
 INCLUDES = 
 METASOURCES = AUTO
 cacheReplacement_SOURCES = CacheItem.cpp FIFO.cpp RoadGraph.cpp Vertex.cpp \
-	lru.cpp main.cpp osc.cpp scache.cpp testObj.cpp testsetting.cpp
+	lru.cpp main.cpp osc.cpp scache.cpp support.cpp testObj.cpp testsetting.cpp
 
 noinst_HEADERS = FIFO.h RoadGraph.h Vertex.h lru.h osc.h scache.h testsetting.h
-_SOURCES = Test.h
+_SOURCES = support.h
 testCacheReplacement_SOURCES = CacheItemTest.cpp RoadGraphTest.cpp \
 	VertexTest.cpp boostTest.cpp boostTest11.cpp fifoTest.cpp lruTest.cpp oscTest.cpp
 
@@ -308,6 +308,7 @@ include ./$(DEPDIR)/osc.Po
 include ./$(DEPDIR)/oscTest.Po
 include ./$(DEPDIR)/program_options.Po
 include ./$(DEPDIR)/scache.Po
+include ./$(DEPDIR)/support.Po
 include ./$(DEPDIR)/testObj.Po
 include ./$(DEPDIR)/testsetting.Po
 
