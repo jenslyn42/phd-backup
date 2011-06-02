@@ -39,6 +39,7 @@ public:
 	int id, s, t, size;
 	std::vector<int> item;
 
+	CacheItem();
 	CacheItem(int key, std::vector<int> item);
 	CacheItem(int key, std::vector<int> item, int queryStartNode, int queryTargetNode);
 
@@ -50,3 +51,4 @@ public:
 };
 
 #endif
+

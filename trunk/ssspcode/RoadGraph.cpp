@@ -119,7 +119,8 @@ vector<int> RoadGraph::dijkstraSSSP(int source, int dest)
 
 		if(totalNodeCalls.find(curnode) == totalNodeCalls.end()){
 			totalNodeCalls[curnode] = 1;
-		}else{ totalNodeCalls[curnode] = totalNodeCalls.at(curnode)+1;
+		}else{ 
+			totalNodeCalls[curnode] = totalNodeCalls.at(curnode)+1;
 		}
 		
 		isVisited[curnode]=true;

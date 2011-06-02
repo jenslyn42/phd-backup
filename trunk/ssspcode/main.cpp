@@ -64,13 +64,12 @@ int main(int argc, char *argv[])
 
 ///Test settings. 
 testsetting ts;
-string testname = "glRandLongStatic22.test";
-string testfile = "graph_large.txt";
+string testname = "glRandLongStaticScored.test";
 // string testfile ="ppi.dat";
-// string testfile ="OL.cedge";
-int testType = 1;
-int numqueries = 10000;
-ts.queryFileName = "queriesRandLongGL1E6"; //needed for static test
+string testfile ="OL.cedge";
+int inputFileType = 3; //1:graph_large, 2: ppi.dat, 3:*.cedge
+int numqueries = 100000;
+ts.queryFileName = "queriesGL1E6"; //needed for static test
 
 ///Generate queries
 vector<pair<int,int> > queries;
@@ -96,15 +95,14 @@ for(int i=0; i<numqueries; i++)
 
 // cout << "error check "<< queries.at(1045).first << "," << queries.at(1045).second << endl;
 // cout << "error check "<< queries.back().first << "," << queries.back().second << endl;
-
 	
 
-int numQ=numqueries, cacheSize=1000, queryRangeStart=0, queryRangeEnd= RoadGraph::mapObject(testfile, testType)->getMapsize();
+int numQ=numqueries, cacheSize=1000, queryRangeStart=0, queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
 bool gaussian, useOptimalSubstructure, useNodeScore, useHitScore;
 double sigma = 2.0;
 gaussian=true, useOptimalSubstructure=true, useNodeScore=true, useHitScore = true;
 
-ts.setData(testname, testfile, testType, numQ, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+ts.setData(testname, testfile, inputFileType, numQ, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
 
 
 
@@ -133,7 +131,7 @@ expTest3-> testObj::~testObj();
 
 //cacheSize
 cacheSize = 10000;
-ts.setData(testname, testfile, testType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
 
 expTest3 = new testObj(ts,4, queries);
 expTest3->runStaticTest();
@@ -141,7 +139,7 @@ expTest3-> testObj::~testObj();
 
 
 cacheSize = 100000;
-ts.setData(testname, testfile, testType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
 
 expTest3 = new testObj(ts,4, queries);
 expTest3->runStaticTest();
@@ -149,7 +147,7 @@ expTest3-> testObj::~testObj();
 
 
 cacheSize = 1000000;
-ts.setData(testname, testfile, testType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
 
 expTest3 = new testObj(ts,4, queries);
 expTest3->runStaticTest();
@@ -157,7 +155,7 @@ expTest3-> testObj::~testObj();
 
 
 cacheSize = 10000000;
-ts.setData(testname, testfile, testType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
 
 expTest3 = new testObj(ts,4, queries);
 expTest3->runStaticTest();
