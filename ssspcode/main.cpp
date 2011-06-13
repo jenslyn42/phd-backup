@@ -64,12 +64,15 @@ int main(int argc, char *argv[])
 
 ///Test settings. 
 testsetting ts;
-string testname = "glRandLongStaticScored.test";
+string testname = "glRandLongStaticScored10000.test";
 // string testfile ="ppi.dat";
 string testfile ="OL.cedge";
 int inputFileType = 3; //1:graph_large, 2: ppi.dat, 3:*.cedge
 int numqueries = 100000;
+
+
 ts.queryFileName = "queriesGL1E6"; //needed for static test
+ts.setStaticQueryType(4);
 
 ///Generate queries
 vector<pair<int,int> > queries;

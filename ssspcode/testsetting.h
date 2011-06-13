@@ -51,6 +51,9 @@ private:
 	int queryRangeStart;
 	int queryRangeEnd;
 
+	//Indicates which method should be used to fill the cache.
+	int staticQueryType;
+
 	pair<bool,double> gaus;
 
 	//is NOT implemented
@@ -95,6 +98,11 @@ public:
 
 	void setTestType (int theValue){testType = theValue;}
 	int getTestType() const{return testType;}	
+
+	//Used in readQueries(int numQueries, string inFn)
+	void setStaticQueryType ( int val ){staticQueryType = val;}
+	int getStaticQueryType() const{return staticQueryType;}
+	
 };
 
 #endif
