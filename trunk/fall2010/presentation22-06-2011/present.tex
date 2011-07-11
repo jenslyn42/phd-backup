@@ -1,0 +1,69 @@
+\documentclass[t]{beamer}
+\setbeamertemplate{navigation symbols}{} %no nav symbols
+\usepackage{beamerthemeshadow}
+\usepackage{pgf}
+\usepackage{listing}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{multirow}
+\usetheme{Copenhagen} % Beamer theme v 3.0
+\usecolortheme{whale} % Beamer color theme
+
+
+\usepackage[boxed,linesnumbered,vlined,slide]{algorithm2eCustom}
+
+
+
+\title[July Presentation 2011\hspace{14em}\insertframenumber/\inserttotalframenumber]{Rethinking Database Algorithms\\ for Phase Change Memory}
+\author[Jeppe R. Thomsen]{Shimin Chen$^{1}$, Phillip B. Gibbons$^{1}$, Suman Nath$^{2}$}%\\ \small{jenslyn@cs.aau.dk}}
+\institute{$^{1}$Intel Labs Pittsburgh, $^{2}$Microsoft Research}
+\begin{document}
+\begin{frame} % Cover slide
+\titlepage
+\end{frame}
+% Instead, you can use \frame{\titlepage}} (Beamer v 2.2 macro)
+%
+%\section{Introduction} % Bookmark information
+%
+%\begin{frame}[red]
+%\frametitle{Overview}
+%\Large
+%
+%\end{frame}
+
+
+
+\input{introduction.tex}
+\input{bplus.tex}
+\input{hashjoin.tex}
+\input{results.tex}
+\end{document}
+
+%General
+%
+%    * Is it clear where the paper was published and by whom?
+%    * Does the talk have a concrete motivating example very early?
+%    * Are unfamiliar abbreviations introduced and used appropriately?
+%    * Is the main problem addressed in the paper clearly stated?
+%    * Does the presentation have concrete and minimal examples of core ideas?
+%    * Are dynamics, e.g., searching a tree presented using animation techniques?
+%    * Are the listeners background use appropriately, e.g., no need to tell what an array is, however must tell what the XY++-Tree is?
+%    * Is there a reasonable number of slides in total in the presentation?
+%
+%Figures
+%
+%    * Are complicated figures presented in sufficient details?
+%    * Are the symbols used in the figures clear to the listeners?
+%
+%Performance Graphs
+%
+%    * Is data, queries, modification, and transactions appropriately introduced?
+%    * Are the axis on performance graphs clearly explained?
+%    * Are the main conclusion from the graph clearly stated?
+%    * Is there only one graph per slide (or are graphs compared)?
+%
+%Critique
+%
+%    * Is the critique relevant and fair?
+%    * Is the critique balanced?
+%    * Is the critique points concrete, i.e., not "it is a good paper"?
