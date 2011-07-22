@@ -3,43 +3,148 @@
 \begin{frame}
 \frametitle{SS}
 
-\begin{itemize}
-\item .
-\end{itemize}
+
 
 \end{frame}
 
 \subsection{Simple Hash Join}
 \begin{frame}
-\frametitle{SS}
 
+\begin{algorithm}[H]
+\dontprintsemicolon
+\SetVline
+
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}\SetKw{Return}{return}
+
+\textbf{Build Phase:} \\
+\For{$i=0;i < M_R; i++$}
+{
+	r = record $i$ in relation R \;
+	insert $r$ into hash table \;
+}
+\textbf{Probe Phase:} \\
+\For{$j=0;j < M_S; j++$}
+{
+	s = record $j$ in relation S \;
+	probe $s$ in hash table \;
+	\If{match(es) found}
+	{
+		generate join result(s) from matching records \;
+		send join result(s) to upper level operator \;
+	}
+}
+\end{algorithm}
+\end{frame}
+
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{Simple Hash Join}
+
+Cashe misses
 \begin{itemize}
-\item .
+\item During Build Phase:
+	\begin{itemize}
+	\item Reading all join keys ($min(\frac{M_RL_R}{L},M_R)$)
+	\item Accessing hash table ($M_RN_{hR}$)
+	\end{itemize}
+\item During Probe Phase:
+	\begin{itemize}
+	\item Scanning probe relation ($\frac{M_SL_S}{L}$)
+	\item Accessing hash table ($M_SN_{hS}$)
+	\item Accessing matching build records in random fashion
+	\end{itemize}
 \end{itemize}
 
+Disadvantages
+\begin{itemize}
+\item Incurs a lot of cache misses for unaligned records
+\end{itemize}
 \end{frame}
 
 
 \subsection{Cache Partitioning}
 
 \begin{frame}
-\frametitle{SS}
 
-\begin{itemize}
-\item .
-\end{itemize}
+\begin{algorithm}[H]
+\dontprintsemicolon
+\SetVline
+\tiny
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}\SetKw{Return}{return}
+
+\textbf{Partition Phase:} \\
+$htsize = M_R * hash_table_per_entry_metadata_size$ \;
+P = $\lceil(M_R*L_R + M_S*L_S + htsize)/C\rceil$ \;
+\For{$i=0;i < M_R; i++$}
+{
+	$r$ = record $i$ in relation $R$ \;
+	$p$ = hash($r$) mod $P$ \;
+	copy $r$ to partion $R_p$ \;
+}
+\For{$j=0;j < M_S; j++$}
+{
+	$s$ = record $j$ in relation $R$ \;
+	$p$ = hash($s$) mod $P$ \;
+	copy $s$ to partion $S_p$ \;
+}
+\textbf{Join Phase:} \\
+\For{$j=0;j < M_S; j++$}
+{
+	Join $R_p$ and $S_p$ using simple hash join \;
+}
+\end{algorithm}
 
 \end{frame}
 
+
+\begin{frame}[red] %hmm.. thought i could change colour here :S
+\frametitle{Cache Partitioning}
+
+Advantages
+\begin{itemize}
+\item If relation size is fixed the number of cache misses are constant.
+\end{itemize}
+
+Disadvantages
+\begin{itemize}
+\item Writes data equivalent to size of input
+\end{itemize}
+\end{frame}
 
 
 \subsection{Virtual Cache Partitioning}
 
 \begin{frame}
-\frametitle{SS}
+\frametitle{Virtual Cache Partitioning}
 
 \begin{itemize}
-\item .
+\item Compute and store record id of the partition of $R$ and $S$.
+\item Store only deltas of record ids.
+\item in join phase access records in place.
 \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Comparison}
+{\tiny
+\begin{tabular}{|l|l|c|}
+\hline
+Algorithm & & Cache Line Accesses ($N_l$) \\\hline
+Simple Hash & Build & $min(\frac{M_RL_R}{L},M_R) + M_RN_{hR}$ \\\hline
+& Probe & $\frac{M_SL_S}{L} + M_SN_{hS} + M_sMatchPerSrecord$ \\\hline
+Cache Partition & Partition & $2\left(\frac{M_RL_R}{L} + \frac{M_SL_S}{L}\right)$ \\\hline
+& Join & $\frac{M_RL_R}{L} + \frac{M_SL_S}{L}$ \\\hline
+Virtual Partition & Partition & $\frac{M_RL_R}{L} + \frac{M_SL_S}{L} + (M_R + M_S)\frac{2}{L}$ \\\hline
+& Join &   $(M_R + M_S)\frac{2}{L} + M_R(\frac{L_R-1}{L} + 1) + M_S(\frac{L_S-1}{L} + 1)$\\\hline
+\end{tabular}
+
+\begin{tabular}{|l|l|c|c|}
+\hline
+Algorithm & & Cache Line Write Backs ($N_{lw}$) & Words written \\\hline
+Simple Hash & Build & $M_R*HashTable_{lw}$ & $M_R*HashTable_{w}$ \\\hline
+Cache Partition & Partition & $\frac{M_RL_R}{L} + \frac{M_SL_S}{L}$ & $\frac{M_RL_R}{W} + \frac{M_SL_S}{W}$ \\\hline
+Virtual Partition & Partition & $(M_R + M_S)\frac{2}{L}$ & $(M_R + M_S)\frac{2}{W}$ \\\hline
+\end{tabular}
+}
 
 \end{frame}

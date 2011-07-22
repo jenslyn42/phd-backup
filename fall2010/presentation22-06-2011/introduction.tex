@@ -39,10 +39,10 @@
 & DRAM & PCM & NAND Flash & HDD \\\hline
 Read energy & 0.8 J/GB & 1 J/GB & 1.5 J/GB & 65 J/GB \\
 Write energy & 1.2 J/GB & 6 J/GB & 17.5 J/GB & 65 J/GB \\
-Idle Power & $_{\tilde{}}\,100$ mW/GB & $_{\tilde{}}\,1$ mW/GB & $_{\tilde{}}\,1-10$ mW/GB & $_{\tilde{}}\,10$ W/GB \\\hline
-Endurance & $\infty$ & $10^6-10^8$ & $10^4-10^5$ & $\infty$ \\\hline
-Page size & 64B & 64B & 4kB & 512B \\
-Page read latency & 20-50ns & $_{\tilde{}}\,50ns$ & $_{\tilde{}}\,25\mu s$ & $_{\tilde{}}\,5 ms$ \\
+Idle Power & \textbf{\boldmath $_{\tilde{}}\,100$ mW/GB} & \textbf{\boldmath $_{\tilde{}}\,1$ mW/GB} & $_{\tilde{}}\,1-10$ mW/GB & $_{\tilde{}}\,10$ W/GB \\\hline
+Endurance & $\infty$ & \boldmath $10^6-10^8$ & \boldmath $10^4-10^5$ & $\infty$ \\\hline
+Page size & \textbf{64B} & \textbf{64B} & \textbf{4kB} & 512B \\
+Page read latency & \textbf{20-50ns} & \boldmath $_{\tilde{}}\,50ns$ & $_{\tilde{}}\,25\mu s$ & $_{\tilde{}}\,5 ms$ \\
 Page Write latency & 20-50ns & $_{\tilde{}}\,1\mu s$ & $_{\tilde{}}\,500\mu s$ & $_{\tilde{}}\,5 ms$ \\
 Write bandwidth & $_{\tilde{}}\,GB/s$ per die & 50-100 MB/s per die & 5-40 MB/s per die & $_{\tilde{}}\,200$ MB/s per drive \\
 Erase latency & N/A & N/A & $_{\tilde{}}\,2ms$ & N/A \\\hline
@@ -66,10 +66,22 @@ Density & 1X & 2-4X & 4X & N/A \\\hline
 \frametitle{Prior Work}
 
 \begin{itemize}
-\item \textbf{CM Architecture}
+\item \textbf{PCM Architecture}
+	\begin{itemize}
+	\item Mostly hardware based. 
+	\item Focus on improving endurance \& write latency.
+	\end{itemize}
 \item \textbf{PCM-Based File Systems}
+	\begin{itemize}
+	\item Does not consider PCM read/write assymmetry
+	\item filesystem; main memory algorithms not examined
+	\end{itemize}
 \item \textbf{Battery-Backed DRAM (BBDRAM)}
-\item \textbf{Main Memory Database Systems and Cache-Friendly Algorithms}
+	\begin{itemize}
+	\item Vulnerable to power failures
+	\item PCM scales better
+	\item Behaviour identical to DRAM, no new algorithms needed.
+	\end{itemize}
 \end{itemize}
 
 
