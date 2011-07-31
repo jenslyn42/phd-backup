@@ -48,7 +48,7 @@ struct zeFixture
 
 	string testname;
 	string testfile;
-	int numNodes, numqueries, cacheSize, queryRangeStart, queryRangeEnd, testType;
+	int numNodes, numqueries, cacheSize, queryRangeStart, queryRangeEnd, testType, cacheType;
 	bool gaussian, useOptimalSubstructure, useNodeScore, useHitScore;
 	double sigma;
 
@@ -60,11 +60,11 @@ struct zeFixture
 		testname ="graph_small.txt";
 		testfile ="graph_small.txt";
 		testType = 1;
-		numqueries=3000, cacheSize=60, queryRangeStart=0, queryRangeEnd=500;
+		numqueries=3000, cacheSize=60, queryRangeStart=0, queryRangeEnd=500, cacheType=1;
 		gaussian=true, useOptimalSubstructure=true, useNodeScore=true, useHitScore = true;
 		sigma= 2.0;
 
-    		ts.setData(testname, testfile, testType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+    		ts.setData(testname, testfile, testType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
 		
 		LRU tmp (ts);		
     		ff = tmp; 

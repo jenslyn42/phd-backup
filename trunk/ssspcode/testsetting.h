@@ -37,9 +37,12 @@
 
 #include <string>
 #include <vector>
+#include <ctime>
+
+#include "utility.h"
+
 using namespace std;
 
-typedef std::pair<int,int> intPair;
 
 class testsetting{
 private:
@@ -47,6 +50,7 @@ private:
 	std::string testFile;
 	int testType;
 	int numQueries;
+	int numQueriesForCache; //indicates how many queries should be used to fill/train cache (used with static methods)
 	int cacheSize;
 	int queryRangeStart;
 	int queryRangeEnd;
@@ -61,16 +65,24 @@ private:
 	bool useNodeScore;
 	bool useHitScore;
 
+	int splits;
+
 public:
 	testsetting(){ };
 
-	testsetting(string testname, string testfile, int testType, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore);
+	testsetting(string testname, string testfile, int testType, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore, int cacheType);
 
-	void setData(string testname, string testfile, int testType, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore);
+	void setData(string testname, string testfile, int testType, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore, int cacheType);
 
 	~testsetting();
 
+	std::string preComputedQueriesFileName;
 	std::string queryFileName;
+	int itemsInCache;
+	int cacheType;
+
+	double fillCacheTime, buildStatisticsTime;
+
 // 	void setTestName (const std::string& theValue ) {testName = theValue;}
 	std::string getTestName() const {return testName;}
 
@@ -100,9 +112,14 @@ public:
 	int getTestType() const{return testType;}	
 
 	//Used in readQueries(int numQueries, string inFn)
-	void setStaticQueryType ( int val ){staticQueryType = val;}
+	void setStaticQueryType (int val){staticQueryType = val;}
 	int getStaticQueryType() const{return staticQueryType;}
-	
+
+	void setSplits(int theValue){splits = theValue;}
+	int getSplits() const {return splits;}
+
+	void setNumQueriesForCache (int theValue) {numQueriesForCache = theValue;}
+	int getNumQueriesForCache() const {return numQueriesForCache;}
 };
 
 #endif

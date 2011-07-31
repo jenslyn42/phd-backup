@@ -37,6 +37,7 @@
 #include "lru.h"
 #include "FIFO.h"
 #include "scache.h"
+#include "probstaticcache.h"
 
 #include <ctime>
 #include <iostream>

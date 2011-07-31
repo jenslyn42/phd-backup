@@ -44,20 +44,21 @@ RoadGraph* RoadGraph::mapObject(std::string testFile, int pt)
 	if(!mapInstance){
 		mapInstance = new RoadGraph();
 		mapInstance->parseFileType = pt;
+		mapInstance->ssspCalls = 0;
 
 		switch( (mapInstance->parseFileType) ){
 			case 1:
-			cout << "mapObject[case1], parseFileType: " << mapInstance->parseFileType << endl;
+			cout << "mapObject[case1], parseFileType: " << mapInstance->parseFileType << " " << testFile << endl;
  			mapInstance->readRoadNetworkFile(testFile);
 			break;
 			case 2:
-			cout << "mapObject[case2], parseFileType: " << mapInstance->parseFileType << endl;
+			cout << "mapObject[case2], parseFileType: " << mapInstance->parseFileType << " " << testFile << endl;
  			mapInstance->readPPINetworkFile(testFile);
 			break;
 			case 3:
- 			cout << "mapObject[case3], parseFileType: " << mapInstance->parseFileType << endl;
+ 			cout << "mapObject[case3], parseFileType: " << mapInstance->parseFileType << " " << testFile;
  			mapInstance->readCedgeNetworkFile(testFile);
- 			cout << "mapObject[case3], parseFileType: " << mapInstance->parseFileType << " done" << endl;
+ 			cout << " ... done" << endl;
 			break;
 		}
 	}
@@ -77,6 +78,7 @@ vector<Vertex> RoadGraph::getMap()
 
 vector<int> RoadGraph::dijkstraSSSP(int source, int dest)
 {	
+	ssspCalls++;
 	if(spDebug) cout << "one, dijkstraSSSP! map:" << (int) map.size() <<" s,t:" << source <<"," <<dest << endl;
 	
 	if(map[source].getId() == -1 || map[dest].getId() == -1 || source > mapSize || dest > mapSize)

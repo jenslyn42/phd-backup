@@ -32,9 +32,9 @@
 
 #include "testsetting.h"
 
-testsetting::testsetting(string testname, string testFile, int testType, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore)
+testsetting::testsetting(string testname, string testFile, int testType, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore, int cacheType)
 {
-	this->setData(testname, testFile, testType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+	this->setData(testname, testFile, testType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
 }
 
 
@@ -44,6 +44,7 @@ testsetting::~testsetting()
 	testFile = "";
 	testType = 0;
 	numQueries = 0;
+	numQueriesForCache = 0;
 	cacheSize = 0;
 	queryRangeStart = 0;
 	queryRangeEnd = 0;
@@ -53,9 +54,12 @@ testsetting::~testsetting()
 	useOptimalSubstructure = false;
 	useNodeScore = false;
 	useHitScore = false;
+	splits = -1;
+	itemsInCache = 0;
+	cacheType = 0;
 }
 
-void testsetting::setData(string testname, string testfile, int testType, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore)
+void testsetting::setData(string testname, string testfile, int testType, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore, int cacheType)
 {
 	testName = testname;
 	testFile = testfile;
@@ -71,6 +75,7 @@ void testsetting::setData(string testname, string testfile, int testType, int nu
 	this->useOptimalSubstructure = useOptimalSubstructure;
 	this->useNodeScore = useNodeScore;
 	this->useHitScore = useHitScore;
+	this->cacheType = cacheType;
 }
 
 #endif

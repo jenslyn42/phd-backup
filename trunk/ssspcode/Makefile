@@ -49,9 +49,10 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_cacheReplacement_OBJECTS = CacheItem.$(OBJEXT) FIFO.$(OBJEXT) \
-	RoadGraph.$(OBJEXT) Vertex.$(OBJEXT) lru.$(OBJEXT) \
-	main.$(OBJEXT) osc.$(OBJEXT) scache.$(OBJEXT) \
-	support.$(OBJEXT) testObj.$(OBJEXT) testsetting.$(OBJEXT) \
+	RoadGraph.$(OBJEXT) Vertex.$(OBJEXT) acache.$(OBJEXT) \
+	lru.$(OBJEXT) main.$(OBJEXT) osc.$(OBJEXT) \
+	probstaticcache.$(OBJEXT) scache.$(OBJEXT) support.$(OBJEXT) \
+	testObj.$(OBJEXT) testsetting.$(OBJEXT) \
 	workloadmodel.$(OBJEXT)
 cacheReplacement_OBJECTS = $(am_cacheReplacement_OBJECTS)
 cacheReplacement_LDADD = $(LDADD)
@@ -204,13 +205,13 @@ top_srcdir = ..
 INCLUDES = 
 METASOURCES = AUTO
 cacheReplacement_SOURCES = CacheItem.cpp FIFO.cpp RoadGraph.cpp Vertex.cpp \
-	lru.cpp main.cpp osc.cpp scache.cpp support.cpp testObj.cpp testsetting.cpp \
-	workloadmodel.cpp
+	acache.cpp lru.cpp main.cpp osc.cpp probstaticcache.cpp scache.cpp support.cpp \
+	testObj.cpp testsetting.cpp workloadmodel.cpp
 
-noinst_HEADERS = FIFO.h RoadGraph.h Vertex.h lru.h osc.h scache.h testsetting.h \
-	workloadmodel.h
+noinst_HEADERS = FIFO.h RoadGraph.h Vertex.h acache.h lru.h osc.h \
+	probstaticcache.h scache.h testsetting.h workloadmodel.h
 
-_SOURCES = support.h
+_SOURCES = utility.h
 testCacheReplacement_SOURCES = CacheItemTest.cpp RoadGraphTest.cpp \
 	VertexTest.cpp boostTest.cpp boostTest11.cpp fifoTest.cpp lruTest.cpp oscTest.cpp
 
@@ -302,6 +303,7 @@ include ./$(DEPDIR)/RoadGraph.Po
 include ./$(DEPDIR)/RoadGraphTest.Po
 include ./$(DEPDIR)/Vertex.Po
 include ./$(DEPDIR)/VertexTest.Po
+include ./$(DEPDIR)/acache.Po
 include ./$(DEPDIR)/boostTest.Po
 include ./$(DEPDIR)/boostTest11.Po
 include ./$(DEPDIR)/fifoTest.Po
@@ -310,6 +312,7 @@ include ./$(DEPDIR)/lruTest.Po
 include ./$(DEPDIR)/main.Po
 include ./$(DEPDIR)/osc.Po
 include ./$(DEPDIR)/oscTest.Po
+include ./$(DEPDIR)/probstaticcache.Po
 include ./$(DEPDIR)/program_options.Po
 include ./$(DEPDIR)/scache.Po
 include ./$(DEPDIR)/support.Po

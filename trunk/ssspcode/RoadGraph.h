@@ -38,13 +38,12 @@
 #include "Vertex.h"
 #include "fastheap.h"
 #include "testsetting.h"
+#include "utility.h"
 
 #include "boost/unordered_map.hpp"
 #include "boost/algorithm/string.hpp"
 #include "boost/foreach.hpp"
 
-typedef boost::unordered_map<int, double> intDoubleMap;
-typedef boost::unordered_map<int, int> unorderedIntMap;
 
 
 class RoadGraph
@@ -55,6 +54,7 @@ public:
 	std::vector<Vertex> getMap();
 	std::vector<int> dijkstraSSSP(int s, int t);
 	int getMapsize();
+	int ssspCalls;
 	string checkMapFilename(){return filename;}
 	boost::unordered_map<int, int> totalNodeCalls;
 	void resetRoadGraph(){mapInstance = NULL;}

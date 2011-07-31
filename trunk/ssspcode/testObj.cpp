@@ -51,6 +51,13 @@ testObj::testObj(testsetting settings, int testType)
 			if (debug) cout << "testObj:: constructor: STATIC test choosen" <<endl;
 			test = new scache(settings);
 			break;
+		case 5:
+			if (debug) cout << "testObj:: constructor: probstaticCache test choosen" <<endl;
+			test = new probstaticCache(settings);
+			break;
+
+			default:
+			break;
 	}
 
 	generateQueries(settings.getNumQueries());
@@ -76,6 +83,10 @@ testObj::testObj(testsetting settings, int testType, vector< pair<int,int> > _qu
 		case 4:
 			if (debug) cout << "testObj:: constructor: STATIC test choosen" <<endl;
 			test = new scache(settings);
+			break;
+		case 5:
+			if (debug) cout << "testObj:: constructor: probstaticCache test choosen" <<endl;
+			test = new probstaticCache(settings);
 			break;
 	}
 	queries = _queries;
@@ -117,10 +128,10 @@ void testObj::runTest()
 void testObj::runStaticTest()
 {
 	if (debug) cout << "testObj::runStaticTest: static test started" <<endl;
-	test->readQueries(ts.getNumQueries(), ts.queryFileName);
+	test->readQueries(ts.getNumQueriesForCache(), ts.preComputedQueriesFileName);
 	if (debug) cout << "testObj::runStaticTest: queries read" <<endl;
  	start = clock();
- 	test->readQueryList(queries); //the argument is not used here, rather the queries var from the test obj is used.
+ 	test->readQueryList(queries);
  	end = clock();
   	if (debug) cout << "testObj::runStaticTest: static test ended" <<endl;
  	testResults(start,end);
@@ -131,21 +142,29 @@ void testObj::runStaticTest()
 void testObj::testResults(clock_t s, clock_t e)
 {
 	///Console output
-	unorderedIntMap nodecalls =  RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->totalNodeCalls;
+	intMap nodecalls =  RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->totalNodeCalls;
 	long totalcalls = 0;
-	BOOST_FOREACH (unorderedIntMap::value_type node, nodecalls){totalcalls += (long)node.second;}
+	BOOST_FOREACH (intMap::value_type node, nodecalls){totalcalls += (long)node.second;}
 	
-	cout << "Time:\t" << (double(e-s))/CLOCKS_PER_SEC << " sec. cm,ch:\t" << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << " " << typeid(*test).name() <<  "\tQueryNum Cache full:\t" << test->getQueryNumCacheFull() << endl;
+	cout << "Time:\t" << (double(e-s))/CLOCKS_PER_SEC << " sec. cm,ch:\t" << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << " " << typeid(*test).name() <<  "\tQueryNum Cache full:\t" << test->getQueryNumCacheFull() << "(" << test->ts.itemsInCache << ")" << endl;
 	
-	cout << "Vertices visited:\t" << totalcalls << "\tCachesize:\t"<<ts.getCacheSize() << "\n\n" << endl;
+	cout << "Vertices visited:\t" << totalcalls << "\tCachesize:\t"<<ts.getCacheSize() << "\tSplits:\t" << ts.getSplits() << "\n" << endl;
+
+	cout << "sssp Calls: " <<RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->ssspCalls << endl;
+	cout << "calc Statistics: " << test->ts.buildStatisticsTime << endl;
+	cout << "fill cache: " << test->ts.fillCacheTime << endl;
+
 	
 	///file output
 	ofstream resultfile;
 	resultfile.open((ts.getTestName()).c_str(), ios::out | ios::ate | ios::app);
 	
-	resultfile << "Time:\t" << (double(e-s))/CLOCKS_PER_SEC << " sec. cm,ch:\t" << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << " " << typeid(*test).name() <<  "\tQueryNum Cache full:\t" << test->getQueryNumCacheFull() << endl;
+	resultfile << "Time:\t" << (double(e-s))/CLOCKS_PER_SEC << " sec. cm,ch:\t" << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << " " << typeid(*test).name() <<  "\tQueryNum Cache full:\t" << test->getQueryNumCacheFull() << "(" << test->ts.itemsInCache << ")" << endl;
 	
-	resultfile << "Vertices visited:\t" << totalcalls << "\tCachesize:\t"<<ts.getCacheSize() << "\n" << endl;
+	resultfile << "Vertices visited:\t" << totalcalls << "\tCachesize:\t"<<ts.getCacheSize() << "\tSplits:\t" << ts.getSplits() <<"\n" << endl;
 	
+	resultfile << "sssp Calls: " <<RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->ssspCalls << endl;
+	resultfile << "calc Statistics: " << test->ts.buildStatisticsTime << endl;
+	resultfile << "fill cache: " << test->ts.fillCacheTime << endl;
 	resultfile.close();
 }

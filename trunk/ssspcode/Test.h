@@ -35,6 +35,8 @@
 #include <iostream>
 #include <string>
 
+#include "testsetting.h"
+
 /**
 	@author Jeppe Rishede <jenslyn42@gmail.com>
 */
@@ -44,6 +46,8 @@ class Test{
 public:
 	Test(){ };
 	~Test(){ };
+
+	testsetting ts;
 
 	virtual void readQuery(std::pair<int,int> query){std::cout << "Error, executing Test() object" <<std::endl;}
 	virtual void readQueryList(std::vector<std::pair<int,int> > queryList){ };
