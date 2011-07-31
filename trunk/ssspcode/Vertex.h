@@ -31,7 +31,9 @@
 #define VERTEX_H
 
 #include "boost/unordered_map.hpp"
+
 #include "fastheap.h"
+
 #include <iostream>
 
 using namespace std;
