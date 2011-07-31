@@ -64,15 +64,23 @@ int main(int argc, char *argv[])
 
 ///Test settings. 
 testsetting ts;
-string testname = "glRandLongStaticScored10000.test";
+string testname = "correctness1000.test";
 // string testfile ="ppi.dat";
 string testfile ="OL.cedge";
 int inputFileType = 3; //1:graph_large, 2: ppi.dat, 3:*.cedge
 int numqueries = 100000;
+ts.setNumQueriesForCache(10000);
+
+//needed for static test
+ts.preComputedQueriesFileName = "queriesGL1E7";
+//ts.queryFileName = "path2.train";
+ts.queryFileName = "paths.train";
+
+ts.setStaticQueryType(3);
 
 
-ts.queryFileName = "queriesGL1E6"; //needed for static test
-ts.setStaticQueryType(4);
+//needed for probstaticCache
+ts.setSplits(0);
 
 ///Generate queries
 vector<pair<int,int> > queries;
@@ -100,19 +108,19 @@ for(int i=0; i<numqueries; i++)
 // cout << "error check "<< queries.back().first << "," << queries.back().second << endl;
 	
 
-int numQ=numqueries, cacheSize=1000, queryRangeStart=0, queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
+int numQ=numqueries, cacheSize=1000, queryRangeStart=0, queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize(), cacheType = 1;
 bool gaussian, useOptimalSubstructure, useNodeScore, useHitScore;
 double sigma = 2.0;
 gaussian=true, useOptimalSubstructure=true, useNodeScore=true, useHitScore = true;
 
-ts.setData(testname, testfile, inputFileType, numQ, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+ts.setData(testname, testfile, inputFileType, numQ, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
 
 
 
-
-cout << std::numeric_limits<int>::max() << endl;
-cout << std::numeric_limits<long>::max() << endl;
-cout << std::numeric_limits<unsigned int>::max() << endl;
+cout << "int \t\t" << std::numeric_limits<int>::max() << endl;
+cout << "unsigned int\t" << std::numeric_limits<unsigned int>::max() << endl;
+cout << "long\t\t" << std::numeric_limits<long>::max() << endl;
+cout << "double\t\t" << std::numeric_limits<double>::max() << endl;
 
 
 ///exp test OSC with testObj
@@ -127,42 +135,108 @@ cout << std::numeric_limits<unsigned int>::max() << endl;
 
 
 ///exp test FIFO with testObj
-testObj *expTest3 = new testObj(ts,4, queries);
+testObj *expTest3;
+
+for(int i=0;i<10;i++)
+{
+ 	ts.setSplits(i);
+	ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+	expTest3 = new testObj(ts,5, queries);
+	expTest3->runStaticTest();
+	expTest3-> testObj::~testObj();
+}
+
+ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+expTest3 = new testObj(ts,4, queries);
 expTest3->runStaticTest();
 expTest3-> testObj::~testObj();
+
+ts.queryFileName = "path2.train";
+testname = "correctness21000.test";
+for(int i=0;i<1;i++)
+{
+ 	ts.setSplits(6);
+	ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+	expTest3 = new testObj(ts,5, queries);
+	expTest3->runStaticTest();
+	expTest3-> testObj::~testObj();
+}
+
+ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+expTest3 = new testObj(ts,4, queries);
+expTest3->runStaticTest();
+expTest3-> testObj::~testObj();
+ 
+cacheSize=10000;
+testname = "correctness10000.test";
+
+for(int i=0;i<11;i++)
+{
+	ts.setSplits(i);
+	ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+	expTest3 = new testObj(ts,5, queries);
+	expTest3->runStaticTest();
+	expTest3-> testObj::~testObj();
+}
+
+ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+expTest3 = new testObj(ts,4, queries);
+expTest3->runStaticTest();
+expTest3-> testObj::~testObj();
+
+
+ts.queryFileName = "paths.train";
+testname = "correctness210000.test";
+cacheSize = 1000;
+
+for(int i=0;i<11;i++)
+{
+ 	ts.setSplits(i);
+	ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+	expTest3 = new testObj(ts,5, queries);
+	expTest3->runStaticTest();
+	expTest3-> testObj::~testObj();
+}
+
+ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+expTest3 = new testObj(ts,4, queries);
+expTest3->runStaticTest();
+expTest3-> testObj::~testObj();
+
+
 
 
 //cacheSize
-cacheSize = 10000;
-ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
-
-expTest3 = new testObj(ts,4, queries);
-expTest3->runStaticTest();
-expTest3-> testObj::~testObj();
-
-
-cacheSize = 100000;
-ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
-
-expTest3 = new testObj(ts,4, queries);
-expTest3->runStaticTest();
-expTest3-> testObj::~testObj();
-
-
-cacheSize = 1000000;
-ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
-
-expTest3 = new testObj(ts,4, queries);
-expTest3->runStaticTest();
-expTest3-> testObj::~testObj();
-
-
-cacheSize = 10000000;
-ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
-
-expTest3 = new testObj(ts,4, queries);
-expTest3->runStaticTest();
-expTest3-> testObj::~testObj();
+// cacheSize = 10000;
+// ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+// 
+// expTest3 = new testObj(ts,5, queries);
+// expTest3->runStaticTest();
+// expTest3-> testObj::~testObj();
+// 
+//
+// cacheSize = 100000;
+// ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+// 
+// expTest3 = new testObj(ts,4, queries);
+// expTest3->runStaticTest();
+// expTest3-> testObj::~testObj();
+// 
+// 
+// cacheSize = 1000000;
+// ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+// 
+// expTest3 = new testObj(ts,4, queries);
+// expTest3->runStaticTest();
+// expTest3-> testObj::~testObj();
+// 
+// 
+// cacheSize = 10000000;
+// ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore);
+// 
+// expTest3 = new testObj(ts,4, queries);
+// expTest3->runStaticTest();
+// expTest3-> testObj::~testObj();
 
 
 return EXIT_SUCCESS;
