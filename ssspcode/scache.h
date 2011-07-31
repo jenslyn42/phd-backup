@@ -34,8 +34,6 @@
 #include "testsetting.h"
 #include "Test.h"
 #include "RoadGraph.h"
-#include "support.h"
-#include "workloadmodel.h"
 #include "utility.h"
 
 #include <boost/foreach.hpp>

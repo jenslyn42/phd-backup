@@ -51,9 +51,8 @@ PROGRAMS = $(bin_PROGRAMS)
 am_cacheReplacement_OBJECTS = CacheItem.$(OBJEXT) FIFO.$(OBJEXT) \
 	RoadGraph.$(OBJEXT) Vertex.$(OBJEXT) acache.$(OBJEXT) \
 	lru.$(OBJEXT) main.$(OBJEXT) osc.$(OBJEXT) \
-	probstaticcache.$(OBJEXT) scache.$(OBJEXT) support.$(OBJEXT) \
-	testObj.$(OBJEXT) testsetting.$(OBJEXT) \
-	workloadmodel.$(OBJEXT)
+	probstaticcache.$(OBJEXT) scache.$(OBJEXT) testObj.$(OBJEXT) \
+	testsetting.$(OBJEXT)
 cacheReplacement_OBJECTS = $(am_cacheReplacement_OBJECTS)
 cacheReplacement_LDADD = $(LDADD)
 cacheReplacement_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -205,11 +204,11 @@ top_srcdir = ..
 INCLUDES = 
 METASOURCES = AUTO
 cacheReplacement_SOURCES = CacheItem.cpp FIFO.cpp RoadGraph.cpp Vertex.cpp \
-	acache.cpp lru.cpp main.cpp osc.cpp probstaticcache.cpp scache.cpp support.cpp \
-	testObj.cpp testsetting.cpp workloadmodel.cpp
+	acache.cpp lru.cpp main.cpp osc.cpp probstaticcache.cpp scache.cpp testObj.cpp \
+	testsetting.cpp
 
 noinst_HEADERS = FIFO.h RoadGraph.h Vertex.h acache.h lru.h osc.h \
-	probstaticcache.h scache.h testsetting.h workloadmodel.h
+	probstaticcache.h scache.h testsetting.h
 
 _SOURCES = utility.h
 testCacheReplacement_SOURCES = CacheItemTest.cpp RoadGraphTest.cpp \
@@ -315,10 +314,8 @@ include ./$(DEPDIR)/oscTest.Po
 include ./$(DEPDIR)/probstaticcache.Po
 include ./$(DEPDIR)/program_options.Po
 include ./$(DEPDIR)/scache.Po
-include ./$(DEPDIR)/support.Po
 include ./$(DEPDIR)/testObj.Po
 include ./$(DEPDIR)/testsetting.Po
-include ./$(DEPDIR)/workloadmodel.Po
 
 .cpp.o:
 	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
