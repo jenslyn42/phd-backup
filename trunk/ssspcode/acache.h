@@ -75,7 +75,7 @@ private:
 	int cacheUsed;
 	int numberOfNodes;
 	int numItems;
-	boost::unordered_map<int, int> nodeIdsInCache;
+	vector<int> nodeIdsInCache;
 	vector<CacheItem> cache;
 
 	void updateCacheUsed(CacheItem ci);
