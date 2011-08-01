@@ -47,7 +47,6 @@ bool aCache::insertItem(CacheItem ci)
 {
 	if(!hasEnoughSpace(ci)) return false;
 
-	numberOfNodes = numberOfNodes + ci.size;
 	numItems++;
 
 	cache.push_back(ci);
@@ -82,11 +81,12 @@ bool aCache::checkCache(CacheItem ci)
 	return checkCache(ci.s, ci.t);
 }
 
+//assumes cache item ci has NOT been added to vector<CacheItem> cache
 bool aCache::hasEnoughSpace(CacheItem ci)
 {
 	if(cacheType == GRAPH_CACHE)
 	{ 
-		if( (cacheUsed+1*BIT) + (ci.size*NODE_BITS+(cache.size()+1)*BIT) < cacheSize) return true;
+		if( (cacheUsed+(cache.size()+1)*BIT) + (ci.size*NODE_BITS+(cache.size()+1)*BIT) < cacheSize) return true;
 	}
 	else if(cacheType == LIST_CACHE)
 	{
@@ -97,15 +97,29 @@ bool aCache::hasEnoughSpace(CacheItem ci)
 	return false;
 }
 
+//assumes cache item ci has already been added to vector<CacheItem> cache
 void aCache::updateCacheUsed(CacheItem ci)
 {
 	if(cacheType == GRAPH_CACHE)
 	{ 
-		cacheUsed = (cacheUsed+1*BIT) + (ci.size*NODE_BITS+(cache.size()+1)*BIT);
+		int nodesToBeAdded = 0;
+
+		BOOST_FOREACH(int v, ci.item)
+		{
+			if(find(nodeIdsInCache.begin(), nodeIdsInCache.end(), v) != nodeIdsInCache.end())
+			{
+				nodesToBeAdded++;
+				nodeIdsInCache.push_back(v);
+			}
+		}
+
+		cacheUsed = (cacheUsed+cache.size()*BIT) + (nodesToBeAdded*NODE_BITS+cache.size()*BIT);
+		numberOfNodes = nodeIdsInCache.size();
 	}
 	else if(cacheType == LIST_CACHE)
 	{
 		cacheUsed = cacheUsed + ci.size*NODE_BITS;
+		numberOfNodes = numberOfNodes + ci.size;
 	}else
 		std::cout << "aCache::hasEnoughSpace! Invalid cache type set: " << cacheType << endl;
 }

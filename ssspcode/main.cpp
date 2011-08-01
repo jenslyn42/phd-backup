@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 
 ///Test settings. 
 testsetting ts;
-string testname = "correctness1000.test";
+string testname = "NEWcorrectness1000.test";
 // string testfile ="ppi.dat";
 string testfile ="OL.cedge";
 int inputFileType = 3; //1:graph_large, 2: ppi.dat, 3:*.cedge
@@ -108,7 +108,7 @@ for(int i=0; i<numqueries; i++)
 // cout << "error check "<< queries.back().first << "," << queries.back().second << endl;
 	
 
-int numQ=numqueries, cacheSize=1000, queryRangeStart=0, queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize(), cacheType = 1;
+int numQ=numqueries, cacheSize=32000, queryRangeStart=0, queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize(), cacheType = 1;
 bool gaussian, useOptimalSubstructure, useNodeScore, useHitScore;
 double sigma = 2.0;
 gaussian=true, useOptimalSubstructure=true, useNodeScore=true, useHitScore = true;
@@ -146,13 +146,13 @@ for(int i=0;i<10;i++)
 	expTest3-> testObj::~testObj();
 }
 
-ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-expTest3 = new testObj(ts,4, queries);
-expTest3->runStaticTest();
-expTest3-> testObj::~testObj();
+// ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+// expTest3 = new testObj(ts,4, queries);
+// expTest3->runStaticTest();
+// expTest3-> testObj::~testObj();
 
 ts.queryFileName = "path2.train";
-testname = "correctness21000.test";
+testname = "NEWcorrectness21000.test";
 for(int i=0;i<1;i++)
 {
  	ts.setSplits(6);
@@ -162,13 +162,13 @@ for(int i=0;i<1;i++)
 	expTest3-> testObj::~testObj();
 }
 
-ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-expTest3 = new testObj(ts,4, queries);
-expTest3->runStaticTest();
-expTest3-> testObj::~testObj();
+// ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+// expTest3 = new testObj(ts,4, queries);
+// expTest3->runStaticTest();
+// expTest3-> testObj::~testObj();
  
-cacheSize=10000;
-testname = "correctness10000.test";
+cacheSize=320000;
+testname = "NEWcorrectness10000.test";
 
 for(int i=0;i<11;i++)
 {
@@ -179,15 +179,14 @@ for(int i=0;i<11;i++)
 	expTest3-> testObj::~testObj();
 }
 
-ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-expTest3 = new testObj(ts,4, queries);
-expTest3->runStaticTest();
-expTest3-> testObj::~testObj();
+// ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+// expTest3 = new testObj(ts,4, queries);
+// expTest3->runStaticTest();
+// expTest3-> testObj::~testObj();
 
 
 ts.queryFileName = "paths.train";
-testname = "correctness210000.test";
-cacheSize = 1000;
+testname = "NEWcorrectness210000.test";
 
 for(int i=0;i<11;i++)
 {
@@ -198,10 +197,10 @@ for(int i=0;i<11;i++)
 	expTest3-> testObj::~testObj();
 }
 
-ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-expTest3 = new testObj(ts,4, queries);
-expTest3->runStaticTest();
-expTest3-> testObj::~testObj();
+// ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+// expTest3 = new testObj(ts,4, queries);
+// expTest3->runStaticTest();
+// expTest3-> testObj::~testObj();
 
 
 
