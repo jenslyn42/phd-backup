@@ -88,7 +88,7 @@ private:
 	bool cacheFull;
 	int calcScoreCounter;
 	boost::unordered_map<int, int> calcScoreMap;
-	
+
 	vector<pair<int,int> > queries;
 	std::vector<std::pair<int, int> > trainingSTPointPairs;
 	std::vector<std::pair<int, int> > testSTPointPairs;
@@ -101,7 +101,7 @@ private:
 	void statistics(string outFn);
 	void pairStatisticsStoT(string outFn);
 	void pairStatisticsAll(string outFn);
-	bool readMapData();
+	void readMapData();
 	void writeoutCacheCoordinates(string testbasename, std::vector<CacheItem> cm, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits);
 	int writeoutTestCoordinates(string testbasename, std::vector<intPair > stPointPairs, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits);
 	void readTestFile(string fn);

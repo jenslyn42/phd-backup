@@ -59,7 +59,7 @@ void scache::readQuery(std::pair< int, int > query)
 // void scache::readQueryList(std::vector< std::pair < int , int > > queryList)
 // {
 // 	int i = 0;
-//  	BOOST_FOREACH(intPair q, queryList ) { 
+//  	BOOST_FOREACH(intPair q, queryList ) {
 // 	i++;
 // 	if(i%10000 == 0) cout << "Query " << i << " done" << endl;
 // 	readQuery(q);
@@ -75,7 +75,7 @@ void scache::checkCache(std::pair< int, int > query)
 {
 	bool cacheHit = false;
 	vector<int> spResult;
-	
+
 	if(ts.isUseOptimalSubstructure()){//If test is done with optimal substructure
 		if(debug) cout << "one1, scache::checkCache! :cacheSize:" << (int) cache.size() <<"::"<< endl;
 		BOOST_FOREACH(CacheItem ci, cache )
@@ -99,7 +99,7 @@ void scache::checkCache(std::pair< int, int > query)
 			}
 		}
 	}
-	
+
 	if(debug) cout << "four, scache::checkCache! cacheHit: " << cacheHit << endl;
 	if(!cacheHit)
 	{
@@ -119,7 +119,6 @@ void scache::checkCache(std::pair< int, int > query)
 void scache::generateRandQueries(int numQueries, int maxVal, string outFn)
 {
 	cout << "scache::generateRandQueries! START" << endl;
-	int s,t,i=0;
 	pair<int,int> p;
 	vector<int> spResult;
 	ofstream cacheFile;
@@ -129,7 +128,7 @@ void scache::generateRandQueries(int numQueries, int maxVal, string outFn)
 	//format:
 	//[number of queries/lines in file] *at first line*
 	//[line number][space][length of vertex list][space][space seperated vertex list] *remaining lines*
-	
+
 	cacheFile << numQueries << endl;
 
 	for(int i = 0; i < numQueries; i++)
@@ -149,7 +148,7 @@ void scache::generateRandQueries(int numQueries, int maxVal, string outFn)
 		BOOST_FOREACH(int vertexID, spResult ){ cacheFile << vertexID << " ";}
 		cacheFile << endl;
 	}
-	
+
 	cout << "scache::generateRandQueries! END" << endl;
 
 	cacheFile.close();
@@ -164,7 +163,6 @@ void scache::generateRandQueries(int numQueries, int maxVal, string outFn)
 void scache::generateRandLongQueries(int numQueries, int maxVal, int k, string outFn)
 {
 	cout << "scache::generateLongQueries! START" << endl;
-	int s,t,i=0;
 	pair<int,int> p, candQuery;
 	vector<int> spResult;
 	vector<pair<int,int> > tmpQueryCand;
@@ -176,7 +174,7 @@ void scache::generateRandLongQueries(int numQueries, int maxVal, int k, string o
 	//format:
 	//[number of queries/lines in file] *at first line*
 	//[line number][space][length of vertex list][space][space seperated vertex list] *remaining lines*
-	
+
 	cacheFile << numQueries << endl;
 
 	for(int i = 0; i < numQueries; i++)
@@ -204,7 +202,7 @@ void scache::generateRandLongQueries(int numQueries, int maxVal, int k, string o
 		BOOST_FOREACH(int vertexID, spResult ){ cacheFile << vertexID << " ";}
 		cacheFile << endl;
 	}
-	
+
 	cout << "scache::generateLongQueries! END" << endl;
 
 	cacheFile.close();
@@ -223,7 +221,7 @@ intPair scache::findLargestQuery(vector<pair<int, int> > cCandidates, int k)
 	//extract all node ids from the queries for easier comparizon when reading .cnode file
 	int i = 0;
 	BOOST_FOREACH(intPair cand, cCandidates )
-	{	
+	{
 		nodeIDs[i] = cand.first;
 		nodeIDs[i+1] = cand.second;
 		i = i+2;
@@ -235,7 +233,7 @@ intPair scache::findLargestQuery(vector<pair<int, int> > cCandidates, int k)
 		getline(cnodeFile, line);
 		boost::algorithm::split(tokens, line, boost::algorithm::is_space());
 		int tmpVal;
-		for(int t = 0; t<k*2; t++){ 
+		for(int t = 0; t<k*2; t++){
 			tmpVal = atoi(tokens[0].c_str());
 			if(tmpVal == nodeIDs[t]){
 				node_coodinates[nodeIDs[t]] = pair<double,double>(atoi(tokens[1].c_str()),atoi(tokens[2].c_str()));
@@ -295,7 +293,7 @@ void scache::readQ(int numQueries, string inFn)
 	std::vector<int> sp;
 	ifstream querysFile (inFn.c_str(), ios::in);
 	bool cacheNotFull = true;
-	
+
 	if( querysFile.is_open() )
 	{
 	cout << "scache::readQueries! Starting to load queries into cache" << endl;
@@ -330,27 +328,26 @@ void scache::readQ(int numQueries, string inFn)
 
 void scache::readLargestQueries(int numQueries, string inFn)
 {
-	int i=0, spSize=0, tmpCacheSize=0, curLine=0;
+	int i=0, spSize=0, curLine=0;
 	Heap mh; //a map to keep track of the position and size of the elements already in the cache, for easy removal.
 	HeapEntry tmp;
-	boost::unordered_map<int, CacheItem> tmpCache;
 	pair<int,int> p;
+	boost::unordered_map<int, CacheItem> tmpCache;
 	string line;
 	std::vector<string> tokens;
 	std::vector<int> sp;
 	ifstream querysFile (inFn.c_str(), ios::in);
-	bool cacheNotFull = true;
-	
+
 	if( querysFile.is_open() )
 	{
 	cout << "scache::readLargestQueries! Starting to load queries into cache" << endl;
 		getline(querysFile,line); //read first line: number of lines/queries in file.
-		
+
 		int filelines = atoi(line.c_str());
 		cout << filelines << endl;
 		while( curLine < filelines-1 )
 		{
-			
+
 			getline(querysFile, line);
 //cout << "i:" << i <<" line: " << line << " cacheUsed " << cacheUsed << endl;
 			boost::algorithm::split(tokens, line, boost::algorithm::is_space());
@@ -377,7 +374,7 @@ void scache::readLargestQueries(int numQueries, string inFn)
  					tmpCache.erase(tmp.id);
 					cacheUsed -= (int) tmp.dist;
 				}while(spSize > (int) mh.top().dist && cacheUsed + spSize > cacheSize);
-				
+
 				//insert new element element if there is space enough in cache.
 				if(cacheUsed + spSize < cacheSize){
 					sp.clear();
@@ -385,7 +382,7 @@ void scache::readLargestQueries(int numQueries, string inFn)
 					CacheItem e (i++, sp, atoi(tokens[2].c_str()), atoi(tokens[spSize+1].c_str()));
  					tmpCache[i] = e;
 					cacheUsed += e.size;
-			
+
 					HeapEntry he;
 					he.id= i;
 					he.dist= (double) spSize;
@@ -431,7 +428,7 @@ void scache::readScoredQueries(int numQueries, string inFn)
 	{
 	cout << "scache::readScoredQueries! Starting to load queries into memory" << endl;
 		getline(querysFile,line); //read first line: number of lines/queries in file.
-		
+
 		filelines = atoi(line.c_str());
 		cout << filelines << endl;
 
@@ -458,12 +455,12 @@ void scache::readScoredQueries(int numQueries, string inFn)
 
 	}
 	cout << "scache::readScoredQueries! done loading queries into memory" << endl;
-	cout << "scache::readScoredQueries! aSPp size:" << allSPpaths.size() << endl; 	
+	cout << "scache::readScoredQueries! aSPp size:" << allSPpaths.size() << endl;
 	//add the largest item to the cache and add all nodes seen to verticesSeen.
 	tmp= mh.top();
 	cache.push_back(allSPpaths[tmp.id]);
 	allSPpaths.erase(tmp.id);
-	mh.pop(); 
+	mh.pop();
 	BOOST_FOREACH(int vertice, (allSPpaths[tmp.id]).item)
 	{
 		verticesSeen[vertice] = 1;
@@ -479,13 +476,13 @@ void scache::readScoredQueries(int numQueries, string inFn)
 		tmpItem = allSPpaths[tmp.id];
 		score = calcScore(tmpItem.item, verticesSeen);
 		spSize = tmpItem.size;
-			
+
 		if(score >= mh.top().dist && cacheUsed + spSize <= cacheSize){
 			if(tmpItem.size + cache.size() > cacheSize) break; //break loop if new item is to large
 			cache.push_back(tmpItem);
 			cacheUsed = cacheUsed + spSize;
 			curItem++;
-			
+
 			BOOST_FOREACH(int vertice, tmpItem.item)
 			{
 				verticesSeen[vertice] = 1;
@@ -505,7 +502,7 @@ void scache::readScoredQueries(int numQueries, string inFn)
 void scache::readScoredQueriesFromTrainFile(int numQueries, string fn)
 {
 	readMapData();
- 
+
  	maxHeap mh; //a map to keep track of the score of each potential cache item
 	HeapEntry tmp, tmp2;
 	CacheItem tmpItem;
@@ -527,7 +524,7 @@ void scache::readScoredQueriesFromTrainFile(int numQueries, string fn)
 		while(getline(trainingData, str))
 		{
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-	
+
 			firstPair = std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str()));
 			secondPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
 
@@ -547,7 +544,7 @@ void scache::readScoredQueriesFromTrainFile(int numQueries, string fn)
 
 		//make new cache item
 		CacheItem e (i, spResult, spResult.front(), spResult.back());
-		
+
 		//add cache item to map holding all queries from file
 		allSPpaths[i] = e;
 		tmp.id = i;
@@ -556,12 +553,12 @@ void scache::readScoredQueriesFromTrainFile(int numQueries, string fn)
 		i++;
 	}
 
-	cout << "scache::readScoredQueriesFromTrainFile! done loading & converting queries in memory" << endl;	
+	cout << "scache::readScoredQueriesFromTrainFile! done loading & converting queries in memory" << endl;
 	//add the largest item to the cache and add all nodes seen to verticesSeen.
 	tmp= mh.top();
 	cache.push_back(allSPpaths[tmp.id]);
 	allSPpaths.erase(tmp.id);
-	mh.pop(); 
+	mh.pop();
 	BOOST_FOREACH(int vertice, (allSPpaths[tmp.id]).item)
 	{
 		verticesSeen[vertice] = 1;
@@ -575,7 +572,7 @@ void scache::readScoredQueriesFromTrainFile(int numQueries, string fn)
 		tmpItem = allSPpaths[tmp.id];
 		score = calcScore(tmpItem.item, verticesSeen);
 		spSize = tmpItem.size;
-			
+
 		if(score > mh.top().dist && cacheUsed + spSize <= cacheSize){
 			if(tmpItem.size + cache.size() > cacheSize) break; //break loop if new item is to large
 			cache.push_back(tmpItem);
@@ -598,7 +595,7 @@ void scache::readScoredQueriesFromTrainFile(int numQueries, string fn)
 	writeoutCacheCoordinates(ts.getTestName(), cache, nodeid2coordinate, ts.getSplits());
 }
 
-bool scache::readMapData()
+void scache::readMapData()
 {
 	int mapSize = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->getMapsize();
 	string mapFile = ts.getTestFile();
@@ -624,7 +621,7 @@ bool scache::readMapData()
 	in_data.close();
 }
 
-///calculate score to use in readScoredQueries() 
+///calculate score to use in readScoredQueries()
 int scache::calcScore(vector<int> sp, boost::unordered_map<int, int> vSeen)
 {
 	int score;
@@ -640,7 +637,7 @@ int scache::calcScore(vector<int> sp, boost::unordered_map<int, int> vSeen)
 	return score/2;
 }
 
-///writes out to file:outFn the count of each node in the cache, 
+///writes out to file:outFn the count of each node in the cache,
 ///which is member of an item completely covered by another item.
 void scache::statistics(string outFn)
 {
@@ -655,8 +652,8 @@ void scache::statistics(string outFn)
 		for(int k=0; k< cache.size(); k++) {
 			kItem = cache.at(i).item;
 			kMin = cache.at(k).item.at(0);
-			kMax = cache.at(k).item.at((cache.at(k).size)-1);			
-			if(i != k && (std::find(iItem.begin(), iItem.end(), kMin) != iItem.end() && 
+			kMax = cache.at(k).item.at((cache.at(k).size)-1);
+			if(i != k && (std::find(iItem.begin(), iItem.end(), kMin) != iItem.end() &&
 				std::find(iItem.begin(), iItem.end(), kMax) != iItem.end())) {
  					count++;
 					//cout << "match pair: " << i <<":" <<k <<endl;
@@ -665,8 +662,8 @@ void scache::statistics(string outFn)
 	}
 	cout << "cacheSize " << cache.size() <<", count " << count << endl;
 
-	typedef boost::unordered_map<int, int> intMapping;
-	intMapping nodePopularity;
+
+	intMap nodePopularity;
 
 	BOOST_FOREACH(CacheItem ci, cache){
 		BOOST_FOREACH(int node, ci.item){
@@ -677,7 +674,7 @@ void scache::statistics(string outFn)
 	ofstream resultfile;
 	resultfile.open(outFn.c_str(), ios::out | ios::ate | ios::app);
 
-	BOOST_FOREACH(intMapping::value_type i, nodePopularity){
+	BOOST_FOREACH(intMap::value_type i, nodePopularity){
 		resultfile << i.first <<"\t" << i.second << endl;
 	}
 	resultfile.close();
@@ -688,8 +685,7 @@ void scache::statistics(string outFn)
 void scache::pairStatisticsStoT(string outFn)
 {
 	cout << "pairStatisticsStoT(" << outFn << ") start" << endl;
-	typedef boost::unordered_map<std::pair<int,int >, int> pairIntMapping;
-	pairIntMapping map;
+	intPairIntMap map;
 	std::pair<int,int> tmpPair;
 
 	BOOST_FOREACH(CacheItem ci, cache){
@@ -702,7 +698,7 @@ void scache::pairStatisticsStoT(string outFn)
 	ofstream resultfile;
 	resultfile.open(outFn.c_str(), ios::out | ios::ate | ios::app);
 
-	BOOST_FOREACH(pairIntMapping::value_type i, map){
+	BOOST_FOREACH(intPairIntMap::value_type i, map){
 		resultfile << i.first.first <<"\t" << i.first.second << "\t" << i.second << endl;
 	}
 	resultfile.close();
@@ -721,9 +717,9 @@ void scache::pairStatisticsAll(string outFn)
 		BOOST_FOREACH(int node1, ci.item){
 			BOOST_FOREACH(int node2, ci.item){
 				if(node1 != node2){
-					if(node1 < node2) 
+					if(node1 < node2)
 						tmpPair =std::make_pair<int,int>(node1,node2);
-					else 
+					else
 						tmpPair = std::make_pair<int,int>(node2,node1);
 				}
 				map[tmpPair] = map[tmpPair] +1;
@@ -743,8 +739,8 @@ void scache::pairStatisticsAll(string outFn)
 }
 
 void scache::writeoutCacheCoordinates(string testbasename, std::vector<CacheItem> cm, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits)
-{	
-	cout << "one, scache::writeoutCacheCoordinates start!" << endl; 
+{
+	cout << "one, scache::writeoutCacheCoordinates start!" << endl;
 	vector<int> sp;
 	int i=0;
 	coordinate c;
@@ -752,37 +748,37 @@ void scache::writeoutCacheCoordinates(string testbasename, std::vector<CacheItem
 	string fn = testbasename;
 	string app = "STATIC";
  	app.append(".cache");
-	fn.replace ((fn.size()-5), app.size(), app); //change file extention from .test to fnD#splits.cache 
+	fn.replace ((fn.size()-5), app.size(), app); //change file extention from .test to fnD#splits.cache
 	of.open(fn.c_str(), ios::out | ios::ate | ios::app);
 
 	BOOST_FOREACH(CacheItem ci, cm)
 	{
 		sp = ci.item;
-		
+
 		BOOST_FOREACH(int v, sp)
 		{
 			if(nodeid2coordinate.find(v) != nodeid2coordinate.end())
 			{
 				c = nodeid2coordinate.at(v);
-				of << c.first << " " << c.second << "\n";	
+				of << c.first << " " << c.second << "\n";
 			}else
 				cout << "scache::writeoutCacheCoordinates ERROR:  unknown node id." << endl;
 		}
 		of << endl;
 		i++;
 	}
-	
+
 	of.close();
 }
 
 int scache::writeoutTestCoordinates(string testbasename, std::vector<std::pair<int, int> > stPointPairs, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits)
-{	
-	cout << "one, scache::writeoutTestCoordinates start!" << endl; 
+{
+	cout << "one, scache::writeoutTestCoordinates start!" << endl;
 	vector<int> sp;
 	coordinate c;
 	string fn = testbasename;
 	string app = "TEST.cache";
-	fn.replace ((fn.size()-5), app.size(), app); //change file extention from .test TEST.cache 
+	fn.replace ((fn.size()-5), app.size(), app); //change file extention from .test TEST.cache
 	ifstream ifile(fn.c_str());
 	if (ifile) {ifile.close(); return 0;} //file alread exist
 
@@ -791,19 +787,19 @@ int scache::writeoutTestCoordinates(string testbasename, std::vector<std::pair<i
 	BOOST_FOREACH(intPair ip, stPointPairs)
 	{
 		sp = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->dijkstraSSSP(ip.first, ip.second);
-		
+
 		BOOST_FOREACH(int v, sp)
 		{
 			if(nodeid2coordinate.find(v) != nodeid2coordinate.end())
 			{
 				c = nodeid2coordinate.at(v);
-				of << c.first << " " << c.second << "\n";	
+				of << c.first << " " << c.second << "\n";
 			}else
 				cout << "scache::writeoutTestCoordinates ERROR:  unknown node id." << endl;
 		}
 		of << endl;
 	}
-	
+
 	of.close();
 	return 1;
 }
@@ -819,17 +815,17 @@ void scache::readTestFile(string fn)
 	cout << fn << endl;
 	ifstream testData (fn.c_str(), ios::in); //*.train file
 	if(debug) cout << "one, scache::readTrainingFile! " << endl;
-	
+
 	if(testData.is_open())
 	{
 		if(debug) cout << "two, scache::readTrainingFile! " << endl;
 		while(getline(testData, str))
 		{
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-	
+
 			firstPair = std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str()));
 			secondPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
-		
+
 			firstPnt = coordinate2Nodeid[firstPair];
 			secondPnt = coordinate2Nodeid[secondPair];
 

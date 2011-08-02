@@ -46,19 +46,19 @@ void Vertex::updateVertexID(int id, int nId, double weight)
 
 void Vertex::addNeighbour(int id, double weight)
 {
-	if(debug) std::cout << "one, vertex::addNeighbour! id: "<<id <<", w: " << weight << " size: " << Adjacencylist.size() << endl; 
+	if(debug) std::cout << "one, vertex::addNeighbour! id: "<<id <<", w: " << weight << " size: " << Adjacencylist.size() << endl;
 	if (debug){for(int d = 0; d < Adjacencylist.size(); d++) {cout << d << ":"<< Adjacencylist[d] << " "; cout << endl;}}
-	
+
 	if(Adjacencylist.find(id) == Adjacencylist.end()){
 		if(debug) std::cout << "two, vertex::addNeighbour!" << endl;
 		Adjacencylist[id] = weight;
 		if(debug) std::cout << "three, vertex::addNeighbour!" << endl;
 	}
-	if(debug){ 
+	if(debug){
 		std::cout << "four, vertex::addNeighbour!"<< endl;
 		for(int d = 0; d < Adjacencylist.size(); d++) {cout<< d << ":"<< Adjacencylist[d] << " ";cout << endl;}
 	}
-	
+
 }
 
 boost::unordered_map<int, double>  Vertex::getAdjacencylist()
@@ -73,7 +73,10 @@ int Vertex::getId()
 
 string Vertex::toString()
 {
-	//TODO: implement
+	std::cout << "Vertice id: " << id << endl;
+	std::cout << "Adjacency list (vid,weight): ";
+    BOOST_FOREACH(intDoubleMap::value_type idm, Adjacencylist){std::cout << "(" << idm.first << "," << idm.second << ")"; }
+    std::cout << "\n" << endl;
 }
 
 #endif

@@ -33,7 +33,7 @@
 #include "RoadGraph.h"
 #define debug false
 //specifically for the dijkstraSSSP() method
-#define spDebug false 
+#define spDebug false
 
 #include "limits.h"
 
@@ -73,14 +73,14 @@ RoadGraph* RoadGraph::mapObject(std::string testFile, int pt)
 
 vector<Vertex> RoadGraph::getMap()
 {
-	return map;	
+	return map;
 }
 
 vector<int> RoadGraph::dijkstraSSSP(int source, int dest)
-{	
+{
 	ssspCalls++;
 	if(spDebug) cout << "one, dijkstraSSSP! map:" << (int) map.size() <<" s,t:" << source <<"," <<dest << endl;
-	
+
 	if(map[source].getId() == -1 || map[dest].getId() == -1 || source > mapSize || dest > mapSize)
 	{
 		if(spDebug) cout << "two, dijkstraSSSP!" << endl;
@@ -109,7 +109,7 @@ vector<int> RoadGraph::dijkstraSSSP(int source, int dest)
 	root_he.id=source;
 	root_he.dist=0.0;    // dist. so far
 	hp.push(root_he);
-	
+
 	if(spDebug) cout << "six, dijkstraSSSP! " << endl;
 	while (hp.size()>0) {
 		HeapEntry he=hp.top();
@@ -121,12 +121,12 @@ vector<int> RoadGraph::dijkstraSSSP(int source, int dest)
 
 		if(totalNodeCalls.find(curnode) == totalNodeCalls.end()){
 			totalNodeCalls[curnode] = 1;
-		}else{ 
+		}else{
 			totalNodeCalls[curnode] = totalNodeCalls.at(curnode)+1;
 		}
-		
+
 		isVisited[curnode]=true;
-		
+
 		if(spDebug) cout << "seven, dijkstraSSSP! "<< curnode << endl;
 		intDoubleMap CurAdjList= map[curnode].getAdjacencylist();
 		if(spDebug) cout << "eight, dijkstraSSSP! " << endl;
@@ -151,7 +151,7 @@ vector<int> RoadGraph::dijkstraSSSP(int source, int dest)
 			do{
 				prevNode = backtrace.at(prevNode);
 				trace.push_back(prevNode);
-			}while(prevNode != source);			
+			}while(prevNode != source);
 		return trace;
 		}
 	}
@@ -191,7 +191,7 @@ void RoadGraph::readRoadNetworkFile(string fn)
 {
 	filename = fn;
 	string str;
-	std::vector<string> tokens;	
+	std::vector<string> tokens;
 	ifstream in_data (fn.c_str(), ios::in);
 	if(in_data.is_open())
 	{
@@ -213,12 +213,12 @@ void RoadGraph::readRoadNetworkFile(string fn)
 		{
 			getline(in_data, str);
 			if(debug) cout << "three, readNetworkFile! getline:" << str << endl;
-	
-			boost::algorithm::split(tokens, str, boost::algorithm::is_space());	
+
+			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 		}
-		
+
 		if(debug) cout << "four, readNetworkFile! tokens ([0],[1],[2]): (" << atoi(tokens[0].c_str()) << "," << atoi(tokens[1].c_str()) << "," << atof(tokens[2].c_str()) << ")" << endl;
-	
+
 		addEdge(atoi(tokens[0].c_str()),atoi(tokens[1].c_str()),atof(tokens[2].c_str()));
 
 		int check = 0;
@@ -240,7 +240,7 @@ void RoadGraph::readPPINetworkFile(string fn)
 	filename = fn;
 	string str;
 	int woffset;
-	std::vector<string> tokens;	
+	std::vector<string> tokens;
 	ifstream in_data (fn.c_str(), ios::in);
 	if(in_data.is_open())
 	{
@@ -259,7 +259,6 @@ void RoadGraph::readPPINetworkFile(string fn)
 			}
 
 
-		int check = 0;
 		while(getline(in_data, str))
 		{
 			//if(debug) cout << "five, readPPINetworkFile! getline:" << str  << " check: " << check++ << endl;
@@ -283,7 +282,7 @@ void RoadGraph::readCedgeNetworkFile(string fn)
 	string str;
 	string nodeFN = fn;
 	nodeFN.replace ((nodeFN.size()-4), 4, "node"); //change file extention from .cedge to .cnode
-	std::vector<string> tokens;	
+	std::vector<string> tokens;
 	ifstream in_data (fn.c_str(), ios::in);
 	if(debug) cout << "s1, readCedgeNetworkFile! nodeFN: " <<nodeFN << endl;
 	if(in_data.is_open())
@@ -302,7 +301,7 @@ void RoadGraph::readCedgeNetworkFile(string fn)
 				//if(debug) cout << "two, readCedgeNetworkFile! map:" << (int) map.size() <<" " << mapSize <<"i: " << i << " map content: " << map[i].getId() << endl;
 			}
 		if(debug) cout << "three, readCedgeNetworkFile! map:" << (int) map.size() <<" " << mapSize << endl;
-		int check = 0;
+
 		while(getline(in_data, str))
 		{
 // 			cout << "five, readCedgeNetworkFile! getline:" << str  << " check: " << check++ << endl;

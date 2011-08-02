@@ -61,7 +61,7 @@ public:
 
 	//std::vector<CacheItem> cache;
 	aCache cache;
-	
+
 	void readQuery(std::pair<int,int> query);
 	void readQueryList(std::vector< std::pair<int,int> > queryList);
 	int getCacheHits(){return numCacheHits;}
@@ -85,19 +85,19 @@ private:
 	bool cacheFull;
 	int mapSize;
 	int calcScoreCounter;
-	boost::unordered_map<int, int> calcScoreMap;	
+	boost::unordered_map<int, int> calcScoreMap;
 
 	vector<pair<int,int> > queries;
 
-	double startTime,endTime; 
+	double startTime,endTime;
 	int** trainingQueriesPerRegionPair;
-	
+
 
 	boost::unordered_map<coordinate, int> coordinate2Nodeid;
 	boost::unordered_map<int, coordinate> nodeid2coordinate;
 	regionlist points; //holds all coordinates from the map
 	boost::unordered_map<int, region> mapRegions; //holds all regions after a call to makePartitions()
- 
+
 	int partitionsMade;
 	std::vector<std::pair<int, int> > trainingSTPointPairs;
 	std::vector<std::pair<int, int> > testSTPointPairs;
@@ -110,10 +110,10 @@ private:
 	double calcScore(vector<int> sp, boost::unordered_map<pair<int, int>, int> vSeen);
 	void statistics(string outFn);
 
-	bool readMapData();
-	bool readData(string fn);
-	bool readTestData(string fn);
-	bool readTrainingData(string fn);
+	void readMapData();
+	void readData(string fn);
+    void readTestData(string fn);
+	void readTrainingData(string fn);
 	bool makePartitions(int splits);
 	std::vector<region> split(std::vector< region > regions, int axis);
 	int mapNodeid2RegionId(int nid);
