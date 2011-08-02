@@ -31,8 +31,10 @@
 #define VERTEX_H
 
 #include "boost/unordered_map.hpp"
+#include "boost/foreach.hpp"
 
 #include "fastheap.h"
+#include "utility.h"
 
 #include <iostream>
 
@@ -49,7 +51,7 @@ public:
 	boost::unordered_map<int, double> getAdjacencylist();
 	int getId();
 	string toString();
-	
+
 private:
 	int id;
 	boost::unordered_map<int, double> Adjacencylist;

@@ -44,6 +44,7 @@ struct region;
 typedef std::pair<double, double> coordinate;
 typedef std::vector<coordinate > regionlist;
 typedef std::pair<int,int> intPair;
+typedef boost::unordered_map<std::pair<int,int >, int> intPairIntMap;
 typedef std::pair<coordinate, coordinate> coordinatePairs;
 typedef std::pair<intPair, intPair > intPairPairs;
 typedef boost::unordered_map<int, int> intMap;
@@ -53,13 +54,12 @@ typedef boost::unordered_map<int, intPair > intPairMap;
 typedef boost::unordered_map<intPair,int > pairIntMap;
 typedef boost::unordered_map<int, CacheItem> intCacheitemMap;
 
-
 struct region
 {
         int id;
         double xmin,xmax,ymin,ymax;
 	regionlist points;
-	
+
         region(){ }
         region(int rid, regionlist pts, double _xmin, double _xmax, double _ymin, double _ymax)
 	{
