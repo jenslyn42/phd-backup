@@ -43,6 +43,7 @@ aCache::aCache(testsetting ts)
 	else
 		cout << "invalid cache type set: " << ts.cacheType << endl;	
 }
+
 bool aCache::insertItem(CacheItem ci)
 {
 	if(!hasEnoughSpace(ci)) return false;
@@ -56,7 +57,6 @@ bool aCache::insertItem(CacheItem ci)
 
 bool aCache::checkCache(int s, int t)
 {
-	bool cacheHit = false;
 	vector<int> cItem;
 	
 	BOOST_FOREACH(CacheItem ci, cache )
@@ -64,7 +64,6 @@ bool aCache::checkCache(int s, int t)
 		cItem = ci.item;
 		if(find(cItem.begin(),cItem.end(), s) != cItem.end() && find(cItem.begin(),cItem.end(), t) != cItem.end())
 		{
-			cacheHit = true;
 			return true;
 		}
 	}
