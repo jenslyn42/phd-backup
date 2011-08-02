@@ -137,7 +137,7 @@ cout << "double\t\t" << std::numeric_limits<double>::max() << endl;
 ///exp test FIFO with testObj
 testObj *expTest3;
 
-for(int i=0;i<10;i++)
+for(int i=0;i<11;i++)
 {
 	if(i%2 == 0){
  	ts.setSplits(i);
@@ -155,13 +155,15 @@ for(int i=0;i<10;i++)
 
 ts.queryFileName = "path2.train";
 testname = "NEW2correctness21000.test";
-for(int i=0;i<1;i++)
+for(int i=0;i<11;i++)
 {
- 	ts.setSplits(6);
+	if(i%2 == 0){
+ 	ts.setSplits(i);
 	ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
 	expTest3 = new testObj(ts,5, queries);
 	expTest3->runStaticTest();
 	expTest3-> testObj::~testObj();
+}
 }
 
 // ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
