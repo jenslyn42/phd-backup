@@ -1,0 +1,103 @@
+% Note that the a4paper option is mainly intended so that authors in
+% countries using A4 can easily print to A4 and see how their papers will
+% look in print - the typesetting of the document will not typically be
+% affected with changes in paper size (but the bottom and side margins will).
+% Use the testflow package mentioned above to verify correct handling of
+% both paper sizes by the user's LaTeX system.
+%
+% Also note that the "draftcls" or "draftclsnofoot", not "draft", option
+% should be used if it is desired that the figures are to be displayed in
+% draft mode.
+%
+\documentclass[conference, compsoc]{IEEEtran}
+
+% Add the compsoc option for Computer Society conferences.
+
+
+\usepackage{url} 
+\usepackage{times}
+%For math symbols like number classes
+\usepackage{amsfonts}
+\usepackage{amssymb}
+%\usepackage{amsthm}
+\usepackage{floatflt}
+\usepackage{wrapfig}
+\usepackage{multirow}
+
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage[cmex10]{amsmath}
+\usepackage{acronym}
+\interdisplaylinepenalty=2500
+\usepackage{xspace} % noget med mellemrum efter forkortelser
+\usepackage{longtable}
+\usepackage[pdftex]{graphicx}
+\usepackage[pdftex]{graphics}
+
+\usepackage[boxed,linesnumbered,vlined,slide]{algorithm2eCustom}
+
+%\usepackage{epstopdf}
+%\DeclareGraphicsExtensions{.pdf,.eps,.png,.jpg,.mps}
+
+%\ $[\today]$
+% *** CITATION PACKAGES ***
+%
+\usepackage{cite}
+
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+
+\begin{document}
+\input{articleFiles/macro.tex}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{deff}[thm]{Definition}
+% \newenvironment{definition}[1][Definition]{\begin{trivlist}
+% \item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+\SetKwBlockLRS{JRBegin}
+\pagestyle{plain}
+
+% paper title
+% can use linebreaks \\ within to get better formatting as desired
+\title{Shortest Path Cache \\ {\textit{\small \today}}}
+
+
+\author{\IEEEauthorblockN{Jeppe Rishede Thomsen%\IEEEauthorrefmark{1},
+\IEEEauthorblockA{%\IEEEauthorrefmark{1}
+Department of Computing\\ Hong Kong Polytechnic University
+}}}
+
+
+\maketitle
+
+\input{articleFiles/acronyms.tex}
+\begin{abstract}
+\input{articleFiles/abstract.tex}
+\end{abstract}
+
+\input{articleFiles/intro}
+\input{articleFiles/relWork}
+\input{articleFiles/problem}%
+\input{articleFiles/contribution}%
+\input{articleFiles/analysis}
+% \input{articleFiles/algorithm}
+\input{articleFiles/implementation}
+% \input{articleFiles/conclusion}
+
+%\newpage
+%\input{help}
+
+%\newpage
+\clearpage
+%\input{articleFiles/proposal}
+%\input{articleFiles/relCollection}
+
+\newpage
+\bibliographystyle{IEEEtran}
+\bibliography{bibliography} \label{bibliography}
+
+\end{document}

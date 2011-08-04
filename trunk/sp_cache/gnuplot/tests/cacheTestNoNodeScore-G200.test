@@ -1,0 +1,14 @@
+TestName	MapSize	numQueries	Cache Size	Cache pct.	queryRange-S	queryRange-E	FixedNumBuckets	Skewed Data	UseOptimalSubstructure	LRU-CacheHits	OSC-CacheHits	FIFO-CacheHits	LRU-CacheHitrate	OSC-CacheHitrate	FIFO-CacheHitrate
+cacheTestNoNodeScore-G200.test	10000	100000	100	1	0	10000	false	false	true	0	11	0	NaN	0.011	NaN
+cacheTestNoNodeScore-G200.test	10000	100000	200	2	0	10000	false	false	true	0	34	0	NaN	0.034	NaN
+cacheTestNoNodeScore-G200.test	10000	100000	500	5	0	10000	false	false	true	0	225	0	NaN	0.225	NaN
+cacheTestNoNodeScore-G200.test	10000	100000	1000	10	0	10000	false	false	true	0	1005	0	NaN	1.005	NaN
+cacheTestNoNodeScore-G200.test	10000	100000	2000	20	0	10000	false	false	true	0	4062	0	NaN	4.062	NaN
+cacheTestNoNodeScore-G200.test	10000	100000	3000	30	0	10000	false	false	true	0	9147	0	NaN	9.147	NaN
+cacheTestNoNodeScore-G200.test	10000	100000	4000	40	0	10000	false	false	true	0	16248	0	NaN	16.248	NaN
+cacheTestNoNodeScore-G200.test	10000	100000	5000	50	0	10000	false	false	true	0	25176	0	NaN	25.176	NaN
+cacheTestNoNodeScore-G200.test	10000	100000	6000	60	0	10000	false	false	true	0	36207	0	NaN	36.207	NaN
+cacheTestNoNodeScore-G200.test	10000	100000	7000	70	0	10000	false	false	true	0	49238	0	NaN	49.238	NaN
+cacheTestNoNodeScore-G200.test	10000	100000	8000	80	0	10000	false	false	true	0	64150	0	NaN	64.15	NaN
+cacheTestNoNodeScore-G200.test	10000	100000	9000	90	0	10000	false	false	true	0	81086	0	NaN	81.086	NaN
+cacheTestNoNodeScore-G200.test	10000	100000	10000	100	0	10000	false	false	true	0	98010	0	NaN	98.01	NaN
