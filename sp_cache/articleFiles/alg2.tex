@@ -1,0 +1,38 @@
+\begin{algorithm}%[H!bt]
+\dontprintsemicolon
+\SetVline
+
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}\SetKw{Return}{return}
+
+
+
+\Input{
+
+	$\alpha$: a tuble $(t, t_{se}, d_{t}, d_{s})$  used as a base for anonymization.\;
+	{\bf PS:} the set of all \poisns\;
+}
+\Output{
+	{\poins}cand: set of \poi containing an edge from $\alpha$ \;
+}
+
+\tcp{\emph{Find all \pois containing an edge from $\alpha.t$}}
+
+ \funcc{FindCand}{\alpha, $PS$}
+{
+	\({\poins}cand \leftarrow \emptyset \)
+	\ForEach{edge $e \in \alpha.t$}
+	{
+		\ForEach {$psr \in PS$ }
+		{
+			\If{$e \in psr.p_{edges}$}
+			{
+				${\poins}cand \leftarrow {\poins}cand \cup psr$\;
+			}
+		} 
+	}
+	\Return{{\poins}cand}
+}
+
+\caption{Find Candidates}
+\label{alg:findCan}
+\end{algorithm}

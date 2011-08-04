@@ -1,0 +1,64 @@
+\begin{algorithm}%[H!bt]
+\dontprintsemicolon
+\SetVline
+
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}\SetKw{Return}{return}
+
+\KwData{
+tmpAnonData: holds the anonymized data until it fulfills the privacy requirements\;
+	
+}
+
+\Input{
+	$\alpha$ \;
+	sortCand \;
+}
+\Output{
+	\(anonData:\) anonymized dataset based on \(\alpha\)\;
+}
+
+\funcc{ExpandTime}{tmpAnonData, \alpha}
+{
+	Find $\alpha$' a trajectory spatially identical to $\alpha.t$ but all timestamps randomly changed to values laying between $\frac{\alpha.d_t}{2}$ below or above the original timestamps $\alpha.t$, while still adhering to the constraints of the road network. It is assumed external information about traffic and speedlimits on the edges are available. \;
+
+	After finding $\alpha$' change all trajectories in tmpAnonData to match the timestamps of $\alpha$' \;
+
+	\Return{$tmpAnonData$}
+}
+
+\funcc{AnonCand}{sortCand, \alpha}
+{
+	\tcp{\emph{Level of temporal/spatial anonymity archived in anonData}}\;
+	$dt \leftarrow 0, ds \leftarrow 0$ \;
+	$toBeAdded \leftarrow false$ \;
+	$tmpAnonData \leftarrow \emptyset$ \;	
+
+	\While{$dt \leq \alpha.d_{t}  \vee ds \leq \alpha.d_{s}$}
+	{
+		$tmpTuple \leftarrow sortCand.next()$ \;
+ 		\If{tmpTuple.$d_t \geq \alpha.d_{t}  \wedge dt \leq \alpha.d_t $ }
+		{
+			$toBeAdded \leftarrow true$ \;
+			$dt \leftarrow dt +1$ \;
+		}
+		\If{tmpTuple.$d_s \geq \alpha.d_{s} \wedge ds \leq \alpha.d_{s}$}
+		{
+			$toBeAdded \leftarrow true$ \;
+			$ds \leftarrow ds +1$ \;
+		}
+		\If{toBeAdded}
+		{
+			\tcp{\emph{Spatial anonymity archived}} \;
+			$tmpAnonData \leftarrow tmpAnonData \cup \{tmpTuple.t\}$ \;
+
+		}
+	}
+	\tcp{\emph{Temporal anonymity archived}} \;
+	$tmpAnonData \leftarrow {\bf ExpandTime}(tmpAnonData, \alpha)$ \;
+		
+	\Return{$anonData \cup tmpAnonData$}
+}
+
+\caption{Anonymize Candidates}
+\label{alg:AnonymizeCan}
+\end{algorithm}
