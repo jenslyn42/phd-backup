@@ -1,5 +1,26 @@
 \section{Experiments}
 
-Introduce what data is used and how we generate syntetic data \\
+Introduce what data is used and how we generate synthetic data \\
 Introduce standard test parameters for the tests to follow.\\
+\begin{tabular}{|l |l |l|}
+\hline
+\textbf{Parameter} & \textbf{Meaning / used for} & \textbf{Standard value} \\\hline
+Mapfile & The map which the test is performed on & \\\hline
+NumQueries & Number of \spath queries in test & \\\hline
+QuerySet & which dataset is used to provide queries & \\\hline
+TrainSet & For generating region statistics, which dataset is used & \\\hline
+CacheSize & Size of cache in bits & \\\hline
+cacheType & Type of cache representation (list/graph) & \\\hline
+kD-tree & Hight of the kD-tree & \\\hline
+\end{tabular}
+
 Write experiments to examine performance of goal 1 \& 2 
+Test ideas (several ideas may be combined, like item 1 can be done on all datasets from item 2):\\
+\begin{itemize}
+\item increase kd-tree hight from 0-10
+\item different maps
+\item compare cache type performance
+\item compare with baseline methods.
+\item vary the cache size
+\item vary number of queries.
+\end{itemize}

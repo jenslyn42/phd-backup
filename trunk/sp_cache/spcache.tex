@@ -1,19 +1,6 @@
-% Note that the a4paper option is mainly intended so that authors in
-% countries using A4 can easily print to A4 and see how their papers will
-% look in print - the typesetting of the document will not typically be
-% affected with changes in paper size (but the bottom and side margins will).
-% Use the testflow package mentioned above to verify correct handling of
-% both paper sizes by the user's LaTeX system.
-%
-% Also note that the "draftcls" or "draftclsnofoot", not "draft", option
-% should be used if it is desired that the figures are to be displayed in
-% draft mode.
-%
-\documentclass[conference, compsoc]{IEEEtran}
+\documentclass{vldb}
 
-% Add the compsoc option for Computer Society conferences.
-
-
+\usepackage{balance}
 \usepackage{url} 
 \usepackage{times}
 %For math symbols like number classes
@@ -26,22 +13,21 @@
 
 \usepackage[T1]{fontenc}
 \usepackage{hyperref}
-\usepackage[cmex10]{amsmath}
+\usepackage{amsmath}
 \usepackage{acronym}
 \interdisplaylinepenalty=2500
 \usepackage{xspace} % noget med mellemrum efter forkortelser
 \usepackage{longtable}
-\usepackage[pdftex]{graphicx}
-\usepackage[pdftex]{graphics}
+\usepackage{graphicx}
+\usepackage{graphics}
+
+% \usepackage[cmex10]{amsmath}
+% \usepackage[pdftex]{graphicx}
+% \usepackage[pdftex]{graphics}
+
 
 \usepackage[boxed,linesnumbered,vlined,slide]{algorithm2eCustom}
 
-%\usepackage{epstopdf}
-%\DeclareGraphicsExtensions{.pdf,.eps,.png,.jpg,.mps}
-
-%\ $[\today]$
-% *** CITATION PACKAGES ***
-%
 \usepackage{cite}
 
 
@@ -61,15 +47,35 @@
 \SetKwBlockLRS{JRBegin}
 \pagestyle{plain}
 
-% paper title
-% can use linebreaks \\ within to get better formatting as desired
-\title{Shortest Path Cache \\ {\textit{\small \today}}}
+\title{Shortest Path Cache
+\titlenote{for use with vldb.cls, (no clue what that means, but lets leave it for now..)}\\ 
+{\textit{\small \today}}
+}
 
-
-\author{\IEEEauthorblockN{Jeppe Rishede Thomsen%\IEEEauthorrefmark{1},
-\IEEEauthorblockA{%\IEEEauthorrefmark{1}
-Department of Computing\\ Hong Kong Polytechnic University
-}}}
+\numberofauthors{2} 
+\author{
+% 1st. author
+\alignauthor
+Jeppe Rishede Thomsen\titlenote{some author note, 1}\\
+       \affaddr{Department of Computing}\\
+       \affaddr{Hong Kong Polytechnic University}\\
+       \affaddr{Kowloon, Hong Kong}\\
+       \email{csjrthomsen@comp.polyu.edu.hk}
+% 2nd. author
+\alignauthor
+Man Lung Yiu\titlenote{some author note,2}\\
+       \affaddr{Department of Computing}\\
+       \affaddr{Hong Kong Polytechnic University}\\
+       \affaddr{Kowloon, Hong Kong}\\
+       \email{csmlyiu@comp.polyu.edu.hk}
+% % 3rd. author
+% \alignauthor Lars Th{\Large{\sf{\o}}}rv{$\ddot{\mbox{a}}$}ld\titlenote{This author is the
+% one who did all the really hard work.}\\
+%        \affaddr{The Th{\large{\sf{\o}}}rv{$\ddot{\mbox{a}}$}ld Group}\\
+%        \affaddr{1 Th{\large{\sf{\o}}}rv{$\ddot{\mbox{a}}$}ld Circle}\\
+%        \affaddr{Hekla, Iceland}\\
+%        \email{larst@affiliation.org}
+}
 
 
 \maketitle
@@ -97,7 +103,13 @@ Department of Computing\\ Hong Kong Polytechnic University
 %\input{articleFiles/relCollection}
 
 \newpage
-\bibliographystyle{IEEEtran}
-\bibliography{bibliography} \label{bibliography}
+
+\bibliographystyle{abbrv}
+\bibliography{bibliography}\label{bibliography}
+% You must have a proper ".bib" file
+
+% before submission Insert that ~.bbl file into
+% the .tex source file and comment out
+% the command \texttt{{\char'134}thebibliography}.
 
 \end{document}
