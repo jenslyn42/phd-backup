@@ -1,16 +1,39 @@
 \section{Baseline Competitors}
 
-Intro to section; Why do we have baseline compeditors, which ones will be introduced, and why those? 
+Intro to section; Why do we have baseline competitors, which ones will be introduced, and why those? 
+
+LRU is a competitor, but can not achieve good performance because:
+\begin{itemize}	
+	\item Has no way to determine the usefulness of adding a path (i.e. no scoring function)
+	\item Even if a path P is good (covers many queries), then if a sequence of consequtive queries comes which P can not cover, then it will be evicted.
+	\item Has no way to optimize the number of paths in the cache, so available cache space may go unused.
+	\item Querying the cache may require a scan of all paths in the cache
+\end{itemize}
 
 \section{Contribution} \label{sec:contribution}
 
-Overall devide into 2 sections, each focused on the methods solving goal 1 and 2 respectively. 
+Restate goal 1 \& 2. Overall divide into 2 sections, each focused on the methods solving goal 1 and 2 respectively. \\
 
-goal 1 (reduce time executing SP algo) \\
-static cache \\
-partition map \\ \newline
+Benefit equation.\\
+
+\subsection{partition map} 
+solves goal 1. reduce time on SP calc as it aids the cache with information on which paths may be useful.\\ 
 
 
-goal 2 (reduce time on overhead)\\
-cache structures: simple array of paths, inverted list on array of paths, sharing subpaths (either in array form or as a graph)\\
+\subsection{static cache} 
+solves goal 2. has zero maintenance cost after filling the cache.
 
+
+\subsection{cache representations and cache concepts:} 
+
+\subsection{simple array of paths} - baseline for goal 2, unoptimized and expensive to use.
+
+\subsection{simple array of paths inverted list} - solves goal 2, reduces the query time of the cache.
+
+\subsection{graph representation} - solves goal 1, allows for more paths in cache, which should translate more cache hits.
+
+\subsection{Sharing subpaths} - solves goal 1, allows for more paths in cache, translating to more cachehits. Unfortunally has a negative impact on goal 2 as it introduces some overhead in query time.
+
+
+\subsection{Greedy algorithm}
+shows in more detail how we propose to solve our problem
