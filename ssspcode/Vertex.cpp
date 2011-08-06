@@ -47,7 +47,7 @@ void Vertex::updateVertexID(int id, int nId, double weight)
 void Vertex::addNeighbour(int id, double weight)
 {
 	if(debug) std::cout << "one, vertex::addNeighbour! id: "<<id <<", w: " << weight << " size: " << Adjacencylist.size() << endl;
-	if (debug){for(int d = 0; d < Adjacencylist.size(); d++) {cout << d << ":"<< Adjacencylist[d] << " "; cout << endl;}}
+	if (debug){for(uint d = 0; d < Adjacencylist.size(); d++) {cout << d << ":"<< Adjacencylist[d] << " "; cout << endl;}}
 
 	if(Adjacencylist.find(id) == Adjacencylist.end()){
 		if(debug) std::cout << "two, vertex::addNeighbour!" << endl;
@@ -56,7 +56,7 @@ void Vertex::addNeighbour(int id, double weight)
 	}
 	if(debug){
 		std::cout << "four, vertex::addNeighbour!"<< endl;
-		for(int d = 0; d < Adjacencylist.size(); d++) {cout<< d << ":"<< Adjacencylist[d] << " ";cout << endl;}
+		for(uint d = 0; d < Adjacencylist.size(); d++) {cout<< d << ":"<< Adjacencylist[d] << " ";cout << endl;}
 	}
 
 }

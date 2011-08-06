@@ -263,7 +263,7 @@ void RoadGraph::readPPINetworkFile(string fn)
 		{
 			//if(debug) cout << "five, readPPINetworkFile! getline:" << str  << " check: " << check++ << endl;
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-			for(int i = 1; i< tokens.size(); i++)
+			for(uint i = 1; i< tokens.size(); i++)
 			{
 				//if(debug) cout << "five1, readPPINetworkFile! getline:" << str << " check: " << check<< endl;
 				addEdge(atoi(tokens[0].c_str()),atoi(tokens[i].c_str())+woffset,1.0); //default weight of 1 since data does not provide any edge weights

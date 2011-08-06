@@ -38,11 +38,11 @@ testObj::testObj(testsetting settings, int testType)
 		case 1:
 			if (debug) cout << "testObj:: constructor: OSC test choosen" <<endl;
  			test = new OSC(settings);
-			break; 
+			break;
 		case 2:
 			if (debug) cout << "testObj:: constructor: LRU test choosen" <<endl;
 			test = new LRU(settings);
-			break; 
+			break;
 		case 3:
 			if (debug) cout << "testObj:: constructor: FIFO test choosen" <<endl;
 			test = new FIFO(settings);
@@ -69,13 +69,13 @@ testObj::testObj(testsetting settings, int testType, vector< pair<int,int> > _qu
 
 	switch( testType ){
 		case 1:
-			if (debug) cout << "testObj:: constructor: OSC test choosen" <<endl;			
+			if (debug) cout << "testObj:: constructor: OSC test choosen" <<endl;
  			test = new OSC(settings);
-			break; 
+			break;
 		case 2:
 			if (debug) cout << "testObj:: constructor: LRU test choosen" <<endl;
 			test = new LRU(settings);
-			break; 
+			break;
 		case 3:
 			if (debug) cout << "testObj:: constructor: FIFO test choosen" <<endl;
 			test = new FIFO(settings);
@@ -93,7 +93,7 @@ testObj::testObj(testsetting settings, int testType, vector< pair<int,int> > _qu
 }
 
 testObj::~ testObj()
-{	
+{
 	delete test;
 }
 
@@ -121,7 +121,7 @@ void testObj::runTest()
 	end = clock();
  	//if (debug) cout << "testObj::runTest: test ended" <<endl;
 	testResults(start,end);
-	
+
 	RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->resetRoadGraph();
 }
 
@@ -135,7 +135,7 @@ void testObj::runStaticTest()
  	end = clock();
   	if (debug) cout << "testObj::runStaticTest: static test ended" <<endl;
  	testResults(start,end);
- 	
+
  	RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->resetRoadGraph();
 }
 
@@ -145,26 +145,26 @@ void testObj::testResults(clock_t s, clock_t e)
 	intMap nodecalls =  RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->totalNodeCalls;
 	long totalcalls = 0;
 	BOOST_FOREACH (intMap::value_type node, nodecalls){totalcalls += (long)node.second;}
-	
+
 	cout << "Time:\t" << (double(e-s))/CLOCKS_PER_SEC << " sec. cm,ch:\t" << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << " " << typeid(*test).name() <<  "\tQueryNum Cache full:\t" << test->getQueryNumCacheFull() << "(" << test->ts.itemsInCache << ")" << endl;
-	
-	cout << "Vertices visited:\t" << totalcalls << "\tCachesize:\t"<<ts.getCacheSize() << "\tSplits:\t" << ts.getSplits() << "\n" << endl;
+
+	cout << "Vertices visited:\t" << totalcalls << "\tCachesize:\t"<<ts.getCacheSize() << "\tSplits:\t" << ts.getSplits() << "\tquery file:\t" << ts.queryFileName << endl;
 
 	cout << "sssp Calls: " <<RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->ssspCalls << endl;
-	cout << "calc Statistics: " << test->ts.buildStatisticsTime << endl;
-	cout << "fill cache: " << test->ts.fillCacheTime << endl;
+	cout << "calc Statistics: " << test->ts.buildStatisticsTime << "sec." <<endl;
+	cout << "fill cache: " << test->ts.fillCacheTime << "sec. \n" << endl;
 
-	
+
 	///file output
 	ofstream resultfile;
 	resultfile.open((ts.getTestName()).c_str(), ios::out | ios::ate | ios::app);
-	
+
 	resultfile << "Time:\t" << (double(e-s))/CLOCKS_PER_SEC << " sec. cm,ch:\t" << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << " " << typeid(*test).name() <<  "\tQueryNum Cache full:\t" << test->getQueryNumCacheFull() << "(" << test->ts.itemsInCache << ")" << endl;
-	
-	resultfile << "Vertices visited:\t" << totalcalls << "\tCachesize:\t"<<ts.getCacheSize() << "\tSplits:\t" << ts.getSplits() <<"\n" << endl;
-	
-	resultfile << "sssp Calls: " <<RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->ssspCalls << endl;
-	resultfile << "calc Statistics: " << test->ts.buildStatisticsTime << endl;
-	resultfile << "fill cache: " << test->ts.fillCacheTime << endl;
+
+	resultfile << "Vertices visited:\t" << totalcalls << "\tCachesize:\t"<<ts.getCacheSize() << "\tSplits:\t" << ts.getSplits() << "\tquery file:\t" << ts.queryFileName << endl;
+
+	resultfile << "sssp Calls: " << RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->ssspCalls << endl;
+	resultfile << "calc Statistics: " << test->ts.buildStatisticsTime << "sec." <<endl;
+	resultfile << "fill cache: " << test->ts.fillCacheTime << "sec. \n" << endl;
 	resultfile.close();
 }

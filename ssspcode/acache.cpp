@@ -41,7 +41,7 @@ aCache::aCache(testsetting ts)
 		numItems = 0;
 	}
 	else
-		cout << "invalid cache type set: " << ts.cacheType << endl;	
+		cout << "invalid cache type set: " << ts.cacheType << endl;
 }
 
 bool aCache::insertItem(CacheItem ci)
@@ -52,13 +52,13 @@ bool aCache::insertItem(CacheItem ci)
 
 	cache.push_back(ci);
 	updateCacheUsed(ci);
-	return true;	
+	return true;
 }
 
 bool aCache::checkCache(int s, int t)
 {
 	vector<int> cItem;
-	
+
 	BOOST_FOREACH(CacheItem ci, cache )
 	{
 		cItem = ci.item;
@@ -84,15 +84,22 @@ bool aCache::checkCache(CacheItem ci)
 bool aCache::hasEnoughSpace(CacheItem ci)
 {
 	if(cacheType == GRAPH_CACHE)
-	{ 
-		if( (cacheUsed+(cache.size()+1)*BIT) + (ci.size*NODE_BITS+(cache.size()+1)*BIT) < cacheSize) return true;
+	{
+        int newNodes = 0; //nodes in ci which is not already in graph
+
+		BOOST_FOREACH(int v, ci.item){
+			if(find(nodeIdsInCache.begin(), nodeIdsInCache.end(), v) == nodeIdsInCache.end()){
+                newNodes++;
+            }
+        }
+        if( (cacheUsed+nodeIdsInCache.size()*BIT) + (newNodes*NODE_BITS+(cache.size()+1)*newNodes*BIT) < cacheSize) return true;
 	}
 	else if(cacheType == LIST_CACHE)
 	{
 		if(cacheUsed + ci.size*NODE_BITS < cacheSize) return true;
 	}else
 		std::cout << "aCache::hasEnoughSpace! Invalid cache type set: " << cacheType << endl;
-	
+
 	return false;
 }
 
@@ -100,19 +107,19 @@ bool aCache::hasEnoughSpace(CacheItem ci)
 void aCache::updateCacheUsed(CacheItem ci)
 {
 	if(cacheType == GRAPH_CACHE)
-	{ 
+	{
 		int nodesToBeAdded = 0;
 
 		BOOST_FOREACH(int v, ci.item)
 		{
-			if(find(nodeIdsInCache.begin(), nodeIdsInCache.end(), v) != nodeIdsInCache.end())
+			if(find(nodeIdsInCache.begin(), nodeIdsInCache.end(), v) == nodeIdsInCache.end())
 			{
 				nodesToBeAdded++;
 				nodeIdsInCache.push_back(v);
 			}
 		}
 
-		cacheUsed = (cacheUsed+cache.size()*BIT) + (nodesToBeAdded*NODE_BITS+cache.size()*BIT);
+		cacheUsed =  nodeIdsInCache.size() * (NODE_BITS + BIT*cache.size()) ;
 		numberOfNodes = nodeIdsInCache.size();
 	}
 	else if(cacheType == LIST_CACHE)

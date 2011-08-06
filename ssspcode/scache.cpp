@@ -467,8 +467,8 @@ void scache::readScoredQueries(int numQueries, string inFn)
 	}
 
 	//add highest scoring cacheItem to cache, and update candidat scores.
-	int score = 0;
-	int curItem = 0;
+	uint score = 0;
+	uint curItem = 0;
 	do{
 		calcScoreMap[curItem] = calcScoreMap[curItem] +1;
 		tmp= mh.top();
@@ -565,7 +565,7 @@ void scache::readScoredQueriesFromTrainFile(int numQueries, string fn)
 	}
 
 	//add highest scoring cacheItem to cache, and update candidat scores.
-	int score = 0;
+	uint score = 0;
 	do{
 		tmp= mh.top();
 		mh.pop();
@@ -624,7 +624,7 @@ void scache::readMapData()
 ///calculate score to use in readScoredQueries()
 int scache::calcScore(vector<int> sp, boost::unordered_map<int, int> vSeen)
 {
-	int score;
+	int score = 0;
 	calcScoreCounter++;
 	BOOST_FOREACH(int v1, sp)
 	{
@@ -645,11 +645,11 @@ void scache::statistics(string outFn)
 	vector<int> iItem, kItem;
 	int kMin,kMax,iMin,iMax, count=0;
 
-	for(int i=0; i< cache.size(); i++) {
+	for(uint i=0; i< cache.size(); i++) {
 		iItem = cache.at(i).item;
 		iMin = cache.at(i).item.at(0);
 		iMax = cache.at(i).item.at((cache.at(i).size)-1);
-		for(int k=0; k< cache.size(); k++) {
+		for(uint k=0; k< cache.size(); k++) {
 			kItem = cache.at(i).item;
 			kMin = cache.at(k).item.at(0);
 			kMax = cache.at(k).item.at((cache.at(k).size)-1);

@@ -71,10 +71,10 @@ public:
 
 private:
 	int cacheType;
-	int cacheSize;
-	int cacheUsed;
-	int numberOfNodes;
-	int numItems;
+	uint cacheSize;
+	uint cacheUsed;
+	uint numberOfNodes;
+	uint numItems;
 	vector<int> nodeIdsInCache;
 	vector<CacheItem> cache;
 
