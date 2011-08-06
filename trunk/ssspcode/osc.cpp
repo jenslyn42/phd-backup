@@ -36,7 +36,7 @@
 OSC::OSC(testsetting ts)
 {
 	cacheSize = ts.getCacheSize();
-	
+
 	nodeHits.reserve(ts.getQueryRangeEnd());
 	nodeHits.insert(nodeHits.begin(),ts.getQueryRangeEnd(),0);
 
@@ -94,7 +94,7 @@ void OSC::checkAndUpdateCache(std::pair< int, int > query)
 // 			int matchTo = std::find(cIt.begin(), cIt.end(), query.second) - cIt.begin();
 			vector<int>::iterator matchFrom = std::find(cIt.begin(), cIt.end(), query.first);
 			vector<int>::iterator matchTo = std::find(cIt.begin(), cIt.end(), query.second);
-			
+
 			if(matchFrom < matchTo)
 				itemSubMatch.assign(matchFrom, matchTo);
 			else
@@ -105,7 +105,7 @@ void OSC::checkAndUpdateCache(std::pair< int, int > query)
 		}
 	}
 	if(debug) cout << "three, OSC::checkAndUpdateCache, cacheHit:" << cacheHit <<endl;
-	
+
 	if(!cacheHit)
 	{
 		if(debug) cout << "four0, OSC::checkAndUpdateCache " << query.first <<"," << query.second <<endl;
@@ -117,7 +117,7 @@ void OSC::checkAndUpdateCache(std::pair< int, int > query)
 		if(debug) cout << "four2, OSC::checkAndUpdateCache" <<endl;
 		vector<int> nodesInQueryResult(spResult);
 
-		if(debug) cout << "four3, OSC::checkAndUpdateCache" <<endl;	
+		if(debug) cout << "four3, OSC::checkAndUpdateCache" <<endl;
 		if(cache.size() != 0)
 		{
 			if(debug) cout << "five1, OSC::checkAndUpdateCache" <<endl;
@@ -171,7 +171,7 @@ void OSC::testToReplaceItem(int querySize, std::vector< int > nodesInQueryResult
 	if(debug) cout << "two, OSC::testToReplaceItem" <<endl;
 	BOOST_FOREACH(int node, ci){
 		if(nodeHits.at(node) < 0 || sum < 0) cout << "two2, OSC::testToReplaceItem node: " << node <<" sum: " << sum<< endl;
-		sum += nodeHits.at(node);	
+		sum += nodeHits.at(node);
 	}
 
 	//calc score for current query based on test flags
@@ -203,7 +203,7 @@ void OSC::testToReplaceItem(int querySize, std::vector< int > nodesInQueryResult
 
 	if(debug) cout << "three, OSC::testToReplaceItem" <<endl;
 	/** calculate scores of all items, and place them in min-heap */
-	for(int k=1; k < cache.size(); k++)
+	for(uint k=1; k < cache.size(); k++)
 	{
 		ci = cache[k].item;
 		nodes = ci.size();
@@ -235,7 +235,7 @@ void OSC::testToReplaceItem(int querySize, std::vector< int > nodesInQueryResult
 			HeapEntry he(k,nodes+sum);
 			removeCandidate.push(he);
 		}
-	
+
 	}
 
 	if(debug) cout << "four, OSC::testToReplaceItem" <<endl;
@@ -243,7 +243,7 @@ void OSC::testToReplaceItem(int querySize, std::vector< int > nodesInQueryResult
 	{
 		vector<int> removeIndexes;
 		int tmpRemIndex = 0;
-		
+
 		do{
 			if((cacheSize - cacheUsed) >= querySize)
 			{
@@ -251,12 +251,12 @@ void OSC::testToReplaceItem(int querySize, std::vector< int > nodesInQueryResult
 				sort(removeIndexes.begin(), removeIndexes.end(), compFunc);
 
 				//remove all cacheItems marked for removal
-				BOOST_FOREACH(int i, removeIndexes)
+				BOOST_FOREACH(uint i, removeIndexes)
 				{
 					if(i >= cache.size()) cout << "THIS WILL NOT WORK!!!" <<endl;
 					else cache.erase(cache.begin()+i); //used to have +i-1!!!
 				}
-				
+
 				//add new cache item to cache
 				if(numTotalQueries <0) cout << "ERROR 1 numTotalQueries: "<< numTotalQueries <<endl;
 

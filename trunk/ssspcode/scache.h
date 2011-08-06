@@ -80,13 +80,13 @@ private:
 	int numDijkstraCalls;
 	int queryNumCacheFull;
 
-	int cacheSize;
-	int cacheUsed;
+	uint cacheSize;
+	uint cacheUsed;
 
 	bool useNodeScore;
 	bool useHitScore;
 	bool cacheFull;
-	int calcScoreCounter;
+	uint calcScoreCounter;
 	boost::unordered_map<int, int> calcScoreMap;
 
 	vector<pair<int,int> > queries;
