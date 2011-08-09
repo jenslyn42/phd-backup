@@ -38,6 +38,14 @@
 #include <boost/foreach.hpp>
 #include "boost/unordered_map.hpp"
 #include <boost/lexical_cast.hpp>
+#include <boost/dynamic_bitset.hpp>
+
+//Used in acache and when defining tests
+#define NODE_BITS 32
+#define BIT 1
+#define GRAPH_CACHE 1
+#define LIST_CACHE 2
+
 
 struct region;
 
@@ -53,6 +61,7 @@ typedef boost::unordered_map<int, region> regionMap;
 typedef boost::unordered_map<int, intPair > intPairMap;
 typedef boost::unordered_map<intPair,int > pairIntMap;
 typedef boost::unordered_map<int, CacheItem> intCacheitemMap;
+typedef	boost::unordered_map<int, boost::dynamic_bitset<> > intDBitset;
 
 struct region
 {

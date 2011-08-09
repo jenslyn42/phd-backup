@@ -346,7 +346,7 @@ void probstaticCache::populateProbStructures()
 	int temp, r1,r2,v1,v2;
 	totalTrainingPairsSeen=0;
 
-	cout << "probstaticcache::populateProbStructures! Init 2d array trainingQueriesPerRegionPair" << endl;
+	cout << "probstaticcache::populateProbStructures! Init 2d array trainingQueriesPerRegionPair";
 	//init array trainingQueriesPerRegionPair[mapSize][mapSize] dynamically
 	trainingQueriesPerRegionPair = new int*[mapSize];
 	for(int i=0; i<mapSize; i++)
@@ -355,9 +355,9 @@ void probstaticCache::populateProbStructures()
 	for(int i=0;i<mapSize;i++)
 		for(int j=0;j<mapSize;j++)
 			trainingQueriesPerRegionPair[i][j] = 0;
-	cout << "probstaticcache::populateProbStructures! Init 2d array trainingQueriesPerRegionPair Done" << endl;
+	cout << " ... Done" << endl;
 
-	cout << "probstaticcache::populateProbStructures! calculating training stats" << endl;
+	cout << "probstaticcache::populateProbStructures! calculating training stats";
 	BOOST_FOREACH(intPair c, trainingSTPointPairs)
 	{
 		v1 = c.first;
@@ -376,6 +376,7 @@ void probstaticCache::populateProbStructures()
 			totalTrainingPairsSeen++;
 		}
 	}
+	cout << " ... Done" << endl;
 }
 
 double probstaticCache::calcScore(vector<int> spResult, boost::unordered_map<pair<int, int>, int> vSeen)
@@ -428,7 +429,7 @@ void probstaticCache::fillCacheFromQueriesFile(int numQueries, string inFn)
 	//load queries from query file
 	if( querysFile.is_open() )
 	{
-		cout << "probstaticcache::fillCacheFromQueriesFile! Starting to load queries into memory" << endl;
+		cout << "probstaticcache::fillCacheFromQueriesFile! Starting to load queries into memory";
 		getline(querysFile,line); //read first line: number of lines/queries in file.
 
 		filelines = atoi(line.c_str());
@@ -443,7 +444,8 @@ void probstaticCache::fillCacheFromQueriesFile(int numQueries, string inFn)
 
 			//make new cache item
 			sp.clear();
-			for(int t = 0; t < spSize; t++) sp.push_back(atoi(tokens[t+2].c_str()));
+			for(int t = 0; t < spSize; t++)
+				sp.push_back(atoi(tokens[t+2].c_str()));
 			CacheItem e (i, sp, atoi(tokens[2].c_str()), atoi(tokens[spSize+1].c_str()));
 
 			//add cache item to map holding all queries from file
@@ -453,9 +455,9 @@ void probstaticCache::fillCacheFromQueriesFile(int numQueries, string inFn)
 
 	}
 
-	cout << "probstaticcache::fillCacheFromQueriesFile! done loading queries into memory" << endl;
+	cout << " ... Done" << endl;
 
-	cout << "probstaticcache::fillCacheFromQueriesFile! Initial scoring started" << endl;
+	cout << "probstaticcache::fillCacheFromQueriesFile! Initial scoring started";
 	//rank queries based on statistics
 	startTime = clock();
 	BOOST_FOREACH(intCacheitemMap::value_type icm, allSPpaths)
@@ -470,7 +472,7 @@ void probstaticCache::fillCacheFromQueriesFile(int numQueries, string inFn)
 		mhCache.push(tmp);
 	}
 	endTime = clock();
-	cout << "probstaticcache::fillCacheFromQueriesFile! Initial scoring done TIME: " << (double(endTime-startTime))/CLOCKS_PER_SEC << endl;
+	cout << " ... Done. TIME: " << (double(endTime-startTime))/CLOCKS_PER_SEC << endl;
 
 	int curItem = 0;
 	//Fill cache
@@ -488,7 +490,7 @@ void probstaticCache::fillCacheFromQueriesFile(int numQueries, string inFn)
 
 				if(score >= mhCache.top().dist)
 				{
-					if(cache.insertItem(tmpItem))
+					if(cache.insertItemWithScore(tmpItem, score))
 					{
 						BOOST_FOREACH(int v1, tmpItem.item)
 						{
@@ -517,12 +519,13 @@ void probstaticCache::fillCacheFromQueriesFile(int numQueries, string inFn)
 	writeoutTrainingCoordinates(ts.getTestName(), trainingSTPointPairs, nodeid2coordinate, ts.getSplits());
 	writeoutTestCoordinates(ts.getTestName(), testSTPointPairs, nodeid2coordinate, ts.getSplits());
 	cout << "scache::calcScoreCounter: " << calcScoreCounter << endl;
-	BOOST_FOREACH(intMap::value_type ii, calcScoreMap){cout << ii.first <<"," << ii.second << endl;}
+	//BOOST_FOREACH(intMap::value_type ii, calcScoreMap){cout << ii.first <<"," << ii.second << endl;}
+	//cache.writeOutBitmaps();
 }
 
-void probstaticCache::writeoutCacheCoordinates(string testbasename, std::vector<CacheItem> cm, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits)
+void probstaticCache::writeoutCacheCoordinates(string testbasename, vector<CacheItem> cm, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits)
 {
-	cout << "one, probstaticcache::writeoutCacheCoordinates start!" << endl;
+	cout << "probstaticcache::writeoutCacheCoordinates start!";
 	vector<int> sp;
 	int i=0;
 	coordinate c;
@@ -542,20 +545,21 @@ void probstaticCache::writeoutCacheCoordinates(string testbasename, std::vector<
 			if(nodeid2coordinate.find(v) != nodeid2coordinate.end())
 			{
 				c = nodeid2coordinate.at(v);
-				of << c.first << " " << c.second << "\n";
+				of << ci.getScore() << " " << c.first << " " << c.second << "\n";
 			}else
-				cout << "probstaticcache::writeoutCacheCoordinates ERROR:  unknown node id." << endl;
+				cout << "\nprobstaticcache::writeoutCacheCoordinates ERROR:  unknown node id." << endl;
 		}
 		of << endl;
 		i++;
 	}
 
 	of.close();
+	cout << " ... Done!" << endl;
 }
 
 int probstaticCache::writeoutTestCoordinates(string testbasename, std::vector<std::pair<int, int> > stPointPairs, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits)
 {
-	cout << "one, probstaticcache::writeoutTestCoordinates start!" << endl;
+	cout << "probstaticcache::writeoutTestCoordinates start!";
 	vector<int> sp;
 	coordinate c;
 	string fn = testbasename;
@@ -577,18 +581,19 @@ int probstaticCache::writeoutTestCoordinates(string testbasename, std::vector<st
 				c = nodeid2coordinate.at(v);
 				of << c.first << " " << c.second << "\n";
 			}else
-				cout << "probstaticcache::writeoutTestCoordinates ERROR:  unknown node id." << endl;
+				cout << "\nprobstaticcache::writeoutTestCoordinates ERROR:  unknown node id." << endl;
 		}
 		of << endl;
 	}
 
 	of.close();
 	return 1;
+	cout << " ...Done!" << endl;
 }
 
 int probstaticCache::writeoutTrainingCoordinates(string testbasename, std::vector<std::pair<int, int> > stPointPairs, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits)
 {
-	cout << "one, probstaticcache::writeoutTestCoordinates start!" << endl;
+	cout << "probstaticcache::writeoutTestCoordinates start!";
 	vector<int> sp;
 	coordinate c;
 	string fn = testbasename;
@@ -610,11 +615,12 @@ int probstaticCache::writeoutTrainingCoordinates(string testbasename, std::vecto
 				c = nodeid2coordinate.at(v);
 				of << c.first << " " << c.second << "\n";
 			}else
-				cout << "probstaticcache::writeoutTestCoordinates ERROR:  unknown node id." << endl;
+				cout << "\nprobstaticcache::writeoutTestCoordinates ERROR:  unknown node id." << endl;
 		}
 		of << endl;
 	}
 
 	of.close();
 	return 1;
+	cout << " ...Done!" << endl;
 }

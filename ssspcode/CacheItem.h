@@ -34,6 +34,7 @@
 
 class CacheItem {
 	int accessKey;
+	double score;
 
 public:
 	int id, s, t, size;
@@ -45,6 +46,8 @@ public:
 
 	void updateKey(int newKey) {accessKey = newKey;}
 	int key() const {return accessKey;}
+	void setScore(double score){this->score = score;}
+	double getScore(){return score;}
 
 //    	friend bool operator< (CacheItem const& cItem1, CacheItem const& cItem2)const {return cItem1.key() < cItem2.key();}
  	inline bool operator< (CacheItem const& cItem)const {return (accessKey < cItem.key());}

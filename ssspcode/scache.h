@@ -65,14 +65,14 @@ public:
 	int getTotalDijkstraCalls(){return numDijkstraCalls;}
 	int getQueryNumCacheFull(){return queryNumCacheFull;}
 
-	void generateRandQueries(int numQueries, int maxVal, string outFn);
-	void generateRandLongQueries(int numQueries, int maxVal, int k, string outFn);
-	void readQueries(int numQueries, string inFn);
-	void readQ(int numQueries, string inFn);
-	void readLargestQueries(int numQueries, string inFn);
-	void readScoredQueries(int numQueries, string inFn);
-	void readProbQueries(int numQueries,string inFn);
-	void readScoredQueriesFromTrainFile(int numQueries, string inFn);
+	void generateRandQueries(uint numQueries, uint maxVal, string outFn);
+	void generateRandLongQueries(uint numQueries, uint maxVal, uint k, string outFn);
+	void readQueries(uint numQueries, string inFn);
+	void readQ(uint numQueries, string inFn);
+	void readLargestQueries(uint numQueries, string inFn);
+	void readScoredQueries(uint numQueries, string inFn);
+	void readProbQueries(uint numQueries,string inFn);
+	void readScoredQueriesFromTrainFile(uint numQueries, string inFn);
 
 private:
 	int numTotalQueries;
@@ -96,7 +96,7 @@ private:
 	boost::unordered_map<int, std::pair<double, double> > nodeid2coordinate;
 
 	void checkCache(std::pair<int,int> query);
-	intPair findLargestQuery(vector<pair<int, int> > cCandidates, int k);
+	intPair findLargestQuery(vector<pair<int, int> > cCandidates, uint k);
 	int calcScore(vector<int> sp, boost::unordered_map<int, int> vSeen);
 	void statistics(string outFn);
 	void pairStatisticsStoT(string outFn);

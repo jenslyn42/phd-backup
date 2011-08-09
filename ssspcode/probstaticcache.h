@@ -122,7 +122,7 @@ private:
 	void fillCache(int numQueries, string inFn);
 	void fillCacheFromQueriesFile(int numQueries, string inFn);
 	void fillCacheFromTrainFile(int numQueries);
-	void writeoutCacheCoordinates(string testbasename, std::vector<CacheItem> cm, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits);
+	void writeoutCacheCoordinates(string testbasename, vector<CacheItem> cm, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits);
 	int writeoutTestCoordinates(string testbasename, std::vector<intPair > stPointPairs, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits);
 	int writeoutTrainingCoordinates(string testbasename, std::vector<intPair > stPointPairs, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits);
 };

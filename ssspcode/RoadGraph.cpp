@@ -64,7 +64,7 @@ RoadGraph* RoadGraph::mapObject(std::string testFile, int pt)
 	}
 	else if((mapInstance->parseFileType) != pt)
 	{
-		RoadGraph::mapInstance = NULL; //if type of file to  be parsed changes, delete mapInstance
+		RoadGraph::mapInstance = NULL; //if type of file to be parsed changes, delete mapInstance
 		RoadGraph::mapObject(testFile, pt);
 	}
 

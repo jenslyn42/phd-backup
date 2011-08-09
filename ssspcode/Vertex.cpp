@@ -73,10 +73,21 @@ int Vertex::getId()
 
 string Vertex::toString()
 {
-	std::cout << "Vertice id: " << id << endl;
-	std::cout << "Adjacency list (vid,weight): ";
-    BOOST_FOREACH(intDoubleMap::value_type idm, Adjacencylist){std::cout << "(" << idm.first << "," << idm.second << ")"; }
-    std::cout << "\n" << endl;
+	string s;
+	s += "Vertice id: ";
+	s += id;
+	s += "\n";
+	s += "Adjacency list (vid,weight): ";
+    BOOST_FOREACH(intDoubleMap::value_type idm, Adjacencylist)
+    {
+    	s += "(";
+		s += idm.first;
+		s += "," ;
+		s += idm.second;
+		s += ")";
+    }
+    s += "\n";
+    return s;
 }
 
 #endif
