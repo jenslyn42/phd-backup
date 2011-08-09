@@ -41,6 +41,7 @@ CacheItem::CacheItem(int key, std::vector<int> item)
 	this->size = item.size();
 	this->s = -1;
 	this->t = -1;
+	this->score = -1;
 };
 
 CacheItem::CacheItem(int key, std::vector< int > item, int queryStartNode, int queryTargetNode)
@@ -51,5 +52,5 @@ CacheItem::CacheItem(int key, std::vector< int > item, int queryStartNode, int q
 	this->size = item.size();
 	this->s = queryStartNode;
 	this->t = queryTargetNode;
+	this->score = -1;
 };
-

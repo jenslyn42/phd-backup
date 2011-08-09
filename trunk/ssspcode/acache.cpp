@@ -55,6 +55,12 @@ bool aCache::insertItem(CacheItem ci)
 	return true;
 }
 
+bool aCache::insertItemWithScore(CacheItem ci, double score)
+{
+	ci.setScore(score);
+	insertItem(ci);
+}
+
 bool aCache::checkCache(int s, int t)
 {
 	vector<int> cItem;
@@ -63,9 +69,7 @@ bool aCache::checkCache(int s, int t)
 	{
 		cItem = ci.item;
 		if(find(cItem.begin(),cItem.end(), s) != cItem.end() && find(cItem.begin(),cItem.end(), t) != cItem.end())
-		{
 			return true;
-		}
 	}
 	return false;
 }
@@ -85,14 +89,12 @@ bool aCache::hasEnoughSpace(CacheItem ci)
 {
 	if(cacheType == GRAPH_CACHE)
 	{
-        int newNodes = 0; //nodes in ci which is not already in graph
+		int newNodes = 0; //nodes in ci which is not already in graph
 
-		BOOST_FOREACH(int v, ci.item){
-			if(find(nodeIdsInCache.begin(), nodeIdsInCache.end(), v) == nodeIdsInCache.end()){
-                newNodes++;
-            }
-        }
-        if( (cacheUsed+nodeIdsInCache.size()*BIT) + (newNodes*NODE_BITS+(cache.size()+1)*newNodes*BIT) < cacheSize) return true;
+		BOOST_FOREACH(int v, ci.item)
+			if(nodeIdsInCache.find(v) == nodeIdsInCache.end()){	newNodes++;	}
+
+		if( (cacheUsed+nodeIdsInCache.size()*BIT) + (newNodes*NODE_BITS+(cache.size()+1)*newNodes*BIT) < cacheSize) return true;
 	}
 	else if(cacheType == LIST_CACHE)
 	{
@@ -109,14 +111,24 @@ void aCache::updateCacheUsed(CacheItem ci)
 	if(cacheType == GRAPH_CACHE)
 	{
 		int nodesToBeAdded = 0;
+		boost::dynamic_bitset<> bitset(0);
 
 		BOOST_FOREACH(int v, ci.item)
 		{
-			if(find(nodeIdsInCache.begin(), nodeIdsInCache.end(), v) == nodeIdsInCache.end())
+			if(nodeIdsInCache.find(v) == nodeIdsInCache.end())
 			{
+				boost::dynamic_bitset<> bitset(cache.size()-1); //set all bits to zero in the bitmap for the first cache.size()-1 bits
 				nodesToBeAdded++;
-				nodeIdsInCache.push_back(v);
+				nodeIdsInCache[v] = bitset;
 			}
+		}
+
+		BOOST_FOREACH(intDBitset::value_type nb, nodeIdsInCache)
+		{
+			if(find(ci.item.begin(), ci.item.end(), nb.first) != ci.item.end())
+				nodeIdsInCache.at(nb.first).push_back(1);
+			else
+				nodeIdsInCache.at(nb.first).push_back(0);
 		}
 
 		cacheUsed =  nodeIdsInCache.size() * (NODE_BITS + BIT*cache.size()) ;
@@ -128,4 +140,22 @@ void aCache::updateCacheUsed(CacheItem ci)
 		numberOfNodes = numberOfNodes + ci.size;
 	}else
 		std::cout << "aCache::hasEnoughSpace! Invalid cache type set: " << cacheType << endl;
+}
+
+void aCache::writeOutBitmaps()
+{
+	int nodeid=0;
+	BOOST_FOREACH(intDBitset::value_type nb, nodeIdsInCache)
+	{
+		nodeid = nb.first;
+		cout << nb.first << " " << nb.second << endl;
+	}
+	cout << nodeIdsInCache.size() << endl;
+	cout << nodeIdsInCache.at(nodeid).size() << endl;
+	cout << nodeIdsInCache.size()*nodeIdsInCache.at(nodeid).size() << endl;
+}
+
+string aCache::getScoreAndContent()
+{
+
 }

@@ -41,15 +41,11 @@
 
 #include <boost/foreach.hpp>
 #include "boost/unordered_map.hpp"
+#include <boost/dynamic_bitset.hpp>
 
 #include <string>
 #include <vector>
 #include <iostream>
-
-#define NODE_BITS 32
-#define BIT 1
-#define GRAPH_CACHE 1
-#define LIST_CACHE 2
 
 class aCache{
 public:
@@ -59,6 +55,7 @@ public:
 	~aCache(){ };
 
 	bool insertItem(CacheItem ci);
+	bool insertItemWithScore(CacheItem ci, double score);
 	bool checkCache(int s, int t);
 	bool checkCache(std::pair<int,int> query);
 	bool checkCache(CacheItem ci);
@@ -68,6 +65,8 @@ public:
 	int getNumberOfNodesInCache(){return numberOfNodes;}
 	int getNumberOfItemsInCache(){return numItems;}
 	vector<CacheItem> getCacheContentVector(){return cache;}
+	void writeOutBitmaps();
+	string getScoreAndContent();
 
 private:
 	int cacheType;
@@ -75,7 +74,7 @@ private:
 	uint cacheUsed;
 	uint numberOfNodes;
 	uint numItems;
-	vector<int> nodeIdsInCache;
+	boost::unordered_map<int, boost::dynamic_bitset<> > nodeIdsInCache;
 	vector<CacheItem> cache;
 
 	void updateCacheUsed(CacheItem ci);

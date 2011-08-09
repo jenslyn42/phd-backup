@@ -146,25 +146,38 @@ void testObj::testResults(clock_t s, clock_t e)
 	long totalcalls = 0;
 	BOOST_FOREACH (intMap::value_type node, nodecalls){totalcalls += (long)node.second;}
 
-	cout << "Time:\t" << (double(e-s))/CLOCKS_PER_SEC << " sec. cm,ch:\t" << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << " " << typeid(*test).name() <<  "\tQueryNum Cache full:\t" << test->getQueryNumCacheFull() << "(" << test->ts.itemsInCache << ")" << endl;
+	cout << "Time:\t" << (double(e-s))/CLOCKS_PER_SEC << " sec." << endl;
+	cout << "Cachehits:\t" << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << endl;
+	cout << typeid(*test).name() <<  endl;
+	cout << "QueryNum Cache full:\t" << test->getQueryNumCacheFull() << "(" << test->ts.itemsInCache << ")" << endl;
 
-	cout << "Vertices visited:\t" << totalcalls << "\tCachesize:\t"<<ts.getCacheSize() << "\tSplits:\t" << ts.getSplits() << "\tquery file:\t" << ts.queryFileName << endl;
+	cout << "Vertices visited:\t" << totalcalls << endl;
+	cout << "Cachesize:\t"<<ts.getCacheSize() << endl;
+	cout << "Splits:\t" << ts.getSplits() << endl;
+	cout << "Query file:\t" << ts.queryFileName << endl;
 
-	cout << "sssp Calls: " <<RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->ssspCalls << endl;
-	cout << "calc Statistics: " << test->ts.buildStatisticsTime << "sec." <<endl;
-	cout << "fill cache: " << test->ts.fillCacheTime << "sec. \n" << endl;
-
+	cout << "sssp Calls:\t" <<RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->ssspCalls << endl;
+	cout << "Calc Statistics:\t" << test->ts.buildStatisticsTime << " sec." <<endl;
+	cout << "Fill cache:\t" << test->ts.fillCacheTime << " sec." << endl;
+	cout << "Sample size:\t" << ts.getNumQueriesForCache() << "\n" << endl;
 
 	///file output
 	ofstream resultfile;
 	resultfile.open((ts.getTestName()).c_str(), ios::out | ios::ate | ios::app);
 
-	resultfile << "Time:\t" << (double(e-s))/CLOCKS_PER_SEC << " sec. cm,ch:\t" << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << " " << typeid(*test).name() <<  "\tQueryNum Cache full:\t" << test->getQueryNumCacheFull() << "(" << test->ts.itemsInCache << ")" << endl;
+	resultfile << "Time:\t" << (double(e-s))/CLOCKS_PER_SEC << " sec." << endl;
+	resultfile << "Cachehits:\t" << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << endl;
+	resultfile << typeid(*test).name() <<  endl;
+	resultfile << "QueryNum Cache full:\t" << test->getQueryNumCacheFull() << "(" << test->ts.itemsInCache << ")" << endl;
 
-	resultfile << "Vertices visited:\t" << totalcalls << "\tCachesize:\t"<<ts.getCacheSize() << "\tSplits:\t" << ts.getSplits() << "\tquery file:\t" << ts.queryFileName << endl;
+	resultfile << "Vertices visited:\t" << totalcalls << endl;
+	resultfile << "Cachesize:\t"<<ts.getCacheSize() << endl;
+	resultfile << "Splits:\t" << ts.getSplits() << endl;
+	resultfile << "Query file:\t" << ts.queryFileName << endl;
 
-	resultfile << "sssp Calls: " << RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->ssspCalls << endl;
-	resultfile << "calc Statistics: " << test->ts.buildStatisticsTime << "sec." <<endl;
-	resultfile << "fill cache: " << test->ts.fillCacheTime << "sec. \n" << endl;
+	resultfile << "sssp Calls:\t" << RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->ssspCalls << endl;
+	resultfile << "Calc Statistics:\t" << test->ts.buildStatisticsTime << " sec." <<endl;
+	resultfile << "Fill cache:\t" << test->ts.fillCacheTime << " sec." << endl;
+	resultfile << "Sample size:\t" << ts.getNumQueriesForCache() << "\n" << endl;
 	resultfile.close();
 }

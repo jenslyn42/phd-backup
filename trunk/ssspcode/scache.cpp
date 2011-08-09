@@ -116,7 +116,7 @@ void scache::checkCache(std::pair< int, int > query)
 *	maxVal:		highest query value to be generated, usually size of graph (nodes)
 *	outFn:		file to write the queries to.
 **/
-void scache::generateRandQueries(int numQueries, int maxVal, string outFn)
+void scache::generateRandQueries(uint numQueries, uint maxVal, string outFn)
 {
 	cout << "scache::generateRandQueries! START" << endl;
 	pair<int,int> p;
@@ -131,7 +131,7 @@ void scache::generateRandQueries(int numQueries, int maxVal, string outFn)
 
 	cacheFile << numQueries << endl;
 
-	for(int i = 0; i < numQueries; i++)
+	for(uint i = 0; i < numQueries; i++)
 	{
 		if(i%5000 == 0) cout << "i:" << i << endl;
 		srand((int)rand());
@@ -160,7 +160,7 @@ void scache::generateRandQueries(int numQueries, int maxVal, string outFn)
 *	k:		size of each query set to choose a candidate from.
 *	outFn:		file to write the queries to.
 **/
-void scache::generateRandLongQueries(int numQueries, int maxVal, int k, string outFn)
+void scache::generateRandLongQueries(uint numQueries, uint maxVal, uint k, string outFn)
 {
 	cout << "scache::generateLongQueries! START" << endl;
 	pair<int,int> p, candQuery;
@@ -177,12 +177,12 @@ void scache::generateRandLongQueries(int numQueries, int maxVal, int k, string o
 
 	cacheFile << numQueries << endl;
 
-	for(int i = 0; i < numQueries; i++)
+	for(uint i = 0; i < numQueries; i++)
 	{
 		if(i%5000 == 0) cout << "i:" << i << endl;
 		srand((int)rand());
 		tmpQueryCand.clear();
-		for(int f = 0; f < k; f++)
+		for(uint f = 0; f < k; f++)
 		{
 			p.first = (rand()%(maxVal-1)) +1;
 			p.second = (rand()%(maxVal-1)) +1;
@@ -209,7 +209,7 @@ void scache::generateRandLongQueries(int numQueries, int maxVal, int k, string o
 }
 
 //support for generateLongQueries()
-intPair scache::findLargestQuery(vector<pair<int, int> > cCandidates, int k)
+intPair scache::findLargestQuery(vector<pair<int, int> > cCandidates, uint k)
 {
 	boost::unordered_map<int, pair<double,double> > node_coodinates; // node ids and their coordinates
 	int nodeIDs [k*2];
@@ -233,7 +233,7 @@ intPair scache::findLargestQuery(vector<pair<int, int> > cCandidates, int k)
 		getline(cnodeFile, line);
 		boost::algorithm::split(tokens, line, boost::algorithm::is_space());
 		int tmpVal;
-		for(int t = 0; t<k*2; t++){
+		for(uint t = 0; t<k*2; t++){
 			tmpVal = atoi(tokens[0].c_str());
 			if(tmpVal == nodeIDs[t]){
 				node_coodinates[nodeIDs[t]] = pair<double,double>(atoi(tokens[1].c_str()),atoi(tokens[2].c_str()));
@@ -264,7 +264,7 @@ intPair scache::findLargestQuery(vector<pair<int, int> > cCandidates, int k)
 	return largestDistPair;
 }
 
-void scache::readQueries(int numQueries, string inFn)
+void scache::readQueries(uint numQueries, string inFn)
 {
 	switch(ts.getStaticQueryType())
 	{
@@ -284,7 +284,7 @@ void scache::readQueries(int numQueries, string inFn)
 
 }
 
-void scache::readQ(int numQueries, string inFn)
+void scache::readQ(uint numQueries, string inFn)
 {
 	int i=0, spSize=0;
 	pair<int,int> p;
@@ -326,7 +326,7 @@ void scache::readQ(int numQueries, string inFn)
 	pairStatisticsAll("glCachePairAllAnalysisRandStatic10000");
 }
 
-void scache::readLargestQueries(int numQueries, string inFn)
+void scache::readLargestQueries(uint numQueries, string inFn)
 {
 	int i=0, spSize=0, curLine=0;
 	Heap mh; //a map to keep track of the position and size of the elements already in the cache, for easy removal.
@@ -407,9 +407,9 @@ void scache::readLargestQueries(int numQueries, string inFn)
 
 }
 
-void scache::readScoredQueries(int numQueries, string inFn)
+void scache::readScoredQueries(uint numQueries, string inFn)
 {
-	int i=0, spSize=0, filelines=0, curLine=0, cacheUsed=0;
+	uint i=0, spSize=0, filelines=0, curLine=0, cacheUsed=0;
 	maxHeap mh; //a map to keep track of the score of each potential cache item
 	HeapEntry tmp, tmp2;
 	CacheItem tmpItem;
@@ -442,7 +442,7 @@ void scache::readScoredQueries(int numQueries, string inFn)
 
 			//make new cache item
 			sp.clear();
-			for(int t = 0; t < spSize; t++) sp.push_back(atoi(tokens[t+2].c_str()));
+			for(uint t = 0; t < spSize; t++) sp.push_back(atoi(tokens[t+2].c_str()));
 			CacheItem e (i, sp, atoi(tokens[2].c_str()), atoi(tokens[spSize+1].c_str()));
 
 			//add cache item to map holding all queries from file
@@ -499,7 +499,7 @@ void scache::readScoredQueries(int numQueries, string inFn)
 	cout << "scache::calcScoreCounter: " << calcScoreCounter << endl;
 }
 
-void scache::readScoredQueriesFromTrainFile(int numQueries, string fn)
+void scache::readScoredQueriesFromTrainFile(uint numQueries, string fn)
 {
 	readMapData();
 
@@ -511,7 +511,7 @@ void scache::readScoredQueriesFromTrainFile(int numQueries, string fn)
 
 	vector<int> spResult;
 	std::pair<double, double> firstPair, secondPair;
-	int firstPnt, secondPnt, i=0, spSize=0, cacheUsed=0;
+	uint firstPnt, secondPnt, i=0, spSize=0, cacheUsed=0;
 	string str;
 	std::vector<string> tokens;
 
