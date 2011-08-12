@@ -13,9 +13,9 @@ unset label                            # remove any previous labels
 set xtic auto                          # set xtics automatically
 set ytic auto                          # set ytics automatically
 set title "Cache Hitsrate when increasing cache size"
-set xlabel "Cache Pct" 25,0
-set ylabel "Cache Hitrate" 0.5, 9
-set key 80,90
+#set xlabel "Cache Pct" 25,0
+#set ylabel "Cache Hitrate" 0.5, 9
+#set key 80,90
 show xlabel
 show ylabel
 #set label "Yield Point" at 0.003,260
@@ -24,4 +24,4 @@ show ylabel
 #set yr [0:100]
 set pointsize 1.0
 
-plot    "compRandLongStaticProbVsScored1000TEST.cache" using 1:2 with linespoints pt 2 lw 2
+plot    "compRandLongStaticProbVsScored1000TEST.cache" using 1:2 with lines
