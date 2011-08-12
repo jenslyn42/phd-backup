@@ -45,6 +45,7 @@
 #define BIT 1
 #define GRAPH_CACHE 1
 #define LIST_CACHE 2
+#define COMPRESSED_G_CACHE 3
 
 
 struct region;
@@ -52,15 +53,17 @@ struct region;
 typedef std::pair<double, double> coordinate;
 typedef std::vector<coordinate > regionlist;
 typedef std::pair<int,int> intPair;
-typedef boost::unordered_map<std::pair<int,int >, int> intPairIntMap;
 typedef std::pair<coordinate, coordinate> coordinatePairs;
 typedef std::pair<intPair, intPair > intPairPairs;
 typedef boost::unordered_map<int, int> intMap;
 typedef boost::unordered_map<int, double> intDoubleMap;
 typedef boost::unordered_map<int, region> regionMap;
+typedef boost::unordered_map<int, coordinate> intCoordinateMap;
 typedef boost::unordered_map<int, intPair > intPairMap;
+typedef boost::unordered_map<std::pair<int,int >, int> intPairIntMap;
 typedef boost::unordered_map<intPair,int > pairIntMap;
 typedef boost::unordered_map<int, CacheItem> intCacheitemMap;
+typedef boost::unordered_map<intPair, CacheItem> intPairCacheitemMap;
 typedef	boost::unordered_map<int, boost::dynamic_bitset<> > intDBitset;
 
 struct region

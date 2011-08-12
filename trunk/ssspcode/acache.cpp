@@ -32,13 +32,14 @@
 
 aCache::aCache(testsetting ts)
 {
-	if(ts.cacheType == GRAPH_CACHE || ts.cacheType == LIST_CACHE)
+	if(ts.cacheType == GRAPH_CACHE || ts.cacheType == LIST_CACHE || ts.cacheType == COMPRESSED_G_CACHE)
 	{
 		cacheType = ts.cacheType;
 		cacheSize = ts.getCacheSize();
 		cacheUsed = 0;
 		numberOfNodes = 0;
 		numItems = 0;
+		totalEntriesInCompressedBitsets = 0;
 	}
 	else
 		cout << "invalid cache type set: " << ts.cacheType << endl;
@@ -94,12 +95,23 @@ bool aCache::hasEnoughSpace(CacheItem ci)
 		BOOST_FOREACH(int v, ci.item)
 			if(nodeIdsInCache.find(v) == nodeIdsInCache.end()){	newNodes++;	}
 
-		if( (cacheUsed+nodeIdsInCache.size()*BIT) + (newNodes*NODE_BITS+(cache.size()+1)*newNodes*BIT) < cacheSize) return true;
+		if( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize) return true;
 	}
 	else if(cacheType == LIST_CACHE)
 	{
 		if(cacheUsed + ci.size*NODE_BITS < cacheSize) return true;
-	}else
+	}
+	else if(cacheType == COMPRESSED_G_CACHE)
+	{
+        int newNodes = 0; //nodes in ci which is not already in graph
+
+		BOOST_FOREACH(int v, ci.item)
+			if(nodeIdsInCache.find(v) == nodeIdsInCache.end()){	newNodes++;	}
+
+
+		if( (nodeIdsInCache.size() + newNodes ) * NODE_BITS + (totalEntriesInCompressedBitsets+ci.size)* ceil(log(cache.size())/log(2)) <= cacheSize) return true;
+	}
+	else
 		std::cout << "aCache::hasEnoughSpace! Invalid cache type set: " << cacheType << endl;
 
 	return false;
@@ -138,7 +150,26 @@ void aCache::updateCacheUsed(CacheItem ci)
 	{
 		cacheUsed = cacheUsed + ci.size*NODE_BITS;
 		numberOfNodes = numberOfNodes + ci.size;
-	}else
+	}
+    else if(cacheType == COMPRESSED_G_CACHE)
+	{
+		int nodesToBeAdded = 0;
+		boost::dynamic_bitset<> bitset(1); //only used as to not change definitino of nodeIdsInCache
+		totalEntriesInCompressedBitsets += ci.size;
+
+		BOOST_FOREACH(int v, ci.item)
+		{
+			if(nodeIdsInCache.find(v) == nodeIdsInCache.end())
+			{
+				nodesToBeAdded++;
+				nodeIdsInCache[v] = bitset;
+			}
+		}
+
+		cacheUsed =  nodeIdsInCache.size() * NODE_BITS + totalEntriesInCompressedBitsets * ceil( log(cache.size()) / log(2) );
+		numberOfNodes = nodeIdsInCache.size();
+	}
+	else
 		std::cout << "aCache::hasEnoughSpace! Invalid cache type set: " << cacheType << endl;
 }
 
@@ -153,9 +184,4 @@ void aCache::writeOutBitmaps()
 	cout << nodeIdsInCache.size() << endl;
 	cout << nodeIdsInCache.at(nodeid).size() << endl;
 	cout << nodeIdsInCache.size()*nodeIdsInCache.at(nodeid).size() << endl;
-}
-
-string aCache::getScoreAndContent()
-{
-
 }

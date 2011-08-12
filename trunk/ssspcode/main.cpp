@@ -136,19 +136,17 @@ cout << "double\t\t" << std::numeric_limits<double>::max() << endl;
 // expTest2-> testObj::~testObj();
 
 
-
 testObj *expTest3;
 
-cacheType = LIST_CACHE;
+cacheType = GRAPH_CACHE;
 cacheSize=320000;
 ts.queryFileName = "path2.train";
-testname = "sample2.test";
-ts.setSplits(6);
+testname = "g10P2.test";
 ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
 
-for(int i = 10000; i <= 100000; i+=10000)
+for(int i = 10; i <= 10; i+=2)
 {
-	ts.setNumQueriesForCache(i);
+	ts.setSplits(i);
 	expTest3 = new testObj(ts,5, queries);
 	expTest3->runStaticTest();
 	expTest3-> testObj::~testObj();
@@ -157,15 +155,18 @@ for(int i = 10000; i <= 100000; i+=10000)
 
 
 ts.queryFileName = "paths.train";
-testname = "sample.test";
+testname = "g10Ps.test";
 ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-for(int i = 10000; i <= 100000; i+=10000)
+for(int i = 10; i <= 10; i+=2)
 {
-	ts.setNumQueriesForCache(i);
+	ts.setSplits(i);
 	expTest3 = new testObj(ts,5, queries);
 	expTest3->runStaticTest();
 	expTest3-> testObj::~testObj();
 }
+
+
+
 
 //cacheType = 2;
 //ts.queryFileName = "paths.train";

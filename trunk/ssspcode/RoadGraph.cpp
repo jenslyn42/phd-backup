@@ -165,26 +165,15 @@ int RoadGraph::getMapsize()
 
 void RoadGraph::addEdge(int v1, int v2, double w)
 {
-	//if(debug) cout << "one, addEdge! (v1,v2,w): (" <<v1 <<"," << v2 <<"," << w <<") " << endl;
-	if(map[v1].getId() == -1){
-		//if(debug) cout << "one1, addEdge! updateVertex (v1,v2,w): (" <<v2 <<"," << v1 <<"," << w <<") " << endl;
+	if(map[v1].getId() == -1)
 		map[v1].updateVertexID(v1,v2,w);
-		//if(debug) cout << "one2, addEdge! updateVertex (v1,v2,w): (" <<v2 <<"," << v1 <<"," << w <<") " << endl;
-	}else{
-		//if(debug) cout << "one3, addEdge! addNeighbour (v2,w): (" << v1 << "," << w << ") " << endl;
+	else
 		map[v1].addNeighbour(v2,w);
-	}
 
-	//if(debug) cout << "two, addEdge! (v2,v1,w): (" <<v2 <<"," << v1 <<"," << w <<") " << endl;
-	if(map[v2].getId() == -1) {
-	//	if(debug) cout << "two1, addEdge! updateVertex (v2,v1,w): (" <<v2 <<"," << v1 <<"," << w <<") " << endl;
+	if(map[v2].getId() == -1)
 		map[v2].updateVertexID(v2,v1,w);
-	//	if(debug) cout << "two2, addEdge! updateVertex (v2,v1,w): (" <<v2 <<"," << v1 <<"," << w <<") " << endl;
-	}else{
-	//	if(debug) cout << "two3, addEdge! addNeighbour (v1,w): (" << v1 << "," << w << ") " << endl;
+	else
 		map[v2].addNeighbour(v1,w);
-	}
-	//if(debug) cout << "three, addEdge!" << endl;
 }
 
 void RoadGraph::readRoadNetworkFile(string fn)
