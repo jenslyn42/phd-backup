@@ -24,4 +24,4 @@ set ytic auto                          # set ytics automatically
 #set yr [0:100]
 set pointsize 1.0
 
-plot    "compRandLongStaticProbVsScoredPaths1000TEST.cache" using 1:2 with linespoints pt 2 lw 2
+plot    "compRandLongStaticProbVsScoredPaths1000TEST.cache" using 1:2 with lines
