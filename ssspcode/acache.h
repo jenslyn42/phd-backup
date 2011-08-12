@@ -46,6 +46,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <cmath>
 
 class aCache{
 public:
@@ -61,15 +62,15 @@ public:
 	bool checkCache(CacheItem ci);
 	bool hasEnoughSpace(CacheItem ci);
 	int getCacheUsed(){return cacheUsed;}
-	int getSize(){return cacheSize;}
-	int getNumberOfNodesInCache(){return numberOfNodes;}
-	int getNumberOfItemsInCache(){return numItems;}
+	int size(){return cacheSize;}
+	int numberOfNodesInCache(){return numberOfNodes;}
+	int numberOfItemsInCache(){return numItems;}
 	vector<CacheItem> getCacheContentVector(){return cache;}
 	void writeOutBitmaps();
-	string getScoreAndContent();
 
 private:
 	int cacheType;
+    double totalEntriesInCompressedBitsets; //only used with COMPRESSED_G_CACHE
 	uint cacheSize;
 	uint cacheUsed;
 	uint numberOfNodes;

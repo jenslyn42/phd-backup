@@ -80,6 +80,7 @@ public:
 	std::string queryFileName;
 	int itemsInCache;
 	int cacheType;
+	int nonEmptyRegions;
 
 	double fillCacheTime, buildStatisticsTime;
 
@@ -109,7 +110,7 @@ public:
 	std::string getTestFile() const{return testFile;}
 
 	void setTestType (int theValue){testType = theValue;}
-	int getTestType() const{return testType;}	
+	int getTestType() const{return testType;}
 
 	//Used in readQueries(int numQueries, string inFn)
 	void setStaticQueryType (int val){staticQueryType = val;}

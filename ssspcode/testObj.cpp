@@ -147,7 +147,7 @@ void testObj::testResults(clock_t s, clock_t e)
 	BOOST_FOREACH (intMap::value_type node, nodecalls){totalcalls += (long)node.second;}
 
 	cout << "Time:\t" << (double(e-s))/CLOCKS_PER_SEC << " sec." << endl;
-	cout << "Cachehits:\t" << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << endl;
+	cout << "Cachehits:\t" << test->getCacheHits() << "(" << test->getTotalDijkstraCalls() << ")" << endl;
 	cout << typeid(*test).name() <<  endl;
 	cout << "QueryNum Cache full:\t" << test->getQueryNumCacheFull() << "(" << test->ts.itemsInCache << ")" << endl;
 
@@ -159,7 +159,8 @@ void testObj::testResults(clock_t s, clock_t e)
 	cout << "sssp Calls:\t" <<RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->ssspCalls << endl;
 	cout << "Calc Statistics:\t" << test->ts.buildStatisticsTime << " sec." <<endl;
 	cout << "Fill cache:\t" << test->ts.fillCacheTime << " sec." << endl;
-	cout << "Sample size:\t" << ts.getNumQueriesForCache() << "\n" << endl;
+	cout << "Sample size:\t" << ts.getNumQueriesForCache() << endl;
+	cout << "Non Empty Regions:\t" << test->ts.nonEmptyRegions << "\n" << endl;
 
 	///file output
 	ofstream resultfile;
@@ -178,6 +179,8 @@ void testObj::testResults(clock_t s, clock_t e)
 	resultfile << "sssp Calls:\t" << RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->ssspCalls << endl;
 	resultfile << "Calc Statistics:\t" << test->ts.buildStatisticsTime << " sec." <<endl;
 	resultfile << "Fill cache:\t" << test->ts.fillCacheTime << " sec." << endl;
-	resultfile << "Sample size:\t" << ts.getNumQueriesForCache() << "\n" << endl;
+	resultfile << "Sample size:\t" << ts.getNumQueriesForCache() << endl;
+	resultfile << "Non Empty Regions:\t" << test->ts.nonEmptyRegions << "\n" << endl;
+
 	resultfile.close();
 }

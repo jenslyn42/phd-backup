@@ -48,6 +48,7 @@ testsetting::~testsetting()
 	cacheSize = 0;
 	queryRangeStart = 0;
 	queryRangeEnd = 0;
+
 	gaus.first=false;
 	gaus.second=0.0;
 
@@ -57,6 +58,7 @@ testsetting::~testsetting()
 	splits = -1;
 	itemsInCache = 0;
 	cacheType = 0;
+	nonEmptyRegions = -1;
 }
 
 void testsetting::setData(string testname, string testfile, int testType, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore, int cacheType)
