@@ -104,12 +104,21 @@ bool aCache::hasEnoughSpace(CacheItem ci)
 	else if(cacheType == COMPRESSED_G_CACHE)
 	{
         int newNodes = 0; //nodes in ci which is not already in graph
+	int bitsToAdd = 0;
 
 		BOOST_FOREACH(int v, ci.item)
-			if(nodeIdsInCache.find(v) == nodeIdsInCache.end()){	newNodes++;	}
+		{
+			if(nodeIdsInCache.find(v) == nodeIdsInCache.end())
+			{	newNodes++;
+				bitsToAdd += 2;
+			}
+			else
+				if(nodeIdsInCacheCompressed.at(v).back().second != cache.size())
+					bitsToAdd += 2;
+		}
 
 
-		if( (nodeIdsInCache.size() + newNodes ) * NODE_BITS + (totalEntriesInCompressedBitsets+ci.size)* ceil(log(cache.size())/log(2)) <= cacheSize) return true;
+		if( (nodeIdsInCache.size() + newNodes ) * NODE_BITS + (totalEntriesInCompressedBitsets+bitsToAdd)* ceil(log(cache.size())/log(2)) <= cacheSize) return true;
 	}
 	else
 		std::cout << "aCache::hasEnoughSpace! Invalid cache type set: " << cacheType << endl;
@@ -154,19 +163,32 @@ void aCache::updateCacheUsed(CacheItem ci)
     else if(cacheType == COMPRESSED_G_CACHE)
 	{
 		int nodesToBeAdded = 0;
-		boost::dynamic_bitset<> bitset(1); //only used as to not change definitino of nodeIdsInCache
-		totalEntriesInCompressedBitsets += ci.size;
+		vector<intPair> compressedSets;
+		int bitsToAdd = 0;
 
 		BOOST_FOREACH(int v, ci.item)
 		{
 			if(nodeIdsInCache.find(v) == nodeIdsInCache.end())
 			{
 				nodesToBeAdded++;
-				nodeIdsInCache[v] = bitset;
+				nodeIdsInCacheCompressed[v] = compressedSets;
+				nodeIdsInCacheCompressed.at(v).push_back(make_pair<int,int>(cache.size(), cache.size()));
+				bitsToAdd += 2;
+			}
+			else
+			{
+				if(nodeIdsInCacheCompressed.at(v).back().second == cache.size()-1)
+					nodeIdsInCacheCompressed.at(v).back().second = cache.size();
+				else
+				{
+					nodeIdsInCacheCompressed.at(v).push_back(make_pair<int,int>(cache.size(), cache.size()));
+					bitsToAdd += 2;
+				}
 			}
 		}
+		totalEntriesInCompressedBitsets += bitsToAdd;
 
-		cacheUsed =  nodeIdsInCache.size() * NODE_BITS + totalEntriesInCompressedBitsets * ceil( log(cache.size()) / log(2) );
+		cacheUsed =  nodeIdsInCacheCompressed.size() * NODE_BITS + totalEntriesInCompressedBitsets * ceil( log(cache.size()) / log(2) );
 		numberOfNodes = nodeIdsInCache.size();
 	}
 	else

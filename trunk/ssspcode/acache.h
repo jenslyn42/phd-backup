@@ -70,12 +70,13 @@ public:
 
 private:
 	int cacheType;
-    double totalEntriesInCompressedBitsets; //only used with COMPRESSED_G_CACHE
+	double totalEntriesInCompressedBitsets; //only used with COMPRESSED_G_CACHE
 	uint cacheSize;
 	uint cacheUsed;
 	uint numberOfNodes;
 	uint numItems;
 	boost::unordered_map<int, boost::dynamic_bitset<> > nodeIdsInCache;
+	boost::unordered_map<int, vector<intPair> > nodeIdsInCacheCompressed; //used with COMPRESSED_G_CACHE
 	vector<CacheItem> cache;
 
 	void updateCacheUsed(CacheItem ci);
