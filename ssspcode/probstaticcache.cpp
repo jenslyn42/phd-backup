@@ -555,7 +555,7 @@ void probstaticCache::fillCacheFromQueriesFileByStatistics(int numQueries, strin
         cid++;
         bucketList[rp] = e;
     }
-    ts.nonEmptyRegions = bucketList.size();
+    ts.nonEmptyRegionPairs = bucketList.size();
 
 	cout << "probstaticcache::fillCacheFromQueriesFileByStatistics! Initial scoring of " << bucketList.size() << " items started";
 	//rank queries based on statistics
@@ -628,7 +628,8 @@ void probstaticCache::fillCacheFromQueriesFileByStatistics(int numQueries, strin
 	writeoutTrainingCoordinates(ts.getTestName(), trainingSTPointPairs, nodeid2coordinate, ts.getSplits());
 	writeoutTestCoordinates(ts.getTestName(), testSTPointPairs, nodeid2coordinate, ts.getSplits());
 	cout << "probstaticcache::calcScoreCounter: " << calcScoreCounter << endl;
-    cache.writeOutBitmaps();
+//    cache.writeOutBitmaps();
+//    cache.printNodesTokensPaths();
 
 }
 
@@ -639,7 +640,7 @@ pair<int,int> probstaticCache::pickSTpair(pair<int,int> regionPair)
     rid2 = regionPair.second;
     vector<int> nodeidVectorRegion1, nodeidVectorRegion2;
 
-    srand(clock());
+//    srand(clock());
     nodeidVectorRegion1 = regionid2nodeidVector.at(rid1);
     nodeidVectorRegion2 = regionid2nodeidVector.at(rid2);
 

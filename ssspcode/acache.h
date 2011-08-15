@@ -38,6 +38,7 @@
 #include "CacheItem.h"
 #include "testsetting.h"
 #include "utility.h"
+#include "compressedpidtokens.h"
 
 #include <boost/foreach.hpp>
 #include "boost/unordered_map.hpp"
@@ -67,6 +68,7 @@ public:
 	int numberOfItemsInCache(){return numItems;}
 	vector<CacheItem> getCacheContentVector(){return cache;}
 	void writeOutBitmaps();
+	void printNodesTokensPaths();
 
 private:
 	int cacheType;
@@ -78,6 +80,8 @@ private:
 	boost::unordered_map<int, boost::dynamic_bitset<> > nodeIdsInCache;
 	boost::unordered_map<int, vector<intPair> > nodeIdsInCacheCompressed; //used with COMPRESSED_G_CACHE
 	vector<CacheItem> cache;
+
+	compressedPidTokens pidSets;
 
 	void updateCacheUsed(CacheItem ci);
 
