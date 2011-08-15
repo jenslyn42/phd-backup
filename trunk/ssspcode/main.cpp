@@ -117,13 +117,12 @@ gaussian=true, useOptimalSubstructure=true, useNodeScore=true, useHitScore = tru
 
 ts.setData(testname, testfile, inputFileType, numQ, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
 
-
-
+cout << "******************************************" << endl;
 cout << "int \t\t" << std::numeric_limits<int>::max() << endl;
 cout << "unsigned int\t" << std::numeric_limits<unsigned int>::max() << endl;
 cout << "long\t\t" << std::numeric_limits<long>::max() << endl;
 cout << "double\t\t" << std::numeric_limits<double>::max() << endl;
-
+cout << "******************************************" << endl;
 
 ///exp test OSC with testObj
 // testObj *expTest = new testObj(ts,1, queries);
@@ -138,13 +137,24 @@ cout << "double\t\t" << std::numeric_limits<double>::max() << endl;
 
 testObj *expTest3;
 
-cacheType = GRAPH_CACHE;
+cacheType = COMPRESSED_G_CACHE;
 cacheSize=320000;
 ts.queryFileName = "path2.train";
-testname = "g10P2.test";
+testname = "CgenerateP2.test";
 ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
 
-for(int i = 10; i <= 10; i+=2)
+for(int i = 0; i <= 10; i+=2)
+{
+	ts.setSplits(i);
+	expTest3 = new testObj(ts,5, queries);
+	expTest3->runStaticTest();
+	expTest3-> testObj::~testObj();
+}
+
+ts.queryFileName = "paths.train";
+testname = "CgeneratePs.test";
+ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+for(int i = 0; i <= 10; i+=2)
 {
 	ts.setSplits(i);
 	expTest3 = new testObj(ts,5, queries);
@@ -153,11 +163,50 @@ for(int i = 10; i <= 10; i+=2)
 }
 
 
+cacheType = GRAPH_CACHE;
+cacheSize=320000;
+ts.queryFileName = "path2.train";
+testname = "GgenerateP2.test";
+ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+
+for(int i = 0; i <= 10; i+=2)
+{
+	ts.setSplits(i);
+	expTest3 = new testObj(ts,5, queries);
+	expTest3->runStaticTest();
+	expTest3-> testObj::~testObj();
+}
 
 ts.queryFileName = "paths.train";
-testname = "g10Ps.test";
+testname = "GgeneratePs.test";
 ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-for(int i = 10; i <= 10; i+=2)
+for(int i = 0; i <= 10; i+=2)
+{
+	ts.setSplits(i);
+	expTest3 = new testObj(ts,5, queries);
+	expTest3->runStaticTest();
+	expTest3-> testObj::~testObj();
+}
+
+
+cacheType = LIST_CACHE;
+cacheSize=320000;
+ts.queryFileName = "path2.train";
+testname = "LgenerateP2.test";
+ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+
+for(int i = 0; i <= 10; i+=2)
+{
+	ts.setSplits(i);
+	expTest3 = new testObj(ts,5, queries);
+	expTest3->runStaticTest();
+	expTest3-> testObj::~testObj();
+}
+
+ts.queryFileName = "paths.train";
+testname = "LgeneratePs.test";
+ts.setData(testname, testfile, inputFileType, numqueries, cacheSize, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+for(int i = 0; i <= 10; i+=2)
 {
 	ts.setSplits(i);
 	expTest3 = new testObj(ts,5, queries);

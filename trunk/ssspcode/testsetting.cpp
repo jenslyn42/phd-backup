@@ -58,7 +58,7 @@ testsetting::~testsetting()
 	splits = -1;
 	itemsInCache = 0;
 	cacheType = 0;
-	nonEmptyRegions = -1;
+	nonEmptyRegionPairs = -1;
 }
 
 void testsetting::setData(string testname, string testfile, int testType, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore, int cacheType)

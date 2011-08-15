@@ -55,6 +55,7 @@ typedef std::vector<coordinate > regionlist;
 typedef std::pair<int,int> intPair;
 typedef std::pair<coordinate, coordinate> coordinatePairs;
 typedef std::pair<intPair, intPair > intPairPairs;
+typedef std::vector<intPair>  intPairVector;
 typedef boost::unordered_map<int, int> intMap;
 typedef boost::unordered_map<int, double> intDoubleMap;
 typedef boost::unordered_map<int, region> regionMap;

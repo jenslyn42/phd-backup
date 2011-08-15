@@ -160,14 +160,14 @@ void testObj::testResults(clock_t s, clock_t e)
 	cout << "Calc Statistics:\t" << test->ts.buildStatisticsTime << " sec." <<endl;
 	cout << "Fill cache:\t" << test->ts.fillCacheTime << " sec." << endl;
 	cout << "Sample size:\t" << ts.getNumQueriesForCache() << endl;
-	cout << "Non Empty Regions:\t" << test->ts.nonEmptyRegions << "\n" << endl;
+	cout << "Non Empty Regions:\t" << test->ts.nonEmptyRegionPairs << "\n" << endl;
 
 	///file output
 	ofstream resultfile;
 	resultfile.open((ts.getTestName()).c_str(), ios::out | ios::ate | ios::app);
 
 	resultfile << "Time:\t" << (double(e-s))/CLOCKS_PER_SEC << " sec." << endl;
-	resultfile << "Cachehits:\t" << test->getTotalDijkstraCalls() <<"," << test->getCacheHits() << endl;
+	resultfile << "Cachehits:\t" << test->getCacheHits() << "(" << test->getTotalDijkstraCalls() << ")" << endl;
 	resultfile << typeid(*test).name() <<  endl;
 	resultfile << "QueryNum Cache full:\t" << test->getQueryNumCacheFull() << "(" << test->ts.itemsInCache << ")" << endl;
 
@@ -180,7 +180,7 @@ void testObj::testResults(clock_t s, clock_t e)
 	resultfile << "Calc Statistics:\t" << test->ts.buildStatisticsTime << " sec." <<endl;
 	resultfile << "Fill cache:\t" << test->ts.fillCacheTime << " sec." << endl;
 	resultfile << "Sample size:\t" << ts.getNumQueriesForCache() << endl;
-	resultfile << "Non Empty Regions:\t" << test->ts.nonEmptyRegions << "\n" << endl;
+	resultfile << "Non Empty Regions:\t" << test->ts.nonEmptyRegionPairs << "\n" << endl;
 
 	resultfile.close();
 }

@@ -80,7 +80,7 @@ public:
 	std::string queryFileName;
 	int itemsInCache;
 	int cacheType;
-	int nonEmptyRegions;
+	int nonEmptyRegionPairs;
 
 	double fillCacheTime, buildStatisticsTime;
 
