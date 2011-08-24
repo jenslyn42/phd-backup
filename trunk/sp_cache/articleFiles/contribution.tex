@@ -1,14 +1,32 @@
-\section{Baseline Competitors}
+\section{\spath Caching}\label{sec:competitors}
 
-Intro to section; Why do we have baseline competitors, which ones will be introduced, and why those? 
+In this section we qualify the differences between static and dynamic caching of \spathsns. We also introduce our state of the art competitor and explain why it is not an adequate solution for the \spath caching problem.
 
-LRU is a competitor, but can not achieve good performance because:
-\begin{itemize}	
-	\item Has no way to determine the usefulness of adding a path (i.e. no scoring function)
-	\item Even if a path P is good (covers many queries), then if a sequence of consequtive queries comes which P can not cover, then it will be evicted.
-	\item Has no way to optimize the number of paths in the cache, so available cache space may go unused.
-	\item Querying the cache may require a scan of all paths in the cache
-\end{itemize}
+
+If a dynamic cache is used\footnotemark, and we want to ensure it always keeps the most useful paths in the cache, it will be very expensive to calculate the utility of a new query with respect how much it overlaps with existing \spaths and how likely it will be able to answer a query in the future, thus adding a substantial overhead to query processing. As the utility of a \spath is so expensive to calculate, while the \spath service is running, it violates goal \ref{item:goal2} in section \ref{subsec:goals}.
+
+Using LRU as the cache replacement policy in a dynamic cache ensures that only minimal overhead is added by using a dynamic cache. LRU, however, has several shortcomings, such as: It no way to determine the usefulness of inserting a path (i.e. no scoring function), which violates goal \ref{item:goal3} (Sec. \ref{subsec:goals}). Because LRU does not have a scoring function then, even if a path $P$ is valuable (covers many queries), if a sequence of consecutive queries, which P can not cover, is submitted, then P will be evicted. Because the way LRU works it also does not have any way to optimize utilization of the cache space available, possibly wasting a lot of space. If no additional structure is added the querying the cache may require a scan of all paths in the cache to examine the cache can answer a query or not.
+
+\footnotetext{Every time a new query is submitted we consider evicting an old item from the cache and inserting the new query, using a replacement policy e.g. LRU}
+
+---
+more beneficial to fill the cache offline and use a static cache, i.e. not evicting or inserting \spaths while the system is running.
+----
+
+% Intro to section; Why do we have baseline competitors, which ones will be introduced, and why those? 
+
+% LRU is a competitor, but can not achieve good performance because:
+% \begin{itemize}	
+% 	\item Has no way to determine the usefulness of adding a path (i.e. no scoring function)
+% 	\item Even if a path P is good (covers many queries), then if a sequence of consecutive queries comes which P can not cover, then it will be evicted.
+% 	\item Has no way to optimize the number of paths in the cache, so available cache space may go unused.
+% 	\item 
+% \end{itemize}
+
+
+
+
+
 
 \section{Contribution} \label{sec:contribution}
 
@@ -20,9 +38,28 @@ List all advantages of a static cache solution \\
 explain what will be introduced, which sub-problems are considered, and which subsections presents what.
 
 
+\begin{table}
+\begin{tabular*}{\columnwidth}{|l||p{0.78\columnwidth}|}
+\hline
+\bf Symbol	& \bf Meaning \\\hline
+...		& ... \\\hline
+\end{tabular*}
+\caption{Table of Symbols}
+\label{tab:symbols}
+\end{table}
+
+
+\begin{figure}[bht]
+  \center
+        \includegraphics[width=0.5\textwidth]{figures/fillcache}
+        \caption{Insertion of cache elements in offline phase.}
+  \label{fig:fillcache}
+\end{figure}
+
+
 \subsection{Benefit model}
 define benefit equations\\
-Define optimization goal as a mathematical expfression to be minimized.
+Define optimization goal as a mathematical expression to be minimized.
 
 \subsection{Hardness Analysis}
 Theoretical analysis showing how hard the problem is to solve for \spath caching.\\
@@ -33,10 +70,10 @@ show it is NP-Hard
 shows in more detail how we propose to solve our problem
 
 
-\subsection{Statistics extration}
+\subsection{Statistics extraction}
 
 \subsubsection{Partition map} 
-solves goal 1. reduce time on SP calc as it aids the cache with information on which paths may be useful.\\ 
+solves goal 1. reduce time on \spath calc as it aids the cache with information on which paths may be useful.\\ 
 discussion of kD-Tree.
 
 
@@ -48,5 +85,5 @@ discussion of kD-Tree.
 
 \subsubsection{Graph representation} - solves goal 1, allows for more paths in cache, which should translate more cache hits.
 
-\subsubsection{Sharing subpaths} - solves goal 1, allows for more paths in cache, translating to more cachehits. Unfortunally has a negative impact on goal 2 as it introduces some overhead in query time.
+\subsubsection{Sharing subpaths} - solves goal 1, allows for more paths in cache, translating to more cachehits. Unfortunately has a negative impact on goal 2 as it introduces some overhead in query time.
 
