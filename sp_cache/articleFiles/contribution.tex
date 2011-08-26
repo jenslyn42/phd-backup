@@ -1,13 +1,26 @@
-\section{\spath Caching}\label{sec:competitors}
+\section{Challenges Of \spath Caching}\label{sec:competitors}
 
-In this section we qualify the differences between static and dynamic caching of \spathsns. We also introduce our state of the art competitor and explain why it is not an adequate solution for the \spath caching problem.
+In this section we qualify the differences between static (no change in cache content at service runtime) and dynamic caching (Cache content is changed at service runtime) of \spathsns. We also introduce our state of the art competitor and explain why it is not an adequate solution for the \spath caching problem.
 
 
-If a dynamic cache is used\footnotemark, and we want to ensure it always keeps the most useful paths in the cache, it will be very expensive to calculate the utility of a new query with respect how much it overlaps with existing \spaths and how likely it will be able to answer a query in the future, thus adding a substantial overhead to query processing. As the utility of a \spath is so expensive to calculate, while the \spath service is running, it violates goal \ref{item:goal2} in section \ref{subsec:goals}.
+Using a dynamic cache\footnotemark and calculating the utility of each path is very expensive. If a dynamic cache is used, and we want to ensure it always keeps the most useful paths in the cache, it will be very expensive to calculate the utility of a new query with respect how much it overlaps with existing \spaths (i.e. how many vertices it shares with an existing \spathns) and how likely it will be able to answer a query in the future, thus adding a substantial overhead to query processing. As the utility of a \spath is so expensive to calculate, while the \spath service is running, it violates goal \ref{item:goal2} in section \ref{subsec:goals}.
 
-Using LRU as the cache replacement policy in a dynamic cache ensures that only minimal overhead is added by using a dynamic cache. LRU, however, has several shortcomings, such as: It no way to determine the usefulness of inserting a path (i.e. no scoring function), which violates goal \ref{item:goal3} (Sec. \ref{subsec:goals}). Because LRU does not have a scoring function then, even if a path $P$ is valuable (covers many queries), if a sequence of consecutive queries, which P can not cover, is submitted, then P will be evicted. Because the way LRU works it also does not have any way to optimize utilization of the cache space available, possibly wasting a lot of space. If no additional structure is added the querying the cache may require a scan of all paths in the cache to examine the cache can answer a query or not.
+Using \lru as the cache replacement policy in a dynamic cache ensures that only minimal overhead is added by using a dynamic cache. When a new query is submittet \lru evicts the least recently uesd \spath and keeps the most recently used \spaths in the cache.
+\lru, however, has several shortcomings: 
+\begin{itemize}
+\item It has no way to determine the usefulness of inserting a path (i.e. no scoring function), which violates goal \ref{item:goal3} (Sec. \ref{subsec:goals}). 
+\item Because \lru does not have a scoring function then, even if a path $P$ is valuable (covers many potential queries), if a sequence of consecutive queries, which $P$ can not cover, is submitted, then P will be evicted. 
+\item \lru also does not have any way to optimize utilization of the cache space available, possibly wasting a lot of space. 
+\end{itemize}
 
-\footnotetext{Every time a new query is submitted we consider evicting an old item from the cache and inserting the new query, using a replacement policy e.g. LRU}
+If no additional structure is added then querying the cache may require a scan of all paths in the cache to examine the cache can answer a query or not.
+
+\footnotetext{Every time a new query is submitted we consider evicting an old item from the cache and inserting the new query, using a replacement policy e.g. \lru}
+
+
+
+
+
 
 ---
 more beneficial to fill the cache offline and use a static cache, i.e. not evicting or inserting \spaths while the system is running.
@@ -15,7 +28,7 @@ more beneficial to fill the cache offline and use a static cache, i.e. not evict
 
 % Intro to section; Why do we have baseline competitors, which ones will be introduced, and why those? 
 
-% LRU is a competitor, but can not achieve good performance because:
+% \lru is a competitor, but can not achieve good performance because:
 % \begin{itemize}	
 % 	\item Has no way to determine the usefulness of adding a path (i.e. no scoring function)
 % 	\item Even if a path P is good (covers many queries), then if a sequence of consecutive queries comes which P can not cover, then it will be evicted.
