@@ -18,7 +18,7 @@ If no additional structure is added then querying the cache may require a scan o
 \footnotetext{Every time a new query is submitted we consider evicting an old item from the cache and inserting the new query, using a replacement policy e.g. \lru}
 
 
-If we assume a cache of size 10 (i.e. has space for 10 vertices), using \lruns, which has already had path A \& B inserted (see Fig. \ref{fig:rxmap}), we can anwer 36 out of the 49 possible queries on the map (i.e. all queries not including $v_7$. However, since \lru always does a cache replacement if there are is a cache miss, then a simple query sequence: $P_{4,7},P_{6,7}$ would replace A \& B with \spathns: $\{v_4,v_5,v_7\}$ and $\{v_6,v_5,v_7\}$, reducing the queries the cache can answer to just 12 out of 49 queries. This clearly demonstrate why it is problematic that \lru does not consider the utility of new queries, as well as how the cache ends up wasting space for 4 nodes.
+If we assume a cache of size 10 (i.e. has space for 10 vertices), using \lruns, which has already had path A \& B inserted (see Fig. \ref{fig:rxmap}), we can anwer 36 out of the 49 possible queries on the map (i.e. all queries not including $v_7$. However, since \lru always does a cache replacement if there are is a cache miss, then a simple query sequence: $Q_{4,7},Q_{6,7}$ would replace A \& B with \spathns: $\{v_4,v_5,v_7\}$ and $\{v_6,v_5,v_7\}$, reducing the queries the cache can answer to just 12 out of 49 queries. This clearly demonstrate why it is problematic that \lru does not consider the utility of new queries, as well as how the cache ends up wasting space for 4 nodes.
 
 
 
@@ -54,17 +54,19 @@ explain what will be introduced, which sub-problems are considered, and which su
 
 
 \begin{table}
-\begin{tabular*}{\columnwidth}{|l||p{0.61\columnwidth}|}
+\begin{tabular*}{\columnwidth}{|l||p{0.60\columnwidth}|}
 \hline
 \bf Symbol		& \bf Meaning \\\hline
+$Q_{S,T}$		& \spath query from S to T \\\hline
 $SP_{S,T}$		& \spath from S to T \\\hline
 $C_{SP}$		& \cet spent on \spath calculation \\\hline
 $C_{OH}$		& \cet spent on overhead and maintenence \\\hline
 $F_{Time}(C_{SP},C_{OH})$& Total \cet spent on answering a query workload \\\hline
 $Cache[i]$		& i'th item in the cache \\\hline
-$Utility(P_{S,T})$	& Calculates the benifit of a (sub-)path $P_{S,T}$ \\\hline
-$Utility_{_T}(\spath)$	& Finds the total sum of the utility of the \spath and its sub-paths \\\hline
-$P_{val}(Cache)$	& Finds the total utility of the content in the cache $\left(\sum\limits_{i=cache[1]}^{cache[size]} Utility_{_T}\left(cache[i]\right)\right)$ \\\hline
+$U(P_{S,T})$	& Calculates the benifit of a (sub-)path $P_{S,T}$ \\\hline
+$U_T(\spath)$	& Finds the total sum of the utility of the \spath and its sub-paths \\\hline
+$P_{val}(Cache)$	& Finds the total utility of the content in the cache \\ 
+			& $\left(\sum\limits_{i=Cache[1]}^{Cache[size]} U_T\left(Cache[i]\right)\right)$ \\\hline
 
 \end{tabular*}
 \caption{Table of Symbols}
@@ -84,6 +86,8 @@ $P_{val}(Cache)$	& Finds the total utility of the content in the cache $\left(\s
 
 We will define our goals more formally, introducing the benefit equations we aim to minimize.
 
+A query is a pair of vertice ids $(v_S, v_T)$, denoted $Q_{S,T}$ and the \spath returned from such query we denote $SP_{S,T}$. 
+To evaluate goal \ref{item:goal1} \& \ref{item:goal2} we measure \cet spent on \spath calculations ($C_{SP}$) and \cet spent on maintenence and overhead ($C_{OH}$).
 
 
 % define benefit equations\\
