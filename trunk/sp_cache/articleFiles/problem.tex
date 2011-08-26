@@ -8,6 +8,16 @@ Calculating a \spath will, regardless of the algorithm used, always be an expens
 
 A \spath has the property of \oss (see lemma \ref{lem:oss}) which means that any \spath in the cache can answer any \spath query where both origin and target node are on the \spathns. Calculating which \spathsns, and their sub-paths, provide the most benefit will obviously be necessary for optimal utilization of the cache. A static cache, which is populated in an offline phase (fig. \ref{fig:routequery}E), is used. A static cache will impose minimal overhead to query processing. Section \ref{sec:competitors} explains why we choose a static cache.
 
+The properties of \ossns (Lemma \ref{lem:oss}) states that all sub-paths on a \spath are also \spathsns. Using \spath A in figure \ref{fig:rxmap} we would also be able to a query from 3 to 5, or 4 to 6, as these nodes are part of \spath A. The same of cause also holds for any \spath A-F from figure \ref{fig:rxmap}.
+
+\begin{figure}[hbt]
+  \center
+        \includegraphics[width=0.5\textwidth]{figures/rxmap}
+        \caption{Simple map \& its \spaths}
+  \label{fig:rxmap}
+\end{figure}
+
+
 \subsection{Architecture}
 We propose a system with a static \spath cache implemented in front of an existing \spath service (See fig. \ref{fig:routequery}) such that if the cache can answer a query then the result can be returned immediately. 
 
@@ -23,7 +33,7 @@ When the system receives a \spath query from a user (fig. \ref{fig:routequery}A)
 
 \subsection{Optimization Intend} \label{subsec:goals}
 
-As the main problem with expensive \spath calculations is time needed, we use reduction in \textit{\cet} as the main optimization target and measurement to evaluate our success. 
+As the main problem with expensive \spath calculations is time needed, we use reduction in \textit{\cet} as the main optimization target and measurement to evaluate our success.
 At a \spath service provider, the time spent to return a \spath result is essentially composed of two tasks: calculating the \spath and the overhead of query processing. 
 
 We will address 3 subgoals:
@@ -35,21 +45,21 @@ We will address 3 subgoals:
 
 We want reduce the gross \cet of \spath calculations - goal 1 - as it is the most CPU intensive task at a \spath service, and therefor also the most time consuming. By using a cache we expect to see a negavite correlation between cache hit rate and \cet used on \spath calculation.
 
-In a \spath service there will always be a some overhead associated with \spath query processing. Introducing a cache in front of the existing \spath service (fig. \ref{fig:routequery}B) will undeniably add more overhead as the cache needs to be queried for all queries submitted to the \spath service, regardless of whether it is able to answer the query or not. In order for the cache to be usefull, the overhead introduced needs to be minimized (goal \ref{item:goal2}). We always have to make sure that the savings achieved by adding a cache to the system is greater than the overhead introduced.
+In a \spath service there will always be a some overhead associated with \spath query processing. Introducing a cache in front of the existing \spath service (fig. \ref{fig:routequery}B) will undeniably add more overhead as the cache needs to be queried for all queries submitted to the \spath service, regardless of whether it is able to answer the query or not. In order for the cache to be useful, the overhead introduced needs to be minimized (goal \ref{item:goal2}). We always have to make sure that the savings achieved by adding a cache to the system is greater than the overhead introduced.
 
 The fact that the system will be using a static cache, and \spaths exhibit the \oss property, makes goal 3 - determining the value of a \spath subpath - very important. The ability to do goal \ref{item:goal3} well will have a direct influence on goal \ref{item:goal1} and  \ref{item:goal2}. If we fill the cache with useless \spaths we will end up calculating a \spath for all queries, as well as the overhead from checking the cache for each query. Solving goal 3 well is the most direct way to solve goal 1.
 
 \begin{lemma}\label{lem:oss}
-If a path $P_{S,T}: v_S,v_{S+1},\ldots,v_T$ is a \spath, then $\forall$ $(v_K,v_L) | S \leq (K \wedge L) \geq T$ there is a  \spath $P_{K,L}$ with start-/end-node in $v_K,v_L$
+If a path $P_{S,T}: v_S,v_{S+1},\ldots,v_T$ is a \spath, then $\forall$ $(v_K,v_L) | v_K \in P_{S,T} \wedge v_L \in P_{S,T}$ there is a  \spath $P_{K,L}$ with start-/end-node in $v_K,v_L$ i.e. \spath D in figure \ref{fig:rxmap} consists of: \\
+$\{P_{1,3}, P_{1,4}, P_{1,5}, P_{1,7}, P_{3,4}, P_{3,5}, P_{3,7}, P_{4,5}, P_{4,7}, P_{5,7}\}$, each one being a \spathns.
 \end{lemma}
-
 
 \begin{table}
 \begin{tabular*}{\columnwidth}{|l||p{0.69\columnwidth}|}
 \hline
 \bf Abbreviation          & \bf Meaning \\\hline
 \spath          & Shortest Path \\\hline
-LRU             & Least Recently Used \\\hline
+\acs{LRU}             & \acl{LRU} \\\hline
 FIFO            & First In First Out \\\hline
 \acs{SPS}       & \acl{SPS} \\\hline
 \acs{CET}	& \acl{CET} \\\hline
@@ -59,8 +69,6 @@ $P_{S,T}$	& \spathns: $v_S,v_{S+1},\ldots,v_T$ \\\hline
 \caption{Table of Notation}
 \label{tab:symbols}
 \end{table}
-
-
 
 
 
