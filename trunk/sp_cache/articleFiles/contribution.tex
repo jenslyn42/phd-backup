@@ -18,13 +18,15 @@ If no additional structure is added then querying the cache may require a scan o
 \footnotetext{Every time a new query is submitted we consider evicting an old item from the cache and inserting the new query, using a replacement policy e.g. \lru}
 
 
+If we assume a cache of size 10 (i.e. has space for 10 vertices), using \lruns, which has already had path A \& B inserted (see Fig. \ref{fig:rxmap}), we can anwer 36 out of the 49 possible queries on the map (i.e. all queries not including $v_7$. However, since \lru always does a cache replacement if there are is a cache miss, then a simple query sequence: $P_{4,7},P_{6,7}$ would replace A \& B with \spathns: $\{v_4,v_5,v_7\}$ and $\{v_6,v_5,v_7\}$, reducing the queries the cache can answer to just 12 out of 49 queries. This clearly demonstrate why it is problematic that \lru does not consider the utility of new queries, as well as how the cache ends up wasting space for 4 nodes.
 
 
 
 
----
-more beneficial to fill the cache offline and use a static cache, i.e. not evicting or inserting \spaths while the system is running.
-----
+
+% ---
+% more beneficial to fill the cache offline and use a static cache, i.e. not evicting or inserting \spaths while the system is running.
+% ----
 
 % Intro to section; Why do we have baseline competitors, which ones will be introduced, and why those? 
 
@@ -52,10 +54,18 @@ explain what will be introduced, which sub-problems are considered, and which su
 
 
 \begin{table}
-\begin{tabular*}{\columnwidth}{|l||p{0.78\columnwidth}|}
+\begin{tabular*}{\columnwidth}{|l||p{0.61\columnwidth}|}
 \hline
-\bf Symbol	& \bf Meaning \\\hline
-...		& ... \\\hline
+\bf Symbol		& \bf Meaning \\\hline
+$SP_{S,T}$		& \spath from S to T \\\hline
+$C_{SP}$		& \cet spent on \spath calculation \\\hline
+$C_{OH}$		& \cet spent on overhead and maintenence \\\hline
+$F_{Time}(C_{SP},C_{OH})$& Total \cet spent on answering a query workload \\\hline
+$Cache[i]$		& i'th item in the cache \\\hline
+$Utility(P_{S,T})$	& Calculates the benifit of a (sub-)path $P_{S,T}$ \\\hline
+$Utility_{_T}(\spath)$	& Finds the total sum of the utility of the \spath and its sub-paths \\\hline
+$P_{val}(Cache)$	& Finds the total utility of the content in the cache $\left(\sum\limits_{i=cache[1]}^{cache[size]} Utility_{_T}\left(cache[i]\right)\right)$ \\\hline
+
 \end{tabular*}
 \caption{Table of Symbols}
 \label{tab:symbols}
@@ -71,8 +81,13 @@ explain what will be introduced, which sub-problems are considered, and which su
 
 
 \subsection{Benefit model}
-define benefit equations\\
-Define optimization goal as a mathematical expression to be minimized.
+
+We will define our goals more formally, introducing the benefit equations we aim to minimize.
+
+
+
+% define benefit equations\\
+% Define optimization goal as a mathematical expression to be minimized.
 
 \subsection{Hardness Analysis}
 Theoretical analysis showing how hard the problem is to solve for \spath caching.\\
