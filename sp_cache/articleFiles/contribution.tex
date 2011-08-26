@@ -54,18 +54,18 @@ explain what will be introduced, which sub-problems are considered, and which su
 
 
 \begin{table}
-\begin{tabular*}{\columnwidth}{|l||p{0.60\columnwidth}|}
+\begin{tabular*}{\columnwidth}{|l||p{0.76\columnwidth}|}
 \hline
 \bf Symbol		& \bf Meaning \\\hline
 $Q_{S,T}$		& \spath query from S to T \\\hline
 $SP_{S,T}$		& \spath from S to T \\\hline
 $C_{SP}$		& \cet spent on \spath calculation \\\hline
 $C_{OH}$		& \cet spent on overhead and maintenence \\\hline
-$F_{Time}()$		& Total \cet spent on answering a query workload, i.e. the sum of  $C_{SP}$ and $C_{OH}$\\\hline
+$F_{Time}$		& Total \cet spent on answering a query workload, i.e. the sum of  $C_{SP}$ and $C_{OH}$\\\hline
 $Cache[i]$		& i'th item in the cache \\\hline
-$U(P_{S,T})$		& Calculates the benifit of a (sub-)path $P_{S,T}$ \\\hline
+$U(SP_{S,T})$		& Calculates the benifit of a (sub-)path $P_{S,T}$ \\\hline
 $U_T(\spath)$		& Finds the total sum of the utility of the \spath and its sub-paths \\\hline
-$P_{val}(Cache)$	& Finds the total utility of the content in the cache \\ 
+$P_{val}$	& Finds the total utility of the content in the cache \\ 
 			& $\left(\sum\limits_{i=Cache[1]}^{Cache[size]} U_T\left(Cache[i]\right)\right)$ \\\hline
 
 \end{tabular*}
@@ -87,7 +87,15 @@ $P_{val}(Cache)$	& Finds the total utility of the content in the cache \\
 We will define our goals more formally, introducing the benefit equations we aim to minimize.
 
 A query is a pair of vertice ids $(v_S, v_T)$, denoted $Q_{S,T}$ and the \spath returned from such query we denote $SP_{S,T}$. 
-To evaluate goal \ref{item:goal1} \& \ref{item:goal2} we measure \cet spent on \spath calculations ($C_{SP}$) and \cet spent on maintenence and overhead ($C_{OH}$).
+To evaluate goal \ref{item:goal1} \& \ref{item:goal2} we measure \cet spent on \spath calculations ($C_{SP}$) and \cet spent on maintenence and overhead ($C_{OH}$). We denote the sum of $C_{SP}$ and $C_{OH}$ as $F_{Time}$.
+
+In order to evaluate goal \ref{item:goal3} we calculate the utility of the content in the cache, denoted $P_{val}$. To calculate $P_{val}$ we calculate the utility of each \spath in the cache, $U_T(\spath)$, by obtaining the sum of the utility of all sub-paths, $U(SP_{S,T})$, for each \spath in the cache.
+
+In order to evaluate our method we minimize eq \ref{eq:benifit}
+
+\begin{equation}\label{eq:benifit}
+B(P_{val},F_{Time}) = F_{Time} + \frac{1}{P_{val}}
+\end{equation}
 
 
 % define benefit equations\\
