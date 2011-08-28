@@ -18,8 +18,13 @@ If no additional structure is added then querying the cache may require a scan o
 \footnotetext{Every time a new query is submitted we consider evicting an old item from the cache and inserting the new query, using a replacement policy e.g. \lru}
 
 
-If we assume a cache of size 10 (i.e. has space for 10 vertices), using \lruns, which has already had path A \& B inserted (see Fig. \ref{fig:rxmap}), we can anwer 36 out of the 49 possible queries on the map (i.e. all queries not including $v_7$. However, since \lru always does a cache replacement if there are is a cache miss, then a simple query sequence: $Q_{4,7},Q_{6,7}$ would replace A \& B with \spathns: $\{v_4,v_5,v_7\}$ and $\{v_6,v_5,v_7\}$, reducing the queries the cache can answer to just 12 out of 49 queries. This clearly demonstrate why it is problematic that \lru does not consider the utility of new queries, as well as how the cache ends up wasting space for 4 nodes.
 
+
+
+To give an example of \lrus shortcomings we assume a cache of size 10 (i.e. has space for 10 vertices), using \lruns, and running on the map from figure \ref{fig:rxmap}. The queries submittet to the system are: 
+Q1:$Q_{1,6}$, Q2:$Q_{2,6}$, Q3:$Q_{1,4}$, Q4:$Q_{4,7}$, Q5:$Q_{1,5}$, Q6:$Q_{3,6}$.
+The answer to Q1 and Q2 (Fig. \ref{fig:rxmap}A,B) are added to the cache as both results have a length of 5 and they can both fit. Q3 results in a cache hit with Q1, but when Q4 is submitted Q1 will be evicted and Q4:$\{v_4,v_5,v_7\}$ inserted. Q5, which \textit{could} have been answered by Q1, now results in the eviction of Q2 and insertion of Q5:$\{v_1,v_3,v_4,v_5\}$. Q6 is not coverd by Q3 or Q5 so it results in a cache miss, and because there are 7 nodes in the cache and Q6:$\{v_3,v_4,v_5,v_7\}$ has 4 nodes, then Q3 will be evicted (since it was inserted first) and Q6 inserted. 
+The end result is that 30\% of the cache space is wasted and out of the 6 queries only we only resulted in a 1 cache hit, we could have had 3 if we kept Q1 in the cache.
 
 
 
@@ -54,20 +59,16 @@ explain what will be introduced, which sub-problems are considered, and which su
 
 
 \begin{table}
-\begin{tabular*}{\columnwidth}{|l||p{0.75\columnwidth}|}
+\begin{tabular*}{\columnwidth}{|l||p{0.78\columnwidth}|}
 \hline
 \bf Symbol		& \bf Meaning \\\hline
-$Q_{S,T}$		& \spath query from S to T \\\hline
-$SP_{S,T}$		& \spath from S to T \\\hline
-$C_{SP}$		& \cet spent on \spath calculation \\\hline
-$C_{OH}$		& \cet spent on overhead and maintenence \\\hline
-$F_{Time}$		& Total \cet spent on answering a query workload, i.e. the sum of  $C_{SP}$ and $C_{OH}$\\\hline
-$Cache[i]$		& i'th item in the cache \\\hline
-$U(SP_{S,T})$		& Calculates the benifit of a (sub-)path $P_{S,T}$ \\\hline
-$U_T(\spath)$		& Finds the total sum of the utility of the \spath and its sub-paths \\\hline
-$P_{val}$	& Finds the total utility of the content in the cache \\ 
-			& $\left(\sum\limits_{i=Cache[1]}^{Cache[size]} U_T\left(Cache[i]\right)\right)$ \\\hline
-
+$Q_{s,t}$		& \spath query from $s$ to $t$ \\\hline
+$SP_{s,t}$		& \spath from $s$ to $t$ \\\hline
+$\zeta$ 		& The Cache \\\hline
+$\zeta_i$		& i'th item in the cache \\\hline
+$\chi_{s,t}$		& Calculates the frequency of a (sub-)path \\\hline
+$\Phi(sp)$		& Finds the set of all sub-paths in a \spath $sp$ \\\hline
+$\tau$			& Calculates the total utility of the content in the cache \\\hline 
 \end{tabular*}
 \caption{Table of Symbols}
 \label{tab:symbols}
@@ -86,17 +87,19 @@ $P_{val}$	& Finds the total utility of the content in the cache \\
 
 We will define our goals more formally, introducing the benefit equations we aim to minimize.
 
-A query is a pair of vertice ids $(v_S, v_T)$, denoted $Q_{S,T}$ and the \spath returned from such query we denote $SP_{S,T}$. 
-To evaluate goal \ref{item:goal1} \& \ref{item:goal2} we measure \cet spent on \spath calculations ($C_{SP}$) and \cet spent on maintenence and overhead ($C_{OH}$). We denote the sum of $C_{SP}$ and $C_{OH}$ as $F_{Time}$.
+A query is a pair of vertice ids $(v_s, v_t)$, denoted $Q_{s,t}$ and the \spath returned from such query we denote $SP_{s,t}$. 
+In order to evaluate goal \ref{item:goal3} we calculate the utility of the content in the cache, denoted $P_{val}$. To calculate $\tau$ we find the set of unique sub-paths from all \spaths in the cache and sum up the frequency, $\chi_{s,t}$, of each unique sub-path.
 
-In order to evaluate goal \ref{item:goal3} we calculate the utility of the content in the cache, denoted $P_{val}$. To calculate $P_{val}$ we calculate the utility of each \spath in the cache, $U_T(\spath)$, by obtaining the sum of the utility of all sub-paths, $U(SP_{S,T})$, for each \spath in the cache.
+In order to evaluate our method we minimize equation \ref{eq:benifit}.
 
-In order to evaluate our method we minimize eq \ref{eq:benifit}
 
-\begin{equation}\label{eq:benifit}
-B(P_{val},F_{Time}) = F_{Time} + \frac{1}{P_{val}}
+
+\begin{equation}
+ \gamma = \bigcup\limits_{\forall \spath \in \zeta} \Phi(\spath) \\
 \end{equation}
-
+\begin{equation} 
+\left(\sum\limits_{\forall SP_{s,t} \in \gamma} \chi_{s,t} \right) 
+\end{equation}
 
 % define benefit equations\\
 % Define optimization goal as a mathematical expression to be minimized.
