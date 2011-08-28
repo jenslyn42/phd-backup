@@ -35,31 +35,31 @@ Test ideas (several ideas may be combined, like item 1 can be done on all datase
 %**********************************
 
 
-\begin{table}
-\begin{tabular*}{\columnwidth}{|l||p{0.74\columnwidth}|}
-\hline
-\bf Symbol		& \bf Meaning \\\hline
-$Q_{S,T}$		& \spath query from S to T \\\hline
-$SP_{S,T}$		& \spath from S to T \\\hline
-$C_{SP}$		& \cet spent on \spath calculation \\\hline
-$C_{OH}$		& \cet spent on overhead and maintenence \\\hline
-$F_{Time}$		& Total \cet spent on answering a query workload, i.e. the sum of  $C_{SP}$ and $C_{OH}$\\\hline
-$Cache[i]$		& i'th item in the cache \\\hline
-$F(SP_{S,T})$		& Calculates the frequency of a (sub-)path \\\hline
-$U_T(\spath)$		& Finds the total sum of the utility of the \spath and its sub-paths \\
-			& $\left(\sum\limits_{s,t, s \neq t}^{numVertices} U(SP_{s,t})\right)$\\\hline
-$P_{val}$		& Finds the total utility of the content in the cache \\ 
-			& $\left(\sum\limits_{i=Cache[1]}^{Cache[size]} U_T\left(Cache[i]\right)\right)$ \\\hline
-
-\end{tabular*}
-\caption{Table of Symbols}
-\label{tab:impSym}
-\end{table}
-
-
-
-To evaluate goal \ref{item:goal1} \& \ref{item:goal2} we measure \cet spent on \spath calculations ($C_{SP}$) and \cet spent on maintenence and overhead ($C_{OH}$). We denote the sum of $C_{SP}$ and $C_{OH}$ as $F_{Time}$.
-
-\begin{equation}
-B(P_{val},F_{Time}) = F_{Time} + \frac{1}{P_{val}}
-\end{equation}
+% \begin{table}
+% \begin{tabular*}{\columnwidth}{|l||p{0.74\columnwidth}|}
+% \hline
+% \bf Symbol		& \bf Meaning \\\hline
+% $Q_{S,T}$		& \spath query from S to T \\\hline
+% $SP_{S,T}$		& \spath from S to T \\\hline
+% $C_{SP}$		& \cet spent on \spath calculation \\\hline
+% $C_{OH}$		& \cet spent on overhead and maintenence \\\hline
+% $F_{Time}$		& Total \cet spent on answering a query workload, i.e. the sum of  $C_{SP}$ and $C_{OH}$\\\hline
+% $Cache[i]$		& i'th item in the cache \\\hline
+% $F(SP_{S,T})$		& Calculates the frequency of a (sub-)path \\\hline
+% $U_T(\spath)$		& Finds the total sum of the utility of the \spath and its sub-paths \\
+% 			& $\left(\sum\limits_{s,t, s \neq t}^{numVertices} U(SP_{s,t})\right)$\\\hline
+% $P_{val}$		& Finds the total utility of the content in the cache \\ 
+% 			& $\left(\sum\limits_{i=Cache[1]}^{Cache[size]} U_T\left(Cache[i]\right)\right)$ \\\hline
+% 
+% \end{tabular*}
+% \caption{Table of Symbols}
+% \label{tab:impSym}
+% \end{table}
+% 
+% 
+% 
+% To evaluate goal \ref{item:goal1} \& \ref{item:goal2} we measure \cet spent on \spath calculations ($C_{SP}$) and \cet spent on maintenence and overhead ($C_{OH}$). We denote the sum of $C_{SP}$ and $C_{OH}$ as $F_{Time}$.
+% 
+% \begin{equation}
+% B(P_{val},F_{Time}) = F_{Time} + \frac{1}{P_{val}}
+% \end{equation}
