@@ -134,30 +134,25 @@ $\gamma =$ 		& $\{SP_{1,3},SP_{1,4},SP_{1,5},SP_{1,6},SP_{3,4},SP_{3,5},$ \\
 
 
 \begin{table}
-\begin{tabular}{r r l}
-$SP_{1,3}$	& $\chi_{1,3} = 4$ \\\
-$SP_{1,4}$	& $\chi_{1,4} = 2$ \\\
-$SP_{1,5}$	& $\chi_{1,5} = 3$ \\\
-$SP_{1,6}$	& $\chi_{1,6} = 1$ \\\
-$SP_{3,4}$	& $\chi_{3,4} = 5$ \\\
-$SP_{3,5}$	& $\chi_{3,5} = 8$ \\\
-$SP_{3,6}$	& $\chi_{3,6} = 7$ \\\
-$SP_{4,5}$	& $\chi_{4,5} = 6$ \\\
-$SP_{4,6}$	& $\chi_{4,6} = 4$ \\\
-$SP_{5,6}$	& $\chi_{5,6} = 2$ \\\
-$SP_{2,3}$	& $\chi_{2,3} = 4$ \\\
-$SP_{2,4}$	& $\chi_{2,4} = 1$ \\\
-$SP_{2,5}$	& $\chi_{2,5} = 2$ \\\
-$SP_{2,6}$	& $\chi_{2,6} = 3$ \\\
-$SP_{4,5}$	& $\chi_{4,5} = 1$ \\\
-$SP_{4,7}$	& $\chi_{4,7} = 5$ \\\
-$SP_{5,7}$	& $\chi_{5,7} = 4$ \\\
+\center
+\begin{tabular}{rl|rl}
+$SP_{1,3}:$	& $\chi_{1,3} = 4$ & $SP_{1,4}:$	& $\chi_{1,4} = 2$ \\
+$SP_{1,5}:$	& $\chi_{1,5} = 3$ & $SP_{1,6}:$	& $\chi_{1,6} = 1$ \\
+$SP_{3,4}:$	& $\chi_{3,4} = 5$ & $SP_{3,5}:$	& $\chi_{3,5} = 8$ \\
+$SP_{3,6}:$	& $\chi_{3,6} = 7$ & $SP_{4,5}:$	& $\chi_{4,5} = 6$ \\
+$SP_{4,6}:$	& $\chi_{4,6} = 4$ & $SP_{5,6}:$	& $\chi_{5,6} = 2$ \\
+$SP_{2,3}:$	& $\chi_{2,3} = 4$ & $SP_{2,4}:$	& $\chi_{2,4} = 1$ \\
+$SP_{2,5}:$	& $\chi_{2,5} = 2$ & $SP_{2,6}:$	& $\chi_{2,6} = 3$ \\
+$SP_{4,5}:$	& $\chi_{4,5} = 1$ & $SP_{4,7}:$	& $\chi_{4,7} = 5$ \\
+$SP_{5,7}:$	& $\chi_{5,7} = 4$ & \\
 \end{tabular}
-\caption{$\chi$ values for $\gamma$ in table \ref{tab:phi}
+\caption{$\chi_{s,t}$ values for $\gamma$ in table \ref{tab:phi}}
 \label{tab:freq}
 \end{table}
 
-When we want to evaluate the utility of $\zeta$ we first calculate $\gamma$ for each \spath. Table \ref{tab:phi} shows the set of sub-paths from the \spaths for each query Q1-Q6 from table \ref{tab:queries}. Once we have all the sets of sub-paths from the cache content, we use equation \ref{eq:gamma} to union them together and obtain the set of unique sub-paths in the cache, $\gamma$ (see table \ref{tab:phi}). After we have obtained $\gamma$, we use equation \ref{eq:benifit} to calculate the total benifit we expect to have with the content in $\zeta$.
+When we want to evaluate the utility of $\zeta$ we first calculate $\gamma$ for each \spath. Table \ref{tab:phi} shows the set of sub-paths from the \spaths for each query Q1-Q6 from table \ref{tab:queries} (we assume all queries fit into the cache). Once we have all the sets of sub-paths from the cache content, we use equation \ref{eq:gamma} to union them together and obtain the set of unique sub-paths in the cache, $\gamma$ (see table \ref{tab:phi}). After we have obtained $\gamma$, we use equation \ref{eq:benifit} to calculate $\tau$, the total benifit we expect to have with the content in $\zeta$. With the $\gamma$ obtained, using $\chi_{s,t}$ values from table \ref{tab:freq}, $\tau$ would be 62 ($4+3+5+7+4+4+2+1+4+2+1+8+6+2+1+3+5 = 62$).
+
+When filling the cache, during the offline phase, potential \spath items are scored based the sum of $\chi_{s,t}$-values from sub-paths not already present in the cache. If we assume Q1 is already in the cache and we are considering to insert either Q2 or Q4 next, then we first find the sub-paths for each query result, which is not already present in the cache. For Q2 it is $\{SP_{2,3},SP_{2,4},SP_{2,5},SP_{2,6}\}$ and for Q4 $\{SP_{4,7},SP_{5,7}\}$. When using the values for $\chi_{s,t}$ from table \ref{tab:freq} the utility of Q2 is $4+1+2+3=10$ and for Q4 $5+4=9$. In this case we would then insert Q2 as it represents the largest expected if inserted.
 
 \subsection{Hardness Analysis}
 Theoretical analysis showing how hard the problem is to solve for \spath caching.\\
@@ -176,10 +171,20 @@ discussion of kD-Tree.
 
 
 \subsection{Cache representations and cache concepts} 
+How the cache is stored, and how we search it, is crucial to the performance of a cache. We will present the basic, naive, approach as well as 3 ideas for improvement.
 
-\subsubsection{Simple array of paths} - baseline for goal 2, unoptimized and expensive to use.
+\subsubsection{Simple array of paths}% - baseline for goal 2, unoptimized and expensive to use.
+The simplest way to represent a cache is a simple array of paths. This representation will we expensive to search since we may need to search all paths in the cache, akin to a double for loop, every time we want to check if an item is in the cache.
 
-\subsubsection{Simple array of paths inverted list} - solves goal 2, reduces the query time of the cache.
+If we have a cache with $SP_{1,6},SP_{2,6},$ and $SP_{1,4}$ already in the cache and $Q_{4,7}$ is recieved, then we need to search the cache to see if we can get a cache hit. Since there can be no cache hit for $Q_{4,7}$ we need to scan all nodes for all paths, which would be 13 in this example (length of $SP_{1,6},SP_{2,6},$, $SP_{1,4}$, see table \ref{tab:queries}).
+
+We will use this representation as the baseline for goal 2 when comparing the improvement when using any of the following cache representation ideas.
+
+\subsubsection{Simple array of paths inverted list} - solves goal 2, reduces the query time of the cache.\\
+A simple, yet very effective, way to improve the search time of a cache represented by a simple array is to add an inverted list on top of the cache. We add an inverted list with node ids as keys and values being a list of array indices which holds paths containing specific node ids. By using such an inverted list we just need to do the intersection between the lists retrived by querying the inverted list with the start and target node ids. 
+
+
+\textbf{*example*}
 
 \subsubsection{Graph representation} - solves goal 1, allows for more paths in cache, which should translate more cache hits.
 
