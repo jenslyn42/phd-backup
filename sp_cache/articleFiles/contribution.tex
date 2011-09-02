@@ -200,17 +200,31 @@ show it is NP-Hard
  
 
 \subsection{Greedy algorithm}
-shows in more detail how we propose to solve our problem
+The pseudo code describing our unoptimized greedy algorithm is presented here.
+
+In algorithm \ref{alg:greedy} we first find $\spath_{all}$ and $\spath_{as}$, the set of all possible \spaths on a map and the set of scores for each member of $\spath_{all}$.
+
+Line one of algorithm \ref{alg:greedy} checks whether there is still space left in the cache. If the cache is not full, we run the loop again to try and add one more \spathns, to utilize the cache as well as possible.
+
+Line two assigns the highest scoring \spath from $\spath_{as}$, the set of all possible \spathsns, to $\spath_{ms}$.
+
+Line three checks whether the current \spath assigned to $\spath_{ms}$ can fit into the cache. If $\spath_{ms}$ can fit, it will be inserted into the cache, otherwise it will not be considered for insertion again.
+
+Assuming line three determines there is enough space in the cache, then line four does the actual insertion of the \spathns.
 
 \input{articleFiles/alg1}
 
+
 \subsection{Statistics extraction}
+
+\input{articleFiles/alg2}
+use algorithm \ref{alg:score}
+
 
 \subsubsection{Partition map} 
 solves goal 1. reduce time on \spath calculation as it aids the cache with information on which paths may be useful.\\ 
 discussion of kD-Tree.
 
-\input{articleFiles/alg2}
 
 \subsection{Cache representations and cache concepts} \label{subsec:cacherepresentatons}
 How the cache is stored, and how we search it, is crucial to the performance of a cache. We will present the basic, naive, approach as well as 3 ideas for improvement.
