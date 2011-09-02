@@ -7,32 +7,31 @@
 
 
 \Input{
-
-	$\alpha$: a tuble $(t, t_{se}, d_{t}, d_{s})$  used as a base for anonymization.\;
-	{\bf PS:} the set of all \poisns\;
+	$\mathbf{\spath_{s,t}}$: A \spath.\;
 }
+
 \Output{
-	{\poins}cand: set of \poi containing an edge from $\alpha$ \;
+	An integer representing the score
 }
 
-\tcp{\emph{Find all \pois containing an edge from $\alpha.t$}}
 
- \funcc{FindCand}{\alpha, $PS$}
+
+ \funcc{Score}{\spath_{s,t}}
 {
-	\({\poins}cand \leftarrow \emptyset \)
-	\ForEach{edge $e \in \alpha.t$}
-	{
-		\ForEach {$psr \in PS$ }
-		{
-			\If{$e \in psr.p_{edges}$}
-			{
-				${\poins}cand \leftarrow {\poins}cand \cup psr$\;
-			}
-		} 
-	}
-	\Return{{\poins}cand}
+	$theScore \leftarrow$ *calc some score* \;
+% 	\ForEach{edge $e \in \alpha.t$}
+% 	{
+% 		\ForEach {$psr \in PS$ }
+% 		{
+% 			\If{$e \in psr.p_{edges}$}
+% 			{
+% 				${\poins}cand \leftarrow {\poins}cand \cup psr$\;
+% 			}
+% 		} 
+% 	}
+	\Return{theScore}
 }
 
-\caption{Find Candidates}
+\caption{The Score() function.}
 \label{alg:findCan}
 \end{algorithm}
