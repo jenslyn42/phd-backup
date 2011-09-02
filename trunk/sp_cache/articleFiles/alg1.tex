@@ -4,35 +4,27 @@
 
 \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}\SetKw{Return}{return}
 
-\Input
+\KwData
 {
 
-	$\mathbf{T}$: The set of trajectories $t$ \;
-	$\mathbf{S}$: The set of privacy profiles $s$\;
-	$G(\mathbf{V,E})$: Roadnetwork Graph \;
-	$D \in \mathbb{R}$: Tolerance for how much a modified trajectory is allowed to diveate from original trajectory. \;
-	$n \in \mathbb{N}$: Factor on how finegrained the road difference calculations should be \;
-	{\bf PS:} the set of all \poisns \;
+	\hspace{-0.6em}$\mathbf{V}$: The set of vertices in the Map \;
+	\hspace{-0.6em}$\mathbf{G(V,E)}$: Graph representation of Map \;
+	\hspace{-0.6em}$\mathbf{\zeta}$: The cache \;
+	\hspace{-0.6em}$\mathbf{\spath_{All}} \leftarrow \{s \in \mathbf{V}, t \in \mathbf{V}, s \neq t : \spath_{s,t}\}$: All $\spath \in \mathbf{G(V,E)}$ \;
+	\hspace{-0.6em}$\mathbf{\spath_{as}} \leftarrow \{Score(\spath_{s,t}) \| \forall \spath_{s,t} \in \spath_{All}$: All scored \spaths \;
 }
 
-%$\alpha \leftarrow t | t \in \mathbf{T} \wedge psr.p_{edges} \cap t \neq \emptyset $
-\While{$ $Sensitive unanonymized edges exist}
+
+\While{$\zeta.spaceLeft > 0$}
 {
-	$\alpha \leftarrow {\bf Choose\_\alpha(\mathbf{T}, PS)}$ \;
-	${\poins}cand \leftarrow {\bf FindCand(\alpha, PS)}$ \;
-	$calcCand~\leftarrow~{\bf CalcCand}({\poins}cand, \alpha, D, n)$ \;
-	$sortCand \leftarrow$  Sort $calcCand$ using ordering given by {\bf CompareCand()} \;
-	$anonData \leftarrow anonData \cup {\bf AnonCand}(sortCand, \alpha$) \;
+	$\spath_{ms} \leftarrow pop(\spath_{as}.max)$ \tcp{pop highest scoring element} \; 
+	\If{$\zeta.spaceLeft \leq \spath_{ms}.size$}
+	{
+		$\zeta.insert(\spath:{ms})$\;
+	}
 }
 \(anonData \cup \{\forall t_i  \in t  | t \in \mathbf{T}\}, t_i \) is a subtrajectory that has not been modified or otherwise included during anonymization.
 
-\funcc{Choose$\_\alpha$}{\mathbf{T}, PS}
-{
-	Choose a 4-tuple $\alpha: (t, t_{se}, d_{t}, d_{s})$. $\alpha.t$ is at least partially covered by the \poi $psr \in PS$. $PS$ is ordered by protection schemes in table \ref{tab:poiclass1} from top to bottom. Within a protection scheme grouping $PS$ is sorted by the highest sensitivity, using ordering from {\bf CompareCand()}. If more than one candidate for $\alpha$ is found the first found will be chosen. \; 
-
-	\Return{$\alpha$}
-}
-
-\caption{Overall execution of algorithms to anonymize dataset}
-\label{alg:overall}
+\caption{Filling the cache}
+\label{alg:greedy}
 \end{algorithm}
