@@ -9,21 +9,20 @@
 
 	\hspace{-0.6em}$\mathbf{V}$: The set of vertices in the Map \;
 	\hspace{-0.6em}$\mathbf{G(V,E)}$: Graph representation of Map \;
-	\hspace{-0.6em}$\mathbf{\zeta}$: The cache \;
+	\hspace{-0.6em}$\mathbf{\Psi}$: The cache \;
 	\hspace{-0.6em}$\mathbf{\spath_{all}} \leftarrow \{s \in \mathbf{V}, t \in \mathbf{V}, s \neq t : \spath_{s,t}\}$: All $\spath \in \mathbf{G(V,E)}$ \;
 	\hspace{-0.6em}$\mathbf{\spath_{as}} \leftarrow \{Score(\spath_{s,t}) | \forall \spath_{s,t} \in \spath_{all}$: All scored \spaths \;
 }
 
 
-\While{$\zeta.spaceLeft > 0$}
+\While{$\Psi.spaceLeft > 0$}
 {
 	$\spath_{ms} \leftarrow pop(\spath_{as}.max)$ \tcp{pop highest scoring element} \; 
-	\If{$\zeta.spaceLeft \leq \spath_{ms}.size$}
+	\If{$\Psi.spaceLeft \leq \spath_{ms}.size$}
 	{
-		$\zeta.insert(\spath:{ms})$\;
+		$\Psi.insert(\spath:{ms})$\;
 	}
 }
-\(anonData \cup \{\forall t_i  \in t  | t \in \mathbf{T}\}, t_i \) is a subtrajectory that has not been modified or otherwise included during anonymization.
 
 \caption{Filling the cache}
 \label{alg:greedy}
