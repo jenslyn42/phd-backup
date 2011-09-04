@@ -209,12 +209,12 @@ Assuming line three determines there is enough space in the cache, then line fou
 
 \textcolor{red}{
 \begin{equation} \label{eq:usp}
-U_{sp} \leftarrow \Phi(SP_{s,t}) \setminus \{ U(\Psi) \cap \Phi(SP_{s,t}) \}
+Q(SP_{s,t}, \Psi) = \{ \Phi(SP_{s,t}) \setminus \{ U(\Psi) \cap \Phi(SP_{s,t}) \} \}
 \end{equation}
 }
 \textcolor{red}{
 \begin{equation} \label{eq:score}
-\{ (SP_{s,t}, \chi_{s,t}) | SP_{s,t} \in U_{sp}, s \neq t, (s,t) \in \chi \}
+S(\chi, SP_{s,t}, \Psi) =  \chi_{s,t} | SP_{s,t} \in Q(SP_{s,t}, \Psi), (s,t) \in \chi, s \neq t
 \end{equation}
 }
 
