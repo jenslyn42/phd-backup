@@ -197,15 +197,30 @@ show it is NP-Hard
 \subsection{Greedy algorithm}
 The pseudo code describing our unoptimized greedy algorithm is presented here.
 
-In algorithm \ref{alg:greedy} we first find $\spath_{all}$ and $\spath_{as}$, the set of all possible \spaths on a map and the set of scores for each member of $\spath_{all}$.
+\textcolor{red}{
+In algorithm \ref{alg:greedy}, line 1-3, we define \textit{Score}($\chi, \Psi$), using equation \ref{eq:score}. Equation \ref{eq:score} will calculate the score of a \spathns, \textit{sp}, based only on the sub-paths of \textit{sp} which are not already present in the cache (Eq. \ref{eq:usp}). \textit{Score}($\chi, \Psi$) will update max-heap \textbf{H} with the (utility, \spath) pairs of all \spath not in the cache. It will calculate the utilities relative to the current cache content. 
+}
 
-Line one of algorithm \ref{alg:greedy} checks whether there is still space left in the cache. If the cache is not full, we run the loop again to try and add one more \spathns, to utilize the cache as well as possible.
+\textcolor{red}{
+Line 4 of algorithm \ref{alg:greedy} initializes \textbf{H} with the utility scores for the empty cache.
+}
 
-Line two assigns the highest scoring \spath from $\spath_{as}$, the set of all possible \spathsns, to $\spath_{ms}$.
+\textcolor{red}{
+Line 5 loops over \textbf{H} till it is either empty or the cache is full. 
+}
 
-Line three checks whether the current \spath assigned to $\spath_{ms}$ can fit into the cache. If $\spath_{ms}$ can fit, it will be inserted into the cache, otherwise it will not be considered for insertion again.
+\textcolor{red}{
+In line 6 we assign the \spath with the highest utility to $\spath_{ms}$ and remove it from \textbf{H}.
+}
 
-Assuming line three determines there is enough space in the cache, then line four does the actual insertion of the \spathns.
+\textcolor{red}{
+Line 7 
+}
+
+\textcolor{red}{
+Line 8-9 
+}
+
 
 \textcolor{red}{
 \begin{equation} \label{eq:usp}
