@@ -10,27 +10,30 @@
 	$\mathbf{G(V,E)}$: Graph representation of Map \;
 	\textbf{H}: a Max-Heap. Contains the utility score of all posible \spaths in $\mathbf{G(V,E)}$. The \spath is the key $v$ and the utility is the value $k$, $(k, v)$, which the is sorted on.\;
 	$\mathbf{\Psi}$: The cache \;
+	$\Psi_{size}$: Cache size \;
 }
 
-\Input
+
+\funcc{Score}{\chi, \Psi}
 {
-
-$\Psi_{size}$: Cache size.
-
+	\ForAll{$SP_{s,t} \in \{ \mathbf{G(V,E)} \setminus U(\Psi) \}$}
+	{
+		\textbf{H}.push($S(\chi, SP_{s,t}, \Psi), SP_{s,t}$) \;
+	}
 }
 
-\tcp{Intialize \textbf{H}}
-\ForAll{$SP_{s,t} \in U(\Psi)$}
-{
-	\textbf{H}.insert($S(\chi, SP_{s,t}, \Psi), SP_{s,t}$) \;
-}
+\tcp{\emph{Intialize \textbf{H}}}
+\textbf{Score}($\chi, \Psi$) \;
 
-\While{$| \Psi | \leq \Psi_{size}$}
+\tcp{\emph{Fill cache}}
+\While{$| \Psi | \leq \Psi_{size}$ OR $| \textbf{H} | = 0$}
 {
 	$\spath_{ms}$ = \textbf{H}.pop() \; 
 	\If{$\Psi_{size} - | \Psi | \geq | \spath_{ms} |$}
 	{
-		$\Psi.insert(\spath_{ms})$\;
+		$\Psi.push(\spath_{ms})$\;
+		\textbf{Score}($\chi, \Psi$) \;
+		
 	}
 }
 
