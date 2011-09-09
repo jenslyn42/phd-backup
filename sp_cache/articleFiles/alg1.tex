@@ -14,16 +14,14 @@
 	$\Psi_{size}$: Cache size \;
 }
 
-\While{$\Psi.spaceLeft > 0$}
-{
-	$\spath_{ms} \leftarrow pop(\spath_{as}.max)$ \tcp{pop highest scoring element} \; 
-	\If{$\Psi.spaceLeft \leq \spath_{ms}.size$}
-	{
-		$\Psi.insert(\spath:{ms})$\;
-	}
-}
 
 \tcp{\emph{Initialize \textbf{H}}}
+
+\ForAll{$\spath_{s,t} | s \in V, t \in V, s \neq t$} 
+{
+    H.push(S$(\chi, \spath_{s,t}, \Psi), \spath_{s,t}$) \;
+}
+
 \textbf{Score}($\chi, \Psi$) \;
 
 \tcp{\emph{Fill cache}}
