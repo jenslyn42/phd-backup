@@ -9,7 +9,7 @@ violates goal \ref{item:goal2} in section \ref{subsec:goals}.
 Using \lru as the cache replacement policy in a dynamic cache ensures that only minimal overhead is added by using a dynamic cache. When a new query is submitted \lru evicts the least recently used \spath and keeps the most recently used \spaths in the cache.
 \lru, however, has several shortcomings: 
 \begin{itemize}
-\item It has no way to determine the usefulness of inserting a path (i.e. no scoring function), which violates goal \ref{item:goal3} (Sec. \ref{subsec:goals}). Because \lru does not have a scoring function then, even if a path $P$ is valuable (covers many potential queries), if a sequence of consecutive queries, which $P$ can not cover, is submitted, then P will be evicted. 
+\item It has no way to determine the usefulness of inserting a path (i.e. no scoring function), which violates goal \ref{item:goal3} (Sec. \ref{subsec:goals}). Because \lru does not have a scoring function then, even if a path $SP$ is valuable (covers many potential queries), if a sequence of consecutive queries, which $SP$ can not cover, is submitted, then P will be evicted. 
 \item \lru also does not have any way to optimize utilization of the cache space available, possibly wasting a lot of space. 
 \item If no additional structure is added then querying the cache may require a scan of all paths in the cache to examine the cache can answer a query or not.
 \item \lru does not consider utilization of the space in the cache.
@@ -18,7 +18,6 @@ Using \lru as the cache replacement policy in a dynamic cache ensures that only 
 
 
 \footnotetext{Every time a new query is submitted we consider evicting an old item from the cache and inserting the new query, using a replacement policy e.g. \lru}
-
 
 
 
@@ -73,11 +72,12 @@ explain what will be introduced, which sub-problems are considered, and which su
 \hline
 \bf Symbol		& \bf Meaning \\\hline
 $Q_{s,t}$		& \spath query from $s$ to $t$ \\\hline
-$SP_{s,t}$		& \spath from $s$ to $t$ \\\hline
 $\chi_{s,t}$		& The frequency of a (sub-)path \\\hline
 $\Psi$ 			& The Cache \\\hline
-$\Phi(sp)$		& Finds the set of all sub-paths in a \spath $sp$ \\\hline
-$U(\Psi)$		& The set of all unique (sub-)paths in $\Psi$ \\\hline
+$|SP|$			& Length of a \spath \\\hline
+$|\Psi|$		& Number of vertices in the cache \\\hline
+$\Phi(sp)$		& The set of all sub-paths in a \spath $sp$ \\\hline
+$\Phi^c(\Psi)$		& The set of all unique (sub-)paths in $\Psi$ \\\hline
 $\Gamma(\Psi)$		& Calculates the total utility of the content in the cache \\\hline 
 $\mathbf{V}$ 		& The set of vertices in the Map \\\hline 
 $G\mathbf{(V,E)}$ 	& Graph representation of the Map \\\hline 
@@ -107,11 +107,11 @@ In order to evaluate our method we try to maximize $\Gamma(\Psi)$ (Eq. \ref{eq:b
 
 
 \begin{equation} \label{eq:upsi}
- U(\Psi) = \bigcup\limits_{\forall \spath \in \Psi} \Phi(\spath)
+ \Phi^c(\Psi) = \bigcup\limits_{\forall \spath \in \Psi} \Phi(\spath)
 \end{equation}
 
 \begin{equation} \label{eq:benefit}
-\Gamma(\Psi) = \sum\limits_{\forall SP_{s,t} \in U(\Psi)} \chi_{s,t}
+\Gamma(\Psi) = \sum\limits_{\forall SP_{s,t} \in \Phi^c(\Psi)} \chi_{s,t}
 \end{equation}
 
 \begin{equation} \label{eq:phi}
@@ -142,7 +142,7 @@ $\Phi(SP_{1,4})=$ 	& $\{SP_{1,3},SP_{1,4},SP_{3,4}\}$ \\
 $\Phi(SP_{4,7})=$ 	& $\{SP_{4,5},SP_{4,7},SP_{5,7}\}$ \\
 $\Phi(SP_{2,5})=$ 	& $\{SP_{2,3},SP_{2,4},SP_{2,5},SP_{3,4},SP_{3,5},SP_{4,5}\}$ \\
 $\Phi(SP_{3,6})=$ 	& $\{SP_{3,4},SP_{3,5},SP_{3,6},SP_{4,5},SP_{4,6},SP_{5,6}\}$ \\\hline
-$U(\Psi) =$ 		& $\{SP_{1,3},SP_{1,4},SP_{1,5},SP_{1,6},SP_{3,4},SP_{3,5},$ \\
+$\Phi^c(\Psi) =$ 	& $\{SP_{1,3},SP_{1,4},SP_{1,5},SP_{1,6},SP_{3,4},SP_{3,5},$ \\
 			& $SP_{3,6},SP_{4,5},SP_{4,6},SP_{5,6},SP_{2,3},SP_{2,4},SP_{2,5},$ \\
 			& $SP_{2,6},SP_{4,5},SP_{4,7},SP_{5,7}\}$  \\
 \end{tabular}
@@ -162,13 +162,13 @@ $U(\Psi) =$ 		& $\{SP_{1,3},SP_{1,4},SP_{1,5},SP_{1,6},SP_{3,4},SP_{3,5},$ \\
 \textbf{6}	& 1	& 3	& 7	& 4	& 2	& X	& -	 \\
 \textbf{7}	& -	& -	& -	& 5	& 4	& -	& X	 \\
 \end{tabular}
-\caption{$\chi_{s,t}$ values for $U(\Psi)$ in table \ref{tab:chi}}
+\caption{$\chi_{s,t}$ values for $\Phi^c(\Psi)$ in table \ref{tab:chi}}
 \label{tab:freq}
 \end{table}
 
 
 
-When we want to evaluate the utility of $\Psi$ we first calculate $U(\Psi)$ for each \spath. Table \ref{tab:chi} shows the set of sub-paths from the \spaths for each query Q1-Q6 from table \ref{tab:queries} (we assume all queries fit into the cache). Once we have all the sets of sub-paths from the cache content, we use equation \ref{eq:upsi} to union them together and obtain the set of unique sub-paths in the cache, $U(\Psi)$ (see table \ref{tab:chi}). After we have obtained $U(\Psi)$, we use equation \ref{eq:benefit} to calculate $\Gamma(\Psi)$, the total benefit we expect to have with the content in $\Psi$. With the $U(\Psi)$ obtained, using $\chi_{s,t}$ values from table \ref{tab:freq}, $\Gamma(\Psi)$ would be 62 ($4+3+5+7+4+4+2+1+4+2+1+8+6+2+1+3+5 = 62$).
+When we want to evaluate the utility of $\Psi$ we first calculate $\Phi^c(\Psi)$ for each \spath. Table \ref{tab:chi} shows the set of sub-paths from the \spaths for each query Q1-Q6 from table \ref{tab:queries} (we assume all queries fit into the cache). Once we have all the sets of sub-paths from the cache content, we use equation \ref{eq:upsi} to union them together and obtain the set of unique sub-paths in the cache, $\Phi^c(\Psi)$ (see table \ref{tab:chi}). After we have obtained $U(\Psi)$, we use equation \ref{eq:benefit} to calculate $\Gamma(\Psi)$, the total benefit we expect to have with the content in $\Psi$. With the $\Phi^c(\Psi)$ obtained, using $\chi_{s,t}$ values from table \ref{tab:freq}, $\Gamma(\Psi)$ would be 62 ($4+3+5+7+4+4+2+1+4+2+1+8+6+2+1+3+5 = 62$).
 
 When filling the cache, during the offline phase, potential \spath items are scored based the sum of $\chi_{s,t}$-values from sub-paths not already present in the cache. If we assume Q1 is already in the cache and we are considering to insert either Q2 or Q4 next, then we first find the sub-paths for each query result, which is not already present in the cache. For Q2 it is $\{SP_{2,3},SP_{2,4},SP_{2,5},SP_{2,6}\}$ and for Q4 $\{SP_{4,7},SP_{5,7}\}$. When using the values for $\chi_{s,t}$ from table \ref{tab:freq} the utility of Q2 is $4+1+2+3=10$ and for Q4 $5+4=9$. In this case we would then insert Q2 as it represents the largest expected if inserted.
 
@@ -188,9 +188,7 @@ In algorithm \ref{alg:greedy}, line 1-3, we define \textit{Score}($\chi, \Psi$),
 Line 4 of algorithm \ref{alg:greedy} initializes \textbf{H} with the utility scores for an empty cache.
 }
 
-\textcolor{red}{
-Line 5 loops over \textbf{H} till it is either empty or the cache is full. 
-}
+Line two assigns the highest scoring \spath from $\spath_{as}$, the set of all possible \spathsns, to $\spath_{ms}$.
 
 \textcolor{red}{
 In line 6 we assign the pair (utility, \spath$_{s,t}$) with the highest utility to $\spath_{ms}$ and remove it from \textbf{H}.
@@ -221,17 +219,17 @@ For round 4-7 All items are marked at being number four in the cache, this is be
 
 
 \begin{table}
-\textcolor{red}{
-\begin{tabular}{| l| l| l| l| l| l| l| l|}\hline
-$^{Round}/_{Query}$ 	& 1 	& 2 		& 3 	& 4 	& 5 	& 6 	& 7\\\hline
-Q1 			& 42 	& $| \underline{\overline{01}}|$	& -  		& -  	& -  	& -  & -  \\\hline
-Q2 			& 42 	& 10	& 10	& $| \underline{\overline{03}} |$	& -	& - & -   \\\hline
-Q3			& 11	& 0	& 0	& 0	& 0	& 0	& $| \underline{\overline{*04}} |$  \\\hline
-Q4			& 15	& 11	& $| \underline{\overline{02}} |$ & -	& -	& -  & -  \\\hline
-Q5			& 26	& 7	& 0	& 0	& $| \underline{\overline{*04}} |$ & -   & -  \\\hline
-Q6			& 32	& 0	& 0	& 0	& 0	& $| \underline{\overline{*04}} |$ & -   \\\hline
+\center
+\begin{tabular}{| l| l| l| l| l|}\hline
+$^{Round}/_{Query}$ 	& 1 	& 2 		& 3 	& 4 	\\\hline
+Q1: ($Q_{1,6}$)		& $| \underline{\overline{42}}|$ 	& -	& -  	& - \\\hline
+Q2: ($Q_{2,6}$)		& 42 	& 10	& $| \underline{\overline{10}} |$	& -\\\hline
+Q3: ($Q_{1,4}$)		& 11	& 0	& 0	& 0	\\\hline
+Q4: ($Q_{4,7}$)		& 15	& $| \underline{\overline{11}} |$	& -	& -  \\\hline
+Q5: ($Q_{2,5}$)		& 26	& 7	& 0	& 0	\\\hline
+Q6: ($Q_{3,6}$)		& 32	& 0	& 0	& 0	\\\hline
+... & ... & ... & ... & ... \\\hline
 \end{tabular}
-}
 \label{tab:steputil}
 \caption{Utility for Q1-Q6 during 7 rounds of algorithm \ref{alg:greedy}. Boxed in values indicate the order of which items are added to the cache.}
 \end{table}
@@ -239,12 +237,12 @@ Q6			& 32	& 0	& 0	& 0	& 0	& $| \underline{\overline{*04}} |$ & -   \\\hline
 
 \textcolor{red}{
 \begin{equation} \label{eq:usp}
-Q(SP_{s,t}, \Psi) = \{ \Phi(SP_{s,t}) \setminus \{ U(\Psi) \cap \Phi(SP_{s,t}) \} \}
+U_{sp} \leftarrow \Phi(SP_{s,t}) \setminus \{ \Phi^c(\Psi) \cap \Phi(SP_{s,t}) \}
 \end{equation}
 }
 \textcolor{red}{
 \begin{equation} \label{eq:score}
-S(\chi, SP_{s,t}, \Psi) =  \chi_{s,t} | SP_{s,t} \in Q(SP_{s,t}, \Psi), (s,t) \in \chi, s \neq t
+\{ (SP_{s,t}, \chi_{s,t}) | SP_{s,t} \in U_{sp}, s \neq t, (s,t) \in \chi \}
 \end{equation}
 }
 
