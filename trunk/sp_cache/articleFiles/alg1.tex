@@ -14,11 +14,12 @@
 	$\Psi_{size}$: Cache size \;
 }
 
-\funcc{Score}{\chi, \Psi}
+\While{$\Psi.spaceLeft > 0$}
 {
-	\ForAll{$SP_{s,t} \in \{ \mathbf{G(V,E)} \setminus U(\Psi) \}$}
+	$\spath_{ms} \leftarrow pop(\spath_{as}.max)$ \tcp{pop highest scoring element} \; 
+	\If{$\Psi.spaceLeft \leq \spath_{ms}.size$}
 	{
-		\textbf{H}.push($S(\chi, SP_{s,t}, \Psi), SP_{s,t}$) \;
+		$\Psi.insert(\spath:{ms})$\;
 	}
 }
 
