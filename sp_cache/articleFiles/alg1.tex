@@ -1,4 +1,5 @@
-\begin{algorithm}%[H!bt]
+
+\begin{algorithm}[H!bt]
 \dontprintsemicolon
 \SetVline
 
@@ -8,11 +9,10 @@
 {
 
 	$\mathbf{G(V,E)}$: Graph representation of Map \;
-	\textbf{H}: a Max-Heap. Contains the utility score of all posible \spaths in $\mathbf{G(V,E)}$. The \spath is the key $v$ and the utility is the value $k$, $(k, v)$, which the is sorted on.\;
+	\textbf{H}: a Max-Heap. Contains the utility score of all possible \spaths in $\mathbf{G(V,E)}$. The \spath is the value $v$ and the utility is the key $k$, $(k, v)$, which the is sorted on.\;
 	$\mathbf{\Psi}$: The cache \;
 	$\Psi_{size}$: Cache size \;
 }
-
 
 \funcc{Score}{\chi, \Psi}
 {
@@ -22,7 +22,7 @@
 	}
 }
 
-\tcp{\emph{Intialize \textbf{H}}}
+\tcp{\emph{Initialize \textbf{H}}}
 \textbf{Score}($\chi, \Psi$) \;
 
 \tcp{\emph{Fill cache}}
@@ -31,7 +31,7 @@
 	$\spath_{ms}$ = \textbf{H}.pop() \; 
 	\If{$\Psi_{size} - | \Psi | \geq | \spath_{ms} |$}
 	{
-		$\Psi.push(\spath_{ms})$\;
+		$\Psi.push(\spath_{ms}.v)$\;
 		\textbf{Score}($\chi, \Psi$) \;
 		
 	}

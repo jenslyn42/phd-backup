@@ -3,7 +3,8 @@
 In this section we qualify the differences between static (no change in cache content at service runtime) and dynamic caching (Cache content is changed at service runtime) of \spathsns. We also introduce our state of the art competitor and explain why it is not an adequate solution for the \spath caching problem.
 
 
-Using a dynamic cache\footnotemark and calculating the utility of each path is very expensive. If a dynamic cache is used, and we want to ensure it always keeps the most useful paths in the cache, it will be very expensive to calculate the utility of a new query with respect how much it overlaps with existing \spaths (i.e. how many vertices it shares with an existing \spathns) and how likely it will be able to answer a query in the future, thus adding a substantial overhead to query processing. As the utility of a \spath is so expensive to calculate, while the \spath service is running, it violates goal \ref{item:goal2} in section \ref{subsec:goals}.
+Using a dynamic cache\footnotemark and calculating the utility of each path is very expensive. If a dynamic cache is used, and we want to ensure it always keeps the most useful paths in the cache, it will be very expensive to calculate the utility of a new query with respect how much it overlaps with existing \spaths (i.e. how many vertices it shares with an existing \spathns) and how likely it will be able to answer a query in the future, thus adding a substantial overhead to query processing. As the utility of a \spath is so expensive to calculate, while the \spath service is running, it 
+violates goal \ref{item:goal2} in section \ref{subsec:goals}.
 
 Using \lru as the cache replacement policy in a dynamic cache ensures that only minimal overhead is added by using a dynamic cache. When a new query is submitted \lru evicts the least recently used \spath and keeps the most recently used \spaths in the cache.
 \lru, however, has several shortcomings: 
@@ -98,7 +99,7 @@ $G\mathbf{(V,E)}$ 	& Graph representation of the Map \\\hline
 
 We will define our goals more formally, introducing the benefit equations we aim to minimize.
 
-A query is a pair of vertice ids $(v_s, v_t)$, denoted $Q_{s,t}$ and the \spath returned from such query we denote $SP_{s,t}$. 
+A query is a pair of vertices ids $(v_s, v_t)$, denoted $Q_{s,t}$ and the \spath returned from such query we denote $SP_{s,t}$. 
 In order to evaluate goal \ref{item:goal3} we calculate the utility of the content in the cache, denoted $\Gamma(\Psi)$. To calculate $\Gamma(\Psi)$ we find the set of unique sub-paths from all \spaths in the cache ($\Psi$) and sum up the frequency, $\chi_{s,t}$, of each unique path.
 \textcolor{red}{$\chi$ Is a table and is computed from existing historical data. An example of different entries, $\chi_{s,t}$, is given in table \ref{tab:chi}}
 
@@ -149,24 +150,6 @@ $U(\Psi) =$ 		& $\{SP_{1,3},SP_{1,4},SP_{1,5},SP_{1,6},SP_{3,4},SP_{3,5},$ \\
 \label{tab:chi}
 \end{table}
 
-
-% \begin{table}
-% \center
-% \begin{tabular}{rl|rl}
-% $SP_{1,3}:$	& $\chi_{1,3} = 4$ & $SP_{1,4}:$	& $\chi_{1,4} = 2$ \\
-% $SP_{1,5}:$	& $\chi_{1,5} = 3$ & $SP_{1,6}:$	& $\chi_{1,6} = 1$ \\
-% $SP_{3,4}:$	& $\chi_{3,4} = 5$ & $SP_{3,5}:$	& $\chi_{3,5} = 8$ \\
-% $SP_{3,6}:$	& $\chi_{3,6} = 7$ & $SP_{4,5}:$	& $\chi_{4,5} = 6$ \\
-% $SP_{4,6}:$	& $\chi_{4,6} = 4$ & $SP_{5,6}:$	& $\chi_{5,6} = 2$ \\
-% $SP_{2,3}:$	& $\chi_{2,3} = 4$ & $SP_{2,4}:$	& $\chi_{2,4} = 1$ \\
-% $SP_{2,5}:$	& $\chi_{2,5} = 2$ & $SP_{2,6}:$	& $\chi_{2,6} = 3$ \\
-% $SP_{4,7}:$	& $\chi_{4,7} = 5$ & $SP_{5,7}:$	& $\chi_{5,7} = 4$ \\
-% \end{tabular}
-% \caption{$\chi_{s,t}$ values for $U(\Psi)$ in table \ref{tab:chi}}
-% \label{tab:freq}
-% \end{table}
-
-
 \begin{table}
 \center
 \begin{tabular}{|l||l|l|l|l|l|l|l|}
@@ -198,11 +181,11 @@ show it is NP-Hard
 The pseudo code describing our unoptimized greedy algorithm is presented here.
 
 \textcolor{red}{
-In algorithm \ref{alg:greedy}, line 1-3, we define \textit{Score}($\chi, \Psi$), using equation \ref{eq:score}. Equation \ref{eq:score} will calculate the score of a \spathns, \textit{sp}, based only on the sub-paths of \textit{sp} which are not already present in the cache (Eq. \ref{eq:usp}). \textit{Score}($\chi, \Psi$) will update max-heap \textbf{H} with the (utility, \spath) pairs of all \spath not in the cache. It will calculate the utilities relative to the current cache content. 
+In algorithm \ref{alg:greedy}, line 1-3, we define \textit{Score}($\chi, \Psi$), using equation \ref{eq:score}. Equation \ref{eq:score} calculates the score of a \spathns, \textit{sp}, based on the sub-paths of \textit{sp} which are not already present in the cache (Eq. \ref{eq:usp}). \textit{Score}($\chi, \Psi$) will update max-heap \textbf{H} with the (utility, \spath) pairs of all \spath not in the cache. It will calculate the utilities relative to the current cache content. 
 }
 
 \textcolor{red}{
-Line 4 of algorithm \ref{alg:greedy} initializes \textbf{H} with the utility scores for the empty cache.
+Line 4 of algorithm \ref{alg:greedy} initializes \textbf{H} with the utility scores for an empty cache.
 }
 
 \textcolor{red}{
@@ -210,16 +193,48 @@ Line 5 loops over \textbf{H} till it is either empty or the cache is full.
 }
 
 \textcolor{red}{
-In line 6 we assign the \spath with the highest utility to $\spath_{ms}$ and remove it from \textbf{H}.
+In line 6 we assign the pair (utility, \spath$_{s,t}$) with the highest utility to $\spath_{ms}$ and remove it from \textbf{H}.
 }
 
 \textcolor{red}{
-Line 7 
+Line 7-9 checks if the size of $\spath_{ms}$ is smaller or equal to the space available in the cache. If $\spath_{ms}$ is small enough, we insert it into the cache and recalculate the utility scores in \textbf{H}.
 }
 
 \textcolor{red}{
-Line 8-9 
+Assuming an empty cache, $\Phi_{size}=40$ (so all queries fit), and using data from table \ref{tab:chi} and  \ref{tab:freq}. We use the queries from table\ref{tab:queries}. Algorithm \ref{alg:greedy}  The utility of Q1-Q6 for 7 rounds (number of rounds Alg.. \ref{alg:greedy} need to consider Q1-Q6) is shown in table \ref{tab:steputil}. We will now explain round 1-7 in detail.}
+
+\textcolor{red}{
+In the first round we calculate a score for all possible queries (Alg. \ref{alg:greedy}, line 4). Since the cache is empty, a \spath score consist of its frequency from table \ref{tab:freq}, as well as the frequency of its sub-paths. For Q1 this would give a utility of 4+2+3+1+5+8+7+6+4+2 = 42. The utility for Q2-Q6 is calculated in the same manner and only these example queries are shown for simplicity. From round 1 we can see that Q1 and Q2 are candidates for the first item in the cache. We choose Q1 here, how to break ties would depend on the individual max-heap implementation. 
 }
+
+\textcolor{red}{
+In the second round (Alg. \ref{alg:greedy}, line 5-9) the cache is now no longer empty and all the scores has been recomputed (Alg. \ref{alg:greedy}, line 9). We can see the values have all gotten smaller and the value of Q1 now is $| \underline{\overline{01}}|$, this special value means it was nr. 1 to be added to the cache. The values have all gotten smaller since the valid sub-paths, for calculating the benefit of Q2-Q6, now does not include any sub-path which was in Q1. In round 2 Q4 now has the largest utility and will there for be added to the cache. As can be seen in round 3, then Q4 now has the special value $|\underline{\overline{02}}|$, indicating that it was the second item to be added to the cache.
+}
+
+\textcolor{red}{
+Round three works as already seen in round 2, except Q2 does not get a lower utility score. This is possible because the \spath added to the cache in the previous round may not always share any edges with other \spaths in \textbf{H}. Q2 will be added in this step as it is the only remaining query with a positive score. The meaning of a zero score is that all the sub-paths in Q3,Q5,Q6 have all been covered by at least one \spath in the cache.
+}
+
+\textcolor{red}{
+For round 4-7 All items are marked at being number four in the cache, this is because they all have a utility score of 4 and which one will be popped first from \textbf{H} will determined by the implementation of \textbf{H} and not our algorithm.
+}
+
+
+\begin{table}
+\textcolor{red}{
+\begin{tabular}{| l| l| l| l| l| l| l| l|}\hline
+$^{Round}/_{Query}$ 	& 1 	& 2 		& 3 	& 4 	& 5 	& 6 	& 7\\\hline
+Q1 			& 42 	& $| \underline{\overline{01}}|$	& -  		& -  	& -  	& -  & -  \\\hline
+Q2 			& 42 	& 10	& 10	& $| \underline{\overline{03}} |$	& -	& - & -   \\\hline
+Q3			& 11	& 0	& 0	& 0	& 0	& 0	& $| \underline{\overline{*04}} |$  \\\hline
+Q4			& 15	& 11	& $| \underline{\overline{02}} |$ & -	& -	& -  & -  \\\hline
+Q5			& 26	& 7	& 0	& 0	& $| \underline{\overline{*04}} |$ & -   & -  \\\hline
+Q6			& 32	& 0	& 0	& 0	& 0	& $| \underline{\overline{*04}} |$ & -   \\\hline
+\end{tabular}
+}
+\label{tab:steputil}
+\caption{Utility for Q1-Q6 during 7 rounds of algorithm \ref{alg:greedy}. Boxed in values indicate the order of which items are added to the cache.}
+\end{table}
 
 
 \textcolor{red}{
@@ -249,7 +264,7 @@ discussion of kD-Tree.
 
 \subsection{Cache representations and cache concepts} \label{subsec:cacherepresentatons}
 How the cache is stored, and how we search it, is crucial to the performance of a cache. We will present the basic, naive, approach as well as 3 ideas for improvement.
-
+% 
 \subsubsection{Simple array of paths}% - baseline for goal 2, unoptimized and expensive to use.
 The simplest way to represent a cache is a simple array of paths. This representation will we expensive to search since we may need to search all paths in the cache, akin to a double for loop, every time we want to check if an item is in the cache.
 
