@@ -1,4 +1,4 @@
-\begin{algorithm}%[H!bt]
+\begin{algorithm}[H!bt]
 \dontprintsemicolon
 \SetVline
 
@@ -18,7 +18,7 @@
 
  \funcc{Score}{\spath_{s,t}}
 {
-	$theScore \leftarrow$ *calc some score* \;
+	\textbf{H}.push($S(\chi, SP_{s,t}, \Psi), SP_{s,t}$) \;
 % 	\ForEach{edge $e \in \alpha.t$}
 % 	{
 % 		\ForEach {$psr \in PS$ }
@@ -29,9 +29,8 @@
 % 			}
 % 		} 
 % 	}
-	\Return{theScore}
 }
 
-\caption{The Score() function.}
+\caption{Score() function using statistics}
 \label{alg:score}
 \end{algorithm}
