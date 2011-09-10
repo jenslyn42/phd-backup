@@ -9,11 +9,11 @@
 {
 
 	$G(V,E)$: Graph representation of Map \;
-
 	$\mathbf{\Psi}$: The cache \;
 	$\mathcal{B}$: Cache budget \;
+	
 }
-
+\vspace{0.7em}
 \tcp{\emph{\textbf{H} Contains the utility score of all possible \spaths in $\mathbf{G(V,E)}$. The \spath is the value $v$ and the utility is the key $k$, $(k, v)$, which the is sorted on.}}
 \textbf{H} Initialize Max-Heap \;
 
@@ -26,21 +26,18 @@
 
 
 \tcp{\emph{Fill cache}}
-\While{$| \Psi | \leq \mathcal{B}$ OR $| \textbf{H} | > 0$}
+\While{$| \Psi | \leq \mathcal{B}$ AND $\spath_{ms}.k \neq 0$}
 {
 	\tcp{\emph{Assign (utility,\spath) pair with the highest utility to $\spath_{ms}$}}
 	$\spath_{ms}$ = \textbf{H}.pop() \; 
-	\If{$\mathcal{B} - | \Psi | \geq | \spath_{ms}.v |$}
+	\tcp{\emph{\textbf{H}.peek() looks at the top (k,v) pair without removing it from the heap}}
+	\If{$\spath_{ms} \geq \textbf{H}.peek()$} 	
+	{	
+	    $\Psi.push(\spath_{ms}.v)$\;
+	}
+	\Else
 	{
-		$\Psi.push(\spath_{ms}.v)$\;
-		\tcp{\emph{Empty \textbf{H}}}
-		H.empty() \;
-		\tcp{\emph{Insert new (utility,\spath) pairs for $\forall \spath \notin \Psi$}}
-		\ForAll{$\spath_{s,t} | s \in V, t \in V, s \neq t, \spath_{s,t} \notin \Psi$} 
-		{
-		    H.push(S$(\chi, \spath_{s,t}, \Psi), \spath_{s,t}$) \;
-		}
-		
+	    H.push(S$(\chi, \spath_{ms}.v, \Psi), \spath_{ms}.v$) \;
 	}
 }
 

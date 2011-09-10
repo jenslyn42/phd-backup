@@ -180,42 +180,34 @@ show it is NP-Hard
 \subsection{Greedy algorithm}
 The pseudo code describing our unoptimized greedy algorithm is presented here.
 
-\textcolor{red}{
-In algorithm \ref{alg:greedy}, line 1-3, we define \textit{Score}($\chi, \Psi$), using equation \ref{eq:score}. Equation \ref{eq:score} calculates the score of a \spathns, \textit{sp}, based on the sub-paths of \textit{sp} which are not already present in the cache (Eq. \ref{eq:usp}). \textit{Score}($\chi, \Psi$) will update max-heap \textbf{H} with the (utility, \spath) pairs of all \spath not in the cache. It will calculate the utilities relative to the current cache content. 
-}
 
-\textcolor{red}{
-Line 4 of algorithm \ref{alg:greedy} initializes \textbf{H} with the utility scores for an empty cache.
-}
+In algorithm \ref{alg:greedy}, line 1, we first initialize \textbf{H} as a max-heap. Line 2-3 fills \textbf{H} (utility,\spath) pairs, with utility calculated using equation \ref{eq:score}. 
+Equation \ref{eq:score} calculates the score of a \spathns, $sp$, based on the sub-paths of $sp$ which are not already present in the cache (Eq. \ref{eq:usp}).
 
-Line two assigns the highest scoring \spath from $\spath_{as}$, the set of all possible \spathsns, to $\spath_{ms}$.
 
-\textcolor{red}{
+Line 4 of algorithm \ref{alg:greedy} starts looping to fill up the cache, terminating when either the cache is full (i.e. $| \Phi | \leq  \mathcal{B}$) or when \textbf{H} becomes empty (i.e. no more candidates to add to the 
+
+
+
+
 In line 6 we assign the pair (utility, \spath$_{s,t}$) with the highest utility to $\spath_{ms}$ and remove it from \textbf{H}.
-}
 
-\textcolor{red}{
+
 Line 7-9 checks if the size of $\spath_{ms}$ is smaller or equal to the space available in the cache. If $\spath_{ms}$ is small enough, we insert it into the cache and recalculate the utility scores in \textbf{H}.
-}
 
-\textcolor{red}{
-Assuming an empty cache, $\Phi_{size}=40$ (so all queries fit), and using data from table \ref{tab:chi} and  \ref{tab:freq}. We use the queries from table\ref{tab:queries}. Algorithm \ref{alg:greedy}  The utility of Q1-Q6 for 7 rounds (number of rounds Alg.. \ref{alg:greedy} need to consider Q1-Q6) is shown in table \ref{tab:steputil}. We will now explain round 1-7 in detail.}
 
-\textcolor{red}{
+Assuming an empty cache, $\Phi_{size}=40$ (so all queries fit), and using data from table \ref{tab:chi} and  \ref{tab:freq}. We use the queries from table\ref{tab:queries}. Algorithm \ref{alg:greedy}  The utility of Q1-Q6 for 7 rounds (number of rounds Alg.. \ref{alg:greedy} need to consider Q1-Q6) is shown in table \ref{tab:steputil}. We will now explain round 1-7 in detail.
+
+
 In the first round we calculate a score for all possible queries (Alg. \ref{alg:greedy}, line 4). Since the cache is empty, a \spath score consist of its frequency from table \ref{tab:freq}, as well as the frequency of its sub-paths. For Q1 this would give a utility of 4+2+3+1+5+8+7+6+4+2 = 42. The utility for Q2-Q6 is calculated in the same manner and only these example queries are shown for simplicity. From round 1 we can see that Q1 and Q2 are candidates for the first item in the cache. We choose Q1 here, how to break ties would depend on the individual max-heap implementation. 
-}
 
-\textcolor{red}{
+
 In the second round (Alg. \ref{alg:greedy}, line 5-9) the cache is now no longer empty and all the scores has been recomputed (Alg. \ref{alg:greedy}, line 9). We can see the values have all gotten smaller and the value of Q1 now is $| \underline{\overline{01}}|$, this special value means it was nr. 1 to be added to the cache. The values have all gotten smaller since the valid sub-paths, for calculating the benefit of Q2-Q6, now does not include any sub-path which was in Q1. In round 2 Q4 now has the largest utility and will there for be added to the cache. As can be seen in round 3, then Q4 now has the special value $|\underline{\overline{02}}|$, indicating that it was the second item to be added to the cache.
-}
 
-\textcolor{red}{
+
 Round three works as already seen in round 2, except Q2 does not get a lower utility score. This is possible because the \spath added to the cache in the previous round may not always share any edges with other \spaths in \textbf{H}. Q2 will be added in this step as it is the only remaining query with a positive score. The meaning of a zero score is that all the sub-paths in Q3,Q5,Q6 have all been covered by at least one \spath in the cache.
-}
 
-\textcolor{red}{
 For round 4-7 All items are marked at being number four in the cache, this is because they all have a utility score of 4 and which one will be popped first from \textbf{H} will determined by the implementation of \textbf{H} and not our algorithm.
-}
 
 
 \begin{table}
@@ -235,16 +227,14 @@ Q6: ($Q_{3,6}$)		& 32	& 0	& 0	& 0	\\\hline
 \end{table}
 
 
-\textcolor{red}{
 \begin{equation} \label{eq:usp}
-U_{sp} \leftarrow \Phi(SP_{s,t}) \setminus \{ \Phi^c(\Psi) \cap \Phi(SP_{s,t}) \}
+U_{sp} \leftarrow \Phi(SP_{s,t}) \setminus \Phi^c(\Psi)
 \end{equation}
-}
-\textcolor{red}{
+
 \begin{equation} \label{eq:score}
 \{ (SP_{s,t}, \chi_{s,t}) | SP_{s,t} \in U_{sp}, s \neq t, (s,t) \in \chi \}
 \end{equation}
-}
+
 
 \input{articleFiles/alg1}
 
