@@ -22,7 +22,6 @@
     H.push(S$(\chi, \spath_{s,t}, \Psi), \spath_{s,t}$) \;
 }
 
-\textbf{Score}($\chi, \Psi$) \;
 
 \tcp{\emph{Fill cache}}
 \While{$| \Psi | \leq \Psi_{size}$ OR $| \textbf{H} | = 0$}
@@ -31,7 +30,12 @@
 	\If{$\Psi_{size} - | \Psi | \geq | \spath_{ms} |$}
 	{
 		$\Psi.push(\spath_{ms}.v)$\;
-		\textbf{Score}($\chi, \Psi$) \;
+		\tcp{\emph{Empty \textbf{H} and insert new (key,value) pairs for \spath $\notin \Psi$}}
+		H.empty() \;
+		\ForAll{$\spath_{s,t} | s \in V, t \in V, s \neq t, \spath_{s,t} \notin \Psi$} 
+		{
+		    H.push(S$(\chi, \spath_{s,t}, \Psi), \spath_{s,t}$) \;
+		}
 		
 	}
 }
