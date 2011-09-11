@@ -26,14 +26,17 @@
 
 
 \tcp{\emph{Fill cache}}
-\While{$| \Psi | \leq \mathcal{B}$ AND $\spath_{ms}.k \neq 0$}
+\While{$| \Psi | \leq \mathcal{B}$ AND $\spath_{ms}.k \neq 0$ OR $| \textbf{H} | > 0$}
 {
 	\tcp{\emph{Assign (utility,\spath) pair with the highest utility to $\spath_{ms}$}}
 	$\spath_{ms}$ = \textbf{H}.pop() \; 
 	\tcp{\emph{\textbf{H}.peek() looks at the top (k,v) pair without removing it from the heap}}
 	\If{$\spath_{ms} \geq \textbf{H}.peek()$} 	
-	{	
-	    $\Psi.push(\spath_{ms}.v)$\;
+	{
+	    \If{$( \mathcal{B} - | \Phi | ) \geq |\spath_{ms}.v |$}
+	    {
+		$\Psi.push(\spath_{ms}.v)$\;
+	    }
 	}
 	\Else
 	{

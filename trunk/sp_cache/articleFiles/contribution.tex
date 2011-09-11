@@ -185,7 +185,7 @@ In algorithm \ref{alg:greedy}, line 1, we first initialize \textbf{H} as a max-h
 Equation \ref{eq:score} calculates the score of a \spathns, $sp$, based on the sub-paths of $sp$ which are not already present in the cache (Eq. \ref{eq:usp}).
 
 
-Line 4 of algorithm \ref{alg:greedy} starts looping to fill up the cache, terminating when either the cache is full (i.e. $| \Phi | \leq  \mathcal{B}$) or when \textbf{H} becomes empty (i.e. no more candidates to add to the 
+Line 4 of algorithm \ref{alg:greedy} starts looping to fill up the cache, terminating when either the cache is full (i.e. $| \Phi | \leq  \mathcal{B}$) or when the top (utility,\spath) has an utility value of 0
 
 
 
