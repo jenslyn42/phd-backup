@@ -5,6 +5,7 @@ In this section we qualify the differences between static (no change in cache co
 
 Using a dynamic cache\footnotemark and calculating the utility of each path is very expensive. If a dynamic cache is used, and we want to ensure it always keeps the most useful paths in the cache, it will be very expensive to calculate the utility of a new query with respect how much it overlaps with existing \spaths (i.e. how many vertices it shares with an existing \spathns) and how likely it will be able to answer a query in the future, thus adding a substantial overhead to query processing. As the utility of a \spath is so expensive to calculate, while the \spath service is running, it 
 violates goal \ref{item:goal2} in section \ref{subsec:goals}.
+\footnotetext{Every time a new query is submitted we consider evicting an old item from the cache and inserting the new query, using a replacement policy e.g. \lru}
 
 Using \lru as the cache replacement policy in a dynamic cache ensures that only minimal overhead is added by using a dynamic cache. When a new query is submitted \lru evicts the least recently used \spath and keeps the most recently used \spaths in the cache.
 \lru, however, has several shortcomings: 
@@ -14,10 +15,6 @@ Using \lru as the cache replacement policy in a dynamic cache ensures that only 
 \item If no additional structure is added then querying the cache may require a scan of all paths in the cache to examine the cache can answer a query or not.
 \item \lru does not consider utilization of the space in the cache.
 \end{itemize}
-
-
-
-\footnotetext{Every time a new query is submitted we consider evicting an old item from the cache and inserting the new query, using a replacement policy e.g. \lru}
 
 
 
@@ -33,24 +30,8 @@ Q5, which \textit{could} have been answered by Q2, now results in the eviction o
 
 Q6 is not covered by Q3 or Q5, the current elements in the cache, resulting in a cache miss. Because there are 7 nodes in the cache and Q6:$\{v_3,v_4,v_5,v_6\}$ has 4 nodes, Q3 will be evicted (since it was inserted first) and Q6 inserted. 
 
-The end result is that 30\% of the cache space is wasted and out of the 6 queries only we only resulted in a 1 cache hit. If Q1 and Q2 had been kept in the cache we could have had 3 cache hits. However, keeping Q1 and Q2 also  demonstrates \lrus problem with overlapping paths. Q1 and Q2 are identical except for one node, which waste a lot of space on duplicated nodes. Had we represented each node only once (addressed in section {subsec:cacherepresentatons}) we would be able to fit all nodes in the map in the cache.
+The end result is that 30\% of the cache space is wasted and out of the 6 queries only we only resulted in a 1 cache hit. If Q1 and Q2 had been kept in the cache we could have had 3 cache hits. However, keeping Q1 and Q2 also  demonstrates \lrus problem with overlapping paths. Q1 and Q2 are identical except for one node, which waste a lot of space on duplicated nodes. Had we represented each node only once (addressed in section \ref{subsec:cacherepresentatons}) we would be able to fit all nodes in the map in the cache.
 
-
-
-
-% ---
-% more beneficial to fill the cache offline and use a static cache, i.e. not evicting or inserting \spaths while the system is running.
-% ----
-
-% Intro to section; Why do we have baseline competitors, which ones will be introduced, and why those? 
-
-% \lru is a competitor, but can not achieve good performance because:
-% \begin{itemize}	
-% 	\item Has no way to determine the usefulness of adding a path (i.e. no scoring function)
-% 	\item Even if a path P is good (covers many queries), then if a sequence of consecutive queries comes which P can not cover, then it will be evicted.
-% 	\item Has no way to optimize the number of paths in the cache, so available cache space may go unused.
-% 	\item 
-% \end{itemize}
 
 
 
@@ -101,7 +82,7 @@ We will define our goals more formally, introducing the benefit equations we aim
 
 A query is a pair of vertices ids $(v_s, v_t)$, denoted $Q_{s,t}$ and the \spath returned from such query we denote $SP_{s,t}$. 
 In order to evaluate goal \ref{item:goal3} we calculate the utility of the content in the cache, denoted $\Gamma(\Psi)$. To calculate $\Gamma(\Psi)$ we find the set of unique sub-paths from all \spaths in the cache ($\Psi$) and sum up the frequency, $\chi_{s,t}$, of each unique path.
-\textcolor{red}{$\chi$ Is a table and is computed from existing historical data. An example of different entries, $\chi_{s,t}$, is given in table \ref{tab:chi}}
+$\chi$ Is a table and is computed from existing historical data. An example of different entries, $\chi_{s,t}$, is given in table \ref{tab:chi}
 
 In order to evaluate our method we try to maximize $\Gamma(\Psi)$ (Eq. \ref{eq:benefit}).
 
@@ -111,7 +92,7 @@ In order to evaluate our method we try to maximize $\Gamma(\Psi)$ (Eq. \ref{eq:b
 \end{equation}
 
 \begin{equation} \label{eq:benefit}
-\Gamma(\Psi) = \sum\limits_{\forall SP_{s,t} \in \Phi^c(\Psi)} \chi_{s,t}
+\Gamma(\Psi) = \sum\limits_{SP_{s,t} \in \Phi^c(\Psi)} \chi_{s,t}
 \end{equation}
 
 \begin{equation} \label{eq:phi}
@@ -128,23 +109,23 @@ Q4:	&	$Q_{4,7} =$ 	& $\{v_4,v_5,v_7\}$ \\
 Q5:	&	$Q_{2,5} =$ 	& $\{v_2,v_3,v_4,v_5\}$ \\
 Q6:	&	$Q_{3,6} =$ 	& $\{v_3,v_4,v_5,v_6\}$ \\
 \end{tabular}
-\caption{Example Queries}
+\caption{Example Queries from figure \ref{fig:rxmap}}
 \label{tab:queries}
 \end{table}
 
 \begin{table}
-\begin{tabular}{r p{0.78\columnwidth}}
-$\Phi(SP_{1,6})=$ 	& $\{SP_{1,3},SP_{1,4},SP_{1,5},SP_{1,6},SP_{3,4},SP_{3,5},$\\
-		 	& $SP_{3,6},SP_{4,5},SP_{4,6},SP_{5,6}\}$ \\
-$\Phi(SP_{2,6})=$ 	& $\{SP_{2,3},SP_{2,4},SP_{2,5},SP_{2,6},SP_{3,4},SP_{3,5},$ \\
-			& $SP_{3,6},SP_{4,5},SP_{4,6},SP_{5,6}\}$ \\
-$\Phi(SP_{1,4})=$ 	& $\{SP_{1,3},SP_{1,4},SP_{3,4}\}$ \\
-$\Phi(SP_{4,7})=$ 	& $\{SP_{4,5},SP_{4,7},SP_{5,7}\}$ \\
-$\Phi(SP_{2,5})=$ 	& $\{SP_{2,3},SP_{2,4},SP_{2,5},SP_{3,4},SP_{3,5},SP_{4,5}\}$ \\
-$\Phi(SP_{3,6})=$ 	& $\{SP_{3,4},SP_{3,5},SP_{3,6},SP_{4,5},SP_{4,6},SP_{5,6}\}$ \\\hline
-$\Phi^c(\Psi) =$ 	& $\{SP_{1,3},SP_{1,4},SP_{1,5},SP_{1,6},SP_{3,4},SP_{3,5},$ \\
-			& $SP_{3,6},SP_{4,5},SP_{4,6},SP_{5,6},SP_{2,3},SP_{2,4},SP_{2,5},$ \\
-			& $SP_{2,6},SP_{4,5},SP_{4,7},SP_{5,7}\}$  \\
+\begin{tabular}{lcp{0.78\columnwidth}}
+$\Phi(SP_{1,6})$ &= 	& $\{SP_{1,3},SP_{1,4},SP_{1,5},SP_{1,6},SP_{3,4},SP_{3,5},$\\
+		 &	& $SP_{3,6},SP_{4,5},SP_{4,6},SP_{5,6}\}$ \\
+$\Phi(SP_{2,6})$ &=  	& $\{SP_{2,3},SP_{2,4},SP_{2,5},SP_{2,6},SP_{3,4},SP_{3,5},$ \\
+		 &	& $SP_{3,6},SP_{4,5},SP_{4,6},SP_{5,6}\}$ \\
+$\Phi(SP_{1,4})$ &=  	& $\{SP_{1,3},SP_{1,4},SP_{3,4}\}$ \\
+$\Phi(SP_{4,7})$ &=  	& $\{SP_{4,5},SP_{4,7},SP_{5,7}\}$ \\
+$\Phi(SP_{2,5})$ &=  	& $\{SP_{2,3},SP_{2,4},SP_{2,5},SP_{3,4},SP_{3,5},SP_{4,5}\}$ \\
+$\Phi(SP_{3,6})$ &=  	& $\{SP_{3,4},SP_{3,5},SP_{3,6},SP_{4,5},SP_{4,6},SP_{5,6}\}$ \\\hline
+$\Phi^c(\Psi)$ 	 &=  	& $\{SP_{1,3},SP_{1,4},SP_{1,5},SP_{1,6},SP_{3,4},SP_{3,5},$ \\
+		 &	& $SP_{3,6},SP_{4,5},SP_{4,6},SP_{5,6},SP_{2,3},SP_{2,4},SP_{2,5},$ \\
+		 &	& $SP_{2,6},SP_{4,5},SP_{4,7},SP_{5,7}\}$  \\
 \end{tabular}
 \caption{$\Phi$ (Eq. \ref{eq:phi}) results for queries in table \ref{tab:queries}}
 \label{tab:chi}
@@ -153,7 +134,7 @@ $\Phi^c(\Psi) =$ 	& $\{SP_{1,3},SP_{1,4},SP_{1,5},SP_{1,6},SP_{3,4},SP_{3,5},$ \
 \begin{table}
 \center
 \begin{tabular}{|l||l|l|l|l|l|l|l|}
-\textbf{$\chi$ ${^s/_t}$}& \textbf{1}	& \textbf{2}	& \textbf{3}	& \textbf{4}	& \textbf{5}	& \textbf{6}	& \textbf{7} \\\hline
+\textbf{$\chi$ ${^s/_t}$}& \bf1	& \bf2	& \bf3	& \bf4	& \bf5	& \bf6	& \bf7 \\\hline
 \textbf{1}	& X	& -	& 4	& 2	& 3	& 1	& -	 \\
 \textbf{2}	& -	& X	& 4	& 1	& 2	& 3	& -	 \\
 \textbf{3}	& 4	& 4	& X	& 5	& 8	& 7	& -	 \\
@@ -168,7 +149,7 @@ $\Phi^c(\Psi) =$ 	& $\{SP_{1,3},SP_{1,4},SP_{1,5},SP_{1,6},SP_{3,4},SP_{3,5},$ \
 
 
 
-When we want to evaluate the utility of $\Psi$ we first calculate $\Phi^c(\Psi)$ for each \spath. Table \ref{tab:chi} shows the set of sub-paths from the \spaths for each query Q1-Q6 from table \ref{tab:queries} (we assume all queries fit into the cache). Once we have all the sets of sub-paths from the cache content, we use equation \ref{eq:upsi} to union them together and obtain the set of unique sub-paths in the cache, $\Phi^c(\Psi)$ (see table \ref{tab:chi}). After we have obtained $U(\Psi)$, we use equation \ref{eq:benefit} to calculate $\Gamma(\Psi)$, the total benefit we expect to have with the content in $\Psi$. With the $\Phi^c(\Psi)$ obtained, using $\chi_{s,t}$ values from table \ref{tab:freq}, $\Gamma(\Psi)$ would be 62 ($4+3+5+7+4+4+2+1+4+2+1+8+6+2+1+3+5 = 62$).
+When we want to evaluate the utility of $\Psi$ we first calculate $\Phi^c(\Psi)$ for each \spath. Table \ref{tab:chi} shows the set of sub-paths from the \spaths for each query Q1-Q6 from table \ref{tab:queries} (we assume all queries fit into the cache). Once we have all the sets of sub-paths from the cache content, we use equation \ref{eq:upsi} to union them together and obtain the set of unique sub-paths in the cache, $\Phi^c(\Psi)$ (see table \ref{tab:chi}). After we have obtained $\Phi^c(\Psi)$, we use equation \ref{eq:benefit} to calculate $\Gamma(\Psi)$, the total benefit we expect to have with the content in $\Psi$. With the $\Phi^c(\Psi)$ obtained, using $\chi_{s,t}$ values from table \ref{tab:freq}, $\Gamma(\Psi)$ would be 62 i.e. $4+3+\dotsb+3+5 = 62$, finding a value in table \ref{tab:freq} for all \spaths of $\Phi^c(\Psi)$ (Tab. \ref{tab:chi}).
 
 When filling the cache, during the offline phase, potential \spath items are scored based the sum of $\chi_{s,t}$-values from sub-paths not already present in the cache. If we assume Q1 is already in the cache and we are considering to insert either Q2 or Q4 next, then we first find the sub-paths for each query result, which is not already present in the cache. For Q2 it is $\{SP_{2,3},SP_{2,4},SP_{2,5},SP_{2,6}\}$ and for Q4 $\{SP_{4,7},SP_{5,7}\}$. When using the values for $\chi_{s,t}$ from table \ref{tab:freq} the utility of Q2 is $4+1+2+3=10$ and for Q4 $5+4=9$. In this case we would then insert Q2 as it represents the largest expected if inserted.
 
@@ -178,36 +159,32 @@ show it is NP-Hard
  
 
 \subsection{Greedy algorithm}
-The pseudo code describing our unoptimized greedy algorithm is presented here.
+We will here introduce \salgo (Alg. \ref{alg:greedy}), the base idea of our greedy algorithm. First we will explain what each line of \salgo does, whereafter we will give an example to show how \salgo works on example input.
 
-
+\salgo takes 3 arguents: $G(V,E)$, the graph representation of a map. $\mathbf{\Psi}$ the cache to be used (it is possible to imagine there could be more than one cache in case the \spath provider serve two disjoint areas like i.e. Europe and Japan). $\mathcal{B}$, the cache budget, states how many nodes $\Psi$ can contain before it is full.
 In \salgo (Alg. \ref{alg:greedy}), line 1, we first initialize \textbf{H} as a max-heap. Line 2-3 fills \textbf{H} (utility,\spath) pairs, with utility calculated using equation \ref{eq:score}. 
 Equation \ref{eq:score} calculates the score of a \spathns, $sp$, based on the sub-paths of $sp$ which are not already present in the cache (Eq. \ref{eq:usp}).
 
-Line 4 of \salgo starts looping to fill up the cache, terminating when either the cache is full ($| \Phi | \leq  \mathcal{B}$), when the highest scoring \spath has an utility value of 0 ($\spath_{ms}.k \neq 0$), or if there are no \spath candidates left to add to the cache.
+Line 4 of \salgo starts looping to fill up the cache, terminating when either the cache is full ($| \Psi | \leq  \mathcal{B}$), when the highest scoring \spath has an utility value of 0 ($\spath_{ms}.k \neq 0$) (According to lemma \ref{lem:addutil} we can not benifit from \spaths with utility equal to zero), or if there are no \spath candidates left to add to the cache.
 
 In line 5 we assign the pair (utility, \spath) the the highest utility score to $\spath_{ms}$ and remove it from the heap \textbf{H}.
 
 In line 6 we update the utility value of $\spath_{ms}$ to know its true utility in case it has changed due to a \spath insertion.
 
-Line 7-11 Implements a compare-and-update/insert loop, avoiding recalculation of all elements in \textbf{H} every round of the loop in line 4. This is necessary because the basis for calculating utility in equation \ref{eq:score} is all possible paths, except those paths, and their sub-paths, already in the cache ($\Phi$). This means that every time we add a \spath to the cache, the utility of some other candidates are likely to be reduced. The way it works is by comparing the $\spath_{ms}$ and the top element of \textbf{H} (line 7), if $\spath_{ms}$ has the highest score we add its \spath to the cache immediately (line 7-9), else we recalculate the utility of the \spath from $\spath_{ms}$ and add it back into \textbf{H} (line 10-11). This will in the worst case mean we have to recalculate all elements in \textbf{H} after a \spath insertion in $\Phi$, the cache. However, it is likely that the new (utility,\spath) pair with the highest utility score is still close to the top, meaning we save a lot of calculations/time. This works since utility scores can only be reduced, never increased.
+Line 7-11 Implements a compare-and-update/insert loop, avoiding recalculation of all elements in \textbf{H} every round of the loop in line 4. This is necessary because the basis for calculating utility in equation \ref{eq:score} is all possible paths, except those paths, and their sub-paths, already in the cache ($\Psi$). This means that every time we add a \spath to the cache, the utility of some other candidates are likely to be reduced. The way it works is by comparing the $\spath_{ms}$ and the top element of \textbf{H} (line 7), if $\spath_{ms}$ has the highest score we add its \spath to the cache immediately (line 7-9), else we recalculate the utility of the \spath from $\spath_{ms}$ and add it back into \textbf{H} (line 10-11). This will in the worst case mean we have to recalculate all elements in \textbf{H} after a \spath insertion in $\Psi$, the cache. However, it is likely that the new (utility,\spath) pair with the highest utility score is still close to the top, meaning we save a lot of calculations/time. This works since utility scores can only be reduced, never increased.
 
 
 
-To show an example of how \salgo (alg. \ref{alg:greedy}) works we assume an empty cache, using $\mathcal{B}=15$, table \ref{tab:chi}, \ref{tab:freq}, and the queries from table \ref{tab:queries}. For clarity we limit our example to show only how it works on the queries Q1-Q6 from table \ref{tab:queries}. We use table \label{tab:steputil} to show the utility of each query after each round of the \salgo (Alg. \ref{alg:greedy}, line 4-11)
+To show an example of how \salgo (Alg. \ref{alg:greedy}) works we assume an empty cache, using $\mathcal{B}=15$, table \ref{tab:chi}, \ref{tab:freq}, and the queries from table \ref{tab:queries}. For clarity we limit our example to show only how it works on the queries Q1-Q6 from table \ref{tab:queries}. We use table \label{tab:steputil} to show the utility of each query after each round of the \salgo (Alg. \ref{alg:greedy}, line 4-11)
 
 In the first round we calculate a score for all possible queries (Alg. \ref{alg:greedy}, line 2-3). Since the cache is empty, a \spath score consist of its frequency from table \ref{tab:freq}, as well as the frequency of its sub-paths. For Q1 this would give a utility of 4+2+3+1+5+8+7+6+4+2 = 42 (i.e. the frequency of all the sub-paths from $\Phi(SP_{1,6}$) in table \ref{tab:chi}). The utility for Q2-Q6, as well as all other possible queries, is calculated in the same manner. Only the example queries are shown in table \ref{tab:steputil}, $\dots$ is used to symbolize the remaining possible queries. From round 1 (Tab. \ref{tab:steputil}) we can see that Q1 and Q2 are equal candidates for the first item in the cache. In line 4-8 query result $\spath_{1,6}$ (from Q1) is choosen, as indicated by the $| \underline{\overline{42}}|$ in round 1 (Tab. \ref{tab:steputil}) . How to break ties, as with Q1 and Q2, would depend on the individual max-heap implementation. 
 
 In the second round of \salgo (Alg. \ref{alg:greedy}, line 4-11) the cache is now no longer empty and we will run line 4-10 several times to find which \spath now has the highest utility. When we first run line 6 we find Q2 now has a utility of 10 and in line 7 we see the top item in \textbf{H} has an utility 32 (expected utility, since has not been recomputed yet), so in line 11 we push back the \spath ($\spath_{ms}.v$) together with its updated utility value of 10. Second time we now pop Q6, since it now has the highest utility value of 32. However, after line 6 it now has a utility of 0, so it will be reinserted into H with its new utility (line 11). Thrird time around we now pop Q5. After line 6 has a utility of 5, which is still smaller than Q4 in the heap, so we reinsert it (line 11). On the fourth turn we pop Q4 with a utility of 15, and after line 6 an actual utiltiy of 11. However, the top of \textbf{H} also has a utility of 11, but since the utility of Q3 can never get larger, only stay the same or become smaller, we don't have to worry about it and we can goto line 7-9 and insert $\spath_{4,7}$ (Q4). The second round almost had us recalculate all the items in \textbf{H} (worst case), however, we were still able to awoid calculating the actual utiltiy of Q3 before we were certain we should insert the \spath of Q4.
 
 
-and all the scores has been recomputed (Alg. \ref{alg:greedy}, line 9). We can see the values have all gotten smaller and the value of Q1 now is $| \underline{\overline{01}}|$, this special value means it was nr. 1 to be added to the cache. The values have all gotten smaller since the valid sub-paths, for calculating the benefit of Q2-Q6, now does not include any sub-path which was in Q1. In round 2 Q4 now has the largest utility and will there for be added to the cache. As can be seen in round 3, then Q4 now has the special value $|\underline{\overline{02}}|$, indicating that it was the second item to be added to the cache.
+Round three works as already seen in round 2. We first consider Q3, which has an actual utility of 0, then we consider Q2, whoes utility is unchanged after line 6, so we insert it in round 3.
 
-
-Round three works as already seen in round 2, except Q2 does not get a lower utility score. This is possible because the \spath added to the cache in the previous round may not always share any edges with other \spaths in \textbf{H}. Q2 will be added in this step as it is the only remaining query with a positive score. The meaning of a zero score is that all the sub-paths in Q3,Q5,Q6 have all been covered by at least one \spath in the cache.
-
-For round 4-7 All items are marked at being number four in the cache, this is because they all have a utility score of 4 and which one will be popped first from \textbf{H} will determined by the implementation of \textbf{H} and not our algorithm.
-
+In round 4 Q5 still has a utility of 7, but after recalculation at line 6 it becomes 0 and the algorithm stops. We never insert a \spath with a utility of 0, since any query it can answer, the cache, $\Psi$, can already answer.
 
 \begin{table}
 \center
@@ -217,25 +194,45 @@ Q1: ($Q_{1,6}$)		& $| \underline{\overline{42}}|$ 	& -	& -  	& - \\\hline
 Q2: ($Q_{2,6}$)		& 42 	& 10	& $| \underline{\overline{10}} |$	& - \\\hline
 Q3: ($Q_{1,4}$)		& 11	& 11	& 0	& 0	\\\hline
 Q4: ($Q_{4,7}$)		& 15	& $| \underline{\overline{11}} |$	& -	& - \\\hline
-Q5: ($Q_{2,5}$)		& 26	& 7	& 0	& 0	\\\hline
+Q5: ($Q_{2,5}$)		& 26	& 7	& 7	& 0	\\\hline
 Q6: ($Q_{3,6}$)		& 32	& 0	& 0	& 0	\\\hline
 $\dots$ & $\dots$ & $\dots$ & $\dots$ & $\dots$ \\\hline
 \end{tabular}
+\caption{Utility for Q1-Q6 during 4 rounds of \salgo. Boxed in values indicate which items are added to the cache in each round.}
 \label{tab:steputil}
-\caption{Utility for Q1-Q6 during 7 rounds of algorithm \ref{alg:greedy}. Boxed in values indicate the order of which items are added to the cache.}
 \end{table}
 
 
 \begin{equation} \label{eq:usp}
-U_{sp} \leftarrow \Phi(SP_{s,t}) \setminus \Phi^c(\Psi)
+U_{sp} \leftarrow \Phi(sp) \setminus \Phi^c(\Psi)
 \end{equation}
 
 \begin{equation} \label{eq:score}
-\{ (SP_{s,t}, \chi_{s,t}) | SP_{s,t} \in U_{sp}, s \neq t, (s,t) \in \chi \}
+S(\chi, \spath, \Psi) = \sum\limits_{SP_{s,t} \in U_{\spath}} \chi_{s,t}
 \end{equation}
 
 
 \input{articleFiles/alg1}
+
+
+\begin{lemma}\label{lem:addutil}
+The utility of a \spath will, when added to the cache, $\Psi$, always increase the utility of $\Psi$ by exactly the utility of \spath. This property can be expressed as such:
+
+$S(\chi, \spath, \Psi) = \Gamma(\Psi \cup \{\spath\}) - \Gamma(\Psi)$
+
+\end{lemma}
+
+\begin{proof}
+
+When calculating the utility of a \spath $sp$: $S(\chi, sp, \Psi)$ only the set of sub-paths in $sp$ disjoint from $\Phi^c(\Psi)$, the set of all unique paths in $\Psi$, is consider as basis for the calculation. 
+
+As there is no overlap between \spaths forming the basis for the utility of $\Psi$ and the set of \spaths forming the basis for the utility of $sp$, then any positive utility value of $sp$ can only be added to the $\Psi$ utility value. 
+
+\end{proof}
+
+
+
+
 
 
 \subsection{Statistics extraction}
