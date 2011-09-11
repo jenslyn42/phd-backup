@@ -30,6 +30,8 @@
 {
 	\tcp{\emph{Assign (utility,\spath) pair with the highest utility to $\spath_{ms}$}}
 	$\spath_{ms}$ = \textbf{H}.pop() \; 
+	\tcp{\emph{Update utility in case previous \spath insertion has changed value}}
+	$\spath_{ms}.k = S(\chi, \spath_{ms}.v, \Psi)$
 	\tcp{\emph{\textbf{H}.peek() looks at the top (k,v) pair without removing it from the heap}}
 	\If{$\spath_{ms} \geq \textbf{H}.peek()$} 	
 	{
