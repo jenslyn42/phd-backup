@@ -43,9 +43,13 @@
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{cor}[thm]{Corollary}
 \newtheorem{lemma}[thm]{Lemma}
-\newtheorem{deff}[thm]{Definition}
-% \newenvironment{definition}[1][Definition]{\begin{trivlist}
-% \item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+%proof and definitions will not get numbers, meant to be used with lemma/corollary/theorem
+%like definition ... lemma (with numbering to reference) ... proof
+\newenvironment{definition}[1][Definition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+
 
 \SetKwBlockLRS{JRBegin}
 \pagestyle{plain}
@@ -100,11 +104,10 @@ Man Lung Yiu \\
 %\input{help}
 
 %\newpage
-\clearpage
+% \clearpage
 %\input{articleFiles/proposal}
 %\input{articleFiles/relCollection}
 
-\newpage
 
 \bibliographystyle{abbrv}
 \bibliography{bibliography}\label{bibliography}
@@ -115,3 +118,4 @@ Man Lung Yiu \\
 % the command \texttt{{\char'134}thebibliography}.
 
 \end{document}
+%\textcolor{red}{ }
