@@ -1,4 +1,3 @@
-
 \begin{algorithm}[H!bt]
 \dontprintsemicolon
 \SetVline
@@ -14,7 +13,7 @@
 	
 }
 \vspace{0.7em}
-\tcp{\emph{\textbf{H} Contains the utility score of all possible \spaths in $\mathbf{G(V,E)}$. The \spath is the value $v$ and the utility is the key $k$, $(k, v)$, which the is sorted on.}}
+\tcp{\emph{\textbf{H} Contains the utility score of all possible \spaths in $\mathbf{G(V,E)}$. The \spath is the value $v$ and the utility is the key $k$, $(k, v)$. The heap is sorted on the key.}}
 \textbf{H} Initialize Max-Heap \;
 
 \tcp{\emph{Initialially fill \textbf{H}}}
@@ -29,20 +28,20 @@
 \While{$| \Psi | \leq \mathcal{B}$ AND $\spath_{ms}.k \neq 0$ OR $| \textbf{H} | > 0$}
 {
 	\tcp{\emph{Assign (utility,\spath) pair with the highest utility to $\spath_{ms}$}}
-	$\spath_{ms}$ = \textbf{H}.pop() \; 
-	\tcp{\emph{Update utility in case previous \spath insertion has changed it}}
-	$\spath_{ms}.k = S(\chi, \spath_{ms}.v, \Psi)$
-	\tcp{\emph{\textbf{H}.peek() looks at the top (k,v) pair without removing it from the heap}}
-	\If{$\spath_{ms} \geq \textbf{H}.peek()$} 	
+	$ \langle  key_{max},  SP_{max} \rangle$ = H. pop() \; 
+	\tcp{\emph{Update utility, as previous \spath insertion has changed it}}
+	$key_{max} = S(\chi, \spath_{max}, \Psi)$
+	\tcp{\emph{\textbf{H}.TopKey() looks at the top (k,v) pair without removing it from the heap}}
+	\If{$key_{max} \geq \textbf{H}.TopKey()$} 	
 	{
-	    \If{$( \mathcal{B} - | \Psi | ) \geq |\spath_{ms}.v |$}
+	    \If{$( \mathcal{B} - | \Psi | ) \geq | \spath_{max} |$}
 	    {
-		$\Psi.insert(\spath_{ms}.v)$\;
+		$\Psi.insert(\spath_{max})$\;
 	    }
 	}
 	\Else
 	{
-	    H.push(S$(\chi, \spath_{ms}.v, \Psi), \spath_{ms}.v$) \;
+	    H.push(S$(\chi, \spath_{max}, \Psi), \spath_{max}$) \;
 	}
 }
 
