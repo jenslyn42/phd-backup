@@ -49,7 +49,7 @@ explain what will be introduced, which sub-problems are considered, and which su
 
 
 \begin{table}
-\begin{tabular*}{\columnwidth}{|l|p{0.76\columnwidth}|}
+\begin{figuretabular*}{\columnwidth}{|l|p{0.76\columnwidth}|}
 \hline
 \bf Symbol		& \bf Meaning \\\hline
 $Q_{s,t}$		& \spath query from $s$ to $t$ \\\hline
@@ -60,8 +60,8 @@ $|\Psi|$		& Number of vertices in the cache \\\hline
 $\Phi(sp)$		& The set of all sub-paths in a \spath $sp$ \\\hline
 $\Phi^c(\Psi)$		& The set of all unique (sub-)paths in $\Psi$ \\\hline
 $\Gamma(\Psi)$		& Calculates the total utility of the content in the cache \\\hline 
-$\mathbf{V}$ 		& The set of vertices in the Map \\\hline 
 $G\mathbf{(V,E)}$ 	& Graph representation of the Map \\\hline 
+$\mathbf{V}$ 		& The set of vertices in the Map \\\hline 
 \end{tabular*}
 \caption{Table of Symbols}
 \label{tab:symbols}
@@ -110,7 +110,7 @@ Q4:	&	$Q_{4,7} =$ 	& $\{v_4,v_5,v_7\}$ \\
 Q5:	&	$Q_{2,5} =$ 	& $\{v_2,v_3,v_4,v_5\}$ \\
 Q6:	&	$Q_{3,6} =$ 	& $\{v_3,v_4,v_5,v_6\}$ \\
 \end{tabular}
-\caption{Example Queries from figure \ref{fig:rxmap}}
+\caption{Example Queries}
 \label{tab:queries}
 \end{table}
 
@@ -152,7 +152,7 @@ $v_7$			& 0	& 0	& 0	& 5	& 4	& 0	& X	 \\
 
 When we want to evaluate the utility of $\Psi$ we first calculate $\Phi^c(\Psi)$ for each \spath. Table \ref{tab:chi} shows the set of sub-paths from the \spaths for each query Q1-Q6 from table \ref{tab:queries} (we assume all queries fit into the cache). Once we have all the sets of sub-paths from the cache content, we use equation \ref{eq:upsi} to union them together and obtain the set of unique sub-paths in the cache, $\Phi^c(\Psi)$ (see table \ref{tab:chi}). After we have obtained $\Phi^c(\Psi)$, we use equation \ref{eq:benefit} to calculate $\Gamma(\Psi)$, the total benefit we expect to have with the content in $\Psi$. With the $\Phi^c(\Psi)$ obtained, using $\chi_{s,t}$ values from table \ref{tab:freq}, $\Gamma(\Psi)$ would be 62 i.e. $4+3+\dotsb+3+5 = 62$, finding a value in table \ref{tab:freq} for all \spaths of $\Phi^c(\Psi)$ (Tab. \ref{tab:chi}).
 
-When filling the cache, during the offline phase, potential \spath items are scored based the sum of $\chi_{s,t}$-values from sub-paths not already present in the cache. If we assume Q1 is already in the cache and we are considering to insert either Q2 or Q4 next, then we first find the sub-paths for each query result, which is not already present in the cache. For Q2 it is $\{SP_{2,3},SP_{2,4},SP_{2,5},SP_{2,6}\}$ and for Q4 $\{SP_{4,7},SP_{5,7}\}$. When using the values for $\chi_{s,t}$ from table \ref{tab:freq} the utility of Q2 is $4+1+2+3=10$ and for Q4 $5+4=9$. In this case we would then insert Q2 as it represents the largest expected if inserted.
+When filling the cache, during the offline phase, potential \spath items are scored based the sum of $\chi_{s,t}$-values from sub-paths not already present in the cache. If we assume $\spath_{1,6}$(Q1) is already in the cache and we are considering to insert either $\spath_{2,6}$(Q2) or $\spath_{4,7}$(Q4) next, then we first find the sub-paths for each query result, which is not already present in the cache. For Q2 it is $\{SP_{2,3},SP_{2,4},SP_{2,5},SP_{2,6}\}$ and for Q4 $\{SP_{4,7},SP_{5,7}\}$. When using the values for $\chi_{s,t}$ from table \ref{tab:freq} the utility of Q2 is $4+1+2+3=10$ and for Q4 $5+4=9$. In this case we would then insert Q2 as it represents the largest expected if inserted.
 
 \subsection{Hardness Analysis}
 Theoretical analysis showing how hard the problem is to solve for \spath caching.\\
@@ -232,15 +232,17 @@ $\dots$ & $\dots$ & $\dots$ & $\dots$ & $\dots$ \\\hline
 
 
 
-\subsection{Statistics extraction}
+\subsection{Statistics}
 
 
-\subsubsection{1 *howto extract statistics*}
+\subsubsection{Statistics extraction}
+
+%howto extract statistics
 
 
+\subsubsection{Generating SP Candidates}
 
-
-\subsubsection{2 *Using statistics to generate SP candidates for \salgo}
+% Generating SP Candidates for \salgo
 
 %\input{articleFiles/alg2}
 %use algorithm \ref{alg:score}

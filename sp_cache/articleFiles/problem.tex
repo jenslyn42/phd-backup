@@ -8,7 +8,7 @@ Calculating a \spath will, regardless of the algorithm used, always be an expens
 
 A \spath has the property of \oss (see lemma \ref{lem:oss}) which means that any \spath in the cache can answer any \spath query where both origin and target node are on the \spathns. Calculating which \spathsns, and their sub-paths, provide the most benefit will obviously be necessary for optimal utilization of the cache. A static cache, which is populated in an offline phase (fig. \ref{fig:routequery}E), is used. A static cache will impose minimal overhead to query processing. Section \ref{sec:competitors} explains why we choose a static cache.
 
-The properties of \ossns (Lemma \ref{lem:oss}) states that all sub-paths on a \spath are also \spathsns. Using \spath A in figure \ref{fig:rxmap} we would also be able to a query from 3 to 5, or 4 to 6, as these nodes are part of \spath A. The same of cause also holds for any \spath A-F from figure \ref{fig:rxmap}.
+The properties of \ossns (Lemma \ref{lem:oss}) states that all sub-paths on a \spath are also \spathsns. Using \spath Q1 in table \ref{tab:queries} we would also be able to a query from $v_3$ to $v_5$, or $v_4$ to $v_6$ (See fig. \ref{fig:rxmap}), as these nodes are part of Q1. The same of cause also holds for any \spath Q1-Q6 from table \ref{tab:queries}.
 
 \begin{figure}[hbt]
   \center
@@ -49,8 +49,8 @@ In a \spath service there will always be a some overhead associated with \spath 
 
 The fact that the system will be using a static cache, and \spaths exhibit the \oss property, makes goal 3 - determining the value of a \spath subpath - very important. The ability to do goal \ref{item:goal3} well will have a direct influence on goal \ref{item:goal1} and  \ref{item:goal2}. If we fill the cache with useless \spaths we will end up calculating a \spath for all queries, as well as the overhead from checking the cache for each query. Solving goal 3 well is the most direct way to solve goal 1.
 
-The \oss property states that every sub-path of a \spath is also a \spath. i.e \spath D in figure \ref{fig:rxmap}) consists of: 
-$\{SP_{1,3}, SP_{1,4}, SP_{1,5}, SP_{1,7}, SP_{3,4},$ $SP_{3,5}, SP_{3,7}, SP_{4,5}, SP_{4,7}, SP_{5,7}\}$, each one being a \spathns.
+The \oss property states that every sub-path of a \spath is also a \spath. i.e \spath Q1 in table \ref{tab:queries} consists of: 
+$\{SP_{1,3}, SP_{1,4}, SP_{1,5}, SP_{1,6}, SP_{3,4},$ $SP_{3,5}, SP_{3,6}, SP_{4,5}, SP_{4,6}, SP_{5,6}\}$, each one being a \spathns.
 
 \begin{lemma}\label{lem:oss}
 If a path $SP_{s,t}: v_s,v_{s+1},\ldots,v_t$ is a \spath, then $\forall$ $(v_k,v_l) | v_k \in SP_{s,t} \wedge v_l \in SP_{s,t}$ there is a  \spath $SP_{k,l}$ with start-/end-node in $v_k,v_l$, following a sub-path of $SP_{s,t}$ 
