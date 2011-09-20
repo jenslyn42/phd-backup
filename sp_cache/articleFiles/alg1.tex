@@ -13,10 +13,10 @@
 	
 }
 \vspace{0.7em}
-\tcp{\emph{\textbf{H} Contains the utility score of all possible \spaths in $\mathbf{G(V,E)}$. The \spath is the value $v$ and the utility is the key $k$, $(k, v)$. The heap is sorted on the key.}}
-\textbf{H} Initialize Max-Heap \;
+\tcp{\emph{H Contains the utility score of all possible \spaths in $\mathbf{G(V,E)}$. The \spath is the value $v$ and the utility is the key $k$, $(k, v)$. The heap is sorted on the key.}}
+H Initialize Max-Heap \;
 
-\tcp{\emph{Initialially fill \textbf{H}}}
+\tcp{\emph{Initialially fill H}}
 
 \ForAll{$\spath_{s,t} | s \in V, t \in V, s \neq t$} 
 {
@@ -25,14 +25,14 @@
 
 
 \tcp{\emph{Fill cache}}
-\While{$| \Psi | \leq \mathcal{B}$ AND $\spath_{ms}.k \neq 0$ OR $| \textbf{H} | > 0$}
+\While{$| \Psi | \leq \mathcal{B}$ AND $\spath_{ms}.k \neq 0$ OR $| H | > 0$}
 {
 	\tcp{\emph{Assign (utility,\spath) pair with the highest utility to $\spath_{ms}$}}
-	$ \langle  key_{max},  SP_{max} \rangle$ = H. pop() \; 
+	$ \langle  key_{max},  SP_{max} \rangle$ = H.pop() \; 
 	\tcp{\emph{Update utility, as previous \spath insertion has changed it}}
 	$key_{max} = S(\chi, \spath_{max}, \Psi)$
-	\tcp{\emph{\textbf{H}.TopKey() looks at the top (k,v) pair without removing it from the heap}}
-	\If{$key_{max} \geq \textbf{H}.TopKey()$} 	
+	\tcp{\emph{H.TopKey() looks at the top (k,v) pair without removing it from the heap}}
+	\If{$key_{max} \geq H.TopKey$} 	
 	{
 	    \If{$( \mathcal{B} - | \Psi | ) \geq | \spath_{max} |$}
 	    {
