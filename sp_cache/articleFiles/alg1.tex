@@ -28,7 +28,7 @@ H Initialize Max-Heap \;
 \While{$| \Psi | \leq \mathcal{B}$ AND $\spath_{ms}.k \neq 0$ OR $| H | > 0$}
 {
 	\tcp{\emph{Assign (utility,\spath) pair with the highest utility to $\spath_{ms}$}}
-	$ \langle  key_{max},  SP_{max} \rangle$ = H.pop() \; 
+	$ \langle  key_{max},  SP_{max} \rangle \leftarrow$ H.pop() \; 
 	\tcp{\emph{Update utility, as previous \spath insertion has changed it}}
 	$key_{max} = S(\chi, \spath_{max}, \Psi)$
 	\tcp{\emph{H.TopKey() looks at the top (k,v) pair without removing it from the heap}}
