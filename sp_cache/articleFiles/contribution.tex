@@ -18,7 +18,7 @@ Using \lru as the cache replacement policy in a dynamic cache ensures that only 
 
 
 
-To give an example of \lrus shortcomings we assume a cache of size 10 (i.e. has space for 10 vertices), using \lruns, and running on the map from figure \ref{fig:rxmap}. Queries Q1-Q6 from table \ref{tab:queries}, Q1 first and Q6 last.
+To give an example of \lrus shortcomings we assume a cache of size 10 (i.e. has space for 10 vertices), using \lruns, and running on the map from figure \ref{fig:rxmap}. Queries Q1-Q6 from table \ref{tab:queries} are used, Q1 first and Q6 last.
 
 The answer to Q1 and Q2 (table \ref{tab:queries}) are added to the cache as both results have a length of 5 and they can both fit. 
 
@@ -31,9 +31,6 @@ Q5, which \textit{could} have been answered by Q2, now results in the eviction o
 Q6 is not covered by Q3 or Q5, the current elements in the cache, resulting in a cache miss. Because there are 7 nodes in the cache and Q6:$\{v_3,v_4,v_5,v_6\}$ has 4 nodes, Q3 will be evicted (since it was inserted first) and Q6 inserted. 
 
 The end result is that 30\% of the cache space is wasted and out of the 6 queries only we only resulted in a 1 cache hit. If Q1 and Q2 had been kept in the cache we could have had 3 cache hits. However, keeping Q1 and Q2 also  demonstrates \lrus problem with overlapping paths. Q1 and Q2 are identical except for one node, which waste a lot of space on duplicated nodes. Had we represented each node only once (addressed in section \ref{subsec:cacherepresentatons}) we would be able to fit all nodes in the map in the cache.
-
-
-
 
 
 
@@ -53,7 +50,7 @@ explain what will be introduced, which sub-problems are considered, and which su
 \hline
 \bf Symbol		& \bf Meaning \\\hline
 $Q_{s,t}$		& \spath query from $s$ to $t$ \\\hline
-$\chi_{s,t}$		& The frequency of a (sub-)path \\\hline
+$\chi_{s,t}$		& The frequency of a \spath \\\hline
 $\Psi$ 			& The Cache \\\hline
 $|SP|$			& Length of a \spath \\\hline
 $|\Psi|$		& Number of vertices in the cache \\\hline
@@ -82,7 +79,7 @@ We will define our goals more formally, introducing the benefit equations we aim
 
 A query is a pair of vertices ids $(v_s, v_t)$, denoted $Q_{s,t}$ and the \spath returned from such query we denote $Q_{s,t}$. 
 In order to evaluate goal \ref{item:goal3} we calculate the utility of the content in the cache, denoted $\Gamma(\Psi)$. To calculate $\Gamma(\Psi)$ we find the set of unique sub-paths from all \spaths in the cache ($\Psi$) and sum up the frequency, $\chi_{s,t}$, of each unique path.
-$\chi$ Is a table and is computed from existing historical data. An example of different entries, $\chi_{s,t}$, is given in table \ref{tab:chi}
+$\chi$, a table of utility computed from existing historical data. An example of different entries, $\chi_{s,t}$, is given in table \ref{tab:freq}
 
 In order to evaluate our method we try to maximize $\Gamma(\Psi)$ (Eq. \ref{eq:benefit}).
 
@@ -116,9 +113,6 @@ Q6	&	$Q_{3,6}$ 	& $\{v_3,v_4,v_5,v_6\}$ \\\hline
 \end{table}
 
 
-
-
-
 \begin{table}
 \begin{tabular}{lcp{0.78\columnwidth}}
 $\Phi(SP_{1,6})$ &= 	& $\{SP_{1,3},SP_{1,4},SP_{1,5},SP_{1,6},SP_{3,4},SP_{3,5},$\\
@@ -137,17 +131,18 @@ $\Phi^c(\Psi)$ 	 &=  	& $\{SP_{1,3},SP_{1,4},SP_{1,5},SP_{1,6},SP_{3,4},SP_{3,5}
 \label{tab:chi}
 \end{table}
 
+
 \begin{table}
 \center
 \begin{tabular}{|l||l|l|l|l|l|l|l|}
 \textbf{$\chi {^s/_t}$}	& $v_1$	& $v_2$	& $v_3$	& $v_4$	& $v_5$	& $v_6$	& $v_7$ \\\hline
-$v_1$			& X	& 0	& 4	& 2	& 3	& 1	& 0	 \\
-$v_2$			& 0	& X	& 4	& 1	& 2	& 3	& 0	 \\
-$v_3$			& 4	& 4	& X	& 5	& 8	& 7	& 0	 \\
-$v_4$			& 2	& 1	& 5	& X	& 6	& 4	& 5	 \\
-$v_5$			& 3	& 2	& 8	& 6	& X	& 2	& 4	 \\
-$v_6$			& 1	& 3	& 7	& 4	& 2	& X	& 0	 \\
-$v_7$			& 0	& 0	& 0	& 5	& 4	& 0	& X	 \\
+$v_1$			& X	& 0	& 0	& 1	& 0	& 1	& 0	 \\
+$v_2$			& 0	& X	& 0	& 0	& 1	& 1	& 0	 \\
+$v_3$			& 0	& 0	& X	& 0	& 0	& 1	& 0	 \\
+$v_4$			& 1	& 0	& 0	& X	& 0	& 0	& 1	 \\
+$v_5$			& 0	& 1	& 0	& 0	& X	& 0	& 0	 \\
+$v_6$			& 1	& 1	& 1	& 0	& 0	& X	& 0	 \\
+$v_7$			& 0	& 0	& 0	& 1	& 0	& 0	& X	 \\
 \end{tabular}
 \caption{$\chi_{s,t}$ values for $\Phi^c(\Psi)$ in table \ref{tab:chi}}
 \label{tab:freq}
@@ -155,9 +150,9 @@ $v_7$			& 0	& 0	& 0	& 5	& 4	& 0	& X	 \\
 
 
 
-When we want to evaluate the utility of $\Psi$ we first calculate $\Phi^c(\Psi)$ for each \spathns. Table \ref{tab:chi} shows the set of sub-paths from the \spaths for each query Q1-Q6 from table \ref{tab:queries} (we assume all queries fit into the cache). Once we have all the sets of sub-paths from the cache content, we use equation \ref{eq:upsi} to union them together and obtain the set of unique sub-paths in the cache, $\Phi^c(\Psi)$ (see table \ref{tab:chi}). After we have obtained $\Phi^c(\Psi)$, we use equation \ref{eq:benefit} to calculate $\Gamma(\Psi)$, the total benefit we expect to have with the content in $\Psi$. With the $\Phi^c(\Psi)$ obtained, using $\chi_{s,t}$ values from table \ref{tab:freq}, $\Gamma(\Psi)$ would be 62 i.e. $4+3+\dotsb+3+5 = 62$, finding a value in table \ref{tab:freq} for all \spaths of $\Phi^c(\Psi)$ (Tab. \ref{tab:chi}).
+When we want to evaluate the utility of $\Psi$ we first calculate $\Phi(\spath)$ for each \spathns. Table \ref{tab:chi} shows the set of sub-paths from the \spaths for each query Q1-Q6 from table \ref{tab:queries} (we assume all queries fit into the cache). Once we have all the sets of sub-paths from the cache content, we use equation \ref{eq:upsi} to union them together and obtain the set of unique sub-paths in the cache, $\Phi^c(\Psi)$ (see table \ref{tab:chi}). After we have obtained $\Phi^c(\Psi)$, we use equation \ref{eq:benefit} to calculate $\Gamma(\Psi)$, the total benefit we expect to have with the content in $\Psi$. With $\Phi^c(\Psi)$ obtained, using $\chi_{s,t}$ values from table \ref{tab:freq}, $\Gamma(\Psi)$ would be 6 i.e. $\chi_{1,6}+\chi_{2,6}+\chi_{1,4}+\dotsb+\chi_{3,6} = 6$, finding a value in table \ref{tab:freq} for all \spaths of $\Phi^c(\Psi)$ (Tab. \ref{tab:chi}).
 
-When filling the cache, during the offline phase, potential \spath items are scored based the sum of $\chi_{s,t}$-values from sub-paths not already present in the cache. If we assume $SP_{1,6}$(Q1) is already in the cache and we are considering to insert either $SP_{2,6}$(Q2) or $SP_{4,7}$(Q4) next, then we first find the sub-paths for each query result, which is not already present in the cache. For Q2 it is $\{SP_{2,3},SP_{2,4},SP_{2,5},SP_{2,6}\}$ and for Q4 $\{SP_{4,7},SP_{5,7}\}$. When using the values for $\chi_{s,t}$ from table \ref{tab:freq} the utility of Q2 is $4+1+2+3=10$ and for Q4 $5+4=9$. In this case we would then insert Q2 as it represents the largest expected if inserted.
+When filling the cache, during the offline phase, potential \spath items are scored based the sum of $\chi_{s,t}$-values from sub-paths not already present in the cache. If we assume $SP_{1,6}$(Q1) is already in the cache and we are considering to insert either $SP_{2,6}$(Q2) or $SP_{4,7}$(Q4) next, then we first find the sub-paths for each query result, which is not already present in the cache. For Q2 it is $\{SP_{2,3},SP_{2,4},SP_{2,5},SP_{2,6}\}$ and for Q4 $\{SP_{4,7},SP_{5,7}\}$. When using the values for $\chi_{s,t}$ from table \ref{tab:freq} the utility of Q2 is $0+0+1+1=2$ and for Q4 $1+0=1$. In this case we would then insert Q2 as it represents the largest expected benifit if inserted into $\Psi$.
 
 \subsection{Hardness Analysis}
 Theoretical analysis showing how hard the problem is to solve for \spath caching.\\
@@ -165,10 +160,10 @@ show it is NP-Hard
  
 
 \subsection{Greedy algorithm}
-We will here introduce \salgo (Alg. \ref{alg:greedy}), the base idea of our greedy algorithm. First we will explain what each line of \salgo does, whereafter we will give an example to show how \salgo works on example input.
+We will here introduce \salgo (Alg. \ref{alg:greedy}), the base idea of our greedy algorithm. First we will explain what each line of \salgo does, where after we will give an example to show how \salgo works on example input.
 
-\salgo takes 3 arguments: $G(V,E)$, the graph representation of a map. $\mathbf{\Psi}$ the cache to be used (it is possible to imagine there could be more than one cache in case the \spath provider serve two disjoint areas like i.e. Europe and Japan). $\mathcal{B}$, the cache budget, states how many nodes $\Psi$ can contain before it is full.
-In \salgo (Alg. \ref{alg:greedy}), line 1, we first initialize \textbf{H} as a max-heap. Line 2-3 fills H (utility,\spath) pairs, with utility calculated using equation \ref{eq:score}. 
+\salgo takes 3 arguments: $G(V,E)$, the graph representation of a map. $\mathbf{\Psi}$, the cache to be used (it is possible to imagine there could be more than one cache in case the \spath provider serve two disjoint areas like i.e. Europe and Japan). $\mathcal{B}$, the cache budget, states how many nodes $\Psi$ can contain before it is full.
+In \salgons, line 1, we first initialize H as a max-heap. Line 2-3 fills H (utility,\spath) pairs, with utility calculated using equation \ref{eq:score}. 
 Equation \ref{eq:score} calculates the score of a \spathns, $sp$, based on the sub-paths of $sp$ which are not already present in the cache (Eq. \ref{eq:usp}).
 
 \begin{equation} \label{eq:usp}
@@ -186,11 +181,11 @@ In line 5 we assign the pair (utility, \spath) the the highest utility score to 
 
 In line 6 we update the utility value, $key_{max}$, to know its true utility in case it has changed due to a \spath insertion.
 
-Line 7-11 Implements a compare-and-update/insert loop, avoiding recalculation of all elements in \textbf{H} every round of the loop in line 4. This is necessary because the basis for calculating utility in equation \ref{eq:score} is all possible paths, except those paths, and their sub-paths, already in the cache ($\Psi$). This means that every time we add a \spath to the cache, the utility of some other candidates are likely to be reduced. The way it works is by comparing $key_{max}$ and key of the top element of H, H.TopKey, (line 7), if $key_{max}$ >  H.TopKey we add its \spath to the cache immediately (line 7-9), else we recalculate $key_{max}$ and add $\langle  key_{max},  SP_{max} \rangle$ back into H (line 10-11). This will in the worst case mean we have to recalculate all elements in H after a \spath insertion in $\Psi$, the cache. However, it is likely that the new (utility,\spath) pair with the highest utility score is still close to the top, meaning we save a lot of calculations/time. This works since utility scores can only be reduced, never increased.
+Line 7-11 Implements a compare-and-update/insert loop, avoiding recalculation of all elements in H every round of the loop in line 4. This is necessary because the basis for calculating utility in equation \ref{eq:score} is all possible paths, except those paths, and their sub-paths, already in the cache ($\Psi$). This means that every time we add a \spath to the cache, the utility of some other candidates are likely to be reduced. The way it works is by comparing $key_{max}$ and key of the top element of H, H.TopKey, (line 7), if $key_{max}$ >  H.TopKey we add its \spath to the cache immediately (line 7-9), else we recalculate $key_{max}$ and add $\langle  key_{max},  SP_{max} \rangle$ back into H (line 10-11). This will in the worst case mean we have to recalculate all elements in H after a \spath insertion in $\Psi$, the cache. However, it is likely that the new (utility,\spath) pair with the highest utility score is still close to the top, meaning we save a lot of calculations/time. This works since utility scores can only be reduced, never increased.
 
 
 \begin{lemma}\label{lem:addutil}
-The utility of a \spath will, when added to the cache, $\Psi$, always increase the utility of $\Psi$ by exactly the utility of \spath. This property can be expressed as such:
+The utility of a \spath will, when added to the cache, $\Psi$, always increase the utility of $\Psi$ by exactly the utility of \spathns:
 
 $S(\chi, \spath, \Psi) = \Gamma(\Psi \cup \{\spath\}) - \Gamma(\Psi)$
 
@@ -201,7 +196,6 @@ $S(\chi, \spath, \Psi) = \Gamma(\Psi \cup \{\spath\}) - \Gamma(\Psi)$
 When calculating the utility of a \spath $sp$: $S(\chi, sp, \Psi)$ only the set of sub-paths in $sp$ disjoint from $\Phi^c(\Psi)$, the set of all unique paths in $\Psi$, is consider as basis for the calculation. 
 
 As there is no overlap between \spaths forming the basis for the utility of $\Psi$ and the set of \spaths forming the basis for the utility of $sp$, then any positive utility value of $sp$ can only be added to the $\Psi$ utility value. 
-
 \end{proof}
 
 
@@ -241,9 +235,11 @@ $\dots$ & $\dots$ & $\dots$ & $\dots$ & $\dots$ \\\hline
 
 We have previously introduced the notion of utility and shown how we can use the frequency of \spaths (Tab. \ref{tab:freq}) on a map to calculate the utility of an individual \spathns. 
 
-We will make it clear why assuming a uniform destribution of \spaths is an insufficient strategy to base utility calculations on.
+We will make it clear why assuming a uniform distribution of \spaths is an insufficient strategy to base utility calculations on.
 
 We will make it show how we extract the frequency information, the statistics, of \spaths on a map. We will show how we use these statistics in order to generate \spath candidates for insertion to the cache, $\Psi$.
+
+The extraction of statistics extraction and selection of candidate paths is part E of figure \ref{fig:routequery}.
 
 \subsubsection{Statistics Extraction}\label{sec:statextract}
 
@@ -254,26 +250,49 @@ We will make it show how we extract the frequency information, the statistics, o
 %For any two nodes in such SP, insert an entry in "ze table"
 %EXAMPLE
 
-The purpose of statistics extraction is to build a frequency table like table \ref{tab:freq}, but build from historical information about user movement, not $\Phi^c(\Psi)$, the cache content.
+The purpose of statistics extraction is to build a frequency table like table \ref{tab:freq}.
 
-We extracted our set of start- and end-points pairs from the historical workload i.e. previously entered \spath queries. We denote this set $\Omega$. We use $\Omega$ to build the $\chi$-table similar to table \ref{tab:freq}, with $v_1,v_2,\ldots,v_n$ on both column and row, n being the number of vertices in the map, $G(V,E)$. We first initialize all values in the $\chi$-table (Tab. \ref{tab:chitable}) to zero and then for each pair $(s,t) \in \Omega$ we increment the count in cell $s,t$ and $t,s$ in the $\chi$-table by one.
+There are two extremes when considering what to build table \ref{tab:freq} from. 
+In the first extreme we can assume a uniform distribution of all possible queries, meaning that the \spaths chosen by \salgo for the cache will be evenly distributed over the entire map. Due to the number of possible paths on a map, in the order of $\frac{v^2}{2}$ possible paths on the number of vertices in a map, a uniform distribution will pick too many low quality candidates (\spaths very few users will submit queries for in the future) for the cache. If historical queries are used we can avoid many low quality \spathsns. We do however need to be sure we have enough historical data since candidates for the cache can only be chosen from the exact member of the set of historical workload. If the historical dataset is not large enough we risk overfitting the cache content to the historical dataset, thereby including low quality \spaths too. Between the two options, using historical information is the best candidate. We will use historical workload in this section.
 
-Once we have inserted all pairs from $\Omega$ into table \ref{tab:chitable} we have finished extracting our statistics, the result of which is the complete $\chi$-table.
+The second extreme is to build table \ref{tab:freq} from historical information about user queries, resulting in \salgo only adding paths to $\Psi$ which has been observed in the past. We extracted our set of start- and end-points pairs from the historical workload i.e. previously entered \spath queries. We denote this set $\Omega$. We use $\Omega$ to build table \ref{tab:freq} with $v_1,v_2,\ldots,v_n$ on both column and row, n being the number of vertices in the map, $G(V,E)$. We first initialize all values in the table to zero and then for each pair $(s,t) \in \Omega$ we increment the count in cell $s,t$ and $t,s$ by one.
 
-%EXAMPLE
+Using historical queries from table \ref{tab:freq} we collect all the start-/end-pairs into $\Omega$ ($\{(1,6),(2,6),(1,7),(2,7)\}$). We then initialize table \ref{tab:chiex} with all zeros (Tab. \ref{tab:chiex}(top)) and add all the pairs from $\Omega$ into table \ref{tab:chiex} (Tab. \ref{tab:chiex}(bottom).)
+
 \begin{table}
 \center
-\begin{tabular}{|l||l|l|l|l|l|}
-\textbf{$\chi {^s/_t}$}	& $v_1$		& $v_2$		& $\cdots$	& $v_{n-1}$	& $v_n$	\\\hline
-$v_1$			& X		& 0		& $\cdots$	& 0		& 0	 \\
-$v_2$			& 0		& X		& $\cdots$	& 0		& 0	 \\
-$\vdots$		& $\vdots$	& $\vdots$	& $\ddots$	& $\vdots$	& $\vdots$ \\
-$v_{n-1}$		& 0		& 0		& $\cdots$	& X		& 0	 \\
-$v_n$			& 0		& 0		& $\cdots$	& 0		& X	 \\
+\begin{tabular}{|l||l|l|l|l|l|l|l|}
+\textbf{$\chi {^s/_t}$}	& $v_1$	& $v_2$	& $v_3$	& $v_4$	& $v_5$	& $v_6$	& $v_7$ \\\hline
+$v_1$			& X	& 0	& 0	& 0	& 0	& 0	& 0	 \\
+$v_2$			& 0	& X	& 0	& 0	& 0	& 0	& 0	 \\
+$v_3$			& 0	& 0	& X	& 0	& 0	& 0	& 0	 \\
+$v_4$			& 0	& 0	& 0	& X	& 0	& 0	& 0	 \\
+$v_5$			& 0	& 0	& 0	& 0	& X	& 0	& 0	 \\
+$v_6$			& 0	& 0	& 0	& 0	& 0	& X	& 0	 \\
+$v_7$			& 0	& 0	& 0	& 0	& 0	& 0	& X	 \\\hline
 \end{tabular}
-\caption{$\chi$-table after initialization.}
-\label{tab:chitable}
+
+\vspace{1em}
+$\Downarrow$
+\vspace{1em}
+
+\begin{tabular}{|l||l|l|l|l|l|l|l|}
+\textbf{$\chi {^s/_t}$}	& $v_1$	& $v_2$	& $v_3$	& $v_4$	& $v_5$	& $v_6$	& $v_7$ \\\hline
+$v_1$			& X	& 0	& 0	& 0	& 0	& 1	& 1	 \\
+$v_2$			& 0	& X	& 0	& 0	& 0	& 1	& 1	 \\
+$v_3$			& 0	& 0	& X	& 0	& 0	& 0	& 0	 \\
+$v_4$			& 0	& 0	& 0	& X	& 0	& 0	& 0	 \\
+$v_5$			& 0	& 0	& 0	& 0	& X	& 0	& 0	 \\
+$v_6$			& 1	& 1	& 0	& 0	& 0	& X	& 0	 \\
+$v_7$			& 1	& 1	& 0	& 0	& 0	& 0	& X	 \\\hline
+\end{tabular}
+\caption{$\chi_{s,t}$ values for $\Omega$ pairs from table \ref{tab:queries2} queries.}
+\label{tab:chiex}
 \end{table}
+
+
+Once we have inserted all pairs from $\Omega$ into table \ref{tab:chiex} we have finished extracting our statistics, the result of which is the complete table \ref{tab:chiex}.
+
 
 %------------------------------------------------------------------
 %------------------------------------------------------------------
@@ -281,7 +300,12 @@ $v_n$			& 0		& 0		& $\cdots$	& 0		& X	 \\
 
 When we generate all possible \spath candidates, or generate \spath candidates from the same data source as the statistics were generated from, there is a high chance of overfitting the \spaths to the statistics. By trying to identify popular regions, in stead of specific paths, we can work at a higher abstraction level and more easily capture the tendencies in the historical workload. A tendency could e.g. be that most people drive from a residential area to an industrial area twice a day for work. If we only look at the raw data we can only see that there are many people sharing some set of edges in their routes, but since people usually live in the own house, or different apartment buildings, their starting and end points will be different and we won't capture that they all are going from (generally) the same place to the same area. Having a higher level understanding of popular regions on the map allows us to insert more paths into the cache which serves as connections between two popular regions.
 
-By dividing the map into partitions we can record the statistics for these partitions in stead of the individual \spathsns. Using the example queries in table \ref{tab:queries2} we can easily see that the 4 queries are almost identical, differing by at most 2 vertices. By using our regular statistics method we only know that $v_3,v_4,v_5$ are very popular, but if we use the map/graph in figure \ref{fig:fillcache} and perform the statistic on the regions in stead, then we get something like table \ref{tab:rchitable}. We still check the frequency for each pair in a \spathns, but we now increment a region cell in stead of a vertex cell in \ref{tab:rchitable}.
+By dividing the map into partitions we can record the statistics for these partitions in stead of the individual \spathsns. Using the example queries in table \ref{tab:queries2} we can easily see that the 4 queries are almost identical, differing by at most 2 vertices. By using our regular statistics method we only know that $v_3,v_4,v_5$ are very popular, but if we use the map/graph in figure \ref{fig:fillcache} and perform the statistic on the regions in stead, then we get something like table \ref{tab:rchitable}. We still check the frequency for each pair in a 
+\spathns, but we now increment a region cell in stead of a vertex cell in \ref{tab:rchitable}.
+
+Using the queries in table \ref{tab:queries2} with figure \ref{fig:fillcache} we get the region-to-vertex set relationship in table \ref{tab:vperregion}. Using table \ref{tab:vperregion} we can transform the start-/end-pairs into region pairs. Doing this we can build the region version of table \ref{tab:freq} (Tab. \ref{tab:rchitable}). To generate candidates we generate one possible $\Psi$ candidate from each positive entry in table \ref{tab:rchitable} by randomly choosing a start-/end-node from each regions pairs vertex sets e.i. one vertex from each region (Tab. \ref{tab:vperregion}).
+Using regions does not change \salgons, regions are only used in the choosing of candidates in line 2 \& 3.
+
 
 
 \begin{table}
@@ -298,20 +322,34 @@ $Q_{2,7} =$ 	& $\{v_2,v_3,v_4,v_5,v_7\}$ \\
 
 \begin{table}
 \center
-\begin{tabular}{|l||l|l|l|}
-\textbf{$\chi {^s/_t}$}	& $R_1$		& $R_2$		& $R_3$	\\\hline
-$R_1$			& X		& 0		& 0	 \\
-$R_2$			& 0		& X		& 0	 \\
-$R_3$			& 0		& 0		& X	 \\
+\begin{tabular}{ll}
+$R_1 :$ 	& $\{v_2,v_3\}$\\
+$R_2 :$ 	& $\{v_1,v_4\}$ \\
+$R_3 :$ 	& $\{v_5,v_7\}$ \\
+$R_4 :$ 	& $\{v_6,v_8\}$ \\
 \end{tabular}
-\caption{$\chi$-table after initialization.}
+\caption{Regional vertex sets}
+\label{tab:vperregion}
+\end{table}
+
+
+\begin{table}
+\center
+\begin{tabular}{|l||l|l|l|l|}
+\textbf{$\chi {^s/_t}$}	& $R_1$		& $R_2$		& $R_3$		& $R_4$\\\hline
+$R_1$			& 0		& 0		& 1		& 1 \\
+$R_2$			& 0		& 0		& 1	 	& 1 \\
+$R_3$			& 1		& 1		& 0	 	& 0 \\
+$R_4$			& 1		& 1		& 0	 	& 0 \\
+\end{tabular}
+\caption{$\chi$ region table produced using query workload from table \ref{tab:queries2}.}
 \label{tab:rchitable}
 \end{table}
 
 \begin{figure}[bht]
   \center
         \includegraphics[width=0.45\textwidth]{figures/mappartition}
-        \caption{Map Partitioned into 3 areas.}
+        \caption{Map Partitioned into 4 areas.}
   \label{fig:fillcache}
 \end{figure}
 
@@ -326,9 +364,9 @@ For partitioning the map we use kD-tree, an existing partition method.
 
 Once we have crated the $\chi$-table we need candidate \spaths for insertion into the cache. There are two ways we can generate these candidate. The first way being to generate candidates directly from the map $G(V,E)$, and the second method being based on additional historical workload to produce the candidates.
 
-We can generate candidates for $\Psi$ by finding all possible \spath in $G(V,E)$ as described in algorithm \ref{alg:greedy}. Generating all \spath possible on $G(V,E)$ is quite expensive when considering the possible number of candidates vs. the size of $\mathcal{B}$ which would usually be a lot smaller. One straight forward optimization to this would be to use only those \spath which has a non-zero entry in table \ref{tab:chitable}. The modified code of algorithm \ref{alg:greedy} is shown in the algorithm \ref{alg:chicand}. Another method we can use is sampling, where we just generate a subset of possible candidates. By choosing nodes evenly distributed on the map we can make sure the subset of \spaths covers the map.
+We can generate candidates for $\Psi$ by finding all possible \spath in $G(V,E)$ as described in algorithm \ref{alg:greedy}. Generating all \spath possible on $G(V,E)$ is quite expensive when considering the possible number of candidates vs. the size of $\mathcal{B}$ which would usually be a lot smaller. One straight forward optimization to this would be to use only those \spath which has a non-zero entry in table \ref{tab:freq}. The modified code of algorithm \ref{alg:greedy} is shown in the algorithm \ref{alg:chicand}. Another method we can use is sampling, where we just generate a subset of possible candidates. By choosing nodes evenly distributed on the map we can make sure the subset of \spaths covers the map.
 
-\begin{algorithm}[H!bt]
+\begin{algorithm} [H!bt]
 \dontprintsemicolon
 \SetVline
 
@@ -339,7 +377,7 @@ We can generate candidates for $\Psi$ by finding all possible \spath in $G(V,E)$
     H.push(S$(\chi, \spath_{s,t}, \Psi), \spath_{s,t}$) \;
 }
 
-\caption{\salgons($G(V,E), \Psi, \mathcal{B}$) -- Generating candidates from $\chi$-table}
+\caption{\salgons($G(V,E), \Psi, \mathcal{B}, \chi$) -- Using non-zero entries from table \ref{tab:freq} (Replaces line 2 \& 3 in algorithm \ref{alg:greedy})}
 \label{alg:chicand}
 \end{algorithm}
 
@@ -347,7 +385,7 @@ We can generate candidates for $\Psi$ by finding all possible \spath in $G(V,E)$
 Another way to generate candidates for the cache is to split the original dataset before using it for generating statistics (Sec. \ref{sec:statextract}). 
 After splitting the dataset we can use one part to generate candidates. In algorithm \ref{alg:greedy}, we replace the requirement in line 2 to use all possible \spathsns, with a requirement to only calculated the scores on the set of \spaths we have extracted (See alg. \ref{alg:hiscand}.
 
-\begin{algorithm}[H!bt]
+\begin{algorithm} [H!bt]
 \dontprintsemicolon
 \SetVline
 
@@ -361,15 +399,48 @@ $\langle SP_{candidates}, SP_{statistics} \rangle \leftarrow Split({SP})$
     H.push(S$(\chi, \spath_{s,t}, \Psi), \spath_{s,t}$) \;
 }
 
-\caption{\salgons($G(V,E), \Psi, \mathcal{B}$) -- Generating candidates from historical data}
+\caption{\salgons($G(V,E), \Psi, \mathcal{B}, \chi$) -- Generating candidates from historical data splitting dataset into two disjoint sets. (Replaces line 2 \& 3 in algorithm \ref{alg:greedy})}
 \label{alg:hiscand}
 \end{algorithm}
 
 To generate \spath candidates for $\Psi$ by finding all possible \spath on a map $G(V,E)$ is a relatively simple matter, all we have to do is execute a \spath query for all possible combinations of vertices in $V$, leading to $\frac{|V|^2}{2}$ Candidates.
 
-To restrict the candidate generation to only include those who has a non-zero entry in the $\chi$-table means that we will exclude any pair of vertices which does not have a non-zero entry in table \ref{tab:chitable}. We generate candidates as before, but only consider any pair with a non-zero entry in the $\chi$-table.
+To restrict the candidate generation to only include those who has a non-zero entry in table \ref{tab:freq} we will exclude any pair of vertices which does not have a non-zero entry in table \ref{tab:freq}. We generate candidates as before, but only consider any pair with a non-zero entry in table \ref{tab:freq}.
 
 If we want to use sampling we can simply pick random pairs of vertices until we have enough candidates. We assume the random function will uniformly pick vertices around the map, so the sampling method still produce a representative set of candidates covering the map.
+
+
+\begin{algorithm} [H!bt]
+\dontprintsemicolon
+\SetVline
+
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}\SetKw{Return}{return}
+
+\Input
+{
+
+$G(V,E), \Psi, \mathcal{B}, \chi$
+}
+
+Partition workload into $SP_{candidates}$ \& $SP_{statistics}$ \;
+
+Build regions on G(V,E) \;
+
+Build the table R - holds the vertex sets for each region \;
+
+use $SP_{statistics}$ with R to build statistics using regions. \;
+
+
+\ForAll{$(R_s,R_t) | (R_s,R_t) \in R, R(R_s) \in V, R(R_t) \in V, (R(R_s),R(R_t)) \exists SP_{candidates}$} 
+{
+    generate candidate \;
+}
+
+
+\caption{Build Cache Statistics}
+\label{alg:buildstatis}
+\end{algorithm}
+
 
 
 \subsection{Cache Representations and Cache Concepts} \label{subsec:cacherepresentatons}
