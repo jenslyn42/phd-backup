@@ -445,13 +445,28 @@ If we have a cache with $SP_{1,6},SP_{2,6},$ and $SP_{1,4}$ already in the cache
 
 We will use this representation as the baseline for goal 2 when comparing the improvement when using any of the following cache representation ideas.
 
+\begin{figure}[hbt]
+  \center
+        \includegraphics[width=0.45\textwidth]{figures/cachearray.pdf}
+        \caption{Simple array of paths.}
+  \label{fig:cachearray}
+\end{figure}
+
+
 \subsubsection{Simple array of paths inverted list} - solves goal 2, reduces the query time of the cache.\\
 A simple, yet very effective, way to improve the search time of a cache represented by a simple array is to add an inverted list on top of the cache. We add an inverted list with node ids as keys and values being a list of array indices which holds paths containing specific node ids. By using such an inverted list we just need to do the intersection between the lists retrieved by querying the inverted list with the start and target node ids. 
 
+\begin{figure}[hbt]
+  \center
+        \includegraphics[width=0.45\textwidth]{figures/cachearrayinvertlist.pdf}
+        \caption{Simple array of paths, accessed by inverted list.}
+  \label{fig:cacheinvertlist}
+\end{figure}
 
 \textbf{*example*}
 
 \subsubsection{Graph representation} - solves goal 1, allows for more paths in cache, which should translate more cache hits.
 
 \subsubsection{Sharing sub-paths} - solves goal 1, allows for more paths in cache, translating to more cache hits. Unfortunately has a negative impact on goal 2 as it introduces some overhead in query time.
+
 
