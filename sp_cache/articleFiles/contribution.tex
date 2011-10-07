@@ -430,20 +430,24 @@ To generate \spath candidates for $\Psi$ by finding all possible \spath on a map
 
 To restrict the candidate generation to only include those who has a non-zero entry in table \ref{tab:freq} we will exclude any pair of vertices which does not have a non-zero entry in table \ref{tab:freq}. We generate candidates as before, but only consider any pair with a non-zero entry in table \ref{tab:freq}.
 
-If we want to use sampling we can simply pick random pairs of vertices until we have enough candidates. We assume the random function will uniformly pick vertices around the map, so the sampling method still produce a representative set of candidates covering the map.
+If we use sampling we can simply pick random pairs of vertices until we have enough candidates. We assume a uniform random function choosing vertices uniformly distributed on the map, so the sampling method still produce a representative set of candidates covering the map.
 
 Regardless of how the candidates are generated in algorithm \ref{alg:greedy}, it does not affect the main part of the algorithm, only line 2-3. We will be using both sampling from randomly generated candidates as well as split workload. This concludes our implementation of line 5-6 of algorithm \ref{alg:buildstatis}
 
 
 \subsection{Cache Representations and Cache Concepts} \label{subsec:cacherepresentatons}
-How the cache is stored, and how we search it, is crucial to the performance of a cache. We will present the basic, naive, approach as well as 3 ideas for improvement.
+The cache storage representation, and the manner in which we search it for cache hits, is crucial to the performance of a cache. We will present the basic, naive, approach as well as 3 ideas for improvement.
 % 
-\subsubsection{Simple array of paths}% - baseline for goal 2, unoptimized and expensive to use.
-The simplest way to represent a cache is a simple array of paths. This representation will we expensive to search since we may need to search all paths in the cache, akin to a double for loop, every time we want to check if an item is in the cache.
+\subsubsection{Simple array of paths}
+The simplest way to represent a cache is a simple array of paths (Fig. \ref{fig:cachearray}). This representation is expensive to search since we need to search each individual path in the cache to check for a cache hit. The search procedure is akin to a nested for-loop, every time we want to check if an item is in the cache. We will use this representation as a baseline when comparing optimizations to handle goal \ref{item:goal2} (section \ref{subsec:goals}).
 
-If we have a cache with $SP_{1,6},SP_{2,6},$ and $SP_{1,4}$ already in the cache and $SP_{4,7}$ is received, then we need to search the cache to see if we can get a cache hit. Since there can be no cache hit for $SP_{4,7}$ we need to scan all nodes for all paths, which would be 13 in this example (length of $SP_{1,6},SP_{2,6},$, $SP_{1,4}$, see table \ref{tab:queries}).
+In the example shown in Figure \ref{fig:cachearray} we submit the query $Q_{2,4}$ to the cache (Fig \ref{fig:cachearray}A) 
 
-We will use this representation as the baseline for goal 2 when comparing the improvement when using any of the following cache representation ideas.
+\begin{itemize}
+\item Short explanation, mention this is naive basic cache represention.
+\item baseline for goal 2, unoptimized and expensive to use.
+\item main part of explanation carried by example tied to figure.
+\end{itemize}
 
 \begin{figure}[hbt]
   \center
@@ -453,8 +457,14 @@ We will use this representation as the baseline for goal 2 when comparing the im
 \end{figure}
 
 
-\subsubsection{Simple array of paths inverted list} - solves goal 2, reduces the query time of the cache.\\
-A simple, yet very effective, way to improve the search time of a cache represented by a simple array is to add an inverted list on top of the cache. We add an inverted list with node ids as keys and values being a list of array indices which holds paths containing specific node ids. By using such an inverted list we just need to do the intersection between the lists retrieved by querying the inverted list with the start and target node ids. 
+\subsubsection{Simple array of paths inverted list}
+%A simple, yet very effective, way to improve the search time of a cache represented by a simple array is to add an inverted list on top of the cache. We add an inverted list with node ids as keys and values being a list of array indices which holds paths containing specific node ids. By using such an inverted list we just need to do the intersection between the lists retrieved by querying the inverted list with the start and target node ids. 
+
+\begin{itemize}
+\item refer to previous section and shortly explain how inverted list is used with the array.
+\item mention  - solves goal 2, reduces the query time of the cache.
+\item main part of explanation carried by example tied to figure.
+\end{itemize}
 
 \begin{figure}[hbt]
   \center
@@ -463,10 +473,44 @@ A simple, yet very effective, way to improve the search time of a cache represen
   \label{fig:cacheinvertlist}
 \end{figure}
 
-\textbf{*example*}
 
-\subsubsection{Graph representation} - solves goal 1, allows for more paths in cache, which should translate more cache hits.
+\subsubsection{Graph representation \& Sharing sub-paths} - solves goal 1, allows for more paths in cache, which should translate more cache hits.
 
-\subsubsection{Sharing sub-paths} - solves goal 1, allows for more paths in cache, translating to more cache hits. Unfortunately has a negative impact on goal 2 as it introduces some overhead in query time.
+\begin{figure}[hbt]
+  \center
+        \includegraphics[width=0.45\textwidth]{figures/cachegraph}
+        \caption{Simple array of paths, accessed by inverted list.}
+  \label{fig:cachegraph}
+\end{figure}
 
+\begin{itemize}
+\item Explain graph representation.
+    \begin{itemize}
+    \item how are paths represented
+    \item how is the search performance of the cache compared to previous array approach
+    \item solves goal 1, allows for more paths in cache, which should translate more cache hits.
+    \end{itemize}
+\item Explain subpath sharing.
+    \begin{itemize}
+    \item solves goal 1, allows for more paths in cache, translating to more cache hits. Unfortunately has a negative impact on goal 2 as it introduces some overhead in query time.
+    \item very compact representation
+    \end{itemize}
+\item most of the explanation should be tied to figure \ref{fig:cachegraph}
+\end{itemize}
 
+\begin{table}
+\center
+\begin{tabular}{|l|l|l|}\hline
+Vertex 	& Compressed list & Saved Vertex space \\\hline
+$v_1$ 	& $\langle 1, 3 \rangle$ 	& 0 \\\hline
+$v_2$ 	& $\langle2, 5 \rangle$ 	& 0 \\\hline
+$v_3$ 	& $\langle 1-3, 5-6 \rangle$ 	& 1 \\\hline
+$v_4$ 	& $\langle 1-6 \rangle$ 	& 4 \\\hline
+$v_5$ 	& $\langle 1-2, 4-6 \rangle$ 	& 1 \\\hline
+$v_6$ 	& $\langle 1-2, 6 \rangle$ 	& 0 \\\hline
+$v_7$ 	& $\langle 4 \rangle$ 		& 0 \\\hline
+
+\end{tabular}
+\caption{Compressed list content and the space saved by using them.}
+\label{tab:compressedlist}
+\end{table}
