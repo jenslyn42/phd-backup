@@ -436,18 +436,18 @@ Regardless of how the candidates are generated in algorithm \ref{alg:greedy}, it
 
 
 \subsection{Cache Representations and Cache Concepts} \label{subsec:cacherepresentatons}
-The cache storage representation, and the manner in which we search it for cache hits, is crucial to the performance of a cache. We will present the basic, naive, approach as well as 3 ideas for improvement.
+The cache storage representation, and the manner in which we search it for cache hits, is crucial to the performance of a cache. We will present the basic, naive, approach as well as several ideas for improvement.
 % 
 \subsubsection{Simple array of paths}
-The simplest way to represent a cache is a simple array of paths (Fig. \ref{fig:cachearray}). This representation is expensive to search since we need to search each individual path in the cache to check for a cache hit. The search procedure is akin to a nested for-loop, every time we want to check if an item is in the cache. We will use this representation as a baseline when comparing optimizations to handle goal \ref{item:goal2} (section \ref{subsec:goals}).
+The simplest way to represent a cache is a simple array of paths (Fig. \ref{fig:cachearray}). This representation is expensive to search since we need to search each individual path in the cache to check for a cache hit. The search procedure is akin to a nested for-loop, every time we want to check if an item is in the cache. We will use this representation as a baseline for comparing optimizations to handle goal \ref{item:goal2} (section \ref{subsec:goals}).
 
-In the example shown in Figure \ref{fig:cachearray} we submit the query $Q_{2,4}$ to the cache (Fig \ref{fig:cachearray}A) 
+In the example shown in Figure \ref{fig:cachearray} we submit the query $Q_{2,4}$ to the cache (Fig. \ref{fig:cachearray}A). To search the cache we first scan $\Psi_1$ (Fig \ref{fig:cachearray}B) to see if both $v_2$ and $v_4$ are in the cached \spath result \spathns$_{1,3}$. The result is empty so we scan $\Psi_{2}$, which again does not contain $v_2$ and $v_4$, meaning we did not find a cache hit. When we scan $\Psi_3$ we find both $v_2$ and $v_4$, so we stop searching and return the result $\langle v_2,v_3v_4 \rangle$ from $\Psi_3$ (Fig \ref{fig:cachearray}C). Had the result of $Q_{2,4}$ not been in the cache we would have scanned all elements $\Psi_1 - \Psi_6$ before calling a \spath algorithm to calculate the result.
 
-\begin{itemize}
-\item Short explanation, mention this is naive basic cache represention.
-\item baseline for goal 2, unoptimized and expensive to use.
-\item main part of explanation carried by example tied to figure.
-\end{itemize}
+% \begin{itemize}
+% \item Short explanation, mention this is naive basic cache representation. 
+% \item baseline for goal 2, unoptimized and expensive to use.
+% \item main part of explanation carried by example tied to figure.
+% \end{itemize}
 
 \begin{figure}[hbt]
   \center
@@ -460,48 +460,67 @@ In the example shown in Figure \ref{fig:cachearray} we submit the query $Q_{2,4}
 \subsubsection{Simple array of paths inverted list}
 %A simple, yet very effective, way to improve the search time of a cache represented by a simple array is to add an inverted list on top of the cache. We add an inverted list with node ids as keys and values being a list of array indices which holds paths containing specific node ids. By using such an inverted list we just need to do the intersection between the lists retrieved by querying the inverted list with the start and target node ids. 
 
-\begin{itemize}
-\item refer to previous section and shortly explain how inverted list is used with the array.
-\item mention  - solves goal 2, reduces the query time of the cache.
-\item main part of explanation carried by example tied to figure.
-\end{itemize}
+If we add an inverted list, holding for each vertex a list of paths which includes the vertex in its path (Fig. \ref{fig:cacheinvertlist}), we can reduce the query time notably compared to searching the cache directly. We consider adding an inverted list as it is an effective means to reduce \cet spent on query execution and thereby fulfill goal \ref{item:goal2} from section \ref{subsec:goals}.
+
+In the example shown in figure \ref{fig:cachearray} the start- and end-point of the query $Q_{2,4}$ (Fig. \ref{fig:cacheinvertlist}A) are used to retrieve the list of paths that vertex $v_2$ and $v_4$ are included in (Fig. \ref{fig:cacheinvertlist}B). If the intersection of the two lists are non-empty we have a cache hit. In figure \ref{fig:cacheinvertlist} there are two candidates which can provide the answer, namely $\Psi_3$ and $\Psi_4$. If we have more than one candidate we simply choose the first candidate and return the query answer from that item (Fig. \ref{fig:cacheinvertlist}C).
+
+% 
+% \begin{itemize}
+% \item refer to previous section and shortly explain how inverted list is used with the array.
+% \item mention  - solves goal 2, reduces the query time of the cache.
+% \item main part of explanation carried by example tied to figure.
+% \end{itemize}
 
 \begin{figure}[hbt]
   \center
-        \includegraphics[width=0.45\textwidth]{figures/cachearrayinvertlist.pdf}
+        \includegraphics[width=0.50\textwidth]{figures/cachearrayinvertlist.pdf}
         \caption{Simple array of paths, accessed by inverted list.}
   \label{fig:cacheinvertlist}
 \end{figure}
 
 
-\subsubsection{Graph representation \& Sharing sub-paths} - solves goal 1, allows for more paths in cache, which should translate more cache hits.
+\subsubsection{Graph representation \& Sharing sub-paths}% - solves goal 1, allows for more paths in cache, which should translate more cache hits.
+
+An alternative way to represent the cache of \spaths is as a graph (Fig. \ref{fig:cachegraph}). The advantage of representing the cache as a graph is that each vertex is only represented once. We maintain a list of path ids with each vertex, with an entry for each cache item containing the vertex. 
+To know whether the cache can answer a query is still easy, simply check whether the intersection of the \spath id set from query's start- and end-vertex is non empty. Finding the actual answer does however take a little more work, as we need to traverse the graph along the \spath query answer to know which vertices are in the list. This searches $\sum_{v_0}^{v_{|\spathns |}} v_i*|e_i|$ vertices, where $v_i \in V$ is a vertex on the \spath answer and $|e_i| \in E $ is the edge degree of $v_i$.
+
+Figure \ref{fig:cachegraph} illustrates how the query $Q_{1,5}$ is queried on the graph representation of the cache. First we check if the \spath id set intersection of $v_1$ and $v_5$ is non-empty (Fig. \ref{fig:cachegraph}B). Since there is a \spath (path 1) in the cache which can answer $Q_{1,5}$, we will do a search for all vertices between $v_1$ and $v_5$ which also includes path 1 in their \spath id set (Fig. \ref{fig:cachegraph}C). The edges taken when doing this search is shown with bold arrows. $v_2$ is also examined since it is connected to the actual path, but is ignored afterwards as $v_2$ does not have \spath id 1 in its set. Note that since both $v_1$ and $v_5$ has id 1 in their \spath id set, then there will always be a path between them. Once we have traversed the graph and found the answer to $Q_{1,5}$ we return the result (Fig. \ref{fig:cachegraph}D).
+
+As the graph representation is very compact and only represents each vertex once, it allows for a high degree of sub-path sharing, which directly translates into more space available for more paths in the cache. As such the goal of this representation is to reduce the overall \cet used on \spath calculation (Goal \ref{item:goal1} in section \ref{subsec:goals}) by increasing the number of paths in the cache so fewer queries may need to be calculated.
+
+The cache query time is slightly worse than when using an array with an inverted list. The graph representation overall fulfills goal \ref{item:goal1} by allowing more paths in the cache, but it does unfortunately also impose some overhead to the query answer time, as each answer needs to be found in the graph (Fig. \ref{fig:cachegraph}C) once it has been confirmed (Fig. \ref{fig:cachegraph}B).
 
 \begin{figure}[hbt]
   \center
         \includegraphics[width=0.45\textwidth]{figures/cachegraph}
-        \caption{Simple array of paths, accessed by inverted list.}
+        \caption{Graph representation of \spath cache. Inserted paths from table \ref{tab:queries}}
   \label{fig:cachegraph}
 \end{figure}
 
-\begin{itemize}
-\item Explain graph representation.
-    \begin{itemize}
-    \item how are paths represented
-    \item how is the search performance of the cache compared to previous array approach
-    \item solves goal 1, allows for more paths in cache, which should translate more cache hits.
-    \end{itemize}
-\item Explain subpath sharing.
-    \begin{itemize}
-    \item solves goal 1, allows for more paths in cache, translating to more cache hits. Unfortunately has a negative impact on goal 2 as it introduces some overhead in query time.
-    \item very compact representation
-    \end{itemize}
-\item most of the explanation should be tied to figure \ref{fig:cachegraph}
-\end{itemize}
+% \begin{itemize}
+% \item Explain graph representation.
+%     \begin{itemize}
+%     \item how are paths represented
+%     \item how is the search performance of the cache compared to previous array approach
+%     \item solves goal 1, allows for more paths in cache, which should translate more cache hits.
+%     \end{itemize}
+% \item Explain sub-path sharing.
+%     \begin{itemize}
+%     \item solves goal 1, allows for more paths in cache, translating to more cache hits. Unfortunately has a negative impact on goal 2 as it introduces some overhead in query time.
+%     \item very compact representation
+%     \end{itemize}
+% \item most of the explanation should be tied to figure \ref{fig:cachegraph}
+% \end{itemize}
+
+An optimization to the graph representation is to not directly represent each path id in the path id set of each vertex. We can do this by collapsing each continues sequence of path ids, which then again allow for even more ids to be added to the cache. Table \ref{tab:compressedlist} shows how the id sets for each vertex in figure \ref{fig:cachegraph} can be collapsed and what the savings are in terms of how many more path ids we have space for.
+
+
+
 
 \begin{table}
 \center
 \begin{tabular}{|l|l|l|}\hline
-Vertex 	& Compressed list & Saved Vertex space \\\hline
+Vertex 	& Compressed list & Num. path ids saved \\\hline
 $v_1$ 	& $\langle 1, 3 \rangle$ 	& 0 \\\hline
 $v_2$ 	& $\langle2, 5 \rangle$ 	& 0 \\\hline
 $v_3$ 	& $\langle 1-3, 5-6 \rangle$ 	& 1 \\\hline
