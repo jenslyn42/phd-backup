@@ -216,12 +216,12 @@ In round 4 Q5 still has a utility of 7, but after recalculation at line 6 it bec
 \center
 \begin{tabular}{| l| l| l| l| l|}\hline
 \small \backslashbox{Query}{Round} 	& 1 	& 2 	& 3 	& 4 	\\\hline
-Q1: ($SP_{1,6}$)		& \zebox{42} 	& -	& -  	& - 	\\\hline
-Q2: ($SP_{2,6}$)		& 42 	& 10	& \zebox{10}	& - 	\\\hline
+% Q1: ($SP_{1,6}$)		& \zebox{42} 	& -	& -  	& - 	\\\hline
+% Q2: ($SP_{2,6}$)		& 42 	& 10	& \zebox{10}	& - 	\\\hline
 Q3: ($SP_{1,4}$)		& 11	& 11	& 0	& 0	\\\hline
 Q4: ($SP_{4,7}$)		& 15	& \zebox{11}	& -	& - 	\\\hline
-Q5: ($SP_{2,5}$)		& 26	& 7	& 7	& 0	\\\hline
-Q6: ($SP_{3,6}$)		& 32	& 0	& 0	& 0	\\\hline
+% Q5: ($SP_{2,5}$)		& 26	& 7	& 7	& 0	\\\hline
+% Q6: ($SP_{3,6}$)		& 32	& 0	& 0	& 0	\\\hline
 $\dots$ & $\dots$ & $\dots$ & $\dots$ & $\dots$ \\\hline
 \end{tabular}
 \caption{Utility for Q1-Q6 during 4 rounds of \salgo. Boxed in values indicate which items are added to the cache in each round.}
@@ -258,24 +258,31 @@ $G(V,E), \Psi, \mathcal{B}, WL$
 }
 
 \tcp{PART1}
-Partition WL into $WL_{candidates}$ \& $WL_{statistics}$ \;
+WL - historical workload. i.e start-/end-points of trajectories \;
 
 Build regions on G(V,E) \;
 
 Build the table R - holds the vertex sets for each region \;
 
-use $WL_{statistics}$ with R to build $\chi$ (statistics), using regions. \;
+use WL with R to build $\chi$ (statistics), using regions. \;
 
 \tcp{PART2}
 
 \ForAll{$(R_s,R_t) | (R_s,R_t) \in \chi$} 
 {
-    Max-Heap H $\leftarrow$ generate-candidate($\chi, WL_{candidates}$) \;
+    Max-Heap H $\leftarrow$ generate-candidate($\chi, WL$) \;
 }
 
 \While{Utility(Max-candidate $\in H) \neq 0$ AND $|\Psi| < \mathcal{B}$ }
 {
     Add Max-candidate to $\Psi$ \;
+
+    \tcp{\it empty H and generate a new set of candidates.}
+    H.clear \;
+    \ForAll{$(R_s,R_t) | (R_s,R_t) \in \chi$} 
+    {
+	Max-Heap H $\leftarrow$ generate-candidate($\chi, WL$) \;
+    }
 }
 
 \caption{Build Cache Statistics \& Generate Candidates.}
@@ -294,9 +301,11 @@ use $WL_{statistics}$ with R to build $\chi$ (statistics), using regions. \;
 The purpose of statistics extraction is to build a frequency table like table \ref{tab:freq}. While we have not yet introduced regions, this essentially corresponds to line 4 in PART1 of algorithm \ref{alg:buildstatis}.
 
 There are two extremes when considering what to build table \ref{tab:freq} from. 
-In the first extreme we can assume a uniform distribution of all possible queries, meaning that the \spaths chosen by \salgo for the cache will be evenly distributed over the entire map. Due to the number of possible paths on a map, in the order of $\frac{v^2}{2}$ possible paths on the number of vertices in a map, a uniform distribution will pick too many low quality candidates (\spaths very few users will submit queries for in the future) for the cache. If historical queries are used we can avoid many low quality \spathsns. We do however need to be sure we have enough historical data since candidates for the cache can only be chosen from the exact member of the set of historical workload. If the historical dataset is not large enough we risk overfitting the cache content to the historical dataset, thereby including low quality \spaths too. Between the two options, using historical information is the best candidate. We will use historical workload in this section.
+In the first extreme we can assume a uniform distribution of all possible queries ($\chi_{s,t} = \frac{1}{v^2}$), meaning that the \spaths chosen by \salgo for the cache will be evenly distributed over the entire map. Due to the number of possible paths on a map, in the order of $\frac{v^2}{2}$ possible paths on the number of vertices in a map, a uniform distribution will pick too many low quality candidates (\spaths very few users will submit queries for in the future) for the cache. 
 
-The second extreme is to build table \ref{tab:freq} from historical information about user queries, resulting in \salgo only adding paths to $\Psi$ which has been observed in the past. We extracted our set of start- and end-points pairs from the historical workload i.e. previously entered \spath queries. We denote this set $\Omega$. We use $\Omega$ to build table \ref{tab:freq} with $v_1,v_2,\ldots,v_n$ on both column and row, n being the number of vertices in the map, $G(V,E)$. We first initialize all values in the table to zero and then for each pair $(s,t) \in \Omega$ we increment the count in cell $s,t$ and $t,s$ by one.
+The second extreme is to build table \ref{tab:freq} from historical information about user queries, resulting in \salgo only adding paths to $\Psi$ which has been observed in the past (Eq. \ref{eq:chi}). We extracted our set of start- and end-points pairs from the historical workload i.e. previously entered \spath queries. We denote this set $\Omega$. We use $\Omega$ to build table \ref{tab:freq} with $v_1,v_2,\ldots,v_n$ on both column and row, n being the number of vertices in the map, $G(V,E)$. We first initialize all values in the table to zero and then for each pair $(s,t) \in \Omega$ we increment the count in cell $s,t$ and $t,s$ by one.
+
+If historical queries are used we can avoid many low quality \spathsns. We do however need to be sure we have enough historical data since candidates for the cache can only be chosen from the exact member of the set of historical workload. If the historical dataset is not large enough we risk overfitting the cache content to the historical dataset, thereby including low quality \spaths too. Between the two option (Uniformly destribution vs. historical workload), using historical information is the best candidate. We will use historical workload in the remainder of this section.
 
 Using historical queries from table \ref{tab:freq} we collect all the start-/end-pairs into $\Omega$ ($\{(1,6),(2,6),(1,7),(2,7)\}$). We then initialize table \ref{tab:chiex} with all zeros and then add all the pairs from $\Omega$ into table \ref{tab:chiex}
 
@@ -338,7 +347,7 @@ $Q_{2,6} =$ 	& $\{v_2,v_3,v_4,v_5,v_6\}$ \\
 $Q_{1,7} =$ 	& $\{v_1,v_3,v_4,v_5,v_7\}$ \\
 $Q_{2,7} =$ 	& $\{v_2,v_3,v_4,v_5,v_7\}$ \\
 \end{tabular}
-\caption{Historical Queries}
+\caption{Historical workload (WL)}
 \label{tab:queries2}
 \end{table}
 
@@ -368,13 +377,15 @@ Using the queries in table \ref{tab:queries2} with figure \ref{fig:mappartition}
 Using regions does not change \salgons, regions are only used in the choosing of candidates in line 2 \& 3.
 This completes our implementation of line 2-4 of algorithm \ref{alg:buildstatis}
 
-\begin{equation} \label{eq:chi}
-\chi{s,t} = | \{\spath_{s,t}\} | : s \in V, t \in V, \spath_{s,t} \in WL
-\end{equation}
 
 \begin{equation} \label{eq:rchi}
-\chi{\tiny _{R_i,R_j}} = \sum\limits_{s\in R_i \wedge t\in R_j} \chi_{s,t}
+\chi{\tiny _{R_i,R_j}} = | R_i| \times |R_j| \times \chi_{s,t}
 \end{equation}
+
+\begin{equation} \label{eq:chi}
+\chi{s,t} = \frac{\chi{\tiny _{R_i,R_j}}}{| R_i| \times |R_j|}
+\end{equation}
+
 
 
 \begin{table}
@@ -395,21 +406,14 @@ For partitioning the map we use kD-tree, an existing partition method.
 %------------------------------------------------------------------
 %------------------------------------------------------------------
 
-
+% % 
 \subsubsection{Candidate Generation}
 
 We will explain how and why we chose to implement line 5-6 of algorithm \ref{alg:buildstatis}. Once we have crated the $\chi$-table we need candidate \spaths for insertion into the cache. There are two ways we can generate these candidate. The first way being to generate candidates directly from the map $G(V,E)$, and the second method being based on additional historical workload to produce the candidates.
 
-We can generate candidates for $\Psi$ by finding all possible \spath in $G(V,E)$ as described in algorithm \ref{alg:greedy}. Generating all \spath possible on $G(V,E)$ is quite expensive when considering the possible number of candidates vs. the size of $\mathcal{B}$ which would usually be a lot smaller. One straight forward optimization to this would be to use only those \spath which has a non-zero entry in table \ref{tab:freq}, this could be very effective if there are few positive values. Another method we can use is sampling, where we just generate a subset of possible candidates. By choosing nodes evenly distributed on the map we can make sure the subset of \spaths covers the map.
+We can generate candidates for $\Psi$ by finding all possible \spath in $G(V,E)$ as described in algorithm \ref{alg:greedy}. Generating all \spath possible on $G(V,E)$ is quite expensive when considering the possible number of candidates vs. the size of $\mathcal{B}$ which would usually be much smaller. One straight forward optimization to this would be to use only those \spath which has a non-zero entry in table \ref{tab:freq}, this could be very effective if there are few positive values. Another method we can use is sampling, where we just generate a subset of possible candidates. By choosing nodes evenly distributed on the map we can make sure the subset of \spaths picked, still covers the map.
 
-Another way to generate candidates for the cache is to split the original dataset before using it for generating statistics (Sec. \ref{sec:statextract}). 
-After splitting the dataset we can use one part to generate statistics and the other for candidates. We modify algorithm \ref{alg:greedy} to take one extra parameter, WL, meaning the historical workload. We get this by using equation \ref{eq:split} to split historical workload into two disjoint set, $WL_{candidates}$ and $WL_{statistics}$, to be used for generation of candidates and statistical information respectively. We replace the requirement in line 2 of algorithm \ref{alg:greedy} to use all possible \spathsns, with a requirement to only calculated the scores on the set of \spaths we have extracted. The changes to algorithm \ref{alg:greedy} are presented in algorithm \ref{alg:hiscand}.
-
-
-\begin{eqnarray} \label{eq:split}
-Split({WL}) &=& \langle WL_{candidates}, WL_{statistics} \rangle | \nonumber \\
-	    & & \forall \spath_{s,t} \in WL, s \in V \wedge t \in V 
-\end{eqnarray}
+Another way to generate candidates for the cache is to base the candidate generation on historical workload. We modify algorithm \ref{alg:greedy} to take one extra parameter, WL, meaning the historical workload. We replace the requirement in line 2 of algorithm \ref{alg:greedy} to use all possible \spathsns, with a requirement to only calculated the scores on the set of \spaths from WL. The changes to algorithm \ref{alg:greedy} are presented in algorithm \ref{alg:hiscand}.
 
 
 \begin{algorithm} [H!bt]
@@ -428,7 +432,7 @@ Split({WL}) &=& \langle WL_{candidates}, WL_{statistics} \rangle | \nonumber \\
 
 To generate \spath candidates for $\Psi$ by finding all possible \spath on a map $G(V,E)$ is a relatively simple matter, all we have to do is execute a \spath query for all possible combinations of vertices in $V$, leading to $\frac{|V|^2}{2}$ Candidates.
 
-To restrict the candidate generation to only include those who has a non-zero entry in table \ref{tab:freq} we will exclude any pair of vertices which does not have a non-zero entry in table \ref{tab:freq}. We generate candidates as before, but only consider any pair with a non-zero entry in table \ref{tab:freq}.
+To restrict the candidate generation to only include those who has a non-zero entry in table \ref{tab:freq} we will exclude any pair of vertices which has an entry of zero in table \ref{tab:freq}. We generate candidates as before, but only consider any pair with a non-zero entry in table \ref{tab:freq}.
 
 If we use sampling we can simply pick random pairs of vertices until we have enough candidates. We assume a uniform random function choosing vertices uniformly distributed on the map, so the sampling method still produce a representative set of candidates covering the map.
 
