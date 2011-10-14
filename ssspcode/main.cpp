@@ -82,6 +82,13 @@ ts.queryFileName = "paths.train";
 ts.setStaticQueryType(3);
 
 
+//--------------------------------
+//RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->transformTrainOrTestFile("ILtiger.cnode", "uic_traj");
+//
+//return EXIT_SUCCESS;
+//-------------------------------
+
+
 //needed for probstaticCache
 ts.setSplits(0);
 
@@ -122,6 +129,7 @@ cout << "int \t\t" << std::numeric_limits<int>::max() << endl;
 cout << "unsigned int\t" << std::numeric_limits<unsigned int>::max() << endl;
 cout << "long\t\t" << std::numeric_limits<long>::max() << endl;
 cout << "double\t\t" << std::numeric_limits<double>::max() << endl;
+cout << sizeof(long) << " " << sizeof(int) << " " <<sizeof(double) <<endl;
 cout << "******************************************" << endl;
 
 ///exp test OSC with testObj
@@ -141,7 +149,7 @@ cacheType = COMPRESSED_G_CACHE;
 
 ts.queryFileName = "path2.train";
 testname = "CsizeP2.test";
-for(int i = 320000; i <= 10; i/=2)
+for(int i = 320000; i >= 10000; i/=2)
 {
     ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
 	ts.setSplits(10);
@@ -152,7 +160,7 @@ for(int i = 320000; i <= 10; i/=2)
 
 ts.queryFileName = "paths.train";
 testname = "CsizePs.test";
-for(int i = 320000; i <= 10; i/=2)
+for(int i = 320000; i >= 10000; i/=2)
 {
     ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
 	ts.setSplits(10);
@@ -166,7 +174,7 @@ cacheType = GRAPH_CACHE;
 
 ts.queryFileName = "path2.train";
 testname = "GsizeP2.test";
-for(int i = 320000; i <= 10; i/=2)
+for(int i = 320000; i >= 10000; i/=2)
 {
         ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
 	ts.setSplits(10);
@@ -177,7 +185,7 @@ for(int i = 320000; i <= 10; i/=2)
 
 ts.queryFileName = "paths.train";
 testname = "GsizePs.test";
-for(int i = 320000; i <= 10; i/=2)
+for(int i = 320000; i >= 10000; i/=2)
 {
     ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
 	ts.setSplits(10);

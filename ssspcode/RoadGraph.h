@@ -58,6 +58,7 @@ public:
 	string checkMapFilename(){return filename;}
 	boost::unordered_map<int, int> totalNodeCalls;
 	void resetRoadGraph(){mapInstance = NULL;}
+	void transformTrainOrTestFile(string cnodeFn, string trainTestFn);
 
 private:
 	RoadGraph(){ };
@@ -70,12 +71,12 @@ private:
 	int edges;
 	int parseFileType;
 	std::string filename;
-	
+
 	void parseType(int pt);
 	void addEdge(int v1, int v2, double w);
 	void readRoadNetworkFile(string fn);
 	void readPPINetworkFile(string fn);
-	void readCedgeNetworkFile(string fn);	
+	void readCedgeNetworkFile(string fn);
 	bool getLastLine(const char *filename, string &lastLine);
 };
 

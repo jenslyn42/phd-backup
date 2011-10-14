@@ -163,6 +163,93 @@ int RoadGraph::getMapsize()
 	return mapSize;
 }
 
+//convert training and testfile format from [vertexID, vertexID] to [lineID, x1, y1, x2, y2]
+//.cnode file has format [nodeID, x, y]
+//assumes the full name of the cnode file "fn.cnode" but only assumes the name of the training/test file. "fn"
+void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
+{
+    string nodeFile = cnodeFn;
+	string testname = trainTestFn;
+	string trainname = trainTestFn;
+	string str;
+    std::vector<string> tokens;
+    boost::unordered_map<int, coordinate> vertexId2coordinate;
+    std::vector<intPair> trainVector;
+    std::vector<intPair> testVector;
+	testname.replace ((testname.size()), 5, ".test");
+    trainname.replace ((trainname.size()), 6, ".train");
+
+    //load in all vertex ids with their coordinate
+	ifstream nodeData (nodeFile.c_str(), ios::in);
+	if(debug) cout << "s1, transformTrainOrTestFile!"<< endl;
+	if(nodeData.is_open())
+	{
+	    while(getline(nodeData, str))
+	    {
+            boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //split last line of *.cnode file
+            vertexId2coordinate[atoi(tokens[0].c_str())] = std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str()));
+	    }
+	    nodeData.close();
+	}
+
+    //load in all start/end vertex ids from training file
+    ifstream trainData (trainname.c_str(), ios::in);
+	if(debug) cout << "s1, transformTrainOrTestFile!"<< endl;
+	if(trainData.is_open())
+	{
+	    while(getline(trainData, str))
+	    {
+            boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //split last line of *.cnode file
+            trainVector.push_back(std::make_pair(atoi(tokens[0].c_str()),atoi(tokens[1].c_str())));
+	    }
+	    trainData.close();
+	}
+
+    //load in all start/end vertex ids from test file
+    ifstream testData (testname.c_str(), ios::in);
+	if(debug) cout << "s1, transformTrainOrTestFile!"<< endl;
+	if(testData.is_open())
+	{
+	    while(getline(testData, str))
+	    {
+            boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //split last line of *.cnode file
+            testVector.push_back(std::make_pair(atoi(tokens[0].c_str()),atoi(tokens[1].c_str())));
+	    }
+	    testData.close();
+	}
+
+
+	testname.replace ((testname.size()-5), 7, "CV.test");
+    trainname.replace ((trainname.size()-6), 8, "CV.train");
+    int i = 0;
+
+    //write out training file
+    ofstream trainfile;
+	trainfile.open(trainname.c_str(), ios::out | ios::ate | ios::app);
+
+    BOOST_FOREACH (intPair coord, trainVector)
+	{
+	    trainfile << i << " " << vertexId2coordinate.at(coord.first).first << " " << vertexId2coordinate.at(coord.first).second << " ";
+	    trainfile << vertexId2coordinate.at(coord.second).first << " " << vertexId2coordinate.at(coord.second).second << endl;
+	    i++;
+	}
+	trainfile.close();
+
+    //write out test file
+    ofstream testfile;
+	testfile.open(testname.c_str(), ios::out | ios::ate | ios::app);
+	i = 0;
+
+    BOOST_FOREACH (intPair coord, testVector)
+	{
+	    testfile << i << " " << vertexId2coordinate.at(coord.first).first << " " << vertexId2coordinate.at(coord.first).second << " ";
+	    testfile << vertexId2coordinate.at(coord.second).first << " " << vertexId2coordinate.at(coord.second).second << endl;
+	    i++;
+	}
+	testfile.close();
+}
+
+
 void RoadGraph::addEdge(int v1, int v2, double w)
 {
 	if(map[v1].getId() == -1)
