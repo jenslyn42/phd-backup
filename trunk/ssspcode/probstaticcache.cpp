@@ -134,6 +134,7 @@ void probstaticCache::readMapData()
 {
 	cout << "one, probstaticcache::readMapData start!" << endl;
 	int mapSize = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->getMapsize();
+
 	string mapFile = ts.getTestFile();
 	std::pair<double, double> tmpPair;
 	string str;
@@ -145,8 +146,9 @@ void probstaticCache::readMapData()
 	//read in the mapping between coordinates and node ids from *.cnode file
 	if(in_data.is_open())
 	{
-		for(int i = 0; i < mapSize+1; i++)
+		for(int i = 0; i < mapSize; i++)
 		{
+            cout << "one, probstaticcache::readMapData: " << mapSize << "@"<< endl;
 			getline(in_data, str);
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 			tmpPair = std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str()));

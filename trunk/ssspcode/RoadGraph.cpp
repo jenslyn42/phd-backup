@@ -246,15 +246,20 @@ void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
 
 void RoadGraph::addEdge(int v1, int v2, double w)
 {
+    if(debug)cout << "one. addEdge(v1,v2) v1:" << v1 << ", v2:" << v2 << ", w:" << w << endl;
 	if(map[v1].getId() == -1)
 		map[v1].updateVertexID(v1,v2,w);
 	else
 		map[v1].addNeighbour(v2,w);
 
+    if(debug)cout << "two. addEdge(v1,v2) v1:" << v1 << ", v2:" << v2 << ", w:" << w << endl;
+
 	if(map[v2].getId() == -1)
 		map[v2].updateVertexID(v2,v1,w);
 	else
 		map[v2].addNeighbour(v1,w);
+
+    if(debug)cout << "three. addEdge(v1,v2) v1:" << v1 << ", v2:" << v2 << ", w:" << w << endl;
 }
 
 void RoadGraph::readRoadNetworkFile(string fn)
@@ -359,9 +364,7 @@ void RoadGraph::readCedgeNetworkFile(string fn)
 	{
 		if(debug) cout << "zero, readCedgeNetworkFile! int maxsize: " << INT_MAX << endl;
 
- 		getLastLine((nodeFN.c_str()),str); //find last line
-		boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //split last line of *.cnode file
-		mapSize = atoi(tokens[0].c_str()); //mapSize = number of nodes (using the highest node id to determine)
+ 		mapSize = getFilelines(nodeFN.c_str()); //find number of lines in file
 
 		map.reserve(mapSize+1);
 		if(debug) cout << "one, readCedgeNetworkFile! map:" << (int) map.size() <<" " << mapSize << endl;
@@ -374,15 +377,41 @@ void RoadGraph::readCedgeNetworkFile(string fn)
 
 		while(getline(in_data, str))
 		{
-// 			cout << "five, readCedgeNetworkFile! getline:" << str  << " check: " << check++ << endl;
+// 			cout << "five, readCedgeNetworkFile! getline:" << str  << " check: " << endl;
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-			//if(debug) cout << "five1, readCedgeNetworkFile! getline:" << str << " check: " << check<< endl;
+			if(debug) cout << "five1, readCedgeNetworkFile! getline:" << str << endl;
 			addEdge(atoi(tokens[1].c_str()),atoi(tokens[2].c_str()),atof(tokens[3].c_str()));
-			//if(debug) cout << "five2, readCedgeNetworkFile! getline:" << str << " check: " << check<< endl;
+			if(debug) cout << "five2, readCedgeNetworkFile! getline:" << str << endl;
 		}
 		if(debug) cout << "six, readCedgeNetworkFile!" << endl;
 		in_data.close();
 	}
+}
+
+int RoadGraph::getFilelines(const char *filename)
+{
+	if(debug) cout << "one, getFilelines! filename: "<<filename << endl;
+	if (!filename || !*filename) // if no file to work on, return false
+        return false;
+
+	int size = 0;
+    string line;
+
+	ifstream is;
+	is.open(filename);
+
+	if (!is) // return false if couldn't open file
+        return -1;
+
+    while (!is.eof())
+    {
+        getline(is, line);
+        size++;
+    }
+
+	is.close();
+
+	return size;
 }
 
 bool RoadGraph::getLastLine(const char *filename, string &lastLine)
