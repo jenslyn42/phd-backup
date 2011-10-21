@@ -52,8 +52,10 @@ public:
 	~LRU();
 
 	std::vector<CacheItem> cache;
-	
+
 	void readQuery(std::pair<int,int> query);
+    void readStaticQuery(std::pair<int,int> query);
+	void readQueries(int numQueries, string inFn);
 	void readQueryList(std::vector<std::pair<int,int> > queryList);
 	int getCacheHits(){return numCacheHits;}
 	int getTotalQueries(){return numTotalQueries;}
@@ -72,11 +74,20 @@ private:
 	bool useNodeScore;
 	bool useHitScore;
 	bool cacheFull;
-	
+
 	testsetting ts;
 
 	void checkAndUpdateCache(std::pair<int,int> query);
+	void checkStaticCache(std::pair< int, int > query);
 	void insertItem(int querySize, std::vector<int> nodesInQueryResult, int sNode, int tNode);
+
+	boost::unordered_map<coordinate, int> coordinate2Nodeid;
+	std::vector<std::pair<int, int> > trainingSTPointPairs;
+	std::vector<std::pair<int, int> > testSTPointPairs;
+
+    void readTestData(string fn);
+	void readTrainingData(string fn);
+	void readMapData();
 };
 
 #endif

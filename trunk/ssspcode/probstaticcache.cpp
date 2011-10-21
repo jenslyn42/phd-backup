@@ -79,7 +79,7 @@ void probstaticCache::readQuery(std::pair< int, int > query)
 //does not use argument, but does instead get its info from a .train file.
 void probstaticCache::readQueryList(std::vector< std::pair < int , int > > queryList)
 {
-	RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->resetRoadGraph();
+	RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
 	BOOST_FOREACH(intPair q, testSTPointPairs ) { readQuery(q); }
 }
 
@@ -163,7 +163,7 @@ void probstaticCache::readMapData()
 }
 
 //file on the form:
-//record_id, S_x, S_y, T_x, T_y.
+//record_id, S_id, T_id, S_x, S_y, T_x, T_y.
 void probstaticCache::readData(string fn)
 {
 	readTrainingData(fn);
@@ -171,7 +171,7 @@ void probstaticCache::readData(string fn)
 }
 
 //file on the form:
-//record_id, S_x, S_y, T_x, T_y.
+//record_id, S_id, T_id, S_x, S_y, T_x, T_y.
 void probstaticCache::readTestData(string fn)
 {
 	cout << "one, probstaticcache::readTestData start!" << endl;
@@ -183,20 +183,23 @@ void probstaticCache::readTestData(string fn)
 	fn.replace ((fn.size()-5), 5, "test"); //change file extention from .train to .test
 	ifstream testData (fn.c_str(), ios::in); //*.test file
 
+
 	//find all pairs of nodeids in the test set to have SP done for them. map nodeids to coordinates.
 	if(testData.is_open())
 	{
+        if(debug) cout << "two, probstaticcache::readTestData file [" << fn << "] opened!" << endl;
 		while(getline(testData, str))
 		{
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 
-			firstPair = std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str()));
-			secondPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
+			firstPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
+			secondPair = std::make_pair(atof(tokens[5].c_str()),atof(tokens[6].c_str()));
 
 			firstPnt = coordinate2Nodeid[firstPair];
 			secondPnt = coordinate2Nodeid[secondPair];
 
 			testSTPointPairs.push_back(std::make_pair(firstPnt,secondPnt));
+			if(debug) cout << "tree, probstaticcache::readTestData end of fileline loop.!" << endl;
 		}
 	}
 	testData.close();
@@ -204,7 +207,7 @@ void probstaticCache::readTestData(string fn)
 }
 
 //file on the form:
-//record_id, S_x, S_y, T_x, T_y.
+//record_id, S_id, T_id, S_x, S_y, T_x, T_y.
 void probstaticCache::readTrainingData(string fn)
 {
 	cout << "one, probstaticcache::readTrainingData start!" << endl;
@@ -223,8 +226,8 @@ void probstaticCache::readTrainingData(string fn)
 		{
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 
-			firstPair = std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str()));
-			secondPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
+			firstPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
+			secondPair = std::make_pair(atof(tokens[5].c_str()),atof(tokens[6].c_str()));
 
 			firstPnt = coordinate2Nodeid[firstPair];
 			secondPnt = coordinate2Nodeid[secondPair];

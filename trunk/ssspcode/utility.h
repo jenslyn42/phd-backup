@@ -66,23 +66,24 @@ typedef boost::unordered_map<intPair,int > pairIntMap;
 typedef boost::unordered_map<int, CacheItem> intCacheitemMap;
 typedef boost::unordered_map<intPair, CacheItem> intPairCacheitemMap;
 typedef	boost::unordered_map<int, boost::dynamic_bitset<> > intDBitset;
+typedef	boost::unordered_map<coordinate, int> coordinateIntMap;
 
 struct region
 {
-        int id;
-        double xmin,xmax,ymin,ymax;
+    int id;
+    double xmin,xmax,ymin,ymax;
 	regionlist points;
 
-        region(){ }
-        region(int rid, regionlist pts, double _xmin, double _xmax, double _ymin, double _ymax)
+    region(){ }
+    region(int rid, regionlist pts, double _xmin, double _xmax, double _ymin, double _ymax)
 	{
-                id = rid;
-                xmin = _xmin;
+        id = rid;
+        xmin = _xmin;
 		xmax = _xmax;
 		ymin = _ymin;
 		ymax = _ymax;
 		points = pts;
-        }
+    }
 };
 
 #endif

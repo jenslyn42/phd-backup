@@ -28,7 +28,7 @@
  *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          		*
  ***************************************************************************************/
 #include "testObj.h"
-#define debug true
+#define debug false
 
 testObj::testObj(testsetting settings, int testType)
 {
@@ -113,9 +113,9 @@ void testObj::runTest()
 	if (debug) cout << "testObj::runTest: test started" <<endl;
 	int i = 0;
 	start = clock();
-	BOOST_FOREACH( intPair qpair, queries )
+	BOOST_FOREACH(intPair qpair, queries )
 	{
-		if( debug) cout << "query NUM: " << ++i << endl;
+		if(debug) cout << "query NUM: " << ++i << endl;
 		test->readQuery(qpair);
 	}
 	end = clock();
