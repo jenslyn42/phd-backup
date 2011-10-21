@@ -71,11 +71,6 @@ RoadGraph* RoadGraph::mapObject(std::string testFile, int pt)
 	return mapInstance;
 }
 
-vector<Vertex> RoadGraph::getMap()
-{
-	return map;
-}
-
 vector<int> RoadGraph::dijkstraSSSP(int source, int dest)
 {
 	ssspCalls++;
@@ -187,7 +182,7 @@ void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
 	    while(getline(nodeData, str))
 	    {
             boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //split last line of *.cnode file
-            vertexId2coordinate[atoi(tokens[0].c_str())] = std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str()));
+            vertexId2coordinate[boost::lexical_cast<int>(tokens[0])] = std::make_pair(boost::lexical_cast<double>(tokens[1]),boost::lexical_cast<double>(tokens[2]));
 	    }
 	    nodeData.close();
 	}
@@ -200,7 +195,7 @@ void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
 	    while(getline(trainData, str))
 	    {
             boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //split last line of *.cnode file
-            trainVector.push_back(std::make_pair(atoi(tokens[0].c_str()),atoi(tokens[1].c_str())));
+            trainVector.push_back(std::make_pair(boost::lexical_cast<int>(tokens[0]),boost::lexical_cast<int>(tokens[1])));
 	    }
 	    trainData.close();
 	}
@@ -213,7 +208,7 @@ void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
 	    while(getline(testData, str))
 	    {
             boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //split last line of *.cnode file
-            testVector.push_back(std::make_pair(atoi(tokens[0].c_str()),atoi(tokens[1].c_str())));
+            testVector.push_back(std::make_pair(boost::lexical_cast<int>(tokens[0]),boost::lexical_cast<int>(tokens[1])));
 	    }
 	    testData.close();
 	}
@@ -248,7 +243,6 @@ void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
 	}
 	testfile.close();
 }
-
 
 void RoadGraph::addEdge(int v1, int v2, double w)
 {

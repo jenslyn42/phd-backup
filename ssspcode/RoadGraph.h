@@ -51,7 +51,7 @@ class RoadGraph
 public:
 	static RoadGraph* mapObject(string testfile, int parseType);
 	void setMapFile(string file);
-	std::vector<Vertex> getMap();
+	std::vector<Vertex> getMap(){return map;}
 	std::vector<int> dijkstraSSSP(int s, int t);
 	int getMapsize();
 	int ssspCalls;

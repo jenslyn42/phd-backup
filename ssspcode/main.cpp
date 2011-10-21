@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 testsetting ts;
 string testname = "NEW2correctness1000.test";
 // string testfile ="ppi.dat";
-string testfile ="OL.cedge";
+string testfile ="ILtiger.cedge";
 int inputFileType = 3; //1:graph_large, 2: ppi.dat, 3:*.cedge
 int numqueries = 100000;
 
@@ -83,9 +83,9 @@ ts.setStaticQueryType(3);
 
 
 //--------------------------------
-//RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->transformTrainOrTestFile("ILtiger.cnode", "uic_traj");
-//
-//return EXIT_SUCCESS;
+RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->transformTrainOrTestFile("ILtiger.cnode", "uic_traj");
+
+return EXIT_SUCCESS;
 //-------------------------------
 
 
@@ -138,61 +138,45 @@ cout << "******************************************" << endl;
 // expTest-> testObj::~testObj();
 
 ///exp test LRU with testObj
-// testObj *expTest2 = new testObj(ts,2, queries);
-// expTest2->runTest();
-// expTest2-> testObj::~testObj();
-
-
-testObj *expTest3;
-
-cacheType = COMPRESSED_G_CACHE;
-
-ts.queryFileName = "path2.train";
-testname = "CsizeP2.test";
-for(int i = 320000; i >= 10000; i/=2)
+ts.queryFileName = "uic_traj.train";
+testname = "CLRU_sizeUIC.test";
+for(int i = 320000; i >= 10000; i/=20000)
 {
     ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-	ts.setSplits(10);
-	expTest3 = new testObj(ts,5, queries);
-	expTest3->runStaticTest();
-	expTest3-> testObj::~testObj();
+    testObj *expTest2 = new testObj(ts,2, queries);
+    expTest2->runStaticTest();
+    expTest2-> testObj::~testObj();
 }
 
-ts.queryFileName = "paths.train";
-testname = "CsizePs.test";
-for(int i = 320000; i >= 10000; i/=2)
-{
-    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-	ts.setSplits(10);
-	expTest3 = new testObj(ts,5, queries);
-	expTest3->runStaticTest();
-	expTest3-> testObj::~testObj();
-}
+//testObj *expTest3;
+//
+//cacheType = COMPRESSED_G_CACHE;
+//
+//ts.queryFileName = "uic_trajCV.train";
+//testname = "CsizeUIC.test";
+//for(int i = 320000; i >= 10000; i/=2)
+//{
+//    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+//	ts.setSplits(5);
+//	expTest3 = new testObj(ts,5, queries);
+//	expTest3->runStaticTest();
+//	expTest3-> testObj::~testObj();
+//}
+
+//cacheType = GRAPH_CACHE;
+//
+//ts.queryFileName = "uic_traj.train";
+//testname = "GsizeUIC.test";
+//for(int i = 320000; i >= 10000; i/=2)
+//{
+//        ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+//	ts.setSplits(10);
+//	expTest3 = new testObj(ts,5, queries);
+//	expTest3->runStaticTest();
+//	expTest3-> testObj::~testObj();
+//}
 
 
-cacheType = GRAPH_CACHE;
-
-ts.queryFileName = "path2.train";
-testname = "GsizeP2.test";
-for(int i = 320000; i >= 10000; i/=2)
-{
-        ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-	ts.setSplits(10);
-	expTest3 = new testObj(ts,5, queries);
-	expTest3->runStaticTest();
-	expTest3-> testObj::~testObj();
-}
-
-ts.queryFileName = "paths.train";
-testname = "GsizePs.test";
-for(int i = 320000; i >= 10000; i/=2)
-{
-    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-	ts.setSplits(10);
-	expTest3 = new testObj(ts,5, queries);
-	expTest3->runStaticTest();
-	expTest3-> testObj::~testObj();
-}
 
 
 

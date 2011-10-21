@@ -30,6 +30,8 @@
 #include "lru.h"
 #define debug false
 
+#define STATIC_CACHE false
+
 typedef std::pair<int , int> intPair;
 
 LRU::LRU(testsetting ts)
@@ -40,6 +42,7 @@ LRU::LRU(testsetting ts)
 	numCacheHits = 0;
 	cacheUsed = 0;
 	numDijkstraCalls = 0;
+    readMapData();
 
 	useNodeScore = ts.isUseNodeScore();
 	useHitScore = ts.isUseHitScore();
@@ -51,32 +54,54 @@ LRU::~ LRU()
 
 void LRU::readQuery(std::pair< int, int > query)
 {
-	checkAndUpdateCache(query);
-	numTotalQueries++;
+   	checkAndUpdateCache(query);
+    numTotalQueries++;
+}
+
+void LRU::readStaticQuery(std::pair< int, int > query)
+{
+    checkStaticCache(query);
+    numTotalQueries++;
+}
+
+void LRU::readQueries(int numQueries, string inFn)
+{
+	cout<< "2.0 done" << endl;
+	readTestData(ts.queryFileName);
+	cout<< "2.1 done" << endl;
+	readTrainingData(ts.queryFileName);
+
+	cout << "test query pairs:" << testSTPointPairs.size() << endl;
+	cout << "training query pairs: " << trainingSTPointPairs.size() << endl;
+
+	if(STATIC_CACHE){
+        BOOST_FOREACH(intPair q, trainingSTPointPairs) { readQuery(q); }
+    }
 }
 
 void LRU::readQueryList(std::vector< std::pair<int,int> > queryList)
 {
-	BOOST_FOREACH(intPair q, queryList )
-	{
-		readQuery(q);
-	}
+	RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
+    if(STATIC_CACHE){
+        numTotalQueries = 0;
+        numCacheHits = 0;
+        numDijkstraCalls = 0;
+        BOOST_FOREACH(intPair q, testSTPointPairs ) { readStaticQuery(q); }
+    }else{
+        BOOST_FOREACH(intPair q, testSTPointPairs ) { readQuery(q); }
+    }
 }
 
 void LRU::checkAndUpdateCache(std::pair< int, int > query)
 {
 	bool cacheHit = false;
-
+    if(debug) {cout << "cache size: " << cache.size() << " s,t: (" << query.first << "," << query.second << ")" << endl;}
 	if(ts.isUseOptimalSubstructure()){
 		BOOST_FOREACH(CacheItem ci, cache )
 		{
-// 			if(find(ci.item.begin(),ci.item.end(), query.first) != ci.item.end()) 
-// 				if(debug) cout << "LRU::checkAndUpdateCache FIRST TRUE" << endl;
-// 			if(find(ci.item.begin(),ci.item.end(), query.second) != ci.item.end())
-// 				if(debug) cout << "LRU::checkAndUpdateCache SECOND TRUE" << endl;
-
 			if(find(ci.item.begin(),ci.item.end(), query.first) != ci.item.end() && find(ci.item.begin(),ci.item.end(), query.second) != ci.item.end())
 			{
+//			    if(debug) {cout << "SP: ("; BOOST_FOREACH(int node, ci.item ) { cout << node << ","; } cout << ")"; }
 				if(debug) cout << "LRU::checkAndUpdateCache BOTH TRUE" << endl;
 				numCacheHits++;
 				ci.updateKey(numTotalQueries);
@@ -106,14 +131,50 @@ void LRU::checkAndUpdateCache(std::pair< int, int > query)
 		numDijkstraCalls++;
 		int querySize = spResult.size();
 		if(cache.size() != 0){
-			if(debug) cout << "LRU::checkAndUpdateCache 1, querySize: "<<querySize << endl;
+			if(debug) cout << "LRU::checkAndUpdateCache 1, querySize: "<< querySize << endl;
 			insertItem(querySize, spResult, query.first, query.second);
 		}else{
-			if(debug) cout << "LRU::checkAndUpdateCache 2, querySize: "<<querySize << endl;
+			if(debug) cout << "LRU::checkAndUpdateCache 2, querySize: "<< querySize << endl;
 			CacheItem e (numTotalQueries, spResult, query.first, query.second);
 			cache.push_back(e);
 		}
 		if(debug) cout << "LRU::checkAndUpdateCache 3" << endl;
+	}
+}
+
+void LRU::checkStaticCache(std::pair< int, int > query)
+{
+	bool cacheHit = false;
+    if(debug) {cout << "cache size: " << cache.size() << " s,t: (" << query.first << "," << query.second << ")" << endl;}
+	if(ts.isUseOptimalSubstructure()){
+		BOOST_FOREACH(CacheItem ci, cache )
+		{
+			if(find(ci.item.begin(),ci.item.end(), query.first) != ci.item.end() && find(ci.item.begin(),ci.item.end(), query.second) != ci.item.end())
+			{
+//			    if(debug) {cout << "SP: ("; BOOST_FOREACH(int node, ci.item ) { cout << node << ","; } cout << ")"; }
+				if(debug) cout << "LRU::checkStaticCache BOTH TRUE" << endl;
+				numCacheHits++;
+				cacheHit = true;
+				break;
+			}
+		}
+		if(debug) cout << "LRU::checkStaticCache " << endl;
+	}else{
+		BOOST_FOREACH(CacheItem ci, cache )
+		{
+			if(query.first == ci.s && query.second == ci.t)
+			{
+				numCacheHits++;
+				cacheHit = true;
+				break;
+			}
+		}
+	}
+
+    if(!cacheHit)
+	{
+		RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->dijkstraSSSP(query.first, query.second);
+		numDijkstraCalls++;
 	}
 }
 
@@ -149,3 +210,89 @@ void LRU::insertItem(int querySize, std::vector< int > nodesInQueryResult, int s
 }
 
 
+//file on the form:
+//record_id, S_x, S_y, T_x, T_y.
+void LRU::readTestData(string fn)
+{
+	cout << "one, LRU::readTestData start!" << endl;
+	std::pair<double, double> firstPair, secondPair;
+	string str;
+	std::vector<string> tokens;
+
+	fn.replace ((fn.size()-5), 5, "test"); //change file extention from .train to .test
+	ifstream testData (fn.c_str(), ios::in); //*.test file
+
+
+	//find all pairs of nodeids in the test set to have SP done for them. map nodeids to coordinates.
+	if(testData.is_open())
+	{
+        if(debug) cout << "two, LRU::readTestData file [" << fn << "] opened!" << endl;
+		while(getline(testData, str))
+		{
+			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+
+			testSTPointPairs.push_back(std::make_pair(atof(tokens[0].c_str()),atof(tokens[1].c_str())));
+		}
+	}
+	testData.close();
+	cout << "two, LRU::readTestData end!" << endl;
+}
+
+//file on the form:
+//record_id, S_x, S_y, T_x, T_y.
+void LRU::readTrainingData(string fn)
+{
+	cout << "one, LRU::readTrainingData start!" << endl;
+	std::pair<double, double> firstPair, secondPair;
+	string str;
+	std::vector<string> tokens;
+
+	ifstream trainingData (fn.c_str(), ios::in); //*.train file
+	if(debug) cout << "one, LRU::readTrainingData! " << endl;
+	//find all pairs of nodeids in the training set to have SP done for them. map nodeids to coordinates.
+	if(trainingData.is_open())
+	{
+		if(debug) cout << "two, LRU::readTrainingData! " << endl;
+		while(getline(trainingData, str))
+		{
+			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+
+			trainingSTPointPairs.push_back(std::make_pair(atof(tokens[0].c_str()),atof(tokens[1].c_str())));
+		}
+		if(debug) cout << endl;
+	}
+	trainingData.close();
+	cout << "two, LRU::readTrainingData end!" << endl;
+}
+
+void LRU::readMapData()
+{
+	cout << "one, LRU::readMapData start!" << endl;
+	int mapSize = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->getMapsize();
+	string mapFile = ts.getTestFile();
+	std::pair<double, double> tmpPair;
+	string str;
+	std::vector<string> tokens;
+    if(debug){}
+	mapFile.replace ((mapFile.size()-4), 4, "node"); //change file extention from .cedge to .cnode
+	ifstream in_data (mapFile.c_str(), ios::in); //*.cnode file
+
+	//read in the mapping between coordinates and node ids from *.cnode file
+	if(in_data.is_open())
+	{
+		for(int i = 0; i < mapSize+1; i++)
+		{
+			getline(in_data, str);
+			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+			tmpPair = std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str()));
+			coordinate2Nodeid[tmpPair] = atoi(tokens[0].c_str());
+		}
+	}
+	in_data.close();
+//    if(debug) {
+//        cout << "items in coordinate2Nodeid: \n";
+//        BOOST_FOREACH(coordinateIntMap::value_type coor, coordinate2Nodeid) { cout << "((" << coor.first.first <<"," << coor.first.second << ")," << coor.second << ")"; }
+//        cout << endl;
+//    }
+	cout << "two, LRU::readMapData end!" << endl;
+}
