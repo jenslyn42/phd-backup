@@ -77,6 +77,7 @@ private:
 	void readRoadNetworkFile(string fn);
 	void readPPINetworkFile(string fn);
 	void readCedgeNetworkFile(string fn);
+	int getFilelines(const char *filename);
 	bool getLastLine(const char *filename, string &lastLine);
 };
 

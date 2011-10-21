@@ -30,7 +30,7 @@
 #include "lru.h"
 #define debug false
 
-#define STATIC_CACHE false
+#define STATIC_CACHE true
 
 typedef std::pair<int , int> intPair;
 
@@ -77,6 +77,7 @@ void LRU::readQueries(int numQueries, string inFn)
 	if(STATIC_CACHE){
         BOOST_FOREACH(intPair q, trainingSTPointPairs) { readQuery(q); }
     }
+    ts.itemsInCache = -1;
 }
 
 void LRU::readQueryList(std::vector< std::pair<int,int> > queryList)
@@ -219,9 +220,9 @@ void LRU::readTestData(string fn)
 	string str;
 	std::vector<string> tokens;
 
-	fn.replace ((fn.size()-5), 5, "test"); //change file extention from .train to .test
+	fn.replace ((fn.size()-5), 5, ".test"); //change file extention from .train to .test
 	ifstream testData (fn.c_str(), ios::in); //*.test file
-
+    cout << "readtestData:" << fn << endl;
 
 	//find all pairs of nodeids in the test set to have SP done for them. map nodeids to coordinates.
 	if(testData.is_open())
@@ -231,7 +232,7 @@ void LRU::readTestData(string fn)
 		{
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 
-			testSTPointPairs.push_back(std::make_pair(atof(tokens[0].c_str()),atof(tokens[1].c_str())));
+			testSTPointPairs.push_back(std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str())));
 		}
 	}
 	testData.close();
@@ -253,11 +254,18 @@ void LRU::readTrainingData(string fn)
 	if(trainingData.is_open())
 	{
 		if(debug) cout << "two, LRU::readTrainingData! " << endl;
+//		int i=0;
 		while(getline(trainingData, str))
 		{
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 
-			trainingSTPointPairs.push_back(std::make_pair(atof(tokens[0].c_str()),atof(tokens[1].c_str())));
+			trainingSTPointPairs.push_back(std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str())));
+//
+//			if(i<10) {
+//                i++;
+//                cout << tokens[0] << " " << tokens[1] << " " << tokens[2] << endl;
+//                cout << atof(tokens[0].c_str()) << " " << atof(tokens[1].c_str()) << " " << atof(tokens[2].c_str()) << endl;
+//			}
 		}
 		if(debug) cout << endl;
 	}
@@ -273,14 +281,14 @@ void LRU::readMapData()
 	std::pair<double, double> tmpPair;
 	string str;
 	std::vector<string> tokens;
-    if(debug){}
+
 	mapFile.replace ((mapFile.size()-4), 4, "node"); //change file extention from .cedge to .cnode
 	ifstream in_data (mapFile.c_str(), ios::in); //*.cnode file
 
 	//read in the mapping between coordinates and node ids from *.cnode file
 	if(in_data.is_open())
 	{
-		for(int i = 0; i < mapSize+1; i++)
+		for(int i = 0; i < mapSize; i++)
 		{
 			getline(in_data, str);
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
