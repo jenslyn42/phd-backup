@@ -91,9 +91,9 @@ private:
 	vector<pair<int,int> > queries;
 
 	double startTime,endTime;
-	int** trainingQueriesPerRegionPair;
+// 	int** trainingQueriesPerRegionPair;
+	boost::unordered_map<std::pair<int,int>, int > trainingQueriesPerRegionPair;
     vector<pair<int,int> > regionPairsSeen;
-
 
 
 	boost::unordered_map<coordinate, int> coordinate2Nodeid;
