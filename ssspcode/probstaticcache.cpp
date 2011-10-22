@@ -55,9 +55,9 @@ probstaticCache::probstaticCache(testsetting ts)
 
 probstaticCache::~probstaticCache()
 {
-	for(int i=0;i<mapSize;i++)
-		delete [] trainingQueriesPerRegionPair[i];
-	delete [] trainingQueriesPerRegionPair;
+// 	for(int i=0;i<mapSize;i++)
+// 		delete [] trainingQueriesPerRegionPair[i];
+// 	delete [] trainingQueriesPerRegionPair;
 }
 
 void probstaticCache::readQuery(std::pair< int, int > query)
@@ -350,17 +350,18 @@ void probstaticCache::populateProbStructures()
 {
 	int temp, r1,r2,v1,v2;
 	totalTrainingPairsSeen=0;
+	std::pair<int,int> p;
 
 	cout << "probstaticcache::populateProbStructures! Init 2d array trainingQueriesPerRegionPair";
-	//init array trainingQueriesPerRegionPair[mapSize][mapSize] dynamically
-	trainingQueriesPerRegionPair = new int*[mapSize];
-	for(int i=0; i<mapSize; i++)
-		trainingQueriesPerRegionPair[i] = new int[mapSize];
-	//init all values
-	for(int i=0;i<mapSize;i++)
-		for(int j=0;j<mapSize;j++)
-			trainingQueriesPerRegionPair[i][j] = 0;
-	cout << " ... Done" << endl;
+	///init array trainingQueriesPerRegionPair[mapSize][mapSize] dynamically
+// 	trainingQueriesPerRegionPair = new int*[mapSize];
+// 	for(int i=0; i<mapSize; i++)
+// 		trainingQueriesPerRegionPair[i] = new int[mapSize];
+// 	//init all values
+// 	for(int i=0;i<mapSize;i++)
+// 		for(int j=0;j<mapSize;j++)
+// 			trainingQueriesPerRegionPair[i][j] = 0;
+// 	cout << " ... Done" << endl;
 
 	cout << "probstaticcache::populateProbStructures! calculating training stats";
 	BOOST_FOREACH(intPair c, trainingSTPointPairs)
@@ -375,8 +376,11 @@ void probstaticCache::populateProbStructures()
 			r1 = mapNodeid2RegionId(v1);
 			r2 = mapNodeid2RegionId(v2);
 			if(r1 > r2) {temp = r1; r1 = r2 ; r2 = temp;}
-
-			trainingQueriesPerRegionPair[r1][r2] =+1;
+			p = make_pair(r1,r2);
+			if(trainingQueriesPerRegionPair.find(p) == trainingQueriesPerRegionPair.end())
+				trainingQueriesPerRegionPair[p] = 1;
+			else
+				trainingQueriesPerRegionPair[p] =+ 1;
 
 			totalTrainingPairsSeen++;
 		}
@@ -400,11 +404,11 @@ double probstaticCache::calcScore(vector<int> spResult, boost::unordered_map<pai
 				r2 = mapNodeid2RegionId(nid2);
 				if(r1 > r2)
 				{
-					if(trainingQueriesPerRegionPair[r2][r1] != 0)
-						score = score + (double)trainingQueriesPerRegionPair[r2][r1];
+					if(trainingQueriesPerRegionPair.find(std::make_pair(r2,r1)) != trainingQueriesPerRegionPair.end())
+						score = score + (double)trainingQueriesPerRegionPair.at(std::make_pair(r2,r1));
 				}else{
-					if(trainingQueriesPerRegionPair[r1][r2] != 0)
-						score = score + (double)trainingQueriesPerRegionPair[r1][r2];
+					if(trainingQueriesPerRegionPair.find(std::make_pair(r1,r2)) != trainingQueriesPerRegionPair.end())
+						score = score + (double)trainingQueriesPerRegionPair.at(std::make_pair(r1,r2));
 				}
 			}
 		}
@@ -542,10 +546,10 @@ void probstaticCache::fillCacheFromQueriesFileByStatistics(int numQueries, strin
     buildRegionId2NodeidVector();
 
     //finding all the region pairs for which the statistics has a non-zero entry for
-    for(int i=0;i<mapSize;i++)
-		for(int j=i;j<mapSize;j++)
-			if(trainingQueriesPerRegionPair[i][j] != 0)
-                regionPairsSeen.push_back(make_pair<int,int>(i,j));
+	BOOST_FOREACH(pairIntMap::value_type rpint, trainingQueriesPerRegionPair){
+
+                regionPairsSeen.push_back(rpint.first);
+}
 
     //filing up bucketlist with one entry from each region pair.
     boost::unordered_map<intPair,CacheItem> bucketList;
