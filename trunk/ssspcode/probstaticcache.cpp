@@ -546,10 +546,10 @@ void probstaticCache::fillCacheFromQueriesFileByStatistics(int numQueries, strin
     buildRegionId2NodeidVector();
 
     //finding all the region pairs for which the statistics has a non-zero entry for
-	BOOST_FOREACH(pairIntMap::value_type rpint, trainingQueriesPerRegionPair){
-
-                regionPairsSeen.push_back(rpint.first);
-}
+    BOOST_FOREACH(pairIntMap::value_type rpint, trainingQueriesPerRegionPair)
+    {
+            regionPairsSeen.push_back(rpint.first);
+    }
 
     //filing up bucketlist with one entry from each region pair.
     boost::unordered_map<intPair,CacheItem> bucketList;
