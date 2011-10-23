@@ -153,11 +153,11 @@ cacheType = LIST_CACHE;
 
 ts.queryFileName = "infati_qlog.test";
 testname = "CacheSize_PROBSTAT.test";
-for(int i = 320000; i >= 10000; i/=2)
+for(int i = 10000; i <= 320000; i*=2)
 {
     cout << i << "J" << endl;
     ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-	ts.setSplits(5);
+	ts.setSplits(10);
 	expTest3 = new testObj(ts,5, queries);
 	expTest3->runStaticTest();
 	expTest3-> testObj::~testObj();
