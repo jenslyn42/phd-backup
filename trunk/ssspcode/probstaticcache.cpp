@@ -148,7 +148,7 @@ void probstaticCache::readMapData()
 	{
 		for(int i = 0; i < mapSize; i++)
 		{
-            cout << "one, probstaticcache::readMapData: " << mapSize << "@"<< endl;
+            if(debug)cout << "one, probstaticcache::readMapData: " << mapSize << "@"<< endl;
 			getline(in_data, str);
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 			tmpPair = std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str()));
@@ -182,7 +182,7 @@ void probstaticCache::readTestData(string fn)
 	string str;
 	std::vector<string> tokens;
 
-	fn.replace ((fn.size()-5), 5, "test"); //change file extention from .train to .test
+	fn.replace ((fn.size()-5), 5, ".test"); //change file extention from .train to .test
 	ifstream testData (fn.c_str(), ios::in); //*.test file
 
 
@@ -205,7 +205,7 @@ void probstaticCache::readTestData(string fn)
 		}
 	}
 	testData.close();
-	cout << "two, probstaticcache::readTestData end!" << endl;
+	cout << "two, probstaticcache::readTestData end! size: " << testSTPointPairs.size() << endl;
 }
 
 //file on the form:
@@ -238,7 +238,7 @@ void probstaticCache::readTrainingData(string fn)
 		}
 	}
 	trainingData.close();
-	cout << "two, probstaticcache::readTrainingData end!" << endl;
+	cout << "two, probstaticcache::readTrainingData end! size:" << trainingSTPointPairs.size() << endl;
 }
 
 bool xxCompfunc(std::pair<double, double> i,std::pair<double, double> j) {return (i.first<j.first);} //sort based on x values
