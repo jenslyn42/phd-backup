@@ -17,7 +17,10 @@
  *                                                                         		*
  *   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS   		*
  *   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT     		*
- *   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR 		*
+ *   LIMITED TO, THE IMPyou please mark your COI information in CMT?
+Thanks.
+
+LIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR 		*
  *   A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER		*
  *   OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 		*
  *   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,   		*
@@ -135,13 +138,14 @@ void probstaticCache::readMapData()
 {
 	cout << "one, probstaticcache::readMapData start!" << endl;
 	int mapSize = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->getMapsize();
-
+	cout << "mapsize: " << mapSize << endl;
 	string mapFile = ts.getTestFile();
 	std::pair<double, double> tmpPair;
 	string str;
 	std::vector<string> tokens;
 
 	mapFile.replace ((mapFile.size()-4), 4, "node"); //change file extention from .cedge to .cnode
+	cout << "mapfile: " << mapFile << endl;
 	ifstream in_data (mapFile.c_str(), ios::in); //*.cnode file
 
 	//read in the mapping between coordinates and node ids from *.cnode file
@@ -149,7 +153,7 @@ void probstaticCache::readMapData()
 	{
 		for(int i = 0; i < mapSize; i++)
 		{
-            if(debug)cout << "one, probstaticcache::readMapData: " << mapSize << "@"<< endl;
+			if(debug)cout << "one, probstaticcache::readMapData: " << mapSize << "@"<< i << endl;
 			getline(in_data, str);
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 			tmpPair = std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str()));
