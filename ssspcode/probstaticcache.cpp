@@ -29,6 +29,7 @@
  ***************************************************************************************/
 #include "probstaticcache.h"
 #define debug false
+#define FILL_CACHE_FROM_TRAINING_DATA true
 
 probstaticCache::probstaticCache()
 {
@@ -178,7 +179,7 @@ void probstaticCache::readTestData(string fn)
 {
 	cout << "one, probstaticcache::readTestData start!" << endl;
 	std::pair<double, double> firstPair, secondPair;
-	int firstPnt, secondPnt;
+	int firstPnt, secondPnt, temp;
 	string str;
 	std::vector<string> tokens;
 
@@ -200,6 +201,8 @@ void probstaticCache::readTestData(string fn)
 			firstPnt = coordinate2Nodeid[firstPair];
 			secondPnt = coordinate2Nodeid[secondPair];
 
+            if(firstPnt > secondPnt){temp = firstPnt; firstPnt = secondPnt; secondPnt = temp;}
+
 			testSTPointPairs.push_back(std::make_pair(firstPnt,secondPnt));
 			if(debug) cout << "tree, probstaticcache::readTestData end of fileline loop.!" << endl;
 		}
@@ -214,7 +217,7 @@ void probstaticCache::readTrainingData(string fn)
 {
 	cout << "one, probstaticcache::readTrainingData start!" << endl;
 	std::pair<double, double> firstPair, secondPair;
-	int firstPnt, secondPnt;
+	int firstPnt, secondPnt, temp;
 	string str;
 	std::vector<string> tokens;
 
@@ -233,6 +236,8 @@ void probstaticCache::readTrainingData(string fn)
 
 			firstPnt = coordinate2Nodeid[firstPair];
 			secondPnt = coordinate2Nodeid[secondPair];
+
+            if(firstPnt > secondPnt){temp = firstPnt; firstPnt = secondPnt; secondPnt = temp;}
 
 			trainingSTPointPairs.push_back(std::make_pair(firstPnt,secondPnt));
 		}
@@ -352,7 +357,6 @@ void probstaticCache::populateProbStructures()
 	totalTrainingPairsSeen=0;
 	std::pair<int,int> p;
 
-	cout << "probstaticcache::populateProbStructures! Init 2d array trainingQueriesPerRegionPair";
 	///init array trainingQueriesPerRegionPair[mapSize][mapSize] dynamically
 // 	trainingQueriesPerRegionPair = new int*[mapSize];
 // 	for(int i=0; i<mapSize; i++)
@@ -363,7 +367,7 @@ void probstaticCache::populateProbStructures()
 // 			trainingQueriesPerRegionPair[i][j] = 0;
 // 	cout << " ... Done" << endl;
 
-	cout << "probstaticcache::populateProbStructures! calculating training stats";
+	cout << "probstaticcache::populateProbStructures! calculating training stats" << endl;
 	BOOST_FOREACH(intPair c, trainingSTPointPairs)
 	{
 		v1 = c.first;
@@ -535,6 +539,7 @@ void probstaticCache::fillCacheFromQueriesFile(int numQueries, string inFn)
 
 void probstaticCache::fillCacheFromQueriesFileByStatistics(int numQueries, string inFn)
 {
+    cout << "One. Start fillCacheFromQueriesFileByStatistics" << endl;
     vector<int> nodeidVectorRegion1, nodeidVectorRegion2, spResult, sp;
     int cid=0;
     pair<int,int> stPair; //to hold s and t for a shortest path query
@@ -543,8 +548,13 @@ void probstaticCache::fillCacheFromQueriesFileByStatistics(int numQueries, strin
     maxHeap mhCache;
 	HeapEntry tmp;
     boost::unordered_map<std::pair<int,int>, int> vSeen;
+    int i = 0;
+    bool SPresult = true;
     buildRegionId2NodeidVector();
+    buildRegionpair2NodepairVector();
 
+
+    cout << "two. Start fillCacheFromQueriesFileByStatistics" << endl;
     //finding all the region pairs for which the statistics has a non-zero entry for
     BOOST_FOREACH(pairIntMap::value_type rpint, trainingQueriesPerRegionPair)
     {
@@ -554,19 +564,35 @@ void probstaticCache::fillCacheFromQueriesFileByStatistics(int numQueries, strin
     //filing up bucketlist with one entry from each region pair.
     boost::unordered_map<intPair,CacheItem> bucketList;
 
+    cout << "three. Start fillCacheFromQueriesFileByStatistics" << endl;
     BOOST_FOREACH(intPair rp, regionPairsSeen)
     {
-        stPair = pickSTpair(rp);
+        SPresult = true;
+        i = 0;
+        cout << "3.1. regionPairsSeen.size: " << regionPairsSeen.size() << " rp: (" << rp.first << "," << rp.second << ") " << endl;
+        do{
+            stPair = pickSTpair(rp);
+            cout << "3.2 stPair: (" << stPair.first << "," << stPair.second << ") (" << rp.first << "," << rp.second << ") i: " << i << endl;
+            spResult = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->dijkstraSSSP(stPair.first, stPair.second);
 
-		spResult = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->dijkstraSSSP(stPair.first, stPair.second);
-		//make new cache item
-		CacheItem e (cid, spResult, spResult.front(), spResult.back());
-        cid++;
-        bucketList[rp] = e;
+            i++;
+            if(i > 10) SPresult = false;
+        }while(spResult.size() == 0 && SPresult == true);
+
+        if(SPresult){
+            cout << "3.3 spResult.size: " << spResult.size() << endl;
+            //make new cache item
+            CacheItem e (cid, spResult, spResult.front(), spResult.back());
+//  		cout << "3.4 e (id,spResult.size,spResult.front, spResult.back) (" << cid << "," << spResult.size() << "," << spResult.front() << "," << spResult.back() << ")" << endl;
+            cid++;
+//          cout << "3.5 cid: " << cid << endl;
+            bucketList[rp] = e;
+//          cout << "stPair: (" << stPair.first << "," << stPair.second << ") spResult.size: " << spResult.size() << " cid: " << cid << endl;
+        }
     }
     ts.nonEmptyRegionPairs = bucketList.size();
 
-	cout << "probstaticcache::fillCacheFromQueriesFileByStatistics! Initial scoring of " << bucketList.size() << " items started";
+	cout << "probstaticcache::fillCacheFromQueriesFileByStatistics! Initial scoring of " << bucketList.size() << " items started" << endl;
 	//rank queries based on statistics
 	startTime = clock();
 	BOOST_FOREACH(intPairCacheitemMap::value_type icm, bucketList)
@@ -579,6 +605,7 @@ void probstaticCache::fillCacheFromQueriesFileByStatistics(int numQueries, strin
 		tmp.pID = icm.first;
 		tmp.dist = score;
 		mhCache.push(tmp);
+		cout << "score: " << score << " tmp.pID: (" << tmp.pID.first << "," << tmp.pID.second << ") tmp.dist: " << tmp.dist << " spLength: " << sp.size() << " mhCache size: " << mhCache.size() << endl;
 	}
 	endTime = clock();
 	cout << " ... Done. TIME: " << (double(endTime-startTime))/CLOCKS_PER_SEC << endl;
@@ -642,35 +669,64 @@ void probstaticCache::fillCacheFromQueriesFileByStatistics(int numQueries, strin
 
 }
 
+
+//	std::vector<std::pair<int, int> > trainingSTPointPairs;
 pair<int,int> probstaticCache::pickSTpair(pair<int,int> regionPair)
 {
-    int rid1, rid2, nid1, nid2;
-    rid1 = regionPair.first;
-    rid2 = regionPair.second;
-    vector<int> nodeidVectorRegion1, nodeidVectorRegion2;
+    if(FILL_CACHE_FROM_TRAINING_DATA){
+        vector<intPair> nodePairVector;
 
-//    srand(clock());
-    nodeidVectorRegion1 = regionid2nodeidVector.at(rid1);
-    nodeidVectorRegion2 = regionid2nodeidVector.at(rid2);
+        nodePairVector = regionPair2nodePairVector.at(regionPair);
+        cout << "nodepairVector size: " << nodePairVector.size() << endl;
+        return nodePairVector.at((int)rand()%nodePairVector.size());
 
-    nid1 = nodeidVectorRegion1.at((int)rand()%nodeidVectorRegion1.size());
-    nid2 = nodeidVectorRegion2.at((int)rand()%nodeidVectorRegion2.size());
+    }else{
+        int nid1, nid2;
+        vector<int> nodeidVectorRegion1, nodeidVectorRegion2;
 
-    return std::make_pair<int,int>(nid1,nid2);
+        nodeidVectorRegion1 = regionid2nodeidVector.at(regionPair.first);
+        nodeidVectorRegion2 = regionid2nodeidVector.at(regionPair.second);
+
+        nid1 = nodeidVectorRegion1.at((int)rand()%nodeidVectorRegion1.size());
+        nid2 = nodeidVectorRegion2.at((int)rand()%nodeidVectorRegion2.size());
+
+        if(nid1 < nid2)
+            return std::make_pair<int,int>(nid1,nid2);
+        else
+            return std::make_pair<int,int>(nid2,nid1);
+    }
 }
 
 void probstaticCache::buildRegionId2NodeidVector()
 {
     int rid;
     vector<int> nodeidVector;
-    BOOST_FOREACH(intCoordinateMap::value_type ic, nodeid2coordinate)
-    {
+    BOOST_FOREACH(intCoordinateMap::value_type ic, nodeid2coordinate) {
         rid = mapCoordinate2RegionId(ic.second);
         if(regionid2nodeidVector.find(rid) == regionid2nodeidVector.end())
             regionid2nodeidVector[rid] = nodeidVector;
 
         regionid2nodeidVector.at(rid).push_back(ic.first);
     }
+}
+
+void probstaticCache::buildRegionpair2NodepairVector()
+{
+    int rid1,rid2,temp;
+    vector<intPair> nodepairVector;
+    intPair ip;
+    BOOST_FOREACH(intPair c, trainingSTPointPairs)
+	{
+        rid1 = mapNodeid2RegionId(c.first);
+        rid2 = mapNodeid2RegionId(c.second);
+        if(rid1 > rid2){temp = rid1; rid1 = rid2; rid2 = temp;}
+        ip = std::make_pair<int,int>(rid1,rid2);
+
+        if(regionPair2nodePairVector.find(ip) == regionPair2nodePairVector.end())
+            regionPair2nodePairVector[ip] = nodepairVector;
+
+        regionPair2nodePairVector.at(ip).push_back(c);
+	}
 }
 
 void probstaticCache::writeoutCacheCoordinates(string testbasename, vector<CacheItem> cm, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits)
