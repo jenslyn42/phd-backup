@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 testsetting ts;
 string testname = "NEW2correctness1000.test";
 // string testfile ="ppi.dat";
-string testfile ="DKroad.cedge";
+string testfile ="Aalborg.cedge";
 int inputFileType = 3; //1:graph_large, 2: ppi.dat, 3:*.cedge
 int numqueries = 100000;
 
@@ -152,13 +152,13 @@ testObj *expTest3;
 
 cacheType = LIST_CACHE;
 
-ts.queryFileName = "infati_qlog.test";
-testname = "CacheSize_level19_PROBSTAT_.test";
-for(int i = 40000; i <= 320000; i*=2)
+ts.queryFileName = "AAL_qlog.test";
+testname = "CacheSize_PROBSTAT_AAL.test";
+for(int i = 10000; i <= 320000; i*=2)
 {
     cout << i << "J" << endl;
     ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-	ts.setSplits(19);
+	ts.setSplits(10);
 	expTest3 = new testObj(ts,5, queries);
 	expTest3->runStaticTest();
 	expTest3-> testObj::~testObj();
