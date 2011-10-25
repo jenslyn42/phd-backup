@@ -99,6 +99,7 @@ private:
 	boost::unordered_map<coordinate, int> coordinate2Nodeid;
 	boost::unordered_map<int, coordinate> nodeid2coordinate;
 	boost::unordered_map<int, vector<int> > regionid2nodeidVector;
+	boost::unordered_map<intPair, vector<intPair> > regionPair2nodePairVector;
 	regionlist points; //holds all coordinates from the map
 	boost::unordered_map<int, region> mapRegions; //holds all regions after a call to makePartitions()
 
@@ -128,6 +129,7 @@ private:
 	void fillCacheFromQueriesFileByStatistics(int numQueries, string inFn);
     pair<int,int> pickSTpair(std::pair<int,int> regionPair);
     void buildRegionId2NodeidVector();
+    void buildRegionpair2NodepairVector();
 	void writeoutCacheCoordinates(string testbasename, vector<CacheItem> cm, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits);
 	int writeoutTestCoordinates(string testbasename, std::vector<intPair > stPointPairs, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits);
 	int writeoutTrainingCoordinates(string testbasename, std::vector<intPair > stPointPairs, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits);

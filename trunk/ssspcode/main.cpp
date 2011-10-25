@@ -131,6 +131,7 @@ cout << "double\t\t" << std::numeric_limits<double>::max() << endl;
 cout << sizeof(long) << " " << sizeof(int) << " " <<sizeof(double) <<endl;
 cout << "******************************************" << endl;
 
+
 ///exp test OSC with testObj
 // testObj *expTest = new testObj(ts,1, queries);
 // expTest->runTest();
@@ -138,8 +139,8 @@ cout << "******************************************" << endl;
 
 ///exp test LRU with testObj
 //ts.queryFileName = "infati_qlog.test";
-//testname = "CacheSize_LRU.test";
-//for(int i = 320000; i >= 5000; i/=2)
+//testname = "CacheSize_LRU_1.test";
+//for(int i = 1250; i <= 40000; i*=2)
 //{
 //    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
 //    testObj *expTest2 = new testObj(ts,2, queries);
@@ -152,12 +153,12 @@ testObj *expTest3;
 cacheType = LIST_CACHE;
 
 ts.queryFileName = "infati_qlog.test";
-testname = "CacheSize_PROBSTAT.test";
-for(int i = 10000; i <= 320000; i*=2)
+testname = "CacheSize_level19_PROBSTAT_.test";
+for(int i = 40000; i <= 320000; i*=2)
 {
     cout << i << "J" << endl;
     ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-	ts.setSplits(10);
+	ts.setSplits(19);
 	expTest3 = new testObj(ts,5, queries);
 	expTest3->runStaticTest();
 	expTest3-> testObj::~testObj();
