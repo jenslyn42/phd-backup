@@ -67,7 +67,7 @@ void testsetting::setData(string testname, string testfile, int testType, int nu
 	testFile = testfile;
 	this->testType = testType;
 	numQueries = numqueries;
-	this->cacheSize = cacheSize;
+	setCacheSize(cacheSize, cacheType);
 	this->queryRangeStart = queryRangeStart;
 	this->queryRangeEnd = queryRangeEnd;
 
@@ -78,6 +78,13 @@ void testsetting::setData(string testname, string testfile, int testType, int nu
 	this->useNodeScore = useNodeScore;
 	this->useHitScore = useHitScore;
 	this->cacheType = cacheType;
+}
+
+void testsetting::setCacheSize ( int cs, int cType ) {
+    if(cType == GRAPH_CACHE || cType == COMPRESSED_G_CACHE)
+        this->cacheSize = cs*8;
+    else
+        this->cacheSize = cs/2;
 }
 
 #endif

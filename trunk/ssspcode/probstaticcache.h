@@ -98,6 +98,7 @@ private:
 
 	boost::unordered_map<coordinate, int> coordinate2Nodeid;
 	boost::unordered_map<int, coordinate> nodeid2coordinate;
+    boost::unordered_map<coordinate, int> coordinate2regionidMap;
 	boost::unordered_map<int, vector<int> > regionid2nodeidVector;
 	boost::unordered_map<intPair, vector<intPair> > regionPair2nodePairVector;
 	regionlist points; //holds all coordinates from the map
@@ -113,6 +114,7 @@ private:
 	void checkCache(std::pair<int,int> query);
 	intPair findLargestQuery(vector<pair<int, int> > cCandidates, int k);
 	double calcScore(vector<int> sp, boost::unordered_map<pair<int, int>, int> vSeen);
+	double commonCalc(int r1, int r2, vector<int> spResult);
 	void statistics(string outFn);
 
 	void readMapData();
@@ -123,6 +125,7 @@ private:
 	std::vector<region> split(std::vector< region > regions, int axis);
 	int mapNodeid2RegionId(int nid);
 	int mapCoordinate2RegionId(std::pair< double, double > coord);
+	int CalcCoordinate2RegionId(std::pair< double, double > coord);
 	void populateProbStructures();
 	void fillCache(int numQueries, string inFn);
 	void fillCacheFromQueriesFile(int numQueries, string inFn);
@@ -130,9 +133,11 @@ private:
     pair<int,int> pickSTpair(std::pair<int,int> regionPair);
     void buildRegionId2NodeidVector();
     void buildRegionpair2NodepairVector();
+    void buildCoordinate2RegionIdMap();
 	void writeoutCacheCoordinates(string testbasename, vector<CacheItem> cm, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits);
 	int writeoutTestCoordinates(string testbasename, std::vector<intPair > stPointPairs, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits);
 	int writeoutTrainingCoordinates(string testbasename, std::vector<intPair > stPointPairs, boost::unordered_map<int, coordinate> nodeid2coordinate, int numSplits);
+	void sumUpNodes();
 };
 
 #endif

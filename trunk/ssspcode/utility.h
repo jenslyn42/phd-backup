@@ -46,6 +46,8 @@
 #define GRAPH_CACHE 1
 #define LIST_CACHE 2
 #define COMPRESSED_G_CACHE 3
+#define SERVER_SCENARIO 10
+#define PROXY_SCENARIO 11
 
 
 struct region;
@@ -61,12 +63,15 @@ typedef boost::unordered_map<int, double> intDoubleMap;
 typedef boost::unordered_map<int, region> regionMap;
 typedef boost::unordered_map<int, coordinate> intCoordinateMap;
 typedef boost::unordered_map<int, intPair > intPairMap;
+typedef boost::unordered_map<int, std::vector<int> > intVectorMap;
+typedef boost::unordered_map<int, std::pair<int, std::vector<int> > > intIntVectorMap;
 typedef boost::unordered_map<std::pair<int,int >, int> intPairIntMap;
 typedef boost::unordered_map<intPair,int > pairIntMap;
 typedef boost::unordered_map<int, CacheItem> intCacheitemMap;
 typedef boost::unordered_map<intPair, CacheItem> intPairCacheitemMap;
 typedef	boost::unordered_map<int, boost::dynamic_bitset<> > intDBitset;
 typedef	boost::unordered_map<coordinate, int> coordinateIntMap;
+typedef boost::unordered_map<int, std::pair<intPair, std::vector<int> > > intIntPairVectorMap;
 
 struct region
 {

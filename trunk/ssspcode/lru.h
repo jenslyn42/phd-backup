@@ -75,8 +75,6 @@ private:
 	bool useHitScore;
 	bool cacheFull;
 
-	testsetting ts;
-
 	void checkAndUpdateCache(std::pair<int,int> query);
 	void checkStaticCache(std::pair< int, int > query);
 	void insertItem(int querySize, std::vector<int> nodesInQueryResult, int sNode, int tNode);
