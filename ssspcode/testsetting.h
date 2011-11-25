@@ -41,6 +41,11 @@
 
 #include "utility.h"
 
+#include <typeinfo>
+#include <iostream>
+
+
+
 using namespace std;
 
 
@@ -65,9 +70,12 @@ private:
 	bool useNodeScore;
 	bool useHitScore;
 
-	int splits;
+	int splits, itemsInCache, nonEmptyRegionPairs, testScenario;
+
+    double fillCacheTime, buildStatisticsTime;
 
 public:
+
 	testsetting(){ };
 
 	testsetting(string testname, string testfile, int testType, int numqueries, int cacheSize, int queryRangeStart, int queryRangeEnd, bool gaussian, double sigma, bool useOptimalSubstructure, bool useNodeScore, bool useHitScore, int cacheType);
@@ -78,11 +86,24 @@ public:
 
 	std::string preComputedQueriesFileName;
 	std::string queryFileName;
-	int itemsInCache;
-	int cacheType;
-	int nonEmptyRegionPairs;
 
-	double fillCacheTime, buildStatisticsTime;
+	int cacheType;
+
+
+    int getNonEmptyRegionPairs(){return nonEmptyRegionPairs;}
+    void setNonEmptyRegionPairs(int rp){nonEmptyRegionPairs = rp;}
+
+    int getTestScenario(){return testScenario;}
+    void setTestScenario(int ts){testScenario = ts;}
+
+    double getItemsInCache(){return itemsInCache;}
+    void setItemsInCache(double iic){itemsInCache = iic;}
+
+    double getBuildStatisticsTime(){return buildStatisticsTime;}
+    void setBuildStatisticsTime(double st){buildStatisticsTime = st;}
+
+    double getFillCacheTime(){return fillCacheTime;}
+    void setFillCacheTime(double ct){fillCacheTime = ct;}
 
 // 	void setTestName (const std::string& theValue ) {testName = theValue;}
 	std::string getTestName() const {return testName;}
@@ -90,7 +111,7 @@ public:
 // 	void setNumQueries (int theValue ) {numQueries = theValue;}
 	int getNumQueries() {return numQueries;}
 
-// 	void setCacheSize ( int theValue ) {cacheSize = theValue;}
+ 	void setCacheSize ( int cs, int cType );
 	int getCacheSize() const {return cacheSize;}
 
 // 	void setSkewedData ( bool theValue ) {skewedData = theValue;}
@@ -121,6 +142,26 @@ public:
 
 	void setNumQueriesForCache (int theValue) {numQueriesForCache = theValue;}
 	int getNumQueriesForCache() const {return numQueriesForCache;}
+
+	void writeOut()
+	{
+	    cout << "\n--------------------------" << endl;
+        cout << "testName " << testName << endl;
+        cout << "testFile " << testFile << endl;
+        cout << "testType" << testType << endl;
+        cout << "numQueries " <<  numQueries << endl;
+        cout << "numQueriesForCache " <<  numQueriesForCache << endl;
+        cout << "cacheSize " <<  cacheSize << endl;
+        cout << "queryRangeStart " <<  queryRangeStart << endl;
+        cout << "queryRangeEnd " <<  queryRangeEnd << endl;
+        cout << "staticQueryType " <<  staticQueryType << endl;
+        cout << "useOptimalSubstructure " <<  useOptimalSubstructure << endl;
+        cout << "useNodeScore " <<  useNodeScore << endl;
+        cout << "useHitScore " <<  useHitScore << endl;
+        cout << "splits, itemsInCache, nonEmptyRegionPairs " <<  splits << " " << itemsInCache << " " << nonEmptyRegionPairs << endl;
+        cout << "fillCacheTime, buildStatisticsTime" <<  fillCacheTime << " " << buildStatisticsTime << endl;
+        cout << "--------------------------\n" << endl;
+	}
 };
 
 #endif

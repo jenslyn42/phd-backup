@@ -64,7 +64,7 @@ private:
 	RoadGraph(){ };
 	~RoadGraph(){delete mapInstance;}
 	RoadGraph(RoadGraph const&){}; //privatre copy constructor
-	RoadGraph& operator=(RoadGraph const&){}; //private assignment operator
+	RoadGraph& operator=(RoadGraph const&); //private assignment operator
 	static RoadGraph* mapInstance;
 	std::vector<Vertex> map;
 	int mapSize;

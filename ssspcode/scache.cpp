@@ -208,7 +208,7 @@ void scache::generateRandLongQueries(uint numQueries, uint maxVal, uint k, strin
 	cacheFile.close();
 }
 
-//support for generateLongQueries()
+///support for generateLongQueries()
 intPair scache::findLargestQuery(vector<pair<int, int> > cCandidates, uint k)
 {
 	boost::unordered_map<int, pair<double,double> > node_coodinates; // node ids and their coordinates
@@ -494,7 +494,7 @@ void scache::readScoredQueries(uint numQueries, string inFn)
 	}while(cacheSize > cacheUsed && !mh.empty());
 	cout << "scache::readScoredQueries! cache size:" << cache.size() << "/" << cacheUsed<< endl;
 	queryNumCacheFull = cacheUsed;
-	ts.itemsInCache = cache.size();
+	ts.setItemsInCache(cache.size());
 	writeoutCacheCoordinates(ts.getTestName(), cache, nodeid2coordinate, ts.getSplits());
 	cout << "scache::calcScoreCounter: " << calcScoreCounter << endl;
 }

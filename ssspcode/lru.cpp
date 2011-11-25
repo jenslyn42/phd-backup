@@ -30,14 +30,14 @@
 #include "lru.h"
 #define debug false
 
-#define STATIC_CACHE true
+#define STATIC_CACHE false
 
 typedef std::pair<int , int> intPair;
 
 LRU::LRU(testsetting ts)
 {
 	this->ts = ts;
-	cacheSize = ts.getCacheSize();
+	cacheSize = ts.getCacheSize()/32;
 	numTotalQueries = 0;
 	numCacheHits = 0;
 	cacheUsed = 0;
@@ -66,7 +66,7 @@ void LRU::readStaticQuery(std::pair< int, int > query)
 
 void LRU::readQueries(int numQueries, string inFn)
 {
-	cout<< "2.0 done" << endl;
+	cout<< "2.0 done cachesize/given cs:" << cacheSize <<"/" << ts.getCacheSize() << endl;
 	readTestData(ts.queryFileName);
 	cout<< "2.1 done" << endl;
 	readTrainingData(ts.queryFileName);
@@ -77,7 +77,6 @@ void LRU::readQueries(int numQueries, string inFn)
 	if(STATIC_CACHE){
         BOOST_FOREACH(intPair q, trainingSTPointPairs) { readQuery(q); }
     }
-    ts.itemsInCache = -1;
 }
 
 void LRU::readQueryList(std::vector< std::pair<int,int> > queryList)
@@ -91,6 +90,11 @@ void LRU::readQueryList(std::vector< std::pair<int,int> > queryList)
     }else{
         BOOST_FOREACH(intPair q, testSTPointPairs ) { readQuery(q); }
     }
+
+    this->ts.setBuildStatisticsTime(-1.0);
+    ts.setNonEmptyRegionPairs(-1);
+    this->ts.setFillCacheTime(-1.0);
+    this->ts.setItemsInCache(cache.size());
 }
 
 void LRU::checkAndUpdateCache(std::pair< int, int > query)
@@ -198,7 +202,6 @@ void LRU::insertItem(int querySize, std::vector< int > nodesInQueryResult, int s
 		{
 			if(!cacheFull){queryNumCacheFull = numTotalQueries; cacheFull = true;}
 			if(debug) cout << "three1, LRU::insertItem" << cache.size() <<"," << cache[0].size <<endl;
-			if(debug) cout << "querySize,cacheSize,cacheUsed:" << querySize <<"," << cacheSize <<"," << cacheUsed << endl;
 			int itemSize = cache[0].size;
 			cache.erase(cache.begin());
 			cacheUsed = cacheUsed - itemSize;
@@ -248,24 +251,22 @@ void LRU::readTrainingData(string fn)
 	string str;
 	std::vector<string> tokens;
 
+	fn.replace ((fn.size()-5), 5, ".train"); //change file extention from .test to .train
 	ifstream trainingData (fn.c_str(), ios::in); //*.train file
+	cout<< "training fn: " << fn << endl;
 	if(debug) cout << "one, LRU::readTrainingData! " << endl;
 	//find all pairs of nodeids in the training set to have SP done for them. map nodeids to coordinates.
 	if(trainingData.is_open())
 	{
 		if(debug) cout << "two, LRU::readTrainingData! " << endl;
-//		int i=0;
+
 		while(getline(trainingData, str))
 		{
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 
 			trainingSTPointPairs.push_back(std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str())));
-//
-//			if(i<10) {
-//                i++;
-//                cout << tokens[0] << " " << tokens[1] << " " << tokens[2] << endl;
-//                cout << atof(tokens[0].c_str()) << " " << atof(tokens[1].c_str()) << " " << atof(tokens[2].c_str()) << endl;
-//			}
+
+
 		}
 		if(debug) cout << endl;
 	}

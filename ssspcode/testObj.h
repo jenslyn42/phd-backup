@@ -38,6 +38,9 @@
 #include "FIFO.h"
 #include "scache.h"
 #include "probstaticcache.h"
+#include "hqf.h"
+#include "hqf_lru.h"
+#include "randCache.h"
 
 #include <ctime>
 #include <iostream>
@@ -67,8 +70,8 @@ public:
 
 private:
 	testsetting ts;
-	
-	clock_t start; 
+
+	clock_t start;
 	clock_t end;
 
 	///for query generation
