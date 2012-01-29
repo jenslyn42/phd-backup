@@ -101,8 +101,11 @@ For both the Aalborg and Beijing dataset we vary the cache size and number of le
 
 \begin{itemize}
 \item We can see $SPC^*$ performs much better than competitors
-\item  LRU perform well on small cache sizes, but the cache hit ratio quickly level out and stop growing, thus LRU is not scalable.
-\item 
+\item LRU perform well on small cache sizes, but the cache hit ratio quickly level out and stop growing, thus LRU is not scalable.
+\item HQF performance is very consistent, with the hit ratio varying only slightly. The hit ratio does however stay at just over 1\% for Aalborg experiments and around 0.2\% for Beijing experiments. It is not usable
+\item We observe that SPC initially does not grow as fast as LRU, but the growth continues as we increase cache size, unlike for LRU. 
+\item $SPC^*$ grows faster than LRU and gets better cache hit ratio at all cache sizes than LRU and SPC, except for the smallest cache size.
+\item The test on the Aalborg vs. Beijing data sets show that SPC performs much better on the Aalborg data set, where as LRU performs about 50\% worse. This can be explained by the fact that both methods rely on users behaving consistently over time, but where SPC relies on global consistency in user behavior, LRU need local consistency too. This makes SPC/$SPC^*$ more robust and we can expect them to always outperform LRU.
 \end{itemize}
 
 
@@ -125,18 +128,6 @@ For both the Aalborg and Beijing dataset we vary the cache size and number of le
 
 
 
-\subsubsection{Vary Training data size}
-
-
-
-
-
-\begin{figure}[htb]
-\center
-     \includegraphics[width=0.5\columnwidth]{figures/poiIntersect.pdf}
-\caption{ Hit ratio vs. training data size}
-\label{fig:dataSizeVsHitRatio}
-\end{figure}
 % \noindent
 % \begin{tabular}{|l |p{0.58\columnwidth} |l |}
 % \hline
@@ -166,13 +157,13 @@ For both the Aalborg and Beijing dataset we vary the cache size and number of le
 On the server [REF TO FIGURE] our aim is slightly different than on the Proxy, as we also have to consider that there may be some paths that are so small that it may be cheaper to simply re-calculate the result, in stead of caching it.
 
 For the Server scenario we will estimate 
-$\Gamma(P_{a,b})$ 
+$\gamma(P_{a,b})$ 
 [REF TO EQUATION], the benefit of a path, as 
-$\Gamma_E(P_{a,b})$:
+$\gamma_E(P_{a,b})$:
 
 
 \begin{equation} \label{eq:estimateCost}
-\Gamma{_E} (P_{a,b})  =\sum\limits_{P_{a,b} \in \mathfrak{U}(P_{a,b})} |SP_{a,b}|^2
+\gamma{_E} (P_{a,b})  =\sum\limits_{P_{a,b} \in \mathfrak{U}(P_{a,b})} |SP_{a,b}|^2
 \end{equation}
 
 % On the proxy server we won't be doing \spath calculations, so the most important performance measure is the cache hit ratio.
@@ -180,42 +171,139 @@ $\Gamma_E(P_{a,b})$:
 % For both the Aalborg and Beijing dataset we vary the cache size and number of levels to show the impact on the cache hit ratio. We have implemented a number of optimizations to the cache storage [REF PREV SEC. NEEDED] and we will show their impact on the cache hit ratio.
 
 
+% 
+% \begin{tabular}{|l|r|r|r|}\hline
+% AA-Method & Time & Hit ratio & Vertices visited \\\hline
+% SPC-P & 28.87 & 99 & 23981137 \\\hline
+% SPC$^+$-P & 23.74 & 375 & 20570981 \\\hline
+% SPC$^*$-P & 22.11 & 1539 & 5559029\\\hline
+% SPC-S & 31.87 & 60 & 24023852 \\\hline
+% SPC$^+$-S & 7.16 & 1549 & 5201386 \\\hline 
+% SPC$^*$-S & 22.11 & 1539 & 5559029 \\\hline
+% \end{tabular}
+% 
+% 
+% 
+% \begin{tabular}{|l|r|r|r|}\hline
+% BJ-Method & Time & Hit ratio & Vertices visited \\\hline
+% SPC-P & 94.58 & 5738 & 85810602\\\hline
+% SPC$^+$-P & 89.44 & 1310 & 82122187 \\\hline
+% SPC$^*$-P & &  &  \\\hline
+% SPC-S & 93.22 & 97 & 86753995 \\\hline
+% SPC$^+$-S & 84.74 & 717 & 79557276 \\\hline 
+% SPC$^*$-S &  &  &  \\\hline
+% \end{tabular}
 
-\begin{tabular}{|l|r|r|r|}\hline
-AA-Method & Time & Hit ratio & Vertices visited \\\hline
-SPC-P & 28.87 & 99 & 23981137 \\\hline
-SPC$^+$-P & 23.74 & 375 & 20570981 \\\hline
-SPC$^*$-P & 22.11 & 1539 & 5559029\\\hline
-SPC-S & 31.87 & 60 & 24023852 \\\hline
-SPC$^+$-S & 7.16 & 1549 & 5201386 \\\hline 
-SPC$^*$-S & 22.11 & 1539 & 5559029 \\\hline
-\end{tabular}
-
-
-
-\begin{tabular}{|l|r|r|r|}\hline
-BJ-Method & Time & Hit ratio & Vertices visited \\\hline
-SPC-P & 94.58 & 5738 & 85810602\\\hline
-SPC$^+$-P & 89.44 & 1310 & 82122187 \\\hline
-SPC$^*$-P & &  &  \\\hline
-SPC-S & 93.22 & 97 & 86753995 \\\hline
-SPC$^+$-S & 84.74 & 717 & 79557276 \\\hline 
-SPC$^*$-S &  &  &  \\\hline
-\end{tabular}
-
-
-
-
+% \begin{figure}[htb]
+% \center
+%   \begin{tabular}{cc}
+%      \includegraphics[width=0.5\columnwidth]{figures/aalborgHitVsCacheSizeServer.pdf}
+%      &
+%      \includegraphics[width=0.5\columnwidth]{figures/beijingHitVsCacheSizeServer.pdf}
+%       \\
+%      (a) Aalborg data & (b)  Beijing data
+%      \end{tabular} 
+% \caption{Hit ratio vs. cache size }
+% \label{fig:cSizeVsHitRatio}
+% \end{figure}
 
 \begin{figure}[htb]
 \center
-  \begin{tabular}{cc}
-     \includegraphics[width=0.3\columnwidth]{figures/poiIntersect.pdf}
+  \begin{tabular}{ccc}
+     \includegraphics[width=0.5\columnwidth]{figures/aalborgHitVsLevelServer.pdf}
      &
-     \includegraphics[width=0.3\columnwidth]{figures/poiIntersect.pdf}
+     \includegraphics[width=0.5\columnwidth]{figures/beijingHitVsLevelServer.pdf}
       \\
      (a) Aalborg data & (b)  Beijing data
      \end{tabular}
 \caption{Hit ratio vs. Levels}
 \label{fig:levelVsHitRatio}
 \end{figure}
+
+\begin{figure}[htb]
+\center
+  \begin{tabular}{ccc}
+     \includegraphics[width=0.5\columnwidth]{figures/aalborgRuntimeVsLevel.pdf}
+     &
+     \includegraphics[width=0.5\columnwidth]{figures/beijingRuntimeVsLevelServer.pdf}
+      \\
+     (a) Aalborg data & (b)  Beijing data
+     \end{tabular}
+\caption{Runtime vs. Levels}
+\label{fig:levelVsHitRatio}
+\end{figure}
+
+\begin{figure}[htb]
+\center
+  \begin{tabular}{ccc}
+     \includegraphics[width=0.5\columnwidth]{figures/aalborgNodesVisitedVsLevelServer.pdf}
+     &
+     \includegraphics[width=0.5\columnwidth]{figures/beijingNodesVisitedVsLevelServer.pdf}
+      \\
+     (a) Aalborg data & (b)  Beijing data
+     \end{tabular}
+\caption{Vertices Visited vs. Levels}
+\label{fig:levelVsHitRatio}
+\end{figure}
+
+\begin{figure}[htb]
+\center
+  \begin{tabular}{ccc}
+     \includegraphics[width=0.5\columnwidth]{figures/aalborgRuntimeVsCacheSize.pdf}
+     &
+     \includegraphics[width=0.5\columnwidth]{figures/beijingRuntimeVsCacheSize.pdf}
+      \\
+     (a) Aalborg data & (b)  Beijing data
+     \end{tabular}
+\caption{Runtime vs. Cache Size}
+\label{fig:levelVsHitRatio}
+\end{figure}
+
+\begin{figure}[htb]
+\center
+  \begin{tabular}{ccc}
+     \includegraphics[width=0.5\columnwidth]{figures/aalborgNodesVisitedVsCacheSize.pdf}
+     &
+     \includegraphics[width=0.5\columnwidth]{figures/beijingNodesVisitedVsCacheSize.pdf}
+      \\
+     (a) Aalborg data & (b)  Beijing data
+     \end{tabular}
+\caption{Vertices Visited vs. Cache Size}
+\label{fig:levelVsHitRatio}
+\end{figure}
+% 
+% % 
+% % 
+% epstopdf aalborgHitVsCacheSize.eps
+% epstopdf aalborgHitVsCacheSizeServer.eps
+% epstopdf aalborgHitVsLevel.eps
+% epstopdf aalborgHitVsLevelServer.eps
+% epstopdf aalborgNodesVisitedVsCacheSize.eps
+% epstopdf aalborgNodesVisitedVsLevelServer.eps
+% epstopdf aalborgRuntimeVsCacheSize.eps
+% epstopdf aalborgRuntimeVsLevel.eps
+% epstopdf beijingHitVsCacheSize.eps
+% epstopdf beijingHitVsCacheSizeServer.eps
+% epstopdf beijingHitVsLevel.eps
+% epstopdf beijingHitVsLevelServer.eps
+% epstopdf beijingNodesVisitedVsCacheSize.eps
+% epstopdf beijingNodesVisitedVsLevelServer.eps
+% epstopdf beijingRuntimeVsCacheSize.eps
+% epstopdf beijingRuntimeVsLevelServer.eps
+% 
+% load './aalborgHitVsCacheSize.p
+% load './aalborgHitVsCacheSizeServer.p
+% load './aalborgHitVsLevel.p
+% load './aalborgHitVsLevelServer.p
+% load './aalborgNodesVisitedVsCacheSize.p
+% load './aalborgNodesVisitedVsLevel.p
+% load './aalborgRuntimeVsCacheSize.p
+% load './aalborgRuntimeVsLevel.p
+% load './beijingHitVsCacheSize.p
+% load './beijingHitVsCacheSizeServer.p
+% load './beijingHitVsLevel.p
+% load './beijingHitVsLevelServer.p
+% load './beijingNodesVisitedVsCacheSize.p
+% load './beijingNodesVisitedVsLevel.p
+% load './beijingRuntimeVsCacheSize.p
+% load './beijingRuntimeVsLevel.p
