@@ -22,6 +22,12 @@ struct HeapEntry {
 	}
 };
 
+struct HeapWorkloadEntry
+{
+    int pathId; //path id
+    std::pair<int, std::vector<int> > answeredPaths; //number of paths 'path id' can answer, and a vector holding the id of each of these.
+};
+
 ///For minHeap
 struct HeapEntryComp {
 	bool operator () (HeapEntry left, HeapEntry right) const
@@ -31,6 +37,12 @@ struct HeapEntryComp {
 struct HeapEntryCompMax {
 	bool operator () (HeapEntry left, HeapEntry right) const
 	{ return left.dist < right.dist; }
+};
+
+///For MaxWorkloadHeap
+struct HeapWorkloadEntryCompMax {
+	bool operator () (HeapWorkloadEntry left, HeapWorkloadEntry right) const
+	{ return left.answeredPaths.second.size() < right.answeredPaths.second.size() ; }
 };
 
 template<typename _Tp, typename _Sequence, typename _Compare >
@@ -75,5 +87,6 @@ class FAST_HEAP
 //typedef    priority_queue<HeapEntry,vector<HeapEntry>,HeapEntryComp> Heap;
 typedef    FAST_HEAP<HeapEntry, std::vector<HeapEntry>, HeapEntryComp> Heap;
 typedef    FAST_HEAP<HeapEntry, std::vector<HeapEntry>, HeapEntryCompMax> maxHeap;
+typedef    FAST_HEAP<HeapWorkloadEntry, std::vector<HeapWorkloadEntry>, HeapWorkloadEntryCompMax> maxWorkloadHeap;
 
 #endif

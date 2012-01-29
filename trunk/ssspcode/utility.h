@@ -49,6 +49,9 @@
 #define SERVER_SCENARIO 10
 #define PROXY_SCENARIO 11
 
+//enum METHOD{ NONE, OSC, LRU, FIFO, SCACHE, SPC, HQF, RANDCACHE, HQFLRU };
+
+
 
 struct region;
 

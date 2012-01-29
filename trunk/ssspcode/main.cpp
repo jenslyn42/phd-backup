@@ -118,26 +118,50 @@ cout << "******************************************" << endl;
 ts.setTestScenario(PROXY_SCENARIO);
 cacheType = LIST_CACHE;
 
+
+
+//void oracleTest(testsetting ts);
+//
+//void hqfTest(testsetting ts);
+//
+//void lruTest(testsetting ts);
+//
+//void spcTest(testsetting ts);
+//
+//void spcStarTest(testsetting ts);
+
+
+
+
+
 ///Oracle test
 //{
-//oracle *ora;
+//testObj *ora;
 //testfile ="Aalborg.cedge";
 //ts.queryFileName = "AAL_qlog.test";
-//testname = "cacheSize_N-HQF_AAL.test";
-//ts.setData(testname, testfile, inputFileType, numqueries, 160000, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//ora = new oracle(ts);
-//ora->run();
-//ora-> oracle::~oracle();
-//
+//testname = "cacheSize_oracle_AAL.test";
+//queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
+//for(int i = 10000; i <= 320000000; i*=2)
+//{
+//    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+//    ora = new testObj(ts,9, queries);
+//    ora->runStaticTest();
+//    ora-> testObj::~testObj();
+//}
 //
 //testfile ="beijing_map.cedge";
 //ts.queryFileName = "beijing_all.test";
-//testname = "cacheSize_N-HQF_BEIJING.test";
-//ts.setData(testname, testfile, inputFileType, numqueries, 160000, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//ora = new oracle(ts);
-//ora->run();
-//ora-> oracle::~oracle();
+//testname = "cacheSize_oracle_BEIJING.test";
+//queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
+//for(int i = 10000; i <= 320000000; i*=2)
+//{
+//    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+//    ora = new testObj(ts,9, queries);
+//    ora->runStaticTest();
+//    ora-> testObj::~testObj();
 //}
+//}
+
 
 ///exp test OSC with testObj
 //{
@@ -148,35 +172,33 @@ cacheType = LIST_CACHE;
 
 ///exp test HQF with testObj
 //{
-//testObj *expTest6;
-////
-//testfile ="Aalborg.cedge";
-//ts.queryFileName = "AAL_qlog.test";
-//testname = "cacheSize_HQF_AAL.test";
-//queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//for(int i = 10000; i <= 3200000; i*=2)
-//for(int i = 2560000; i <= 32000000000000; i*=2)
-//{
-//    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//	ts.setSplits(14);
-//	expTest6 = new testObj(ts,6, queries);
-//	expTest6->runStaticTest();
-//	expTest6-> testObj::~testObj();
-//}
+testObj *expTest6;
 //
-//testfile ="beijing_map.cedge";
-//ts.queryFileName = "beijing_all.test";
-//testname = "cacheSize_HQF_BEIJING.test";
-//queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//for(int i = 10000; i <= 3200000; i*=2)
-//for(int i = 2560000; i <= 32000000000000; i*=2)
-//{
-//    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//	ts.setSplits(14);
-//	expTest6 = new testObj(ts,6, queries);
-//	expTest6->runStaticTest();
-//	expTest6-> testObj::~testObj();
-//}
+testfile ="Aalborg.cedge";
+ts.queryFileName = "AAL_qlog.test";
+testname = "cacheSize_HQF_AAL.test";
+queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
+for(int i = 10000; i <= 320000000; i*=2)
+{
+    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+	ts.setSplits(14);
+	expTest6 = new testObj(ts,6, queries);
+	expTest6->runStaticTest();
+	expTest6-> testObj::~testObj();
+}
+
+testfile ="beijing_map.cedge";
+ts.queryFileName = "beijing_all.test";
+testname = "cacheSize_HQF_BEIJING.test";
+queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
+for(int i = 10000; i <= 320000000; i*=2)
+{
+    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+	ts.setSplits(14);
+	expTest6 = new testObj(ts,6, queries);
+	expTest6->runStaticTest();
+	expTest6-> testObj::~testObj();
+}
 //}
 
 ///exp test randCache with testObj
@@ -216,42 +238,43 @@ cacheType = LIST_CACHE;
 
 ///exp test LRU with testObj
 //{
-testObj *expTest2;
-
-    testfile ="Aalborg.cedge";
-    ts.queryFileName = "AAL_qlog.test";
-    testname = "cacheSize_LRU_AAL.test";
-    queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-    for(int i = 10000; i <= 3200000; i*=2)
-    {
-        ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-        expTest2 = new testObj(ts,2, queries);
-        expTest2->runStaticTest();
-        expTest2-> testObj::~testObj();
-    }
-
-    testfile ="beijing_map.cedge";
-    ts.queryFileName = "beijing_all.test";
-    testname = "cacheSize_LRU_BEIJING.test";
-    queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-    for(int i = 10000; i <= 3200000; i*=2)
-    {
-        ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-        expTest2 = new testObj(ts,2, queries);
-        expTest2->runStaticTest();
-        expTest2-> testObj::~testObj();
-    }
+//testObj *expTest2;
+//
+//    testfile ="Aalborg.cedge";
+//    ts.queryFileName = "AAL_qlog.test";
+//    testname = "cacheSize_LRU_AAL.test";
+//    queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
+//    for(int i = 10000; i <= 3200000; i*=2)
+//    {
+//        ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+//        expTest2 = new testObj(ts,2, queries);
+//        expTest2->runStaticTest();
+//        expTest2-> testObj::~testObj();
+//    }
+//
+//    testfile ="beijing_map.cedge";
+//    ts.queryFileName = "beijing_all.test";
+//    testname = "cacheSize_LRU_BEIJING.test";
+//    queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
+//    for(int i = 10000; i <= 3200000; i*=2)
+//    {
+//        ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
+//        expTest2 = new testObj(ts,2, queries);
+//        expTest2->runStaticTest();
+//        expTest2-> testObj::~testObj();
+//    }
 //}
 
 ///cache test SPC with testObj
 //{
 //testObj *expTest3;
-//
+
 //testfile ="Aalborg.cedge";
 //ts.queryFileName = "AAL_qlog.test";
 //testname = "CacheSize_SPC_AAL.test";
 //queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//for(int i = 10000; i <= 3200000; i*=2)
+////for(int i = 10000; i <= 3200000; i*=2)
+//for(int i = 5120000; i <= 320000000; i*=2)
 //{
 //    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
 //	ts.setSplits(14);
@@ -264,7 +287,8 @@ testObj *expTest2;
 //ts.queryFileName = "beijing_all.test";
 //queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
 //testname = "CacheSize_SPC_BEIJING.test";
-//for(int i = 10000; i <= 3200000; i*=2)
+////for(int i = 10000; i <= 3200000; i*=2)
+//for(int i = 5120000; i <= 320000000; i*=2)
 //{
 //    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
 //	ts.setSplits(14);
@@ -274,7 +298,7 @@ testObj *expTest2;
 //}
 //}
 
-///level test SPC with testObj
+///LEVEL test SPC with testObj
 //{
 //testObj *expTest3;
 //
@@ -295,7 +319,7 @@ testObj *expTest2;
 //queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
 //ts.queryFileName = "beijing_all.test";
 //testname = "Level_SPC_BEIJING.test";
-//for(int i = 8; i <= 18; i= i+2)
+//for(int i = 4; i <= 18; i= i+2)
 //{
 //    ts.setData(testname, testfile, inputFileType, numqueries, 160000, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
 //	ts.setSplits(i);
@@ -369,31 +393,6 @@ testObj *expTest2;
 //	expTest10-> testObj::~testObj();
 //}
 //}
-
-//
-//cacheType = LIST_CACHE;
-//
-//testfile ="Aalborg.cedge";
-//ts.queryFileName = "AAL_qlog.test";
-//testname = "COMPOSIT_devide.test";
-//queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//
-//ts.setData(testname, testfile, inputFileType, numqueries, 160000, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//ts.setSplits(14);
-//expTest3 = new testObj(ts,5, queries);
-//expTest3->runStaticTest();
-//expTest3-> testObj::~testObj();
-//
-//testfile ="beijing_map.cedge";
-//ts.queryFileName = "beijing_all.test";
-//queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//testname = "COMPOSIT_devide.test";
-//
-//ts.setData(testname, testfile, inputFileType, numqueries, 160000, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//ts.setSplits(14);
-//expTest3 = new testObj(ts,5, queries);
-//expTest3->runStaticTest();
-//expTest3-> testObj::~testObj();
 
 
 return EXIT_SUCCESS;
