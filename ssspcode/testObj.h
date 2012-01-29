@@ -41,6 +41,7 @@
 #include "hqf.h"
 #include "hqf_lru.h"
 #include "randCache.h"
+#include "oracle.h"
 
 #include <ctime>
 #include <iostream>

@@ -175,16 +175,12 @@ void probstaticCache::readMapData()
 
 void probstaticCache::buildCoordinate2RegionIdMap()
 {
-//    int tmpI=0, tmpSize=points.size();
     cout << "buildCoordinate2RegionIdMap start" << endl;
     BOOST_FOREACH(coordinate p, points)
-    {
-        //cout << "buildCoordinate2RegionIdMap: points.size: " << tmpSize << "@" << tmpI++ << endl;
         coordinate2regionidMap[p] = CalcCoordinate2RegionId(p);
-    }
+
     cout << "buildCoordinate2RegionIdMap end" << endl;
 }
-
 
 //file on the form:
 //record_id, S_id, T_id, S_x, S_y, T_x, T_y.
@@ -396,16 +392,6 @@ void probstaticCache::populateProbStructures()
 	int temp, r1,r2,v1,v2;
 	totalTrainingPairsSeen=0;
 	std::pair<int,int> p;
-
-	///init array trainingQueriesPerRegionPair[mapSize][mapSize] dynamically
-// 	trainingQueriesPerRegionPair = new int*[mapSize];
-// 	for(int i=0; i<mapSize; i++)
-// 		trainingQueriesPerRegionPair[i] = new int[mapSize];
-// 	//init all values
-// 	for(int i=0;i<mapSize;i++)
-// 		for(int j=0;j<mapSize;j++)
-// 			trainingQueriesPerRegionPair[i][j] = 0;
-// 	cout << " ... Done" << endl;
 
 	cout << "probstaticcache::populateProbStructures! calculating training stats" << endl;
 	BOOST_FOREACH(intPair c, trainingSTPointPairs)

@@ -67,6 +67,10 @@ testObj::testObj(testsetting settings, int testType)
 			if (debug) cout << "testObj:: constructor: hqflru test choosen" <<endl;
 			test = new hqflru(settings);
 			break;
+        case 9:
+			if (debug) cout << "testObj:: constructor: Oracle test choosen" <<endl;
+			test = new oracle(settings);
+			break;
         default:
 			break;
 	}
@@ -109,6 +113,10 @@ testObj::testObj(testsetting settings, int testType, vector< pair<int,int> > _qu
         case 8:
 			if (debug) cout << "testObj:: constructor: hqflru test choosen" <<endl;
 			test = new hqflru(settings);
+			break;
+        case 9:
+			if (debug) cout << "testObj:: constructor: Oracle test choosen" <<endl;
+			test = new oracle(settings);
 			break;
 	}
 	queries = _queries;

@@ -88,18 +88,23 @@ bool aCache::checkCache(CacheItem ci)
 //assumes cache item ci has NOT been added to vector<CacheItem> cache
 bool aCache::hasEnoughSpace(CacheItem ci)
 {
-	if(cacheType == GRAPH_CACHE)
+    return hasEnoughSpace(ci.item);
+}
+
+bool aCache::hasEnoughSpace(vector<int> sp)
+{
+    if(cacheType == GRAPH_CACHE)
 	{
 		int newNodes = 0; //nodes in ci which is not already in graph
 
-		BOOST_FOREACH(int v, ci.item)
+		BOOST_FOREACH(int v, sp)
 			if(nodeIdsInCache.find(v) == nodeIdsInCache.end()){	newNodes++;	}
 
 		if( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize) return true;
 	}
 	else if(cacheType == LIST_CACHE)
 	{
-		if(cacheUsed + ci.size*NODE_BITS < cacheSize) return true;
+		if(cacheUsed + sp.size()*NODE_BITS < cacheSize) return true;
 	}
 	else if(cacheType == COMPRESSED_G_CACHE)
 	{

@@ -1,10 +1,12 @@
 #ifndef ORACLE_H
 #define ORACLE_H
 
-//#include "CacheItem.h"
+#include "CacheItem.h"
 #include "testsetting.h"
 #include "RoadGraph.h"
 #include "utility.h"
+#include "acache.h"
+#include "Test.h"
 //
 #include <boost/foreach.hpp>
 #include "boost/unordered_map.hpp"
@@ -19,15 +21,20 @@
 //#include <ctime>
 //#include <cstdlib>
 
-class oracle
-{
+class oracle: public Test{
+
 public:
     oracle(testsetting ts);
     oracle();
     ~oracle();
 
-    testsetting ts;
-    void run();
+    void readQuery(std::pair<int,int> query);
+    void readQueryList(std::vector<std::pair<int,int> > queryList);
+    int getCacheHits(){return numCacheHits;}
+    int getTotalQueries(){return numTotalQueries;}
+    int getTotalDijkstraCalls(){return numDijkstraCalls;}
+    int getQueryNumCacheFull(){return -1;}
+    void readQueries(int numQueries, std::string inFn);
 
 private:
 
@@ -37,6 +44,11 @@ private:
     regionlist points; //holds all coordinates from the map
 
     double startTime,endTime;
+    aCache cache;
+
+    int numTotalQueries;
+    int numCacheHits;
+    int numDijkstraCalls;
 
     boost::unordered_map<coordinate, int> coordinate2Nodeid;
     boost::unordered_map<int, coordinate> nodeid2coordinate;
@@ -46,7 +58,8 @@ private:
     boost::unordered_map<int, vector<int> > nodeId2pathIdTraining;
     boost::unordered_map<int, vector<int> > nodeId2pathIdTest;
 
-    boost::unordered_map<int, std::pair<int, std::vector<int> > > pathId2workloadAnswered; //holds how many paths each training path can answer from the test data as well as the ids of each path answered
+    //holds how many paths each training path can answer from the test data as well as the ids of each path answered
+    boost::unordered_map<int, std::pair<int, std::vector<int> > > pathId2workloadAnswered; //PathID, <(test)paths answered, pid of each answered path>
 
 	void readMapData();
 	void readTrainingData(string fn);
@@ -55,7 +68,10 @@ private:
     void buildNodeId2pathId();
 
     void futureWorkloadAnswers();
+    void fillCache();
+    maxWorkloadHeap rankWorkloadAnswered(boost::unordered_map<int, std::pair<int, std::vector<int> > > pathId2workloadAnswered);
     void print();
+    void checkCache(std::pair< int, int > query);
 };
 
 #endif // ORACLE_H

@@ -62,6 +62,7 @@ public:
 	bool checkCache(std::pair<int,int> query);
 	bool checkCache(CacheItem ci);
 	bool hasEnoughSpace(CacheItem ci);
+    bool hasEnoughSpace(vector<int> sp);
 	int getCacheUsed(){return cacheUsed;}
 	int size(){return cacheSize;}
 	int numberOfNodesInCache(){return numberOfNodes;}
