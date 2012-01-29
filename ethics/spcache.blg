@@ -1,0 +1,60 @@
+This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
+The top-level auxiliary file: spcache.aux
+The style file: abbrv.bst
+Database file #1: bibliography.bib
+Warning--empty booktitle in v3
+Warning--empty booktitle in v1
+Warning--empty booktitle in v5
+Warning--empty booktitle in v4
+Warning--empty booktitle in v13
+Warning--empty year in v13
+Warning--empty booktitle in v6
+Warning--empty booktitle in v2
+Warning--empty booktitle in v10
+Warning--empty booktitle in v8
+Warning--empty booktitle in v7
+Warning--empty booktitle in v9
+Warning--empty booktitle in v12
+Warning--empty booktitle in v11
+You've used 13 entries,
+            2118 wiz_defined-function locations,
+            542 strings with 4503 characters,
+and the built_in function-call counts, 3006 in all, are:
+= -- 245
+> -- 91
+< -- 0
++ -- 40
+- -- 26
+* -- 131
+:= -- 503
+add.period$ -- 38
+call.type$ -- 13
+change.case$ -- 52
+chr.to.int$ -- 0
+cite$ -- 27
+duplicate$ -- 169
+empty$ -- 339
+format.name$ -- 26
+if$ -- 636
+int.to.chr$ -- 0
+int.to.str$ -- 13
+missing$ -- 13
+newline$ -- 67
+num.names$ -- 26
+pop$ -- 119
+preamble$ -- 1
+purify$ -- 39
+quote$ -- 0
+skip$ -- 89
+stack$ -- 0
+substring$ -- 66
+swap$ -- 13
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 52
+warning$ -- 14
+while$ -- 26
+width$ -- 15
+write$ -- 117
+(There were 14 warnings)

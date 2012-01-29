@@ -1,4 +1,4 @@
-\documentclass{vldb}
+\documentclass[11pt]{article}
 
 \usepackage{balance}
 \usepackage{url} 
@@ -55,59 +55,32 @@
 \SetKwBlockLRS{JRBegin}
 \pagestyle{plain}
 
-\title{Shortest Path Cache \\
-%\titlenote{for use with vldb.cls, (no clue what that means..)}\\ 
-{\textit{\small \today}}
-}
-
-\numberofauthors{2} 
+\title{SCADA: Publicly exposing obscure security flaws }
+\date{}
 \author{
-% 1st. author
-\alignauthor
-Jeppe Rishede Thomsen \\%\titlenote{some author note, 1}\\
-       \affaddr{Department of Computing}\\
-       \affaddr{Hong Kong Polytechnic University}\\
-       \affaddr{Kowloon, Hong Kong}\\
-       \email{csjrthomsen@comp.polyu.edu.hk}
-% 2nd. author
-\alignauthor
-Man Lung Yiu \\
-       \affaddr{Department of Computing}\\
-       \affaddr{Hong Kong Polytechnic University}\\
-       \affaddr{Kowloon, Hong Kong}\\
-       \email{csmlyiu@comp.polyu.edu.hk}
-% % 3rd. author
-% \alignauthor Lars Th{\Large{\sf{\o}}}rv{$\ddot{\mbox{a}}$}ld\titlenote{This author is the
-% one who did all the really hard work.}\\
-%        \affaddr{The Th{\large{\sf{\o}}}rv{$\ddot{\mbox{a}}$}ld Group}\\
-%        \affaddr{1 Th{\large{\sf{\o}}}rv{$\ddot{\mbox{a}}$}ld Circle}\\
-%        \affaddr{Hekla, Iceland}\\
-%        \email{larst@affiliation.org}
+Jeppe Rishede Thomsen \\
+       Department of Computing\\
+       Hong Kong Polytechnic University\\
+       Kowloon, Hong Kong\\
+       csjrthomsen@comp.polyu.edu.hk
 }
 
 
 \maketitle
 
 \input{articleFiles/acronyms.tex}
-\begin{abstract}
-\input{articleFiles/abstract.tex}
-\end{abstract}
+
 
 \input{articleFiles/intro}
-\input{articleFiles/relWork}
-\input{articleFiles/problem}%
-\input{articleFiles/contribution}%
-\input{articleFiles/analysis}
-\input{articleFiles/implementation}
-\input{articleFiles/conclusion}
+
 
 %\newpage
 %\input{help}
 
 %\newpage
- \clearpage
+%  \clearpage
 %\input{articleFiles/proposal}
-\input{articleFiles/relCollection}
+% \input{articleFiles/relCollection}
 
 
 \bibliographystyle{abbrv}
