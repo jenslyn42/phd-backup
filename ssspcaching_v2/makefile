@@ -10,7 +10,7 @@ CCOPTS   = -c -O
 LINK     = g++
 LINKOPTS = -lm
 
-PACK = Setting.o RoadGraph.o Cache.o Oracle.o Probcache.o Scache.o Competitors.o TestObj.o 
+PACK = Setting.o RoadGraph.o Cache.o Probcache.o Competitors.o ProtoStudy.o 
 
 
 .cc.o:
@@ -19,23 +19,17 @@ PACK = Setting.o RoadGraph.o Cache.o Oracle.o Probcache.o Scache.o Competitors.o
 all: main
 
 
-Setting.o: Setting.cpp
+Setting.o: Setting.cpp Setting.h
 
-RoadGraph.o: RoadGraph.cpp
+RoadGraph.o: RoadGraph.cpp RoadGraph.h Setting.h
 
-Cache.o: Cache.cpp
+Cache.o: Cache.cpp Cache.h RoadGraph.h Setting.h
 
+Probcache.o: Probcache.cpp Probcache.h Cache.h RoadGraph.h Setting.h
 
-Oracle.o: Oracle.cpp
+Competitors.o: Competitors.cpp Competitors.h Cache.h RoadGraph.h Setting.h
 
-Competitors.o: Competitors.cpp
-
-Probcache.o: Probcache.cpp
-
-Scache.o: Scache.cpp
-
-
-TestObj.o: TestObj.cpp
+ProtoStudy.o: ProtoStudy.cpp ProtoStudy.h Cache.h RoadGraph.h Setting.h
 
 
 
@@ -47,4 +41,4 @@ main: main.cpp $(PACK)
 # $(LINK) -O2 -o mains main.cpp $(PACK) $(LINKOPTS)
 	
 clean:
-	rm *.o
+	rm *.o mains.*

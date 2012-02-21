@@ -32,7 +32,159 @@
 #include "Setting.h"
 #include "RoadGraph.h"
 #include "Cache.h"
-#include "TestObj.h"
+
+#include "Competitors.h"
+#include "ProtoStudy.h"
+#include "Probcache.h"
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#define debug true
+
+
+class TestObject {
+public:
+	TestObject(TestSetting settings);
+	
+	~TestObject() {
+		delete test;
+	};
+	
+	void runStaticTest();
+	void printResults();
+
+	AbstractCache *test;
+
+private:
+	TestSetting ts;
+	clock_t start,end;
+};
+
+
+TestObject::TestObject(TestSetting settings) {	
+	ts = settings;
+	
+	
+	cout << "TestObject:: constructor: " << MatchEnumString(ALGO_ENUM,ts.testAlgo) << " test choosen" <<endl;
+	
+	switch( ts.testAlgo ){
+		case ALGO_NONE:
+			ts.cacheSize = 0;	// a special case with 0 cacheSize
+			test = new LRU(ts);
+			break;
+		case ALGO_LRU:
+			test = new LRU(ts);
+			break;
+		case ALGO_SCACHE:
+			test = new Scache(ts);
+			break;
+		case ALGO_SPC:
+		case ALGO_SPCplus:
+		case ALGO_SPCstar:
+			test = new Probcache(ts);
+			break;
+        case ALGO_HQF:
+			test = new HQF(ts);
+			break;
+        case ALGO_HQFLRU:
+			test = new HybridHQFLRU(ts);
+			break;
+        case ALGO_ORACLE:
+			test = new Oracle(ts);
+			break;
+	}
+}
+
+void TestObject::runStaticTest() {
+	srand(0);	srand48(0);	// fix the random seed
+	
+	if (debug) cout << "TestObject::runStaticTest: static test started" <<endl;
+
+	test->buildCache();
+	if (debug) cout << "TestObject::runStaticTest: queries read" <<endl;
+
+ 	start = clock();
+ 	test->runQueryList();
+ 	end = clock();
+
+  	if (debug) cout << "TestObject::runStaticTest: static test ended" <<endl;
+ 	printResults();
+
+ 	RoadGraph::mapObject(ts)->resetRoadGraph();
+}
+
+void TestObject::printResults() {
+	///Console output
+	
+	
+	// after the following update, we just use "ts" as "test->ts"
+	ts = test->ts;
+
+	unsigned long numNodeVisits = RoadGraph::mapObject(ts)->numNodeVisits;
+	int ssspCalls = RoadGraph::mapObject(ts)->ssspCalls;
+
+	cout << "QueryTime:\t" << (double(end-start))/CLOCKS_PER_SEC << " sec" << endl;
+	cout << "CacheHits:\t" << test->getCacheHits() << "(" << test->getTotalDijkstraCalls() << ")" << endl;
+	cout << "SPcalls:\t" << ssspCalls << endl;
+	cout << "NodesVisited:\t" << numNodeVisits << endl;
+
+	//cout << "Class:\t" << typeid(*test).name() <<  endl;
+	cout << "Algorithm:\t" << ts.testAlgo << " " << MatchEnumString(ALGO_ENUM,ts.testAlgo) << endl;
+	cout << "Storage:\t" << ts.testStorage << " " << MatchEnumString(STORAGE_ENUM,ts.testStorage) << endl;
+	cout << "Scenario:\t" << ts.testScenario << " " << MatchEnumString(ARCH_ENUM,ts.testScenario) << endl;	
+	
+	cout << "CacheSize:\t" << ts.cacheSize << endl;
+	cout << "CacheItems:\t" << ts.getItemsInCache() << endl;
+
+	cout << "Splits:\t" << ts.getSplits() << endl;
+	cout << "QueryFile:\t" << ts.queryFileName << endl;
+
+	cout << "NonEmptyRegions:\t" << ts.getNonEmptyRegionPairs() << endl;
+	cout << "CalcStatTime:\t" << ts.getBuildStatisticsTime() << " sec" <<endl;
+	cout << "FillCacheTime:\t" << ts.getFillCacheTime() << " sec" << endl;
+	
+
+    bool fileExist = false;
+    ifstream fin((ts.getTestName()).c_str());
+    if (fin)
+		fileExist = true;// check to see if file exists
+    fin.close();
+
+    ///file output
+	ofstream resultfile;
+	resultfile.open((ts.getTestName()).c_str(), ios::out | ios::ate | ios::app);
+    if(!fileExist){
+        resultfile 	<< "QueryTime\tCacheHits\tDijkstraCalls\tSPcalls\tNodesVisited\t"
+					<< "Algorithm\tScenario\t"
+					<< "CacheSize\tCacheItems\tSplits\tQueryFile\t"
+					<< "NonEmptyRegions\tCalcStatTime\tFillCacheTime\t" << endl;
+    }
+	
+	// note: "typeid(*test).name()" no longer used
+    resultfile 	<< (double(end-start))/CLOCKS_PER_SEC << "\t" 
+				<< test->getCacheHits() << "\t" 
+				<< test->getTotalDijkstraCalls() << "\t" 
+				<< ssspCalls << "\t" 
+				<< numNodeVisits << "\t" 
+				
+				<< MatchEnumString(ALGO_ENUM,ts.testAlgo)  << "\t" 
+				<< MatchEnumString(ARCH_ENUM,ts.testScenario) << "\t" 
+
+				<< ts.cacheSize << "\t" 
+				<< ts.getItemsInCache() << "\t"
+				<< ts.getSplits() << "\t" 
+				<< ts.queryFileName << "\t"
+				
+				<< ts.getNonEmptyRegionPairs() << "\t" 
+				<< ts.getBuildStatisticsTime() << "\t"
+				<< ts.getFillCacheTime() << endl;
+
+    resultfile.close();
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
 int calcAVGpathlengthInCache(std::string fn) {
@@ -56,30 +208,113 @@ int calcAVGpathlengthInCache(std::string fn) {
 
 
 
-int main(int argc, char *argv[])
-{
 
-///Test settings.
-testsetting ts;
-string testname,testfile;
-int inputFileType = 3; //1:graph_large, 2: ppi.dat, 3:*.cedge
+/*
+int               2147483647
+unsigned int      4294967295
+long              9223372036854775807
+unsigned long     18446744073709551615
+double             1.79769e+308
+*/
+
+void extractTestParameters(TestSetting& ts) {
+	ts.testFile = ts.getConfigString("testFile");
+	ts.testName = ts.getConfigString("testName");
+	ts.queryFileName = ts.getConfigString("queryFileName");
+	
+	//1:graph_large, 2: ppi.dat, 3:*.cedge
+	ts.inputFileType = ts.getConfigInt("inputFileType");
+	ts.splits = ts.getConfigInt("splits");	// for Probcache (SPC)
+	ts.scacheQueryType = ts.getConfigInt("scacheQueryType");	// for SCACHE
+	
+	ts.cacheSize = ts.getConfigLong("cachesize");	// as number of bits
+	ts.testAlgo = (ALGO_CHOICE) ts.getEnumCode(ALGO_ENUM,"testAlgo");
+	ts.testScenario = (ARCH_CHOICE) ts.getEnumCode(ARCH_ENUM,"testScenario");
+	
+	
+	// default storage method: the LIST cache 
+	ts.testStorage = STORE_LIST;
+	if ( ts.testAlgo == ALGO_SPCplus )
+		ts.testStorage = STORE_GRAPH;
+	else if ( ts.testAlgo == ALGO_SPCstar )
+		ts.testStorage = STORE_COMPRESS;
+	
+	
+	// format: "experiment"_"testAlgo"_"testFile (3 letters)".test
+	// 		   "experiment" to be added later
+	if (ts.getConfigBool("autoTestName")==true) {
+		string& tname = ts.testName;
+		tname="";
+		tname.append(MatchEnumString(ALGO_ENUM,ts.testAlgo));
+		tname.append("_");
+		tname.append( ts.testFile, 0, 3);	// first 3 latters of testFile
+		tname.append(".test");
+	}
+		
+}
 
 
-//needed for static test
-ts.preComputedQueriesFileName = "queriesGL1E7";
-//the number of paths to read from preComputedQueriesFileName file
-//ts.queryFileName = "path2.train";
-ts.queryFileName = "paths.train";
-
-ts.setStaticQueryType(3);
-
-//needed for probstaticCache
-ts.setSplits(0);
-
-///Generate queries
 
 
 
+void ExperimentVaryCacheSize(TestSetting ts) {
+	if (ts.getConfigBool("autoTestName")==true) {
+		ts.testName.insert(0,"V_cachesize_");
+		cout << "(auto) testName: " << ts.testName << endl;
+	}
+	
+	unsigned long lowCacheSize = ts.getConfigLong("lowCacheSize");
+	unsigned long highCacheSize = ts.getConfigLong("highCacheSize");
+	
+	for (unsigned long csize = lowCacheSize; csize <= highCacheSize ; csize*=2) {
+		ts.cacheSize = csize;
+		cout << "*** Now using ts.cacheSize = " << ts.cacheSize << endl;
+		
+		TestObject *expTest = new TestObject(ts);
+		expTest->runStaticTest();
+		delete expTest;
+	}
+}
+
+
+void ExperimentVarySplit(TestSetting ts) {
+	if (ts.getConfigBool("autoTestName")==true) {
+		ts.testName.insert(0,"V_split_");
+		cout << "(auto) testName: " << ts.testName << endl;
+	}
+	
+	int lowSplit = ts.getConfigInt("lowSplit");
+	int highSplit = ts.getConfigInt("highSplit");
+	
+	for (int splits = lowSplit; splits <= highSplit ; splits+=2) {	
+		ts.splits = splits;
+		cout << "*** Now using ts.splits = " << ts.splits << endl;
+
+		TestObject *expTest = new TestObject(ts);
+		expTest->runStaticTest();
+		delete expTest;
+	}
+}
+
+
+void ExperimentSingle(TestSetting ts) {
+	if (ts.getConfigBool("autoTestName")==true) {
+		ts.testName.insert(0,"V_single_");
+		cout << "(auto) testName: " << ts.testName << endl;
+	}
+	
+	TestObject *expTest = new TestObject(ts);
+	expTest->runStaticTest();
+	delete expTest;
+}
+
+int main(int argc, char *argv[]) {
+
+	InitEnumMappings();	// initialization
+	
+	srand(0);	srand48(0);
+	
+	
 cout << "******************************************" << endl;
 cout << "int \t\t" << std::numeric_limits<int>::max() << endl;
 cout << "unsigned int\t" << std::numeric_limits<unsigned int>::max() << endl;
@@ -89,274 +324,29 @@ cout << "double\t\t" << std::numeric_limits<double>::max() << endl;
 cout << sizeof(long) << " " << sizeof(int) << " " << sizeof(unsigned long) << " " <<sizeof(double) <<endl;
 cout << "******************************************" << endl;
 
-
-ts.setTestScenario(PROXY_SCENARIO);
-
-int cacheType = LIST_CACHE;		// 	cacheType = GRAPH_CACHE
-
-//
+	//Test setting
+	TestSetting ts;
+	ts.addConfigFromFile("config.prop");	// load default parameter values
+	ts.addConfigFromCmdLine(argc,argv);		// override parameter values
+	//ts.listConfig();		// list the content of the config
+	
+	extractTestParameters(ts);
+	ts.printSetting();
+	
+	
+	string experiment = ts.getConfigString("experiment");
+	boost::to_upper(experiment);
+	
+	if (experiment.compare("SINGLE")==0)
+		ExperimentSingle(ts);
+	else if (experiment.compare("SPLIT")==0)
+		ExperimentVarySplit(ts);
+	else if (experiment.compare("CACHESIZE")==0)
+		ExperimentVaryCacheSize(ts);
+	
 //cout << "avg path length D4: " << calcAVGpathlengthInCache("level_SPC_scoreLengthDevide_AALD4.cache") << endl;
 //cout << "avg path length D14: " << calcAVGpathlengthInCache("level_SPC_scoreLengthDevide_AALD14.cache") << endl;
 //cout << "avg path length D18: " << calcAVGpathlengthInCache("level_SPC_scoreLengthDevide_AALD18.cache") << endl;
 
-
-///Oracle test
-//{
-//testObj *ora;
-//testfile ="Aalborg.cedge";
-//ts.queryFileName = "AAL_qlog.test";
-//testname = "cacheSize_oracle_scoreLengthDevide_AAL.test";
-//queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//for(int i = 10000; i <= 320000000; i*=2)
-//{
-//    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//    ora = new testObj(ts,9, queries);
-//    ora->runStaticTest();
-//    ora-> testObj::~testObj();
-//}
-//
-//testfile ="beijing_map.cedge";
-//ts.queryFileName = "beijing_all.test";
-//testname = "cacheSize_oracle_BEIJING.test";
-//queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//for(int i = 10000; i <= 320000000; i*=2)
-//{
-//    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//    ora = new testObj(ts,9, queries);
-//    ora->runStaticTest();
-//    ora-> testObj::~testObj();
-//}
-//}
-
-///exp test OSC with testObj
-//{
-// testObj *expTest = new testObj(ts,1, queries);
-// expTest->runTest();
-// expTest-> testObj::~testObj();
-//}
-
-///exp test HQF with testObj
-//{
-//testObj *expTest6;
-////
-//testfile ="Aalborg.cedge";
-//ts.queryFileName = "AAL_qlog.test";
-//testname = "cacheSize_HQF_AAL.test";
-//queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//for(int i = 10000; i <= 320000000; i*=2)
-//{
-//    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//	ts.setSplits(14);
-//	expTest6 = new testObj(ts,6, queries);
-//	expTest6->runStaticTest();
-//	expTest6-> testObj::~testObj();
-//}
-//
-//testfile ="beijing_map.cedge";
-//ts.queryFileName = "beijing_all.test";
-//testname = "cacheSize_HQF_BEIJING.test";
-//queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//for(int i = 10000; i <= 320000000; i*=2)
-//{
-//    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//	ts.setSplits(14);
-//	expTest6 = new testObj(ts,6, queries);
-//	expTest6->runStaticTest();
-//	expTest6-> testObj::~testObj();
-//}
-//}
-
-///exp test randCache with testObj
-//{
-/////exp test randCache with testObj
-//testObj *expTest7;
-//
-//ts.setTestScenario(PROXY_SCENARIO);
-//cacheType = LIST_CACHE;
-
-//testfile ="Aalborg.cedge";
-//ts.queryFileName = "AAL_qlog.test";
-//testname = "cacheSize_randcache_AAL.test";
-//queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//for(int i = 10000; i <= 3200000; i*=2)
-//{
-//    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//	ts.setSplits(14);
-//	expTest7 = new testObj(ts,7, queries);
-//	expTest7->runStaticTest();
-//	expTest7-> testObj::~testObj();
-//}
-//
-//testfile ="beijing_map.cedge";
-//ts.queryFileName = "beijing_all.test";
-//testname = "cacheSize_randcache_BEIJING.test";
-//queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//for(int i = 10000; i <= 3200000; i*=2)
-//{
-//    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//	ts.setSplits(14);
-//	expTest7 = new testObj(ts,7, queries);
-//	expTest7->runStaticTest();
-//	expTest7-> testObj::~testObj();
-//}
-//}
-
-///exp test LRU with testObj
-//{
-//testObj *expTest2;
-//
-//    testfile ="Aalborg.cedge";
-//    ts.queryFileName = "AAL_qlog.test";
-//    testname = "cacheSize_LRU_AAL.test";
-//    queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//    for(int i = 10000; i <= 3200000; i*=2)
-//    {
-//        ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//        expTest2 = new testObj(ts,2, queries);
-//        expTest2->runStaticTest();
-//        expTest2-> testObj::~testObj();
-//    }
-//
-//    testfile ="beijing_map.cedge";
-//    ts.queryFileName = "beijing_all.test";
-//    ` = "cacheSize_LRU_BEIJING.test";
-//    queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//    for(int i = 10000; i <= 3200000; i*=2)
-//    {
-//        ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//        expTest2 = new testObj(ts,2, queries);
-//        expTest2->runStaticTest();
-//        expTest2-> testObj::~testObj();
-//    }
-//}
-
-///cache test SPC with testObj
-//{
-testObj *expTest3;
-
-testfile ="Aalborg.cedge";
-testname = "cachesize_SPC_generate14_AAL_staticRand.test";
-ts.queryFileName = "AAL_qlog.test";
-
-for (unsigned long cachesize = 5120000; cachesize <= 128000000000 ; cachesize*=2)
-{
-	ts.setData(testname, testfile, inputFileType, cachesize, cacheType);
-	ts.setSplits(14);
-
-	expTest3 = new testObj(ts,METHOD_SPC);
-	expTest3->runStaticTest();
-
-	delete expTest3;
-	expTest3 = NULL;
-}
-
-//testfile ="beijing_map.cedge";
-//ts.queryFileName = "beijing_all.test";
-//testname = "cachesize_SPC_generate_BEIJING.test";
-//for (unsigned long cachesize = 5120000; cachesize <= 128000000000 ; cachesize*=2)
-//{
-//	ts.setData(testname, testfile, inputFileType, cachesize, cacheType);
-//	ts.setSplits(14);
-//	expTest3 = new testObj(ts,5, queries);
-//	expTest3->runStaticTest();
-//	expTest3-> testObj::~testObj();
-//}
-//}
-
-///LEVEL test SPC with testObj
-//{
-//testObj *expTest3;
-//
-//testfile ="Aalborg.cedge";
-//ts.queryFileName = "AAL_qlog.test";
-//queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//testname = "level_SPC_scoreLengthDevide_AAL.test";
-//for(int i = 4; i <= 18; i = i+2)
-//{
-//    ts.setData(testname, testfile, inputFileType, numqueries, 1280000, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//	ts.setSplits(i);
-//	expTest3 = new testObj(ts,5, queries);
-//	expTest3->runStaticTest();
-//	expTest3-> testObj::~testObj();
-//}
-//
-//testfile ="beijing_map.cedge";
-//queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//ts.queryFileName = "beijing_all.test";
-//testname = "level_SPC_BEIJING.test";
-//for(int i = 4; i <= 18; i= i+2)
-//{
-//    ts.setData(testname, testfile, inputFileType, numqueries, 160000, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//	ts.setSplits(i);
-//	expTest3 = new testObj(ts,5, queries);
-//	expTest3->runStaticTest();
-//	expTest3-> testObj::~testObj();
-//}
-//}
-
-///cache test SPC-STAR with testObj
-//{
-//testObj *expTest3;
-//
-//ts.setTestScenario(PROXY_SCENARIO);
-//cacheType = COMPRESSED_G_CACHE;
-////
-//testfile ="Aalborg.cedge";
-//ts.queryFileName = "AAL_qlog.test";
-//testname = "CacheSize_SPC-STAR_AAL.test";
-//for(unsigned long i = 10000; i <= 128000000; i*=2)
-//{
-//    ts.setData(testname, testfile, inputFileType, i, cacheType);
-//	ts.setSplits(14);
-//	expTest3 = new testObj(ts,METHOD_SPC);
-//	expTest3->runStaticTest();
-//	expTest3-> testObj::~testObj();
-//}
-//
-//testfile ="beijing_map.cedge";
-//ts.queryFileName = "beijing_all.test";
-//queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//testname = "CacheSize_SPC-STAR_BEIJING.test";
-//for(int i = 10000; i <= 3200000; i*=2)
-//{
-//    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//	ts.setSplits(14);
-//	expTest3 = new testObj(ts,5, queries);
-//	expTest3->runStaticTest();
-//	expTest3-> testObj::~testObj();
-//}
-//}
-
-///cache test HQFLRU with testObj
-//{
-//testObj *expTest10;
-//
-//testfile ="Aalborg.cedge";
-//ts.queryFileName = "AAL_qlog.test";
-//testname = "CacheSize_HQFLRU_AAL.test";
-//queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//for(int i = 10000; i <= 32000000; i*=2)
-//{
-//    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//	ts.setSplits(14);
-//	expTest10 = new testObj(ts,8, queries);
-//	expTest10->runStaticTest();
-//	expTest10-> testObj::~testObj();
-//}
-//
-//testfile ="beijing_map.cedge";
-//ts.queryFileName = "beijing_all.test";
-//queryRangeEnd= RoadGraph::mapObject(testfile, inputFileType)->getMapsize();
-//testname = "CacheSize_HQFLRU_BEIJING.test";
-//for(int i = 10000; i <= 32000000; i*=2)
-//{
-//    ts.setData(testname, testfile, inputFileType, numqueries, i, queryRangeStart, queryRangeEnd, gaussian, sigma, useOptimalSubstructure, useNodeScore, useHitScore, cacheType);
-//	ts.setSplits(14);
-//	expTest10 = new testObj(ts,8, queries);
-//	expTest10->runStaticTest();
-//	expTest10-> testObj::~testObj();
-//}
-//}
-
-return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 };

@@ -41,7 +41,7 @@ typedef std::vector<Edge> EdgeList;
 class RoadGraph
 {
 public:
-	static RoadGraph* mapObject(string testfile, int parseType);
+	static RoadGraph* mapObject(TestSetting& ts);
 	void setMapFile(string file);
 	//std::vector<Vertex> getMap(){return map;}
 	std::vector<int> dijkstraSSSP(int s, int t);
@@ -69,8 +69,7 @@ private:
 	int edges;
 	int parseFileType;
 	std::string filename;
-
-	void parseType(int pt);
+	
 	void addEdge(int v1, int v2, double w);
 	void readRoadNetworkFile(string fn);
 	void readPPINetworkFile(string fn);

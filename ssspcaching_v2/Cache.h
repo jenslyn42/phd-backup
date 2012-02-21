@@ -50,46 +50,43 @@ public:
 	int key() const {return accessKey;}
 	void setScore(double score){this->score = score;}
 	double getScore(){return score;}
-
-//    	friend bool operator< (CacheItem const& cItem1, CacheItem const& cItem2)const {return cItem1.key() < cItem2.key();}
+	
  	inline bool operator< (CacheItem const& cItem)const {return (accessKey < cItem.key());}
 };
 
 typedef boost::unordered_map<int, CacheItem> intCacheitemMap;
 typedef boost::unordered_map<intPair, CacheItem> intPairCacheitemMap;
 
+enum QLOG_CHOICE { QLOG_TRAIN, QLOG_TEST };
 
 
-class Test {
+class AbstractCache {
 
 // these attributes are accessible by subclasses
 protected:
-	regionlist points; //holds all coordinates from the map
-	coordinateIntMap coordinate2Nodeid;
-	intCoordinateMap nodeid2coordinate;
-
+	PointVector points; //holds all Points from the map
+	PointIntMap Point2Nodeid;
+	intPointMap nodeid2Point;
+	intPairVector trainingSTPointPairs,testSTPointPairs;
+	
 	int numTotalQueries;
 	int numCacheHits;
 	int numDijkstraCalls;
 	int mapSize;
 
+	// important: note that the cache size is expressed as the number of "bits"
 	unsigned long cacheSize;
 	unsigned long cacheUsed;
-	boost::unordered_map<intPair, intPair> cacheStats; // (node1,node2) -> (seen count, sp length)
 
 public:
-	Test(){ };
-	~Test(){ };
+	AbstractCache(){ };
+	~AbstractCache(){ };
 
-	testsetting ts;
+	TestSetting ts;
 
 	// virtual functions to be defined in subclasses
-	virtual void readQuery(intPair query){std::cout << "Error, executing Test() object" <<std::endl;}
-	virtual void readQueryList(intPairVector queryList){ };
-
-	//for static tests
-	virtual void readQueries(int numQueries, std::string inFn){ };
-
+	virtual void buildCache() {};
+	virtual void runQueryList() {};
 
 	// shared methods
 	int getCacheHits(){return numCacheHits;}
@@ -97,10 +94,10 @@ public:
 	int getTotalDijkstraCalls(){return numDijkstraCalls;}
 
 	void readMapData();
-    void writeoutCacheCoordinates(string testbasename, vector<CacheItem> cm);
-	int writeoutTestCoordinates(string testbasename, std::vector<intPair > stPointPairs);
-	int writeoutTrainingCoordinates(string testbasename, std::vector<intPair > stPointPairs);
-
+    void plotCachePoints(vector<CacheItem>& cm);
+	bool plotShortestPaths(QLOG_CHOICE qlog);
+	void readQueryLogData(QLOG_CHOICE qlog);
+	
 	double getElapsedTime(double& refTime) {
 		double oldTime=refTime;
 		refTime=clock();
@@ -118,10 +115,10 @@ struct CompressPidType {
 };
 
 
-class compressedPidTokens {
+class CompressedPidTokens {
 public:
-    compressedPidTokens();
-    ~compressedPidTokens();
+    CompressedPidTokens();
+    ~CompressedPidTokens();
 
     void insertPath(intVector& vecpath);
     int GetTotalNumItems() {return _total_pid_items;}
@@ -144,42 +141,44 @@ private:
 };
 
 
-class aCache{
+class CacheStorage {
 public:
-	aCache();
-	aCache(testsetting ts);
 
-	void init(testsetting ts);
+	// add an init function in the constructor to initialize the invertedLists
+	CacheStorage();
+	CacheStorage(TestSetting ts);
 
-	~aCache(){ };
+	void init(TestSetting ts);
+
+	~CacheStorage(){ };
 
 	bool insertItem(CacheItem ci);
 	bool insertItemWithScore(CacheItem ci, double score);
-	bool checkCache(int s, int t);
 	bool checkCache(intPair query);
-	bool checkCache(CacheItem ci);
 	bool hasEnoughSpace(CacheItem ci);
-    bool hasEnoughSpace(intVector sp);
+    bool hasEnoughSpace(intVector& sp);
 	unsigned long getCacheUsed(){return cacheUsed;}
 	unsigned long size(){return cacheSize;}
 	int numberOfNodesInCache(){return numberOfNodes;}
-	int numberOfItemsInCache(){return numItems;}
-	vector<CacheItem> getCacheContentVector(){return cache;}
-	void writeOutBitmaps();
+	int numberOfItemsInCache(){return cache.size();}
+	//void writeOutBitmaps();
 	void printNodesTokensPaths();
-
+	
+	vector<CacheItem> cache;
+	
 private:
-	int cacheType;
+	intVector* invertedLists;	// to support fast query processing
+	int mapSize;
+	
+	STORAGE_CHOICE testStorage;
+
 	double totalEntriesInCompressedBitsets; //only used with COMPRESSED_G_CACHE
 	unsigned long cacheSize;
 	unsigned long cacheUsed;
 	uint numberOfNodes;
-	uint numItems;
 	boost::unordered_map<int, boost::dynamic_bitset<> > nodeIdsInCache;
-	boost::unordered_map<int, vector<intPair> > nodeIdsInCacheCompressed; //used with COMPRESSED_G_CACHE
-	vector<CacheItem> cache;
-
-	compressedPidTokens pidSets;
+	
+	CompressedPidTokens pidSets;
 
 	void updateCacheUsed(CacheItem ci);
 
