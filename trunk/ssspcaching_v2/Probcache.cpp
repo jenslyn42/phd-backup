@@ -29,15 +29,10 @@
  ***************************************************************************************/
 #include "Probcache.h"
 #define debug false
-#define FILL_CACHE_FROM_TRAINING_DATA false
 
 
-probstaticCache::probstaticCache()
-{
 
-}
-
-probstaticCache::probstaticCache(testsetting ts)
+Probcache::Probcache(TestSetting ts)
 {
 	this->ts = ts;
 
@@ -47,62 +42,60 @@ probstaticCache::probstaticCache(testsetting ts)
 	numTotalQueries = 0;
 	numCacheHits = 0;
 	numDijkstraCalls = 0;
-	cacheFull = false;
 
 	readMapData();
+	
+	
 
 	// *** Ken updated
-	// function of "buildCoordinate2RegionIdMap" included below
+	// function of "buildPoint2RegionIdMap" included below
 	makePartitions(ts.getSplits());
 	calcScoreCounter=0;
 }
 
-probstaticCache::~probstaticCache()
-{
-// 	for(int i=0;i<mapSize;i++)
-// 		delete [] trainingQueriesPerRegionPair[i];
-// 	delete [] trainingQueriesPerRegionPair;
+Probcache::~Probcache() {
+	//dtor
+	// 	for(int i=0;i<mapSize;i++)
+	// 		delete [] trainingQueriesPerRegionPair[i];
+	// 	delete [] trainingQueriesPerRegionPair;
 }
 
-void probstaticCache::readQuery(intPair query) {
-	numTotalQueries++;	// track usage info
 
-	bool cacheHit = false;
-	vector<int> spResult;
-
-	if(debug) cout << "one, probstaticcache::checkCache! :cacheSize:" << (int) cache.size() <<"::"<< endl;
-	if(cache.checkCache(query))
-	{
-		numCacheHits++;
-		cacheHit = true;
-	}
-
-
-//if (query.first!=2512 || query.second!=99841) return;
-
-	if(!cacheHit) {
-		if(debug) cout << "three, probstaticcache::checkCache!" << endl;
-		spResult = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->dijkstraSSSP(query.first, query.second);
-		numDijkstraCalls++;
-	}
-	if(debug) cout << "four, probstaticcache::checkCache!" << endl;
-}
 
 //does not use argument, but does instead get its info from a .train file.
-void probstaticCache::readQueryList(std::vector<intPair> queryList)
-{
-	RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
-	BOOST_FOREACH(intPair q, testSTPointPairs ) { readQuery(q); }
+void Probcache::runQueryList() {
+	intVector spResult;
+	
+	RoadGraph::mapObject(ts)->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
+	
+	BOOST_FOREACH(intPair q, testSTPointPairs) { 
+		
+		numTotalQueries++;	// track usage info
+
+		if (debug) 
+			cout << "one, Probcache::checkCache! :cacheSize:" << (int) cache.size() <<"::"<< endl;
+			
+		if (cache.checkCache(q)) { // cacheHit
+			numCacheHits++;
+		} else {
+			if(debug) cout << "three, Probcache::checkCache!" << endl;
+			spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);
+			numDijkstraCalls++;
+		}
+		
+		if(debug) 
+			cout << "four, Probcache::checkCache!" << endl;
+	}
 }
 
-void probstaticCache::readQueries(int numQueries, string inFn)
+void Probcache::buildCache()
 {
 	cout<< "2.0 done" << endl;
 double refTime = clock();
-	readTestData(ts.queryFileName);
+	readQueryLogData(QLOG_TEST);
 	cout<< "2.1 done, " << getElapsedTime(refTime) << endl;
 
-	readTrainingData(ts.queryFileName);
+	readQueryLogData(QLOG_TRAIN);
 	// sumUpNodes();   	// this statement too expensive
 	cout<< "2.2 done, " << getElapsedTime(refTime) << endl;
 
@@ -112,33 +105,19 @@ double refTime = clock();
 	calcScoreCounter=0;
 	cout<< "2.3 done, " << _build_stat_time << endl;
 
-	fillCache(numQueries, inFn);
+	fillCache();
 	double _fill_cache_time=getElapsedTime(refTime);
 	ts.setFillCacheTime(_fill_cache_time);
 	cout<< "2.4 done, " << _fill_cache_time << endl;
 }
 
 
-// the following function is expensive, but it doesn't help the algorithm
-/*void probstaticCache::sumUpNodes()
-{
-    int totalNodes = 0;
-    vector<int> spR;
-    BOOST_FOREACH(intPair tn, trainingSTPointPairs)
-    {
-        spR =RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->dijkstraSSSP(tn.first, tn.second);
-        totalNodes = totalNodes + spR.size();
-    }
-    cout << "total nodes in SPs from training set: " <<totalNodes << " in " <<trainingSTPointPairs.size() << " paths" << endl;
-}*/
-
-
-void probstaticCache::extractStatistics() {
+void Probcache::extractStatistics() {
 	int temp, r1,r2,v1,v2;
 	int totalTrainingPairsSeen=0;
 	intPair p;
 
-	cout << "probstaticcache::populateProbStructures! calculating training stats" << endl;
+	cout << "Probcache::populateProbStructures! calculating training stats" << endl;
 	BOOST_FOREACH(intPair c, trainingSTPointPairs) {
 		v1 = c.first;
 		v2 = c.second;
@@ -166,100 +145,18 @@ void probstaticCache::extractStatistics() {
 
 
 
-//file on the form:
-//record_id, S_id, T_id, S_x, S_y, T_x, T_y.
-void probstaticCache::readData(string fn)
-{
-	readTrainingData(fn);
-	readTestData(fn);
-}
-
-//file on the form:
-//record_id, S_id, T_id, S_x, S_y, T_x, T_y.
-void probstaticCache::readTestData(string fn)
-{
-	cout << "one, probstaticcache::readTestData start!" << endl;
-	std::pair<double, double> firstPair, secondPair;
-	int firstPnt, secondPnt, temp;
-	string str;
-	std::vector<string> tokens;
-
-	fn.replace ((fn.size()-5), 5, ".test"); //change file extention from .train to .test
-	ifstream testData (fn.c_str(), ios::in); //*.test file
+bool xxCompfunc(Point i,Point j) {return (i.first<j.first);} //sort based on x values
+bool yyCompfunc(Point i,Point j) {return (i.second<j.second);} //sort based on y values
 
 
-	//find all pairs of nodeids in the test set to have SP done for them. map nodeids to coordinates.
-	if(testData.is_open())
-	{
-        if(debug) cout << "two, probstaticcache::readTestData file [" << fn << "] opened!" << endl;
-		while(getline(testData, str))
-		{
-			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-
-			firstPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
-			secondPair = std::make_pair(atof(tokens[5].c_str()),atof(tokens[6].c_str()));
-
-			firstPnt = coordinate2Nodeid[firstPair];
-			secondPnt = coordinate2Nodeid[secondPair];
-
-            if(firstPnt > secondPnt){temp = firstPnt; firstPnt = secondPnt; secondPnt = temp;}
-
-			testSTPointPairs.push_back(std::make_pair(firstPnt,secondPnt));
-			if(debug) cout << "tree, probstaticcache::readTestData end of fileline loop.!" << endl;
-		}
-	}
-	testData.close();
-	cout << "two, probstaticcache::readTestData end! size: " << testSTPointPairs.size() << endl;
-}
-
-//file on the form:
-//record_id, S_id, T_id, S_x, S_y, T_x, T_y.
-void probstaticCache::readTrainingData(string fn)
-{
-	cout << "probstaticcache::readTrainingData start!" << endl;
-	std::pair<double, double> firstPair, secondPair;
-	int firstPnt, secondPnt, temp;
-	string str;
-	std::vector<string> tokens;
-
-	fn.replace ((fn.size()-5), 5, ".train"); //change file extention from .test to .train
-	ifstream trainingData (fn.c_str(), ios::in); //*.train file
-    cout << "training fn: " << fn << endl;
-	//find all pairs of nodeids in the training set to have SP done for them. map nodeids to coordinates.
-	if(trainingData.is_open())
-	{
-		if(debug) cout << "two, probstaticcache::readTrainingData! " << endl;
-		while(getline(trainingData, str))
-		{
-			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-
-			firstPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
-			secondPair = std::make_pair(atof(tokens[5].c_str()),atof(tokens[6].c_str()));
-
-			firstPnt = coordinate2Nodeid[firstPair];
-			secondPnt = coordinate2Nodeid[secondPair];
-
-            if(firstPnt > secondPnt){temp = firstPnt; firstPnt = secondPnt; secondPnt = temp;}
-
-			trainingSTPointPairs.push_back(std::make_pair(firstPnt,secondPnt));
-		}
-	}
-	trainingData.close();
-	cout << "probstaticcache::readTrainingData end! size:" << trainingSTPointPairs.size() << endl;
-}
-
-bool xxCompfunc(coordinate i,coordinate j) {return (i.first<j.first);} //sort based on x values
-bool yyCompfunc(coordinate i,coordinate j) {return (i.second<j.second);} //sort based on y values
-
-
-bool probstaticCache::makePartitions(int splits) {
+bool Probcache::makePartitions(int splits) {
 	int axis = 0;
-    cout << "probstaticcache::makePartitions start" << endl;
+    cout << "Probcache::makePartitions start" << endl;
 	double mapXmin,mapXmax,mapYmin,mapYmax;
 
 	//partitionsMade = pow(2,splits);
 
-	vector<region> regionsVector;
+	vector<Region> regionsVector;
 
 	sort(points.begin(), points.end(), xxCompfunc);
 	mapXmin = points.front().first;
@@ -268,29 +165,29 @@ bool probstaticCache::makePartitions(int splits) {
 	mapYmin = points.front().second;
 	mapYmax = points.back().second;
 
-	region reg(0,mapXmin,mapXmax,mapYmin,mapYmax);
+	Region reg(0,mapXmin,mapXmax,mapYmin,mapYmax);
 	reg.points=points;
 
 	regionsVector.push_back(reg);
-    cout << "two. probstaticcache::makePartitions splitting start: " << splits << " splits." << endl;
+    cout << "two. Probcache::makePartitions splitting start: " << splits << " splits." << endl;
 	for(int i=0; i<splits; i++) {
 		split(regionsVector, axis);
 		axis++;
 	}
-    cout << "three, probstaticcache::makePartitions set id of each region" << endl;
+    cout << "three, Probcache::makePartitions set id of each region" << endl;
 	//set the id of each region.
 
 	int total_points=0;
 	// update the region_id of points here
 	for (uint region_id=0; region_id<regionsVector.size(); region_id++) {
-		region& r = regionsVector[region_id];
+		Region& r = regionsVector[region_id];
 		r.id = region_id;
 		mapRegions[region_id] = r;
 
 		// *** KEN updated:  February 11
-		// for each coordinate in "r.points" (for this partition only)
-		BOOST_FOREACH(coordinate p, r.points) {
-			coordinate2regionidMap[p] = region_id;
+		// for each Point in "r.points" (for this partition only)
+		BOOST_FOREACH(Point p, r.points) {
+			Point2regionidMap[p] = region_id;
 		}
 
 		total_points+=r.points.size();
@@ -299,8 +196,6 @@ bool probstaticCache::makePartitions(int splits) {
     cout << "total points: " << total_points << ", " << points.size() << endl;
 
 	cout << "mapRegions size: " << mapRegions.size() << endl;
-	ts.setSplits(log2(mapRegions.size()));
-
 
 	// *** Feb 14 added
 	// compute "nodeid2regionid", to be used for calcScore function
@@ -318,10 +213,10 @@ bool probstaticCache::makePartitions(int splits) {
 		return false;
 }
 
-void probstaticCache::split(std::vector<region>& regions, int axis) {
-	std::vector< region > tmpRegions;
+void Probcache::split(std::vector<Region>& regions, int axis) {
+	std::vector<Region > tmpRegions;
 
-	BOOST_FOREACH (region reg, regions) {
+	BOOST_FOREACH (Region reg, regions) {
         int size = reg.points.size();
 		if (size == 0)
 			continue;
@@ -341,8 +236,8 @@ void probstaticCache::split(std::vector<region>& regions, int axis) {
 		else
 			sort(reg.points.begin(), reg.points.end(), yyCompfunc);
 
-		region leftReg(axis,reg.xmin,reg.xmax,reg.ymin,reg.ymax);
-		region rightReg(axis,reg.xmin,reg.xmax,reg.ymin,reg.ymax);
+		Region leftReg(axis,reg.xmin,reg.xmax,reg.ymin,reg.ymax);
+		Region rightReg(axis,reg.xmin,reg.xmax,reg.ymin,reg.ymax);
 
 		int middle = size/2;
 		leftReg.points.assign( reg.points.begin(), reg.points.begin()+middle );
@@ -373,28 +268,26 @@ void probstaticCache::split(std::vector<region>& regions, int axis) {
 // [Feb 13] Note: the following function is called heavily
 // optimize this function tomorrow: use an "array" for direct "node-to-region" access!
 
-int probstaticCache::mapNodeid2RegionId(int nid)
-{
-    if(nodeid2coordinate.find(nid) != nodeid2coordinate.end())
-        return mapCoordinate2RegionId(nodeid2coordinate.at(nid));
-    else{
-        cout << "node " << nid << " does not exits in nodeid2coordinate"  << endl;
+int Probcache::mapNodeid2RegionId(int nid) {
+    if(nodeid2Point.find(nid) != nodeid2Point.end())
+        return mapPoint2RegionId(nodeid2Point[nid]);
+    else {
+        cout << "node " << nid << " is not in nodeid2Point"  << endl;
         return -1;
     }
 }
 
-int probstaticCache::mapCoordinate2RegionId(coordinate coord)
-{
-    if(coordinate2regionidMap.find(coord) != coordinate2regionidMap.end())
-        return coordinate2regionidMap.at(coord);
-    else{
-        cout << "coordinate (" << coord.first << "," << coord.second << ") does not fit in a region" << endl;
+int Probcache::mapPoint2RegionId(Point coord) {
+    if(Point2regionidMap.find(coord) != Point2regionidMap.end())
+        return Point2regionidMap[coord];
+    else {
+        cout << "Point (" << coord.first << "," << coord.second << ") does not fit in a region" << endl;
         return -1;
     }
 }
 
 
-double probstaticCache::calcScore(intVector& spResult, intPairSet& vSeen) {
+double Probcache::calcScore(intVector& spResult, intPairSet& vSeen) {
 	double score = 0.0;
 	bool isEmpty_vSeen=(vSeen.size()==0);
 
@@ -492,7 +385,7 @@ double probstaticCache::calcScore(intVector& spResult, intPairSet& vSeen) {
 
 	// final update
 	if (spResult.size()>0) {
-		if (ts.getTestScenario() == SERVER_SCENARIO)
+		if (ts.testScenario == ARCH_SERVER)
 			score = score * pow(spResult.size(),2);
 		else
 			score = score / spResult.size();
@@ -502,13 +395,13 @@ double probstaticCache::calcScore(intVector& spResult, intPairSet& vSeen) {
 }
 
 
-void probstaticCache::fillCache(int numQueries, string inFn)
+void Probcache::fillCache()
 {
 //	fillCacheFromQueriesFile(numQueries, inFn);
-	fillCacheFromQueriesFileByStatistics(numQueries, inFn);
+	fillCacheFromQueriesFileByStatistics();
 }
 
-void probstaticCache::fillCacheFromQueriesFile(int numQueries, string inFn)
+/*void Probcache::fillCacheFromQueriesFile()
 {
 	vector<int> sp;
 	CacheItem tmpItem;
@@ -525,7 +418,7 @@ void probstaticCache::fillCacheFromQueriesFile(int numQueries, string inFn)
 	//load queries from query file
 	if( querysFile.is_open() )
 	{
-		cout << "probstaticcache::fillCacheFromQueriesFile! Starting to load queries into memory";
+		cout << "Probcache::fillCacheFromQueriesFile! Starting to load queries into memory";
 		getline(querysFile,line); //read first line: number of lines/queries in file.
 
 		filelines = atoi(line.c_str());
@@ -553,7 +446,7 @@ void probstaticCache::fillCacheFromQueriesFile(int numQueries, string inFn)
 
 	cout << " ... Done" << endl;
 
-	cout << "probstaticcache::fillCacheFromQueriesFile! Initial scoring started";
+	cout << "Probcache::fillCacheFromQueriesFile! Initial scoring started";
 	//rank queries based on statistics
 	startTime = clock();
 	BOOST_FOREACH(intCacheitemMap::value_type icm, allSPpaths)
@@ -601,13 +494,11 @@ void probstaticCache::fillCacheFromQueriesFile(int numQueries, string inFn)
 	}
 	ts.setItemsInCache(cache.numberOfItemsInCache());
 
-	writeoutCacheCoordinates(ts.getTestName(), cache.getCacheContentVector());
-	writeoutTrainingCoordinates(ts.getTestName(), trainingSTPointPairs);
-	writeoutTestCoordinates(ts.getTestName(), testSTPointPairs);
+	writeoutCachePoints(ts.getTestName(), cache.getCacheContentVector());
 	cout << "scache::calcScoreCounter: " << calcScoreCounter << endl;
-}
+}*/
 
-void probstaticCache::fillCacheFromQueriesFileByStatistics(int numQueries, string inFn) {
+void Probcache::fillCacheFromQueriesFileByStatistics() {
     intVector spResult;
     intPairSet vSeen;
     maxHeap mhCache;
@@ -615,61 +506,65 @@ void probstaticCache::fillCacheFromQueriesFileByStatistics(int numQueries, strin
 
 double refTime = clock();
 	cout << "One. Start fillCacheFromQueriesFileByStatistics" << endl;
+	
 	buildRegionId2NodeidVector();
-    if (FILL_CACHE_FROM_TRAINING_DATA)
-		buildRegionpair2NodepairVector();
-    cout << "two1. Start fillCacheFromQueriesFileByStatistics" << endl;
+    buildRegionpair2NodepairVector();
+    
+	cout << "two1. Start fillCacheFromQueriesFileByStatistics" << endl;
     //finding all the region pairs for which the statistics has a non-zero entry for
 
 
 	// fill up bucketlist with one entry from each region pair.
-	RoadGraph* graph = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType());
+	RoadGraph* graph = RoadGraph::mapObject(ts);
     boost::unordered_map<intPair,CacheItem> bucketList;	// bucket list
-	vector<intPair> regionPairsSeen; // only a local variable
-	BOOST_FOREACH(intPairIntMap::value_type rpint, trainingQueriesPerRegionPair)
-        regionPairsSeen.push_back(rpint.first);
+	
 
 
 cout << " @@2 TIME: " << getElapsedTime(refTime) << endl;
 
-	ts.setNonEmptyRegionPairs(regionPairsSeen.size());
+	ts.setNonEmptyRegionPairs(trainingQueriesPerRegionPair.size());
 
-    cout << "three. Start fillCacheFromQueriesFileByStatistics " << regionPairsSeen.size() << endl;
+    cout << "three. Start fillCacheFromQueriesFileByStatistics " << trainingQueriesPerRegionPair.size() << endl;
 
 	//rank queries based on statistics
-	BOOST_FOREACH(intPair rp, regionPairsSeen) {
-        bool isPathFound = true;
-        int num_trials = 0;
+	BOOST_FOREACH(intPairIntMap::value_type rpint, trainingQueriesPerRegionPair) {
+        intPair rp = rpint.first;
+	
         if (debug)
 			cout << "3.1.  rp: (" << rp.first << "," << rp.second << ") " << endl;
 
-        do {
-			intPair stPair = pickSTpair(rp);	//to hold s and t for a shortest path query
+		// pickSTpair is randomized; we try it several times in case it picks a pair with empty spResult
+        bool isPathFound = false;
+        for (int num_trials=0; num_trials<20; num_trials++ ) {	// a threshold
+			intPair stPair = pickSTpair(rp);	// a shortest path query
             if (debug)
 				cout << "3.2 stPair: (" << stPair.first << "," << stPair.second << ") ("
 					<< rp.first << "," << rp.second << ") num_trials: " << num_trials << endl;
 
 			spResult = graph->dijkstraSSSP(stPair.first, stPair.second);
-
-            num_trials++;
-            if (num_trials>20) // a threshold
-				isPathFound = false; //As pickSTpair is randomized, we try it several times in case it picks a pair with empty spResult
-        } while (spResult.size() == 0 && isPathFound == true);
+            if (spResult.size()>0) {
+				isPathFound = true;
+				break; 
+			}
+        }
 
 		if (isPathFound) {
             if(debug)
 				cout << "3.3 spResult.size: " << spResult.size() << endl;
             //make new cache item
-            CacheItem e (cid, spResult);
-            cid++;
-            bucketList[rp] = e;
+            
+            bucketList[rp] = CacheItem(cid, spResult);
+			cid++;
 
 			HeapEntry tmp;
 			tmp.pID = rp;
 			tmp.dist = calcScore(spResult, vSeen);
 			//printf(" \t$$ %d %f\n", e.id, tmp.dist );
 
-			mhCache.push(tmp);
+			// [Feb 21]
+			if (tmp.dist>0) // new
+				mhCache.push(tmp);
+			
 			if(debug)
 				cout << "4. score: " << tmp.dist << " tmp.pID: (" << tmp.pID.first << "," << tmp.pID.second << ") tmp.dist: "
 					<< tmp.dist << " spLength: " << spResult.size() << " mhCache size: " << mhCache.size() << endl;
@@ -691,22 +586,26 @@ cout << " @@3 TIME: " << getElapsedTime(refTime) << endl;
 		}
 
 		// "tmp.pID" must be found in "bucketList" for the following lines
-		if (cache.hasEnoughSpace(bucketList.at(tmp.pID))) {
-			CacheItem tmpItem = bucketList.at(tmp.pID);
+		CacheItem& tmpItem = bucketList.at(tmp.pID);
+		if (cache.hasEnoughSpace(tmpItem)) {
 			double curscore = calcScore(tmpItem.item, vSeen);
 
 //printf("%f | %d %f %f\n",mhCache.top().dist, tmpItem.id, tmp.dist, score );
 
 			if ( (mhCache.size()==0) || (curscore>=mhCache.top().dist) ) {
-				if (cache.insertItemWithScore(tmpItem, curscore)) {
-					num_cache_paths++;
-					if (curscore==0)
-						num_zero_paths++;
 
-					BOOST_FOREACH(int v1, tmpItem.item) {
-						BOOST_FOREACH(int v2, tmpItem.item) {
-							if (v1 < v2)
-								vSeen.insert(make_pair(v1,v2));
+				// [Feb 21]
+				if (curscore>0) {
+					if (cache.insertItemWithScore(tmpItem, curscore)) {
+						num_cache_paths++;
+						if (curscore==0)
+							num_zero_paths++;
+			
+						BOOST_FOREACH(int v1, tmpItem.item) {
+							BOOST_FOREACH(int v2, tmpItem.item) {
+								if (v1 < v2)
+									vSeen.insert(make_pair(v1,v2));
+							}
 						}
 					}
 				}
@@ -714,16 +613,17 @@ cout << " @@3 TIME: " << getElapsedTime(refTime) << endl;
 				//find a new SP for the current region pair
 				intPair stPair = pickSTpair(tmp.pID);
 				spResult = graph->dijkstraSSSP(stPair.first, stPair.second);
-
-				CacheItem e (cid, spResult);
+				
+				bucketList[tmp.pID] = CacheItem(cid, spResult);
 				cid++;
-				bucketList[tmp.pID] = e;
-				curscore = calcScore(spResult, vSeen);
+				curscore = calcScore(spResult, vSeen); // update score
 			}
 
 			// update the new entry in mhCache
-			tmp.dist = curscore;
-			mhCache.push(tmp);
+			if (curscore>0) { 	// [Feb 21]
+				tmp.dist = curscore;
+				mhCache.push(tmp);
+			}
 		}
 
 	}
@@ -732,11 +632,14 @@ printf(" *** num_cache_paths: %d, num_zero_paths: %d\n",num_cache_paths,num_zero
 cout << " @@4 TIME: " << getElapsedTime(refTime) << endl;
 
 	ts.setItemsInCache(cache.numberOfItemsInCache());
-
-    writeoutCacheCoordinates(ts.getTestName(), cache.getCacheContentVector());
-	writeoutTrainingCoordinates(ts.getTestName(), trainingSTPointPairs);
-	writeoutTestCoordinates(ts.getTestName(), testSTPointPairs);
-	cout << "probstaticcache::calcScoreCounter: " << calcScoreCounter << endl;
+    plotCachePoints(cache.cache);
+	
+	// only uncomment these lines when we need to plot
+	//plotShortestPaths(QLOG_TRAIN);
+	//plotShortestPaths(QLOG_TEST);
+	
+	
+	cout << "Probcache::calcScoreCounter: " << calcScoreCounter << endl;
 
 cout << " @@5 TIME: " << getElapsedTime(refTime) << endl;
 
@@ -747,31 +650,29 @@ cout << " @@5 TIME: " << getElapsedTime(refTime) << endl;
 
 
 //	std::vector<std::pair<int, int> > trainingSTPointPairs;
-intPair probstaticCache::pickSTpair(intPair regionPair) {
+intPair Probcache::pickSTpair(intPair regionPair) {
 	intPair ansPair;
 
-    if (FILL_CACHE_FROM_TRAINING_DATA) {
-        vector<intPair>& nodePairVector = regionPair2nodePairVector.at(regionPair);
-        if (debug)
-			cout << "nodepairVector size: " << nodePairVector.size() << endl;
+	// [Feb 21] next task: implement "pick path WITHOUT REPLACEMENT!"
+	vector<intPair>& nodePairVector = regionPair2nodePairVector[regionPair];
+	if (debug)
+		cout << "nodepairVector size: " << nodePairVector.size() << endl;
+	
+    if (nodePairVector.size()>0) { // pick path WITHOUT REPLACEMENT
+		///random choice
+		int slot=(int)rand()%nodePairVector.size();
+		ansPair=nodePairVector[slot];
+		
+		nodePairVector[slot]=nodePairVector.back();	// WITHOUT REPLACEMENT
+		nodePairVector.pop_back();
+    } else { // random choice
+	
+        intVector& nodeVectorRegion1 = regionid2nodeidVector[regionPair.first];
+        intVector& nodeVectorRegion2 = regionid2nodeidVector[regionPair.second];
 
         ///random choice
-//        ansPair=nodePairVector.at((int)rand()%nodePairVector.size());
-
-        ///fixed values to check for correctness
-        ansPair=nodePairVector.at((ts.randReplacement++)%nodePairVector.size());
-    } else {
-        vector<int>& nodeidVectorRegion1 = regionid2nodeidVector.at(regionPair.first);
-        vector<int>& nodeidVectorRegion2 = regionid2nodeidVector.at(regionPair.second);
-
-        ///random choice
-//        int nid1 = nodeidVectorRegion1.at((int)rand()%nodeidVectorRegion1.size());
-//        int nid2 = nodeidVectorRegion2.at((int)rand()%nodeidVectorRegion2.size());
-
-        ///fixed values to check for correctness
-        int nid1 = nodeidVectorRegion1.at((ts.randReplacement++)%nodeidVectorRegion1.size());
-        int nid2 = nodeidVectorRegion2.at((ts.randReplacement++)%nodeidVectorRegion2.size());
-
+        int nid1 = nodeVectorRegion1[(int)rand()%nodeVectorRegion1.size()];
+        int nid2 = nodeVectorRegion2[(int)rand()%nodeVectorRegion2.size()];
 
         if (nid1 < nid2)
             ansPair=make_pair<int,int>(nid1,nid2);
@@ -782,34 +683,28 @@ intPair probstaticCache::pickSTpair(intPair regionPair) {
 	return ansPair;
 }
 
-void probstaticCache::buildRegionId2NodeidVector() {
-    int rid;
-    vector<int> nodeidVector;
-    BOOST_FOREACH(intCoordinateMap::value_type ic, nodeid2coordinate) {
-        rid = mapCoordinate2RegionId(ic.second);
-        if(regionid2nodeidVector.find(rid) == regionid2nodeidVector.end())
-            regionid2nodeidVector[rid] = nodeidVector;
-
-        regionid2nodeidVector.at(rid).push_back(ic.first);
+void Probcache::buildRegionId2NodeidVector() {
+    BOOST_FOREACH(intPointMap::value_type ic, nodeid2Point) {
+        int rid = mapPoint2RegionId(ic.second);
+        if (regionid2nodeidVector.find(rid) == regionid2nodeidVector.end())
+            regionid2nodeidVector[rid] = vector<int>();
+        regionid2nodeidVector[rid].push_back(ic.first);
     }
 }
 
-void probstaticCache::buildRegionpair2NodepairVector()
-{
+void Probcache::buildRegionpair2NodepairVector() {
     int rid1,rid2,temp;
-    vector<intPair> nodepairVector;
-    intPair ip;
-    BOOST_FOREACH(intPair c, trainingSTPointPairs)
-	{
+    BOOST_FOREACH(intPair c, trainingSTPointPairs) {
         rid1 = mapNodeid2RegionId(c.first);
         rid2 = mapNodeid2RegionId(c.second);
-        if(rid1 > rid2){temp = rid1; rid1 = rid2; rid2 = temp;}
-        ip = std::make_pair<int,int>(rid1,rid2);
-
-        if(regionPair2nodePairVector.find(ip) == regionPair2nodePairVector.end())
-            regionPair2nodePairVector[ip] = nodepairVector;
-
-        regionPair2nodePairVector.at(ip).push_back(c);
+        if (rid1 > rid2) {
+			temp = rid1; rid1 = rid2; rid2 = temp;
+		}
+		
+        intPair ip = make_pair(rid1,rid2);
+        if (regionPair2nodePairVector.find(ip) == regionPair2nodePairVector.end())
+            regionPair2nodePairVector[ip] = vector<intPair>();
+        regionPair2nodePairVector[ip].push_back(c);
 	}
 }
 

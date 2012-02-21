@@ -41,63 +41,46 @@
 /**
 	@author Jeppe Rishede <jenslyn42@gmail.com>
 */
-class probstaticCache: public Test{
+class Probcache: public AbstractCache {
+
 public:
-	probstaticCache(testsetting ts);
-	probstaticCache();
+	Probcache(TestSetting ts);
+	~Probcache();
 
-	~probstaticCache();
+	CacheStorage cache;
 
-	//std::vector<CacheItem> cache;
-	aCache cache;
-
-	void readQuery(intPair query);
-	void readQueryList(std::vector<intPair> queryList);
-	void readQueries(int numQueries, string inFn);
+	void buildCache();
+	void runQueryList();
+	
 
 private:
-	unsigned long cacheSize;
-	unsigned long cacheUsed;
-
-	bool cacheFull;
 	int calcScoreCounter;
 	vector<intPair> queries;
-
-	double startTime,endTime;
-
 	boost::unordered_map<intPair, int > trainingQueriesPerRegionPair;
 
+	
 
 	// [Feb 14] added
 	intVector nodeid2regionid;
 
-	boost::unordered_map<coordinate, int> coordinate2regionidMap;
+	boost::unordered_map<Point, int> Point2regionidMap;
 	boost::unordered_map<int, intVector > regionid2nodeidVector;
 	boost::unordered_map<intPair, vector<intPair> > regionPair2nodePairVector;
 
-	boost::unordered_map<int, region> mapRegions; //holds all regions after a call to makePartitions()
-
-	std::vector<intPair> trainingSTPointPairs;
-	std::vector<intPair> testSTPointPairs;
-
+	boost::unordered_map<int,Region> mapRegions; //holds all regions after a call to makePartitions()
 
 	double calcScore(intVector& sp, intPairSet& vSeen);
 	void extractStatistics();
-
-	void readData(string fn);
-    void readTestData(string fn);
-	void readTrainingData(string fn);
-	bool makePartitions(int splits);
-	void split(std::vector<region>& regions, int axis);
+	
+    bool makePartitions(int splits);
+	void split(vector<Region>& regions, int axis);
 	int mapNodeid2RegionId(int nid);
-	int mapCoordinate2RegionId(coordinate coord);
-	void fillCache(int numQueries, string inFn);
-	void fillCacheFromQueriesFile(int numQueries, string inFn);
-	void fillCacheFromQueriesFileByStatistics(int numQueries, string inFn);
+	int mapPoint2RegionId(Point coord);
+	void fillCache();
+	void fillCacheFromQueriesFileByStatistics();
     intPair pickSTpair(intPair regionPair);
     void buildRegionId2NodeidVector();
     void buildRegionpair2NodepairVector();
-	//void sumUpNodes();
 };
 
 #endif

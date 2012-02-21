@@ -70,9 +70,9 @@ CacheItem::CacheItem(int key, intVector& item, int queryStartNode, int queryTarg
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void Test::readMapData() {
+void AbstractCache::readMapData() {
 	cout << "one, Base::readMapData start!" << endl;
-	mapSize = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->getMapsize();
+	mapSize = RoadGraph::mapObject(ts)->getMapsize();
 	cout << "mapsize: " << mapSize << endl;
 	string mapFile = ts.getTestFile();
 	std::pair<double, double> tmpPair;
@@ -83,53 +83,51 @@ void Test::readMapData() {
 	cout << "mapfile: " << mapFile << endl;
 	ifstream in_data (mapFile.c_str(), ios::in); //*.cnode file
 
-	//read in the mapping between coordinates and node ids from *.cnode file
+	//read in the mapping between Points and node ids from *.cnode file
 	if (in_data.is_open()) {
 		for(int i = 0; i < mapSize; i++)
 		{
 			getline(in_data, str);
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 			tmpPair = std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str()));
-			coordinate2Nodeid[tmpPair] = atoi(tokens[0].c_str());
-			nodeid2coordinate[atoi(tokens[0].c_str())] = tmpPair;
+			Point2Nodeid[tmpPair] = atoi(tokens[0].c_str());
+			nodeid2Point[atoi(tokens[0].c_str())] = tmpPair;
 			points.push_back(tmpPair);
 			// WARNING: brittle code (error when the file contains one more line!)
 		}
 	}
 	in_data.close();
 
-	
-	//writeoutCacheCoordinates(ts.getTestName(), cache.getCacheContentVector(), nodeid2coordinate, ts.getSplits());
-
 	cout << "two, Base::readMapData end!" << endl;
 }
 
-void Test::writeoutCacheCoordinates(string testbasename, vector<CacheItem> cm)
-{
+void AbstractCache::plotCachePoints(vector<CacheItem>& cm) {
+	// obtain parameter from "ts"
+	string testbasename=ts.getTestName();
 	int numSplits=ts.getSplits();
 
-	cout << "Base::writeoutCacheCoordinates start!";
+	cout << "Base::plotCachePoints start!";
 	vector<int> sp;
-	int i=0;
-	coordinate c;
+	
 	ofstream of;
 	string fn = testbasename;
 	string app = "D" + boost::lexical_cast<std::string>(numSplits);
 	string app2 = "C" + boost::lexical_cast<std::string>(cacheSize);
 	app.append(app2);
  	app.append(".cache");
-	fn.replace ((fn.size()-5), app.size(), app); //change file extention from .test to fnD#splits.cache
+	fn.replace ((fn.size()-5), 5, app); //change file extention from .test to fnD#splits.cache
 	of.open(fn.c_str(), ios::out | ios::ate | ios::app);
 
+	int i=0;
 	BOOST_FOREACH(CacheItem ci, cm) {
 		sp = ci.item;
 
 		BOOST_FOREACH(int v, sp) {
-			if(nodeid2coordinate.find(v) != nodeid2coordinate.end()) {
-				c = nodeid2coordinate.at(v);
+			if(nodeid2Point.find(v) != nodeid2Point.end()) {
+				Point c = nodeid2Point.at(v);
 				of << ci.getScore() << " " << c.first << " " << c.second << "\n";
 			} else
-				cout << "\nBase::writeoutCacheCoordinates ERROR:  unknown node id." << endl;
+				cout << "\nBase::plotCachePoints ERROR:  unknown node id." << endl;
 		}
 		of << endl;
 		i++;
@@ -137,243 +135,278 @@ void Test::writeoutCacheCoordinates(string testbasename, vector<CacheItem> cm)
 
 	of.close();
 	
-	
-	{	
-		fn = testbasename;
-		app = "D" + boost::lexical_cast<std::string>(numSplits);
-		app2 = "C" + boost::lexical_cast<std::string>(cacheSize);
-		app.append(app2);
-		app.append(".statCache");
-		fn.replace ((fn.size()-5), app.size(), app); //change file extention from .test to fnD#splits.cache
-		of.open(fn.c_str(), ios::out | ios::ate | ios::app);
-
-		BOOST_FOREACH(intPairPairs stats, cacheStats)// stats: (node1,node2) -> (seen count, sp length)
-			of << stats.first.first << " " << stats.first.second << " " << stats.second.first << " " << stats.second.second << endl;
-
-		of.close();
-	}
-	
 	cout << " ... Done!" << endl;
 }
 
 
 
-int Test::writeoutTestCoordinates(string testbasename, std::vector<intPair> stPointPairs)
-{
-	cout << "Base::writeoutTestCoordinates start!";
-	vector<int> sp;
-	coordinate c;
+bool AbstractCache::plotShortestPaths(QLOG_CHOICE qlog) {
+	// obtain parameter from "ts"
+	string testbasename=ts.getTestName();
+	string app="";
+	intPairVector* ptrPointPairs=NULL;
+	
+	if (qlog==QLOG_TRAIN) {
+		app = "TEST.cache";
+		ptrPointPairs=&trainingSTPointPairs;
+	} else if (qlog==QLOG_TEST) {
+		app = "TRAIN.cache";
+		ptrPointPairs=&testSTPointPairs;
+	} else {
+		printf("*** invalid qlog parameter\n");
+		exit(0);
+		return false;
+	}
+	
+	cout << "Base::plotShortestPaths start!";
+	intPairVector& stPointPairs=(*ptrPointPairs);
 	string fn = testbasename;
-	string app = "TEST.cache";
-	fn.replace ((fn.size()-5), app.size(), app); //change file extention from .test TEST.cache
+	fn.replace ((fn.size()-5), 5, app); //change file extention from .test TEST.cache
 	ifstream ifile(fn.c_str());
-	if (ifile) {ifile.close(); return 0;} //file already exist
+	if (ifile) { //file already exist
+		ifile.close(); 
+		return false;
+	} 
 
 	ofstream of(fn.c_str(), ios::out | ios::ate | ios::app);
 
-	BOOST_FOREACH(intPair ip, stPointPairs)
-	{
-		sp = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->dijkstraSSSP(ip.first, ip.second);
+	BOOST_FOREACH(intPair ip, stPointPairs) {
+		intVector sp = RoadGraph::mapObject(ts)->dijkstraSSSP(ip.first, ip.second);
 
-		BOOST_FOREACH(int v, sp)
-		{
-			if(nodeid2coordinate.find(v) != nodeid2coordinate.end())
-			{
-				c = nodeid2coordinate.at(v);
+		BOOST_FOREACH(int v, sp) {
+			if(nodeid2Point.find(v) != nodeid2Point.end()) {
+				Point c = nodeid2Point.at(v);
 				of << c.first << " " << c.second << "\n";
-			}else
-				cout << "\nBase::writeoutTestCoordinates ERROR:  unknown node id." << endl;
+			} else
+				cout << "\nBase::plotShortestPaths ERROR:  unknown node id." << endl;
 		}
 		of << endl;
 	}
 	cout << " ... Done!" << endl;
 	of.close();
-	return 1;
+	return true;
 }
 
 
-int Test::writeoutTrainingCoordinates(string testbasename, std::vector<intPair> stPointPairs)
-{
-	cout << "Base::writeoutTrainingCoordinates start!";
-	vector<int> sp;
-	coordinate c;
-	string fn = testbasename;
-	string app = "TRAIN.cache";
-	fn.replace ((fn.size()-5), app.size(), app); //change file extention from .test TEST.cache
-	ifstream ifile(fn.c_str());
-	if (ifile) {ifile.close(); return 0;} //file already exist
+//file on the form:
+//record_id, S_id, T_id, S_x, S_y, T_x, T_y.
+void AbstractCache::readQueryLogData(QLOG_CHOICE qlog) {
+	// extract parameter from "ts"
+	string fn=ts.queryFileName;
+	string app="";
+	intPairVector* ptrPointPairs=NULL;
+	
+	if (qlog==QLOG_TRAIN) {
+		app = ".train";
+		ptrPointPairs=&trainingSTPointPairs;
+	} else if (qlog==QLOG_TEST) {
+		app = ".test";
+		ptrPointPairs=&testSTPointPairs;
+	} else {
+		printf("*** invalid qlog parameter\n");
+		exit(0);
+		return;
+	}	
+	intPairVector& stPointPairs=(*ptrPointPairs);
 
-	ofstream of(fn.c_str(), ios::out | ios::ate | ios::app);
+	std::pair<double, double> firstPair, secondPair;
+	int firstPnt, secondPnt, temp;
+	string str;
+	std::vector<string> tokens;
+	fn.replace ((fn.size()-5), 5, app); //change file extention from .test to .train
+	ifstream qlogFile (fn.c_str(), ios::in); //*.train file
+    
+	cout << "Base::readQueryLogData start: " << fn << endl;
+	
+	//find all pairs of nodeids in the training set to have SP done for them. map nodeids to Points.
+	if (qlogFile.is_open()) {
+		if (debug) 
+			cout << "two, Base::readQueryLogData opened! " << endl;
+		
+		while(getline(qlogFile, str)) {
+			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 
-	BOOST_FOREACH(intPair ip, stPointPairs)
-	{
-		sp = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->dijkstraSSSP(ip.first, ip.second);
+			firstPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
+			secondPair = std::make_pair(atof(tokens[5].c_str()),atof(tokens[6].c_str()));
 
-		BOOST_FOREACH(int v, sp)
-		{
-			if(nodeid2coordinate.find(v) != nodeid2coordinate.end())
-			{
-				c = nodeid2coordinate.at(v);
-				of << c.first << " " << c.second << "\n";
-			}else
-				cout << "\nBase::writeoutTrainingCoordinates ERROR:  unknown node id." << endl;
+			firstPnt = Point2Nodeid[firstPair];
+			secondPnt = Point2Nodeid[secondPair];
+
+            if (firstPnt > secondPnt) {
+				temp = firstPnt; firstPnt = secondPnt; secondPnt = temp;
+			}
+
+			stPointPairs.push_back(std::make_pair(firstPnt,secondPnt));
 		}
-		of << endl;
 	}
-    cout << " ... Done!" << endl;
-	of.close();
-	return 1;
+	qlogFile.close();
+	cout << "Base::readQueryLogData end! size:" << stPointPairs.size() << endl;
 }
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
 
-aCache::aCache() {
+CacheStorage::CacheStorage() {
 
 }
 
 
-aCache::aCache(testsetting ts) {
+CacheStorage::CacheStorage(TestSetting ts) {
 	init(ts);
 }
 
-void aCache::init(testsetting ts)
+void CacheStorage::init(TestSetting ts)
 {
-	if(ts.cacheType == GRAPH_CACHE || ts.cacheType == LIST_CACHE || ts.cacheType == COMPRESSED_G_CACHE)
-	{
-		cacheType = ts.cacheType;
-		cacheSize = ts.getCacheSize();
-		cacheUsed = 0;
-		numberOfNodes = 0;
-		numItems = 0;
-		totalEntriesInCompressedBitsets = 0;
-	}
+	// assume that checking has been done for "testStorage" elsewhere
+	testStorage = ts.testStorage;
+	cacheSize = ts.cacheSize;
+	cacheUsed = 0;
+	numberOfNodes = 0;
+	totalEntriesInCompressedBitsets = 0;
+	
+	mapSize = RoadGraph::mapObject(ts)->getMapsize();
+	if (testStorage!=STORE_LIST)
+		invertedLists=new intVector[mapSize];
 	else
-		cout << "invalid cache type set: " << ts.cacheType << endl;
+		invertedLists=NULL;
 }
 
-bool aCache::insertItem(CacheItem ci)
-{
-	if(!hasEnoughSpace(ci)) return false;
+bool CacheStorage::insertItem(CacheItem ci) {
+	if (!hasEnoughSpace(ci)) return false;
 
-	numItems++;
-
+	
+	int path_id = numberOfItemsInCache();
+	
 	cache.push_back(ci);
 	updateCacheUsed(ci);
+	
+	
+	// update inverted list
+	// note that ci.id is not sorted (need to sort them later?)
+	if (testStorage!=STORE_LIST) {
+		intVector& sp = ci.item;
+		BOOST_FOREACH(int v, sp) {
+			assert(v>=0&&v<mapSize);
+			invertedLists[v].push_back(path_id);
+		}
+		
+		//printf("new old: %d %d, query (%d %d)\n",path_id,ci.id,ci.s,ci.t);
+	}
+	
 	return true;
 }
 
-bool aCache::insertItemWithScore(CacheItem ci, double score)
-{
+bool CacheStorage::insertItemWithScore(CacheItem ci, double score) {
 	ci.setScore(score);
 	return insertItem(ci);
 }
 
-bool aCache::checkCache(int s, int t)
-{
+bool CacheStorage::checkCache(intPair query) {
 	vector<int> cItem;
 
-	BOOST_FOREACH(CacheItem ci, cache )
-	{
-		cItem = ci.item;
-		if(find(cItem.begin(),cItem.end(), s) != cItem.end() && find(cItem.begin(),cItem.end(), t) != cItem.end())
-			return true;
+	int s = query.first;
+	int t = query.second;
+	assert(s>=0&&s<mapSize);
+	assert(t>=0&&t<mapSize);
+	
+	
+	if (testStorage==STORE_LIST) {
+		BOOST_FOREACH(CacheItem& ci, cache ) {
+			cItem = ci.item;
+			if(find(cItem.begin(),cItem.end(), s) != cItem.end() && find(cItem.begin(),cItem.end(), t) != cItem.end())
+				return true;
+		}	
+	} else {
+		intVector& vecA=invertedLists[s];
+		intVector& vecB=invertedLists[t];
+		if (vecA.size()==0 || vecB.size()==0)
+			return false;
+		
+		// *** merge algorithm (for sorted arrays)
+		//printf("\tQ(%d %d): %d %d\n",s,t,vecA.size(),vecB.size());
+		int posA=0,posB=0;
+		while (posA<vecA.size() && posB<vecB.size()) {
+			if (vecA[posA]<vecB[posB])
+				posA++;
+			else if (vecA[posA]>vecB[posB]) 
+				posB++;
+			else {// equal path_id
+				// printf("\tQ(%d %d): %d %d\n",s,t,vecA[posA],vecB[posB]);	// BUG?
+				return true;
+			}
+		}
 	}
+	
 	return false;
 }
 
-bool aCache::checkCache(intPair query)
-{
-	return checkCache(query.first, query.second);
-}
-
-bool aCache::checkCache(CacheItem ci)
-{
-	return checkCache(ci.s, ci.t);
-}
-
 //assumes cache item ci has NOT been added to vector<CacheItem> cache
-bool aCache::hasEnoughSpace(CacheItem ci)
+bool CacheStorage::hasEnoughSpace(CacheItem ci)
 {
     return hasEnoughSpace(ci.item);
 }
 
-bool aCache::hasEnoughSpace(vector<int> sp)
-{
-    if(cacheType == GRAPH_CACHE)
-	{
+bool CacheStorage::hasEnoughSpace(intVector& sp) {
+    if(testStorage == STORE_GRAPH) {
+		
 		int newNodes = 0; //nodes in ci which is not already in graph
+		BOOST_FOREACH(int v, sp) {
+			if (nodeIdsInCache.find(v) == nodeIdsInCache.end())
+				newNodes++;
+		}
 
-		BOOST_FOREACH(int v, sp)
-			if(nodeIdsInCache.find(v) == nodeIdsInCache.end()){	newNodes++;	}
-
-		if( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize) return true;
+		if ( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize ) 
+			return true;
+			
+	} else if(testStorage == STORE_LIST) {
+	
+		if ( cacheUsed + sp.size()*NODE_BITS < cacheSize ) 
+			return true;
+			
+	} else if(testStorage == STORE_COMPRESS) {
+		// KEN: this part is commented because the size is already updated in "updateCacheUsed"
+		if ( cacheUsed < cacheSize )
+			return true;
 	}
-	else if(cacheType == LIST_CACHE)
-	{
-		if(cacheUsed + sp.size()*NODE_BITS < cacheSize) return true;
-	}
-	else if(cacheType == COMPRESSED_G_CACHE)
-	{
-//        int newNodes = 0; //nodes in ci which is not already in graph
-//        int bitsToAdd = 0;
-//
-//		BOOST_FOREACH(int v, ci.item)
-//		{
-//			if(nodeIdsInCache.find(v) == nodeIdsInCache.end())
-//			{	newNodes++;
-//				bitsToAdd += 2;
-//			}
-//			else
-//				if(nodeIdsInCacheCompressed.at(v).back().second != cache.size())
-//					bitsToAdd += 2;
-//		}
-//
-//		if( (nodeIdsInCache.size() + newNodes ) * NODE_BITS + (totalEntriesInCompressedBitsets+bitsToAdd)* ceil(log(cache.size())/log(2)) <= cacheSize) return true;
-        if(cacheUsed < cacheSize) return true;
-	}
-	else
-		std::cout << "aCache::hasEnoughSpace! Invalid cache type set: " << cacheType << endl;
 
 	return false;
 }
 
 //assumes cache item ci has already been added to vector<CacheItem> cache
-void aCache::updateCacheUsed(CacheItem ci)
-{
-	if(cacheType == GRAPH_CACHE)
-	{
-		int nodesToBeAdded = 0;
-		boost::dynamic_bitset<> bitset(0);
+void CacheStorage::updateCacheUsed(CacheItem ci) {
 
-		BOOST_FOREACH(int v, ci.item)
-		{
-			if(nodeIdsInCache.find(v) == nodeIdsInCache.end())
-			{
-				boost::dynamic_bitset<> bitset(cache.size()-1); //set all bits to zero in the bitmap for the first cache.size()-1 bits
-				nodesToBeAdded++;
-				nodeIdsInCache[v] = bitset;
+	if (testStorage == STORE_GRAPH) {
+	
+		// add a bitset for each new node
+		
+		intVector& sp = ci.item;
+		
+		BOOST_FOREACH(int v, sp) {
+			if (nodeIdsInCache.find(v) == nodeIdsInCache.end()) {
+				 //set all bits to zero in the bitmap for the first cache.size()-1 bits
+				nodeIdsInCache[v] = boost::dynamic_bitset<>(cache.size()-1);;
 			}
 		}
 
-		BOOST_FOREACH(intDBitset::value_type nb, nodeIdsInCache)
-		{
-			if(find(ci.item.begin(), ci.item.end(), nb.first) != ci.item.end())
-				nodeIdsInCache.at(nb.first).push_back(1);
+		BOOST_FOREACH(intDBitset::value_type nb, nodeIdsInCache) {
+			int nid = nb.first;
+			if (find(sp.begin(), sp.end(), nid) != sp.end())
+				nodeIdsInCache[nid].push_back(1);
 			else
-				nodeIdsInCache.at(nb.first).push_back(0);
+				nodeIdsInCache[nid].push_back(0);
 		}
 
 		cacheUsed =  nodeIdsInCache.size() * (NODE_BITS + BIT*cache.size()) ;
 		numberOfNodes = nodeIdsInCache.size();
-	}
-	else if(cacheType == LIST_CACHE)
-	{
+		
+	} else if (testStorage == STORE_LIST) {
+	
 		cacheUsed = cacheUsed + ci.size*NODE_BITS;
 		numberOfNodes = numberOfNodes + ci.size;
-	}
-    else if(cacheType == COMPRESSED_G_CACHE)
-	{
+		
+	} else if (testStorage == STORE_COMPRESS) {
+	
 	    pidSets.insertPath(ci.item);
 
         int num_paths = cache.size();
@@ -382,14 +415,15 @@ void aCache::updateCacheUsed(CacheItem ci)
         int pid_bits = ceil( log( num_paths ) / log(2) );
         int token_bits = ceil( log(  num_tokens ) / log(2) );
 
-        cacheUsed =  pidSets.getNumNodes() * ( NODE_BITS + token_bits ) + pidSets.GetTotalNumItems()  * ( pid_bits + 1 )  +  num_tokens * token_bits * 2 ;
+        cacheUsed =  	pidSets.getNumNodes() * ( NODE_BITS + token_bits ) + 
+						pidSets.GetTotalNumItems()  * ( pid_bits + 1 )  +  num_tokens * token_bits * 2 ;
 		numberOfNodes = pidSets.getNumNodes();
+		
 	}
-	else
-		std::cout << "aCache::hasEnoughSpace! Invalid cache type set: " << cacheType << endl;
+
 }
 
-void aCache::writeOutBitmaps()
+/*void CacheStorage::writeOutBitmaps()
 {
 	int nodeid=0;
 	BOOST_FOREACH(intDBitset::value_type nb, nodeIdsInCache)
@@ -400,9 +434,9 @@ void aCache::writeOutBitmaps()
 	cout << nodeIdsInCache.size() << endl;
 	cout << nodeIdsInCache.at(nodeid).size() << endl;
 	cout << nodeIdsInCache.size()*nodeIdsInCache.at(nodeid).size() << endl;
-}
+}*/
 
-void aCache::printNodesTokensPaths()
+void CacheStorage::printNodesTokensPaths()
 {
     pidSets.printNodesTokensPaths();
 }
@@ -411,24 +445,24 @@ void aCache::printNodesTokensPaths()
 //////////////////////////////////////////////////////////////////////////////////////////
 
 
-compressedPidTokens::compressedPidTokens()
+CompressedPidTokens::CompressedPidTokens()
 {
        _num_token = 0;
        pathID =0;
        _total_pid_items=0;
 }
 
-compressedPidTokens::~compressedPidTokens()
+CompressedPidTokens::~CompressedPidTokens()
 {
     //dtor
 }
 
 // pre-condition: assume that "path_id" must be larger than any existing id in "vecpair"
-void compressedPidTokens::insertVecPair( intPairVector& vecpair, int path_id )
+void CompressedPidTokens::insertVecPair( intPairVector& vecpair, int path_id )
 {
     if(debug) cout << "compressedPidTokens::insertVecPair! Start";
 	if (vecpair.size()==0) {
-		vecpair.push_back(std::make_pair(path_id,path_id));
+		vecpair.push_back(make_pair(path_id,path_id));
 		_total_pid_items++;	// single item only
 	} else {
 		intPair tmppair=vecpair.back();
@@ -438,7 +472,7 @@ void compressedPidTokens::insertVecPair( intPairVector& vecpair, int path_id )
 			vecpair.pop_back();		// remove the last pair
 			tmppair.second=path_id;	// update that pair
 		} else {
-			tmppair=std::make_pair(path_id,path_id);	// make a new pair
+			tmppair=make_pair(path_id,path_id);	// make a new pair
 			_total_pid_items++;	// single item only
 		}
 		vecpair.push_back(tmppair);
@@ -446,7 +480,7 @@ void compressedPidTokens::insertVecPair( intPairVector& vecpair, int path_id )
 	if(debug) cout << " ... Done" << endl;
 }
 
-void compressedPidTokens::compressedPidTokens::printVecPair( intPairVector& vecpair )
+void CompressedPidTokens::printVecPair( intPairVector& vecpair )
 {
     if(debug) cout << "compressedPidTokens::printVecPair! Start";
 	BOOST_FOREACH(intPair curpair, vecpair)
@@ -458,7 +492,7 @@ void compressedPidTokens::compressedPidTokens::printVecPair( intPairVector& vecp
 
 }
 
-void compressedPidTokens::printNodesTokensPaths()
+void CompressedPidTokens::printNodesTokensPaths()
 {
     if(debug) cout << "compressedPidTokens::printNodesTokensPaths! Start";
 
@@ -490,7 +524,7 @@ void compressedPidTokens::printNodesTokensPaths()
     if(debug) cout << "compressedPidTokens::printNodesTokensPaths! Done" << endl;
 }
 
-void compressedPidTokens::insertCompressedPid( int path_id, intVector& tmpModify, CompressPidType* prevcomppath )
+void CompressedPidTokens::insertCompressedPid( int path_id, intVector& tmpModify, CompressPidType* prevcomppath )
 {
     if(debug) cout << "compressedPidTokens::insertCompressedPid! Begin ";
 	int next_token=GenerateToken();
@@ -519,7 +553,7 @@ void compressedPidTokens::insertCompressedPid( int path_id, intVector& tmpModify
     if(debug) cout << "compressedPidTokens::insertCompressedPid! Done " << endl;
 }
 
-void compressedPidTokens::insertPath(vector<int>& vecpath)
+void CompressedPidTokens::insertPath(vector<int>& vecpath)
 {
     if(debug) cout << "compressedPidTokens::insertPath! Begin ";
 	vector<int> newnodes,oldnodes;	// temporary vectors

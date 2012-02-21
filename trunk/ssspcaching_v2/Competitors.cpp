@@ -3,14 +3,11 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define STATIC_CACHE false
 
-typedef std::pair<int , int> intPair;
-
-LRU::LRU(testsetting ts)
+LRU::LRU(TestSetting ts)
 {
 	this->ts = ts;
-	cacheSize = ts.getCacheSize()/32;
+	cacheSize = ts.cacheSize;
 	numTotalQueries = 0;
 	numCacheHits = 0;
 	cacheUsed = 0;
@@ -22,80 +19,61 @@ LRU::~ LRU()
 {
 }
 
-void LRU::readQuery(std::pair< int, int > query)
+
+void LRU::buildCache()
 {
-   	checkAndUpdateCache(query);
-    numTotalQueries++;
+	cout<< "2.0 done cachesize:" << cacheSize << endl;
+	readQueryLogData(QLOG_TEST);
+	
+	cout << "test query pairs:" << testSTPointPairs.size() << endl;	
 }
 
-void LRU::readStaticQuery(std::pair< int, int > query)
+void LRU::runQueryList()
 {
-    checkStaticCache(query);
-    numTotalQueries++;
-}
-
-void LRU::readQueries(int numQueries, string inFn)
-{
-	cout<< "2.0 done cachesize/given cs:" << cacheSize <<"/" << ts.getCacheSize() << endl;
-	readTestData(ts.queryFileName);
-	cout<< "2.1 done" << endl;
-	readTrainingData(ts.queryFileName);
-
-	cout << "test query pairs:" << testSTPointPairs.size() << endl;
-	cout << "training query pairs: " << trainingSTPointPairs.size() << endl;
-
-	if(STATIC_CACHE){
-        BOOST_FOREACH(intPair q, trainingSTPointPairs) { readQuery(q); }
-    }
-}
-
-void LRU::readQueryList(std::vector< std::pair<int,int> > queryList)
-{
-	RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
-    if(STATIC_CACHE){
-        numTotalQueries = 0;
-        numCacheHits = 0;
-        numDijkstraCalls = 0;
-        BOOST_FOREACH(intPair q, testSTPointPairs ) { readStaticQuery(q); }
-    }else{
-        BOOST_FOREACH(intPair q, testSTPointPairs ) { readQuery(q); }
-    }
-
-    this->ts.setBuildStatisticsTime(-1.0);
-    ts.setNonEmptyRegionPairs(-1);
-    this->ts.setFillCacheTime(-1.0);
+	RoadGraph::mapObject(ts)->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
+    
+	BOOST_FOREACH(intPair q, testSTPointPairs ) { 
+		checkAndUpdateCache(q);
+		numTotalQueries++;
+	}
+    
+    this->ts.setBuildStatisticsTime(0);
+    ts.setNonEmptyRegionPairs(0);
+    this->ts.setFillCacheTime(0);
     this->ts.setItemsInCache(cache.size());
 }
 
-void LRU::checkAndUpdateCache(std::pair< int, int > query)
+void LRU::checkAndUpdateCache(intPair query)
 {
 	bool cacheHit = false;
-    if(debug) {cout << "cache size: " << cache.size() << " s,t: (" << query.first << "," << query.second << ")" << endl;}
+    if(debug) {
+		cout << "cache size: " << cache.size() << " s,t: (" << query.first << "," << query.second << ")" << endl;
+	}
 
-
-		BOOST_FOREACH(CacheItem ci, cache )
+	BOOST_FOREACH(CacheItem ci, cache ) {
+		if (find(ci.item.begin(),ci.item.end(), query.first) != ci.item.end() && 
+		    find(ci.item.begin(),ci.item.end(), query.second) != ci.item.end())
 		{
-			if(find(ci.item.begin(),ci.item.end(), query.first) != ci.item.end() && find(ci.item.begin(),ci.item.end(), query.second) != ci.item.end())
-			{
-//			    if(debug) {cout << "SP: ("; BOOST_FOREACH(int node, ci.item ) { cout << node << ","; } cout << ")"; }
-				if(debug) cout << "LRU::checkAndUpdateCache BOTH TRUE" << endl;
-				numCacheHits++;
-				ci.updateKey(numTotalQueries);
-				sort(cache.begin(), cache.end());
-				cacheHit = true;
-				break;
-			}
+	//		if(debug) {cout << "SP: ("; BOOST_FOREACH(int node, ci.item ) { cout << node << ","; } cout << ")"; }
+			if(debug) 
+				cout << "LRU::checkAndUpdateCache BOTH TRUE" << endl;
+			numCacheHits++;
+			ci.updateKey(numTotalQueries);
+			sort(cache.begin(), cache.end());
+			cacheHit = true;
+			break;
 		}
-		if(debug) cout << "LRU::checkAndUpdateCache " << endl;
+	}
+	if(debug) cout << "LRU::checkAndUpdateCache " << endl;
 
 	if(!cacheHit)
 	{
-		vector<int> spResult = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->dijkstraSSSP(query.first, query.second);
+		vector<int> spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
 		numDijkstraCalls++;
 		int querySize = spResult.size();
 		if(cache.size() != 0){
 			if(debug) cout << "LRU::checkAndUpdateCache 1, querySize: "<< querySize << endl;
-			insertItem(querySize, spResult, query.first, query.second);
+			insertItem(spResult);
 		}else{
 			if(debug) cout << "LRU::checkAndUpdateCache 2, querySize: "<< querySize << endl;
 			CacheItem e (numTotalQueries, spResult);
@@ -105,256 +83,95 @@ void LRU::checkAndUpdateCache(std::pair< int, int > query)
 	}
 }
 
-void LRU::checkStaticCache(std::pair< int, int > query)
-{
-	bool cacheHit = false;
-    if(debug) {cout << "cache size: " << cache.size() << " s,t: (" << query.first << "," << query.second << ")" << endl;}
 
+void LRU::insertItem(intVector& sp) {
 
-		BOOST_FOREACH(CacheItem ci, cache )
-		{
-			if(find(ci.item.begin(),ci.item.end(), query.first) != ci.item.end() && find(ci.item.begin(),ci.item.end(), query.second) != ci.item.end())
-			{
-//			    if(debug) {cout << "SP: ("; BOOST_FOREACH(int node, ci.item ) { cout << node << ","; } cout << ")"; }
-				if(debug) cout << "LRU::checkStaticCache BOTH TRUE" << endl;
-				numCacheHits++;
-				cacheHit = true;
-				break;
-			}
-		}
-		if(debug) cout << "LRU::checkStaticCache " << endl;
-
-
-    if(!cacheHit)
-	{
-		RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->dijkstraSSSP(query.first, query.second);
-		numDijkstraCalls++;
-	}
-}
-
-void LRU::insertItem(uint querySize, std::vector< int > nodesInQueryResult, int sNode, int tNode)
-{
+	int spSize = sp.size();
 	bool notEnoughSpace = true;
-	if(debug) cout << "one, LRU::insertItem(" <<querySize <<"," <<nodesInQueryResult.size() <<","<<sNode<<","<<tNode<<")" << endl;
+	if(debug) cout << "one, LRU::insertItem(" << spSize <<"," <<sp.size() << ")" << endl;
 	//insert query into cache, will repeatedly remove items until there is enough space for the new item.
 	do{
-		if((cacheSize - cacheUsed) > querySize)
-		{
-			if(debug) cout << "two1, LRU::insertItem cacheSize,cacheUsed " << cacheSize <<"," << cacheUsed <<endl;
-			CacheItem cItem (numTotalQueries, nodesInQueryResult);
+	
+		if((cacheSize - cacheUsed) > spSize*NODE_BITS) {
+			if(debug) 
+				cout << "two1, LRU::insertItem cacheSize,cacheUsed " << cacheSize <<"," << cacheUsed <<endl;
+			CacheItem cItem (numTotalQueries, sp);
 			cache.push_back(cItem);
-			cacheUsed = cacheUsed + cItem.size;
+			cacheUsed = cacheUsed + cItem.size*NODE_BITS;
 			notEnoughSpace = false;
-			if(debug) cout << "two2, LRU::insertItem cacheSize,cacheUsed " << cacheSize <<"," << cacheUsed <<endl;
-		}
-		else if(querySize < cacheSize)
-		{
-			if(!cacheFull){ cacheFull = true; }
-			if(debug) cout << "three1, LRU::insertItem" << cache.size() <<"," << cache[0].size <<endl;
-			int itemSize = cache[0].size;
+			if (debug) 
+				cout << "two2, LRU::insertItem cacheSize,cacheUsed " << cacheSize <<"," << cacheUsed <<endl;
+		
+		} else if ( spSize*NODE_BITS < cacheSize) {
+		
+			if (debug) 
+				cout << "three1, LRU::insertItem" << cache.size() <<"," << cache[0].size <<endl;
+			int itemSize = cache[0].size;	// Ken: Is this the oldest item?
 			cache.erase(cache.begin());
-			cacheUsed = cacheUsed - itemSize;
-			if(debug) cout << "three2, LRU::insertItem" <<endl;
-		}
-		else
+			cacheUsed = cacheUsed - itemSize*NODE_BITS;
+			if (debug) 
+				cout << "three2, LRU::insertItem" <<endl;
+				
+		} else
 			break;
-	}while(notEnoughSpace);
-	if(debug) cout << "four, LRU::insertItem" <<endl;
+	} while(notEnoughSpace);
+	
+	if(debug) 
+		cout << "four, LRU::insertItem" <<endl;
 }
 
-
-//file on the form:
-//record_id, S_x, S_y, T_x, T_y.
-void LRU::readTestData(string fn)
-{
-	cout << "one, LRU::readTestData start!" << endl;
-	std::pair<double, double> firstPair, secondPair;
-	string str;
-	std::vector<string> tokens;
-
-	fn.replace ((fn.size()-5), 5, ".test"); //change file extention from .train to .test
-	ifstream testData (fn.c_str(), ios::in); //*.test file
-    cout << "readtestData:" << fn << endl;
-
-	//find all pairs of nodeids in the test set to have SP done for them. map nodeids to coordinates.
-	if(testData.is_open())
-	{
-        if(debug) cout << "two, LRU::readTestData file [" << fn << "] opened!" << endl;
-		while(getline(testData, str))
-		{
-			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-
-			testSTPointPairs.push_back(std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str())));
-		}
-	}
-	testData.close();
-	cout << "two, LRU::readTestData end!" << endl;
-}
-
-//file on the form:
-//record_id, S_x, S_y, T_x, T_y.
-void LRU::readTrainingData(string fn)
-{
-	cout << "one, LRU::readTrainingData start!" << endl;
-	std::pair<double, double> firstPair, secondPair;
-	string str;
-	std::vector<string> tokens;
-
-	fn.replace ((fn.size()-5), 5, ".train"); //change file extention from .test to .train
-	ifstream trainingData (fn.c_str(), ios::in); //*.train file
-	cout<< "training fn: " << fn << endl;
-	if(debug) cout << "one, LRU::readTrainingData! " << endl;
-	//find all pairs of nodeids in the training set to have SP done for them. map nodeids to coordinates.
-	if(trainingData.is_open())
-	{
-		if(debug) cout << "two, LRU::readTrainingData! " << endl;
-
-		while(getline(trainingData, str))
-		{
-			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-
-			trainingSTPointPairs.push_back(std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str())));
-
-
-		}
-		if(debug) cout << endl;
-	}
-	trainingData.close();
-	cout << "two, LRU::readTrainingData end!" << endl;
-}
 
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-hqf::hqf()
-{
 
-}
-
-hqf::hqf(testsetting ts)
+HQF::HQF(TestSetting ts)
 {
     this->ts = ts;
 	cache.init(ts);
-	cacheSize = cache.size();
+	cacheSize = ts.cacheSize;
 	numTotalQueries = 0;
 	numCacheHits = 0;
 	numDijkstraCalls = 0;
-	cacheFull = false;
 	readMapData();
 	calcScoreCounter=0;
 }
 
-hqf::~hqf()
+HQF::~HQF()
 {
     //dtor
 }
 
-void hqf::readQuery(std::pair<int,int> query)
-{
-	checkCache(query);
-	numTotalQueries++;
+
+void HQF::runQueryList() {
+	RoadGraph::mapObject(ts)->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
+	BOOST_FOREACH(intPair q, testSTPointPairs ) { 
+		checkCache(q);
+		numTotalQueries++;
+	}
+
+	ts.setNonEmptyRegionPairs(0);
+	ts.setBuildStatisticsTime(0);
 }
 
-void hqf::readQueryList(std::vector< std::pair<int,int> > queryList)
-{
-	RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
-	BOOST_FOREACH(intPair q, testSTPointPairs ) { readQuery(q); }
-
-	ts.setNonEmptyRegionPairs(-1);
-	ts.setBuildStatisticsTime(-1);
-}
-
-void hqf::readQueries(int numQueries, string inFn)
+void HQF::buildCache()
 {
     cout<< "2.0 done" << endl;
-	readTestData(ts.queryFileName);
+	readQueryLogData(QLOG_TEST);
 	cout<< "2.1 done" << endl;
-	readTrainingData(ts.queryFileName);
+	readQueryLogData(QLOG_TRAIN);
 	cout<< "2.2 done" << endl;
-    startTime = clock();
- 	fillCache(numQueries, inFn);
-	endTime = clock();
-	ts.setFillCacheTime((double(endTime-startTime))/CLOCKS_PER_SEC);
+    
+	double refTime = clock();
+ 	fillCache();
+	ts.setFillCacheTime(getElapsedTime(refTime));
 	cout << "2.3 done" << endl;
 }
 
 
-//file on the form:
-//record_id, S_id, T_id, S_x, S_y, T_x, T_y.
-void hqf::readTestData(string fn)
-{
-	cout << "one, hqf::readTestData start!" << endl;
-	std::pair<double, double> firstPair, secondPair;
-	int firstPnt, secondPnt, temp;
-	string str;
-	std::vector<string> tokens;
 
-	fn.replace ((fn.size()-5), 5, ".test"); //change file extention from .train to .test
-	ifstream testData (fn.c_str(), ios::in); //*.test file
-    cout << "training fnL" << fn << endl;
-
-	//find all pairs of nodeids in the test set to have SP done for them. map nodeids to coordinates.
-	if(testData.is_open())
-	{
-        if(debug) cout << "two, hqf::readTestData file [" << fn << "] opened!" << endl;
-		while(getline(testData, str))
-		{
-			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-
-			firstPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
-			secondPair = std::make_pair(atof(tokens[5].c_str()),atof(tokens[6].c_str()));
-
-			firstPnt = coordinate2Nodeid[firstPair];
-			secondPnt = coordinate2Nodeid[secondPair];
-
-            if(firstPnt > secondPnt){temp = firstPnt; firstPnt = secondPnt; secondPnt = temp;}
-
-			testSTPointPairs.push_back(std::make_pair(firstPnt,secondPnt));
-			if(debug) cout << "tree, hqf::readTestData end of fileline loop.!" << endl;
-		}
-	}
-	testData.close();
-	cout << "two, hqf::readTestData end! size: " << testSTPointPairs.size() << endl;
-}
-
-//file on the form:
-//record_id, S_id, T_id, S_x, S_y, T_x, T_y.
-void hqf::readTrainingData(string fn)
-{
-	cout << "hqf::readTrainingData start!" << endl;
-	std::pair<double, double> firstPair, secondPair;
-	int firstPnt, secondPnt, temp;
-	string str;
-	std::vector<string> tokens;
-
-	fn.replace ((fn.size()-5), 5, ".train"); //change file extention from .test to .train
-	ifstream trainingData (fn.c_str(), ios::in); //*.train file
-	if(debug) cout << "one, hqf::readTrainingData! " << endl;
-	//find all pairs of nodeids in the training set to have SP done for them. map nodeids to coordinates.
-	if(trainingData.is_open())
-	{
-		if(debug) cout << "two, hqf::readTrainingData! " << endl;
-		while(getline(trainingData, str))
-		{
-			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-
-			firstPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
-			secondPair = std::make_pair(atof(tokens[5].c_str()),atof(tokens[6].c_str()));
-
-			firstPnt = coordinate2Nodeid[firstPair];
-			secondPnt = coordinate2Nodeid[secondPair];
-
-            if(firstPnt > secondPnt){temp = firstPnt; firstPnt = secondPnt; secondPnt = temp;}
-
-			trainingSTPointPairs.push_back(std::make_pair(firstPnt,secondPnt));
-		}
-	}
-	trainingData.close();
-	cout << "hqf::readTrainingData end! size:" << trainingSTPointPairs.size() << endl;
-}
-
-void hqf::fillCache(int numQueries, string inFn)
+void HQF::fillCache()
 {
     boost::unordered_map<intPair, int> coordinateStats;
     boost::unordered_map<intPair,CacheItem> bucketList;
@@ -373,17 +190,15 @@ void hqf::fillCache(int numQueries, string inFn)
 
     BOOST_FOREACH(intPair rp, trainingSTPointPairs)
     {
-        spResult = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->dijkstraSSSP(rp.first, rp.second);
+        spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(rp.first, rp.second);
 
-       //make new cache item
+		//make new cache item
         CacheItem e (iId, spResult);
         iId++;
         bucketList[rp] = e;
         tmp.pID = rp;
 		tmp.dist = coordinateStats.at(rp);
 		mhCache.push(tmp);
-
-		cacheStats[rp] = std::make_pair<int,int>(coordinateStats.at(rp), spResult.size());
     }
 
 
@@ -403,14 +218,10 @@ void hqf::fillCache(int numQueries, string inFn)
 		}
 	}
 	ts.setItemsInCache(cache.numberOfItemsInCache());
-
-    writeoutCacheCoordinates(ts.getTestName(), cache.getCacheContentVector());
-	writeoutTrainingCoordinates(ts.getTestName(), trainingSTPointPairs);
-	writeoutTestCoordinates(ts.getTestName(), testSTPointPairs);
-
+    plotCachePoints(cache.cache);
 }
 
-void hqf::checkCache(std::pair< int, int > query)
+void HQF::checkCache(intPair query)
 {
 	bool cacheHit = false;
 	vector<int> spResult;
@@ -426,7 +237,7 @@ void hqf::checkCache(std::pair< int, int > query)
 	if(!cacheHit)
 	{
 		if(debug) cout << "three, hqf::checkCache!" << endl;
-		spResult = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->dijkstraSSSP(query.first, query.second);
+		spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
 		numDijkstraCalls++;
 	}
 	if(debug) cout << "four, hqf::checkCache!" << endl;
@@ -435,12 +246,8 @@ void hqf::checkCache(std::pair< int, int > query)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-hqflru::hqflru()
-{
 
-}
-
-hqflru::hqflru(testsetting ts)
+HybridHQFLRU::HybridHQFLRU(TestSetting ts)
 {
     this->ts = ts;
 	cache.init(ts);
@@ -448,127 +255,49 @@ hqflru::hqflru(testsetting ts)
 	numTotalQueries = 0;
 	numCacheHits = 0;
 	numDijkstraCalls = 0;
-	cacheFull = false;
 	readMapData();
 	calcScoreCounter=0;
 }
 
-hqflru::~hqflru()
+HybridHQFLRU::~HybridHQFLRU()
 {
     //dtor
 }
 
-void hqflru::readQuery(std::pair<int,int> query)
-{
-    cout << "query: (" << query.first <<"," << query.second << ")" << endl;
-	checkAndUpdateCache(query);
-	numTotalQueries++;
-}
 
-void hqflru::readQueryList(std::vector< std::pair<int,int> > queryList)
-{
-    runtimeCache = cache.getCacheContentVector();
+void HybridHQFLRU::runQueryList() {
+    runtimeCache = cache.cache;
     sort(runtimeCache.begin(), runtimeCache.end());
     cacheUsed = cache.getCacheUsed();
     cout<< "3.0 Start" << endl;
-	RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
+	RoadGraph::mapObject(ts)->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
     cout<< "3.1 Done" << endl;
-	BOOST_FOREACH(intPair q, testSTPointPairs ) { readQuery(q); }
+	BOOST_FOREACH(intPair q, testSTPointPairs ) { 
+	    cout << "q: (" << q.first <<"," << q.second << ")" << endl;
+		checkAndUpdateCache(q);
+		numTotalQueries++;
+	}
     cout << "3.2 Done" << endl;
 
-	ts.setNonEmptyRegionPairs(-1);
-	ts.setBuildStatisticsTime(-1);
+	ts.setNonEmptyRegionPairs(0);
+	ts.setBuildStatisticsTime(0);
 }
 
-void hqflru::readQueries(int numQueries, string inFn)
+void HybridHQFLRU::buildCache()
 {
     cout<< "2.0 done" << endl;
-	readTestData(ts.queryFileName);
+	readQueryLogData(QLOG_TEST);
 	cout<< "2.1 done" << endl;
-	readTrainingData(ts.queryFileName);
+	readQueryLogData(QLOG_TRAIN);
 	cout<< "2.2 done" << endl;
-    startTime = clock();
- 	fillCache(numQueries, inFn);
-	endTime = clock();
-	ts.setFillCacheTime((double(endTime-startTime))/CLOCKS_PER_SEC);
+    double refTime = clock();
+ 	fillCache();
+	ts.setFillCacheTime(getElapsedTime(refTime));
 	cout << "2.3 done" << endl;
 }
 
-//file on the form:
-//record_id, S_id, T_id, S_x, S_y, T_x, T_y.
-void hqflru::readTestData(string fn)
-{
-	cout << "one, hqflru::readTestData start!" << endl;
-	std::pair<double, double> firstPair, secondPair;
-	int firstPnt, secondPnt, temp;
-	string str;
-	std::vector<string> tokens;
 
-	fn.replace ((fn.size()-5), 5, ".test"); //change file extention from .train to .test
-	ifstream testData (fn.c_str(), ios::in); //*.test file
-    cout << "training fn: " << fn << endl;
-
-	//find all pairs of nodeids in the test set to have SP done for them. map nodeids to coordinates.
-	if(testData.is_open())
-	{
-        if(debug) cout << "two, hqflru::readTestData file [" << fn << "] opened!" << endl;
-		while(getline(testData, str))
-		{
-			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-
-			firstPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
-			secondPair = std::make_pair(atof(tokens[5].c_str()),atof(tokens[6].c_str()));
-
-			firstPnt = coordinate2Nodeid[firstPair];
-			secondPnt = coordinate2Nodeid[secondPair];
-
-            if(firstPnt > secondPnt){temp = firstPnt; firstPnt = secondPnt; secondPnt = temp;}
-
-			testSTPointPairs.push_back(std::make_pair(firstPnt,secondPnt));
-			if(debug) cout << "tree, hqflru::readTestData end of fileline loop.!" << endl;
-		}
-	}
-	testData.close();
-	cout << "two, hqflru::readTestData end! size: " << testSTPointPairs.size() << endl;
-}
-
-//file on the form:
-//record_id, S_id, T_id, S_x, S_y, T_x, T_y.
-void hqflru::readTrainingData(string fn)
-{
-	cout << "hqflru::readTrainingData start!" << endl;
-	std::pair<double, double> firstPair, secondPair;
-	int firstPnt, secondPnt, temp;
-	string str;
-	std::vector<string> tokens;
-
-	fn.replace ((fn.size()-5), 5, ".train"); //change file extention from .test to .train
-	ifstream trainingData (fn.c_str(), ios::in); //*.train file
-	if(debug) cout << "one, hqflru::readTrainingData! " << endl;
-	//find all pairs of nodeids in the training set to have SP done for them. map nodeids to coordinates.
-	if(trainingData.is_open())
-	{
-		if(debug) cout << "two, hqflru::readTrainingData! " << endl;
-		while(getline(trainingData, str))
-		{
-			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-
-			firstPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
-			secondPair = std::make_pair(atof(tokens[5].c_str()),atof(tokens[6].c_str()));
-
-			firstPnt = coordinate2Nodeid[firstPair];
-			secondPnt = coordinate2Nodeid[secondPair];
-
-            if(firstPnt > secondPnt){temp = firstPnt; firstPnt = secondPnt; secondPnt = temp;}
-
-			trainingSTPointPairs.push_back(std::make_pair(firstPnt,secondPnt));
-		}
-	}
-	trainingData.close();
-	cout << "hqflru::readTrainingData end! size:" << trainingSTPointPairs.size() << endl;
-}
-
-void hqflru::fillCache(int numQueries, string inFn)
+void HybridHQFLRU::fillCache()
 {
     boost::unordered_map<intPair, int> coordinateStats;
     boost::unordered_map<intPair,CacheItem> bucketList;
@@ -579,7 +308,7 @@ void hqflru::fillCache(int numQueries, string inFn)
 
     BOOST_FOREACH(intPair p, trainingSTPointPairs)
 	{
-        if(coordinateStats.find(p) == coordinateStats.end())
+        if (coordinateStats.find(p) == coordinateStats.end())
             coordinateStats[p] = 1;
         else
             coordinateStats[p] = coordinateStats[p] + 1;
@@ -587,17 +316,15 @@ void hqflru::fillCache(int numQueries, string inFn)
 
     BOOST_FOREACH(intPair rp, trainingSTPointPairs)
     {
-        spResult = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->dijkstraSSSP(rp.first, rp.second);
+		spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(rp.first, rp.second);
 
-       //make new cache item
+		//make new cache item
         CacheItem e (iId, spResult);
         iId++;
         bucketList[rp] = e;
         tmp.pID = rp;
 		tmp.dist = coordinateStats.at(rp);
 		mhCache.push(tmp);
-
-		cacheStats[rp] = std::make_pair<int,int>(coordinateStats.at(rp), spResult.size());
     }
 
 
@@ -617,36 +344,11 @@ void hqflru::fillCache(int numQueries, string inFn)
 		}
 	}
 	ts.setItemsInCache(cache.numberOfItemsInCache());
-
-    writeoutCacheCoordinates(ts.getTestName(), cache.getCacheContentVector());
-	writeoutTrainingCoordinates(ts.getTestName(), trainingSTPointPairs);
-	writeoutTestCoordinates(ts.getTestName(), testSTPointPairs);
-
+    plotCachePoints(cache.cache);
 }
 
-void hqflru::checkCache(std::pair< int, int > query)
-{
-	bool cacheHit = false;
-	vector<int> spResult;
 
-	if(debug) cout << "one, hqflru::checkCache! :cacheSize:" << (int) cache.size() <<"::"<< endl;
-	if(cache.checkCache(query))
-	{
-		numCacheHits++;
-		cacheHit = true;
-	}
-
-	if(debug) cout << "two, hqflru::checkCache! cacheHit: " << cacheHit << endl;
-	if(!cacheHit)
-	{
-		if(debug) cout << "three, hqflru::checkCache!" << endl;
-		spResult = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->dijkstraSSSP(query.first, query.second);
-		numDijkstraCalls++;
-	}
-	if(debug) cout << "four, hqflru::checkCache!" << endl;
-}
-
-void hqflru::checkAndUpdateCache(std::pair< int, int > query)
+void HybridHQFLRU::checkAndUpdateCache(intPair query)
 {
 	bool cacheHit = false;
     if(debug) {cout << "cache size: " << runtimeCache.size() << " s,t: (" << query.first << "," << query.second << ")" << endl;}
@@ -667,7 +369,7 @@ void hqflru::checkAndUpdateCache(std::pair< int, int > query)
 
 	if(!cacheHit)
 	{
-		vector<int> spResult = RoadGraph::mapObject(ts.getTestFile(),ts.getTestType())->dijkstraSSSP(query.first, query.second);
+		vector<int> spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
 		numDijkstraCalls++;
 		int querySize = spResult.size();
 		if(runtimeCache.size() != 0){
@@ -683,7 +385,7 @@ void hqflru::checkAndUpdateCache(std::pair< int, int > query)
 	}
 }
 
-void hqflru::insertItem(uint querySize, std::vector< int > nodesInQueryResult, int sNode, int tNode)
+void HybridHQFLRU::insertItem(uint querySize, std::vector< int > nodesInQueryResult, int sNode, int tNode)
 {
 	bool notEnoughSpace = true;
 	if(debug) cout << "one, hqflru::insertItem(" <<querySize <<"," <<nodesInQueryResult.size() <<","<<sNode<<","<<tNode<<")" << endl;
@@ -700,7 +402,6 @@ void hqflru::insertItem(uint querySize, std::vector< int > nodesInQueryResult, i
 		}
 		else if(querySize < cacheSize && runtimeCache.size() != 0)
 		{
-			if(!cacheFull){ cacheFull = true;}
 			if(debug) cout << "three1, hqflru::insertItem" << runtimeCache.size() <<"," << runtimeCache[0].size << "," << cacheUsed << "," << querySize << "," << cacheSize << endl;
 			int itemSize = runtimeCache[0].size;
 			runtimeCache.erase(runtimeCache.begin());
@@ -715,8 +416,5 @@ void hqflru::insertItem(uint querySize, std::vector< int > nodesInQueryResult, i
 	if(debug) cout << "four, hqflru::insertItem" <<endl;
 }
 
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 

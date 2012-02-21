@@ -40,9 +40,13 @@
 
 RoadGraph* RoadGraph::mapInstance = NULL;
 
-RoadGraph* RoadGraph::mapObject(std::string testFile, int pt)
+RoadGraph* RoadGraph::mapObject(TestSetting& ts)
 {
-	if(!mapInstance){
+	// obtain parameter values
+	std::string testFile=ts.getTestFile();
+	int pt=ts.inputFileType;
+	
+	if (mapInstance==NULL){
 		mapInstance = new RoadGraph();
 		mapInstance->parseFileType = pt;
 		mapInstance->ssspCalls = 0;
@@ -64,11 +68,10 @@ printf("*** RoadGraph::read\n");
 				cout << " ... done" << endl;
 				break;
 		}
-	}
-	else if((mapInstance->parseFileType) != pt)
+	} else if((mapInstance->parseFileType) != pt)
 	{
-		RoadGraph::mapInstance = NULL; //if type of file to be parsed changes, delete mapInstance
-		RoadGraph::mapObject(testFile, pt);
+		delete mapInstance;
+		mapInstance = NULL; //if type of file to be parsed changes, delete mapInstance
 	}
 
 	return mapInstance;
@@ -183,13 +186,13 @@ void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
 	string trainname = trainTestFn;
 	string str;
     std::vector<string> tokens;
-    boost::unordered_map<int, coordinate> vertexId2coordinate;
+    boost::unordered_map<int, Point> vertexId2Point;
     std::vector<intPair> trainVector;
     std::vector<intPair> testVector;
 	testname.replace ((testname.size()), 5, ".test");
     trainname.replace ((trainname.size()), 6, ".train");
 
-    //load in all vertex ids with their coordinate
+    //load in all vertex ids with their Point
 	ifstream nodeData (nodeFile.c_str(), ios::in);
 	if(debug) cout << "s1, transformTrainOrTestFile!"<< endl;
 	if(nodeData.is_open())
@@ -197,7 +200,7 @@ void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
 	    while(getline(nodeData, str))
 	    {
             boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //split last line of *.cnode file
-            vertexId2coordinate[boost::lexical_cast<int>(tokens[0])] = std::make_pair(boost::lexical_cast<double>(tokens[1]),boost::lexical_cast<double>(tokens[2]));
+            vertexId2Point[boost::lexical_cast<int>(tokens[0])] = std::make_pair(boost::lexical_cast<double>(tokens[1]),boost::lexical_cast<double>(tokens[2]));
 	    }
 	    nodeData.close();
 	}
@@ -239,8 +242,8 @@ void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
 
     BOOST_FOREACH (intPair coord, trainVector)
 	{
-	    trainfile << i << " " << vertexId2coordinate.at(coord.first).first << " " << vertexId2coordinate.at(coord.first).second << " ";
-	    trainfile << vertexId2coordinate.at(coord.second).first << " " << vertexId2coordinate.at(coord.second).second << endl;
+	    trainfile << i << " " << vertexId2Point.at(coord.first).first << " " << vertexId2Point.at(coord.first).second << " ";
+	    trainfile << vertexId2Point.at(coord.second).first << " " << vertexId2Point.at(coord.second).second << endl;
 	    i++;
 	}
 	trainfile.close();
@@ -252,8 +255,8 @@ void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
 
     BOOST_FOREACH (intPair coord, testVector)
 	{
-	    testfile << i << " " << vertexId2coordinate.at(coord.first).first << " " << vertexId2coordinate.at(coord.first).second << " ";
-	    testfile << vertexId2coordinate.at(coord.second).first << " " << vertexId2coordinate.at(coord.second).second << endl;
+	    testfile << i << " " << vertexId2Point.at(coord.first).first << " " << vertexId2Point.at(coord.first).second << " ";
+	    testfile << vertexId2Point.at(coord.second).first << " " << vertexId2Point.at(coord.second).second << endl;
 	    i++;
 	}
 	testfile.close();
@@ -458,6 +461,7 @@ bool RoadGraph::getLastLine(const char *filename, string &lastLine)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
 #endif

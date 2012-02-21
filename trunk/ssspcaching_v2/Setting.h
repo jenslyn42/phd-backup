@@ -63,15 +63,34 @@ using namespace std;
 
 
 //Used in acache and when defining tests
-#define NODE_BITS 32
-#define BIT 1
-#define GRAPH_CACHE 1
-#define LIST_CACHE 2
-#define COMPRESSED_G_CACHE 3
-#define SERVER_SCENARIO 10
-#define PROXY_SCENARIO 11
+#define NODE_BITS (32)
+#define BIT (1)
 
-enum CACHE_METHOD { METHOD_NONE, METHOD_SPC, METHOD_LRU, METHOD_HQF, METHOD_SCACHE, METHOD_HQFLRU, METHOD_ORACLE };
+//#define NUM_BITS(csize) (csize*8)
+
+
+typedef std::pair<int,string> LookupPair;
+typedef vector<LookupPair> LookupList;
+
+// algorithmic choice
+enum ALGO_CHOICE { ALGO_NONE, ALGO_SPC, ALGO_SPCplus, ALGO_SPCstar, ALGO_LRU, ALGO_HQF, ALGO_SCACHE, ALGO_HQFLRU, ALGO_ORACLE };
+
+// cache storage choice
+enum STORAGE_CHOICE { STORE_LIST, STORE_GRAPH, STORE_COMPRESS };
+
+// architecture choice
+enum ARCH_CHOICE { ARCH_SERVER, ARCH_PROXY };
+
+
+// Important: 	for each "ENUM" type, there is a corresponding "LookupList" in "Setting.cpp"
+//				they follow a naming convention.
+// 				make sure that "InitEnumMappings" is updated according to ENUM above
+extern LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM;
+
+void InitEnumMappings(); // initialize the above "LookupList"
+int MatchEnumCode(LookupList& list,string str);		// lookup an enum value by a string
+string MatchEnumString(LookupList& list,int code); 	// lookup a string by an enum value
+
 
 
 
@@ -79,21 +98,19 @@ typedef std::pair<int,int> intPair;
 typedef std::vector<intPair>  intPairVector;
 typedef std::vector<int>  intVector;
 
-typedef std::pair<double, double> coordinate;
-typedef std::vector<coordinate > regionlist;
-typedef std::pair<coordinate, coordinate> coordinatePairs;
-typedef std::pair<intPair, intPair > intPairPairs;
+typedef std::pair<double, double> Point;
+typedef std::vector<Point> PointVector;
+typedef std::pair<Point,Point> PointPairs;
+typedef std::pair<intPair,intPair> intPairPairs;
 
 
 typedef boost::unordered_set<intPair> intPairSet;
-
 typedef boost::unordered_map<int, intPair > intPairMap;
 typedef boost::unordered_map<intPair, int> intPairIntMap;
 
 typedef boost::unordered_map<int, int> intMap;
 typedef boost::unordered_map<int, double> intDoubleMap;
-
-typedef boost::unordered_map<int, coordinate> intCoordinateMap;
+typedef boost::unordered_map<int, Point> intPointMap;
 typedef boost::unordered_map<int, intVector > intVectorMap;
 
 typedef boost::unordered_map<int, std::pair<int, intVector > > intIntVectorMap;
@@ -101,17 +118,21 @@ typedef boost::unordered_map<int, std::pair<intPair, intVector > > intIntPairVec
 
 
 typedef	boost::unordered_map<int, boost::dynamic_bitset<> > intDBitset;
-typedef	boost::unordered_map<coordinate, int> coordinateIntMap;
+typedef	boost::unordered_map<Point, int> PointIntMap;
+
+typedef boost::unordered_map<string,string> ConfigType;
 
 
-struct region {
+
+
+struct Region {
     int id;
     double xmin,xmax,ymin,ymax;
-	regionlist points;
+	PointVector points;
 
-    region(){ }
+    Region(){ }
 
-    region(int rid, double _xmin, double _xmax, double _ymin, double _ymax) {
+    Region(int rid, double _xmin, double _xmax, double _ymin, double _ymax) {
         id = rid;
         xmin = _xmin;
 		xmax = _xmax;
@@ -121,52 +142,47 @@ struct region {
     }
 };
 
-typedef boost::unordered_map<int, region> regionMap;
 
-
-
-
-
-class testsetting {
-
-
-private:
+class TestSetting {	
+    double fillCacheTime, buildStatisticsTime;
+	
+	void printConfigError(string key,bool required);
+	void trimSpace(char* str);
+	ConfigType cr;
+	
+public:
+	// these attributes can be accessed directly
 	std::string testName;
 	std::string testFile;
-	int testType;
-	unsigned long cacheSize;
-
-	//Indicates which method should be used to fill the cache.
-	int staticQueryType;
-
-	int splits, itemsInCache, nonEmptyRegionPairs, testScenario;
-
-    double fillCacheTime, buildStatisticsTime;
-
-public:
-
-	testsetting(){ };
-
-	testsetting(string testname, string testfile, int testType, unsigned long cacheSize, int cacheType);
-
-	void setData(string testname, string testfile, int testType, unsigned long cacheSize, int cacheType);
-
-	~testsetting();
-
-	std::string preComputedQueriesFileName;
 	std::string queryFileName;
 
-	int cacheType;
+	int inputFileType;		// used for RoadGraph
+	int scacheQueryType;	// used for SCACHE only
+	int splits, itemsInCache, nonEmptyRegionPairs;
+	
+	ALGO_CHOICE testAlgo;
+	STORAGE_CHOICE testStorage;
+	ARCH_CHOICE testScenario;
+	unsigned long cacheSize;
 
-	//instead of Rand()
-	unsigned long randReplacement;
+	TestSetting();
+	~TestSetting();	
+	
+	void addConfigFromFile(const char* filename);
+	void addConfigFromCmdLine(int argc,char** argv);
+	void listConfig();
 
-
+	float getConfigFloat(string key,bool required=true,float _default=0);
+	int getConfigInt(string key,bool required=true,int _default=0);
+	long getConfigLong(string key,bool required=true,long _default=0);
+	string getConfigString(string key,bool required=true,string _default="");
+	bool getConfigBool(string key,bool required=true,bool _default=false);
+	
+	
+	int getEnumCode(LookupList& list,string key);
+	
     int getNonEmptyRegionPairs(){return nonEmptyRegionPairs;}
     void setNonEmptyRegionPairs(int rp){nonEmptyRegionPairs = rp;}
-
-    int getTestScenario(){return testScenario;}
-    void setTestScenario(int ts){testScenario = ts;}
 
     double getItemsInCache(){return itemsInCache;}
     void setItemsInCache(double iic){itemsInCache = iic;}
@@ -179,32 +195,14 @@ public:
 
 	std::string getTestName() const {return testName;}
 
- 	void setCacheSize (unsigned long cs, int cType );
-	unsigned long getCacheSize() const {return cacheSize;}
+ 	std::string getTestFile() const{return testFile;}
 
-	std::string getTestFile() const{return testFile;}
-
-	void setTestType (int theValue){testType = theValue;}
-	int getTestType() const{return testType;}
-
-	void setStaticQueryType (int val){staticQueryType = val;}
-	int getStaticQueryType() const{return staticQueryType;}
-
-	void setSplits(int theValue){splits = theValue;}
+	//int getStaticQueryType() const{return staticQueryType;}
+	
+	
 	int getSplits() const {return splits;}
-
-	void writeOut()
-	{
-	    cout << "\n--------------------------" << endl;
-        cout << "testName " << testName << endl;
-        cout << "testFile " << testFile << endl;
-        cout << "testType" << testType << endl;
-        cout << "cacheSize " <<  cacheSize << endl;
-        cout << "staticQueryType " <<  staticQueryType << endl;
-        cout << "splits, itemsInCache, nonEmptyRegionPairs " <<  splits << " " << itemsInCache << " " << nonEmptyRegionPairs << endl;
-        cout << "fillCacheTime, buildStatisticsTime" <<  fillCacheTime << " " << buildStatisticsTime << endl;
-        cout << "--------------------------\n" << endl;
-	}
+	
+	void printSetting();
 };
 
 
