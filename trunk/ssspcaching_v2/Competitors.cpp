@@ -46,7 +46,9 @@ void LRU::runQueryList()
 void LRU::checkAndUpdateCache(intPair query)
 {
 	bool cacheHit = false;
-    if(debug) {
+ 	unsigned long existingNodesvisited; //*1* used for keeping track of number of nodes visited by a SP call.
+	
+	if(debug) {
 		cout << "cache size: " << cache.size() << " s,t: (" << query.first << "," << query.second << ")" << endl;
 	}
 
@@ -68,9 +70,13 @@ void LRU::checkAndUpdateCache(intPair query)
 
 	if(!cacheHit)
 	{
+		existingNodesvisited = RoadGraph::mapObject(ts)->numNodeVisits; //*1* nodes visited before call
 		vector<int> spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
 		numDijkstraCalls++;
 		int querySize = spResult.size();
+		
+		cout << "LRU:queryID: " << numTotalQueries << ": " << RoadGraph::mapObject(ts)->numNodeVisits - existingNodesvisited << endl;
+	
 		if(cache.size() != 0){
 			if(debug) cout << "LRU::checkAndUpdateCache 1, querySize: "<< querySize << endl;
 			insertItem(spResult);

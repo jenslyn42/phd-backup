@@ -65,6 +65,7 @@ Probcache::~Probcache() {
 //does not use argument, but does instead get its info from a .train file.
 void Probcache::runQueryList() {
 	intVector spResult;
+	unsigned long existingNodesvisited; //*1* used for keeping track of number of nodes visited by a SP call.
 	
 	RoadGraph::mapObject(ts)->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
 	
@@ -79,14 +80,18 @@ void Probcache::runQueryList() {
 			numCacheHits++;
 		} else {
 			if(debug) cout << "three, Probcache::checkCache!" << endl;
+			  existingNodesvisited = RoadGraph::mapObject(ts)->numNodeVisits; //*1* nodes visited before call
 			spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);
 			numDijkstraCalls++;
+
+			cout << "Probcache::queryID: " << numTotalQueries << ": " << RoadGraph::mapObject(ts)->numNodeVisits - existingNodesvisited << endl;		  
 		}
 		
 		if(debug) 
 			cout << "four, Probcache::checkCache!" << endl;
 	}
 }
+
 
 void Probcache::buildCache()
 {

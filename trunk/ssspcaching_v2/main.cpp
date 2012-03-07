@@ -123,7 +123,8 @@ void TestObject::printResults() {
 
 	unsigned long numNodeVisits = RoadGraph::mapObject(ts)->numNodeVisits;
 	int ssspCalls = RoadGraph::mapObject(ts)->ssspCalls;
-
+	
+	cout << "\n\n--------------------------" << endl;
 	cout << "QueryTime:\t" << (double(end-start))/CLOCKS_PER_SEC << " sec" << endl;
 	cout << "CacheHits:\t" << test->getCacheHits() << "(" << test->getTotalDijkstraCalls() << ")" << endl;
 	cout << "SPcalls:\t" << ssspCalls << endl;
@@ -143,6 +144,7 @@ void TestObject::printResults() {
 	cout << "NonEmptyRegions:\t" << ts.getNonEmptyRegionPairs() << endl;
 	cout << "CalcStatTime:\t" << ts.getBuildStatisticsTime() << " sec" <<endl;
 	cout << "FillCacheTime:\t" << ts.getFillCacheTime() << " sec" << endl;
+	cout << "--------------------------\n\n" << endl;
 	
 
     bool fileExist = false;
@@ -259,7 +261,7 @@ void extractTestParameters(TestSetting& ts) {
 
 void ExperimentVaryCacheSize(TestSetting ts) {
 	if (ts.getConfigBool("autoTestName")==true) {
-		ts.testName.insert(0,"V_cachesize_");
+		ts.testName.insert(0,"v_cachesize_");
 		cout << "(auto) testName: " << ts.testName << endl;
 	}
 	
@@ -279,7 +281,7 @@ void ExperimentVaryCacheSize(TestSetting ts) {
 
 void ExperimentVarySplit(TestSetting ts) {
 	if (ts.getConfigBool("autoTestName")==true) {
-		ts.testName.insert(0,"V_split_");
+		ts.testName.insert(0,"v_split_");
 		cout << "(auto) testName: " << ts.testName << endl;
 	}
 	
@@ -299,7 +301,7 @@ void ExperimentVarySplit(TestSetting ts) {
 
 void ExperimentSingle(TestSetting ts) {
 	if (ts.getConfigBool("autoTestName")==true) {
-		ts.testName.insert(0,"V_single_");
+		ts.testName.insert(0,"v_single_");
 		cout << "(auto) testName: " << ts.testName << endl;
 	}
 	
@@ -325,10 +327,21 @@ cout << sizeof(long) << " " << sizeof(int) << " " << sizeof(unsigned long) << " 
 cout << "******************************************" << endl;
 
 	//Test setting
-	TestSetting ts;
-	ts.addConfigFromFile("config.prop");	// load default parameter values
-	ts.addConfigFromCmdLine(argc,argv);		// override parameter values
+	///Load settings from config.prob
+	//TestSetting ts;
+	//ts.addConfigFromFile("config.prop");	// load default parameter values
+	//ts.addConfigFromCmdLine(argc,argv);		// override parameter values
 	//ts.listConfig();		// list the content of the config
+	
+	///Load settings from commandline
+	TestSetting ts;
+	ts.addConfigFromCmdLine(argc,argv);    // get the "configName" parameter from command line
+	string configName= ts.getConfigString("configName");
+
+	ts.addConfigFromFile( configName.c_str() );    // load default parameter values
+	ts.addConfigFromCmdLine(argc,argv);     // override parameter values
+
+	
 	
 	extractTestParameters(ts);
 	ts.printSetting();

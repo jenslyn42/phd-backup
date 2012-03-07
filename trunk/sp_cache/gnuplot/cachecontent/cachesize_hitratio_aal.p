@@ -5,7 +5,7 @@ reset
 set terminal postscript eps enhanced monochrome solid rounded
 set output "cachesize_hitratio_aal.eps"
 #set   autoscale                        # scale axes automatically
-set size 0.8,0.8			# scale whole graph, but not fonts
+set size 0.5,0.5			# scale whole graph, but not fonts
 set border				# adds borders to graph
 show border
 unset log                              # remove any log-scaling
@@ -13,9 +13,9 @@ unset label                            # remove any previous labels
 set log x
 set xtic auto                          # set xtics automatically
 set ytic auto                          # set ytics automatically
-set title "Cache Hitsrate when increasing cache size"
-set xlabel "Cache size"
-set ylabel "Cache Hitrate"
+#set title "Cache Hitsrate when increasing cache size"
+set xlabel "Cache size (kB)"
+set ylabel "Hit ratio (%)"
 set key left top
 show xlabel
 show ylabel
@@ -27,6 +27,5 @@ set pointsize 1.0
 
 plot    "v_cachesize_HQF_Aal.test" using (($8/8)/1024):(($2/($2+$3))*100) title 'HQF' with linespoints pt 2 lw 2,\
 "v_cachesize_LRU_Aal.test" using (($8/8)/1024):(($2/($2+$3))*100) title 'LRU' with linespoints pt 4 lw 2,\
-"v_cachesize_ORACLE_Aal.test" using (($8/8)/1024):(($2/($2+$3))*100) title 'ORACLE' with linespoints pt 6 lw 2,\
 "v_cachesize_SPC_Aal.test" using (($8/8)/1024):(($2/($2+$3))*100) title 'SPC' with linespoints pt 8 lw 2,\
 "v_cachesize_SPCSTAR_Aal.test" using (($8/8)/1024):(($2/($2+$3))*100) title 'SPC^*' with linespoints pt 14 lw 2

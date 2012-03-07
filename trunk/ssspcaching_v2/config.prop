@@ -50,7 +50,7 @@ cachesize = 5120000
 scacheQueryType = 3
 
 
-experiment = split
+experiment = cachesize
 // choices: single, split, cachesize
 
 

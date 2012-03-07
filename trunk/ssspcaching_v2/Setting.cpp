@@ -123,7 +123,7 @@ TestSetting::~TestSetting() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void TestSetting::printSetting() {
-	cout << "\n--------------------------" << endl;
+	cout << "\n\n--------------------------" << endl;
 	cout << "testName: " << testName << endl;
 	cout << "testFile, Type: " << testFile << " " << inputFileType << endl;
 	cout << "queryFileName: " << queryFileName << endl;
@@ -136,7 +136,7 @@ void TestSetting::printSetting() {
 	cout << "scacheQueryType: " <<  scacheQueryType << endl;
 	cout << "splits, itemsInCache, nonEmptyRegionPairs: " <<  splits << " " << itemsInCache << " " << nonEmptyRegionPairs << endl;
 	cout << "fillCacheTime, buildStatisticsTime: " <<  fillCacheTime << " " << buildStatisticsTime << endl;
-	cout << "--------------------------\n" << endl;
+	cout << "--------------------------\n\n" << endl;
 }
 	
 void TestSetting::trimSpace(char* str) {
