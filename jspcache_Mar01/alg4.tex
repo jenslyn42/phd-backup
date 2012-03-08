@@ -1,0 +1,63 @@
+\begin{algorithm}%[H!bt]
+
+\dontprintsemicolon
+\SetVline
+
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}\SetKw{Return}{return}
+
+
+\Input{
+	calcCand \;
+}
+
+\Output{
+	sortCand \;
+}
+
+
+\tcp{\emph{Specifies ordering to be used by a sorting algorithm}} \;
+
+\funcc{CompareCand}{p1(t,t_{se},d_{t},d_{s}),p2(t,t_{se},d_{t},d_{s}), \alpha}
+{
+	\If{$p1.d_t > p2.d_t \wedge p1.d_s > p2.d_s$}
+	{
+		p1 > p2 \;
+	}
+	\ElseIf{$p1.d_t < p2.d_t \wedge p1.d_s < p2.d_s$}
+	{
+		p1 < p2 \;
+	}
+	\If{$p1.d_t > p2.d_t \wedge p1.d_s < p2.d_s \vee p1.d_t < p2.d_t \wedge p1.d_s > p2.d_s$}
+	{
+		\If{$p1.d_t+p1.d_s > p2.d_t+p2.d_s$}{p1 > p2 \;}
+		\ElseIf{$p1.d_t+p1.d_s = p2.d_t+p2.d_s$}
+		{
+			%\If{$(p1.d_t \vee p1.d_s) > (p2.d_t \wedge p2.d_s)$}
+			\If{$((p1.d_t > p2.d_t \wedge p1.d_t > p2.d_s) \vee (p1.d_s > p2.d_t \wedge p1.d_s > p2.d_s)) $}
+			{
+				p1 > p2 \;
+			}
+			%\ElseIf{$(p1.d_t \wedge p1.d_s) < (p2.d_t \vee p2.d_s)$}
+			\ElseIf{\(((p2.d_t > p1.d_t \wedge p2.d_t > p1.d_s) \vee (p2.d_s > p1.d_t \wedge p2.d_s > p1.d_s)) \)}
+			{
+				p1 < p2 \;
+			}
+			\ElseIf{$\mid p1.t \cap \alpha.t | < |\, p2.t \cap \alpha.t\mid$}
+			{
+				p1 < p2 \;
+			}
+			\ElseIf{$\mid p1.t \cap \alpha.t | > |\, p2.t \cap \alpha.t \mid $}
+			{
+				p1 > p2 \;
+			}
+			\Else
+			{
+				p1 = p2 \;
+			}
+		}
+	}
+}
+
+\caption{Ordering for Sorting algorithm}
+\label{alg:sortCan}
+\end{algorithm}

@@ -1,0 +1,90 @@
+
+
+Future work:
+	Ask Jeppe to find some interesting "caching" problems with real applications
+	
+
+0) Caching geocodes
+
+		http://code.google.com/apis/maps/articles/geocodestrat.html
+		
+		But what are the challenges?
+		
+		
+		Study Google Maps API ???
+			- Directions API
+			- Distance Matrix API
+			- Elevation API: create elevation chart??
+			- Places API
+			- Places Autocomplete API
+			- Street View Search ???
+		
+
+	
+1) Caching shortest path distance queries?
+	Is distance("A","B") < 10 ?
+	
+		- Interesting / useful if "A" and "B" are "English names" rather than geo-codes
+		
+		- Why not use client-side software? Why not pre-load coordinates of POIs into the database?
+		
+		- Google Distance matrix API: for developers to compute travel distance / time between a number of points
+			Limitations
+			- Free: 	100 = 10*10 elements per query (limit), 2500 elements per day
+			- Business:	625 = 25*25 elements per query (limit), 100000 elements per day
+		
+		
+		- "Related work" would explain the API / XML response in detail
+			- Any main difference from Ted Chow's ICDE / MDM paper?  (probably they use "Directions" API only)
+	
+		- What are the challenges?
+			e.g., prefetching: what kind of entries should be packed / prefeteched within the same request?
+				What is the benefit of doing so?
+				What is the probability that such prefetched entries will become useful?
+				Any machine learning / human behavioral learning issue?
+
+				What do we want to optimize? What are the constraints?
+				What kinds of origin? What kinds of destinations?
+		
+		- How do we find the query workload?
+			What kinds of queries are used in such applications?  
+			Range search? Nearest neighbor search?
+			
+			Sampling mehods? Try far-away points?
+				Exploit triangular inequality?
+		
+		- Example: 	http://code.google.com/apis/maps/documentation/javascript/examples/distance-matrix.html
+				
+				
+		- Practical aspect: follow Google API and design corresponding strategies for that API
+	
+		- Non-practical aspect: it depends heavily on the "output" of the API, e.g.,
+				- a shortest path API only returns a path
+				- a distance API only returns YES/NO
+				- a Dijkstra API that returns a bitvector from the source to all nodes
+
+	
+2) Caching of some important queries in the Web 2.0 world?
+
+
+======================================================================================================
+
+Notes:
+
+remove sec. 1.1 
+	Add running example to paper.
+
+Section 2:
+	Rewrite motivation for more fluent reading.
+
+Section 3: 
+	Quite short, try to fix references.
+	Expand on the parts we claim and maybe provide the reference from our own experiements.
+	
+Section 3.1
+	Better start of section, it should have an intro before describing the figure of the architecture.
+
+Maybe switch 4.1 and 4.2, and in 4.2 move the info about simplest method closer to beginning.
+
+
+	

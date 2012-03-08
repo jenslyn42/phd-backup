@@ -1,0 +1,50 @@
+
+./estnet -NumLandmarks 5 >>  BJ_LMoutdata
+
+./estnet -NumLandmarks 10 >>  BJ_LMoutdata
+
+./estnet -NumLandmarks 20 >>  BJ_LMoutdata
+
+./estnet -NumLandmarks 40 >>  BJ_LMoutdata
+
+./estnet -NumLandmarks 80 >>  BJ_LMoutdata
+
+
+
+./estnet -NumSamples 25 >>  BJ_SAMoutdata
+
+./estnet -NumSamples 50 >>  BJ_SAMoutdata
+
+./estnet -NumSamples 100 >>  BJ_SAMoutdata
+
+./estnet -NumSamples 200 >>  BJ_SAMoutdata
+
+./estnet -NumSamples 400 >>  BJ_SAMoutdata
+
+
+
+
+./estnet -NumLandmarks 5 >>  AAL_LMoutdata
+
+./estnet -NumLandmarks 10 >>  AAL_LMoutdata
+
+./estnet -NumLandmarks 20 >>  AAL_LMoutdata
+
+./estnet -NumLandmarks 40 >>  AAL_LMoutdata
+
+./estnet -NumLandmarks 80 >>  AAL_LMoutdata
+
+
+
+
+
+./estnet -NumSamples 25 >>  AAL_SAMoutdata
+
+./estnet -NumSamples 50 >>  AAL_SAMoutdata
+
+./estnet -NumSamples 100 >>  AAL_SAMoutdata
+
+./estnet -NumSamples 200 >>  AAL_SAMoutdata
+
+./estnet -NumSamples 400 >>  AAL_SAMoutdata
+

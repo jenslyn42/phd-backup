@@ -1,0 +1,91 @@
+\begin{algorithm}%[H!bt]
+
+\dontprintsemicolon
+\SetVline
+
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}\SetKw{Return}{return}
+
+
+\Input{	$\mathbf{T}:$ The set of trajectories. \;
+
+	\(t \in tCand:\) a tuple \((t, t_{se},t.d_t,t.d_s)\)
+
+	$D \in \mathbb{R}$: Tolerance for how much a modified trajectory is allowed to diveate from original trajectory. \;
+
+	$n \in \mathbb{N}$: Granularity of the road difference calculations. \;
+
+	$\alpha$: a tuple $(t, t_{se}, d_{t}, d_{s})$  used as a base for anonymization.\;
+}
+\Output{
+
+	$calcCand$: set containing calculated alternative trajectories along with their spatial and temporal sensitivity\;
+}
+
+
+\funcc{CalcAlt}{\alpha, t, D, n}
+{
+	$dLimit \leftarrow 0, diff \leftarrow 0, fail \leftarrow 0$ \;
+	$j \leftarrow 1$ \;
+	\(calcCand \leftarrow \emptyset\) \;
+
+
+	$tmpT \leftarrow t.t \setminus \alpha.t$ \tcp{\emph{Ordered set}} \;
+	
+
+ 	\While{$dLimit \leq D \wedge tmpT \backslash \alpha \neq \emptyset \wedge fail < 2$}
+ 	{
+		%From the shared edges between $\alpha.t$ and $t.t$ choose edges alternating at each end of the shared edges.
+
+		Choose edges alternating at each end of $tmpT$
+
+		edge $e_1 \leftarrow \alpha.t[j]$ \;
+		edge $e_2 \leftarrow {\bf closestEdge}(\alpha.t[j], t)$ \;
+
+		\If{$\frac{e_{diff}(e_1,e_2,n) + diff}{j} \leq D$}
+		{
+			$diff \leftarrow e_{diff}(e_1,e_2,n) + diff$ \;
+			$dLimit \leftarrow \frac{diff}{j}$ \;
+			$tmpT \leftarrow tmpT \cup \{e_1\}$ \;
+			$fail \leftarrow 0$ \;
+		} 
+		\Else
+		{
+			$fail \leftarrow fail + 1$ \;
+		}
+
+		$j \leftarrow j+1$ \;
+	}
+
+	$calcCand \leftarrow calcCand \cup (tmpT, t_{se},t.d_t,t.d_s)$ \;
+
+}
+
+%{\bf TrajectoryFromPSR($P, \mathbf{T}, \alpha$)} - given $\mathbf{T},\alpha$, and a \poi P {\bf TrajectoryFromPSR} returns a set of tubles {(t, $d_t, d_s$)}, where $t \in \mathbf{T}$ belongs to P and has at least one edge in common with $\alpha$ . $d_t, d_s$ is the temporal and spatial sensitivity of $t$.
+\funcc{TrajectoriesPSR}{P, \mathbf{T}, \alpha}
+{
+	$u \leftarrow$ {\bf {\poi}toUser}(P) \tcp{\emph{user $(id,s,\{t\})$ where $P \in s.\{PSR\}$}} \;
+ 
+ 	$tSet \leftarrow \{(t, t_{se}, d_t, d_s) | \forall t \in \mathbf{T} \wedge t \cap \alpha.t \neq \emptyset \wedge P.p_{edges} \cup t \neq \emptyset \wedge t_{se} = \alpha.t \cap t \wedge t \in u.t, d_t = P.d_t, d_s = P.d_s \wedge \forall i,j | \alpha.t_{se}[i]_{\tau_{s}}-\frac{\alpha.d_t}{2} \leq t_{se}[j]_{\tau_{s}} \leq \alpha.t_{se}[i]_{\tau_{s}}+\frac{\alpha.d_t}{2} \}$
+
+ 	%$t \in \mathbf{T}$. At least one edge in $t$ is covered by P.$p_{edges}$ and $t \bigcap \alpha \neq \emptyset$. The returned tuple include $d_t,d_s,$ and $t_{se} = \alpha \bigcap t$.
+ 	\Return {$tSet$}
+}
+
+\funcc{CalcCand}{{\poins}cand, \alpha, D, n}
+{
+	\ForEach{\poi P in {\poins}cand}
+	{
+		tCand $\leftarrow$ {\bf TrajectoriesPSR($P, \mathbf{T}, \alpha$)} \;
+
+ 		\ForEach{$t$ in tCand}
+ 		{
+			{\bf CalcAlt}($\alpha, t, D, n$) \;
+ 		}
+	}
+
+	\Return{calcCand} \;
+}
+
+\caption{Calculate Candidates}
+\label{alg:calcCan}
+\end{algorithm}
