@@ -1,0 +1,671 @@
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=pdflatex 2012.2.17)  5 MAR 2012 02:28
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**spcache.tex
+(./spcache.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, dumylang, nohyphenation, ge
+rman-x-2009-06-19, ngerman-x-2009-06-19, afrikaans, ancientgreek, ibycus, arabi
+c, armenian, basque, bulgarian, catalan, pinyin, coptic, croatian, czech, danis
+h, dutch, ukenglish, usenglishmax, esperanto, estonian, ethiopic, farsi, finnis
+h, french, galician, german, ngerman, swissgerman, monogreek, greek, hungarian,
+ icelandic, assamese, bengali, gujarati, hindi, kannada, malayalam, marathi, or
+iya, panjabi, tamil, telugu, indonesian, interlingua, irish, italian, kurmanji,
+ lao, latin, latvian, lithuanian, mongolian, mongolianlmc, bokmal, nynorsk, pol
+ish, portuguese, romanian, russian, sanskrit, serbian, serbianc, slovak, sloven
+ian, spanish, swedish, turkish, turkmen, ukrainian, uppersorbian, welsh, loaded
+.
+(./sig-alternate.cls (/usr/share/texmf/tex/latex/graphics/epsfig.sty
+Package: epsfig 1999/02/16 v1.7a (e)psfig emulation (SPQR)
+
+(/usr/share/texmf/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texmf/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+(/usr/share/texmf/tex/latex/graphics/graphics.sty
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texmf/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/usr/share/texmf/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+
+(/usr/share/texmf/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+(/usr/share/texmf/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/message (HO)
+)
+(/usr/share/texmf/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2011/04/18 v1.20 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count79
+))
+\Gin@req@height=\dimen102
+\Gin@req@width=\dimen103
+)
+\epsfxsize=\dimen104
+\epsfysize=\dimen105
+)
+(/usr/share/texmf/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2009/06/22 v3.00
+
+(/usr/share/texmf/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2009/06/22 v3.00 Basic AMSFonts support
+\@emptytoks=\toks15
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 96.
+))
+(/usr/share/texmf/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2000/07/18 v2.13 AMS math features
+\@mathmargin=\skip41
+
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01
+
+(/usr/share/texmf/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0
+\@emptytoks=\toks16
+\ex@=\dimen106
+))
+(/usr/share/texmf/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d
+\pmbraise@=\dimen107
+)
+(/usr/share/texmf/tex/latex/amsmath/amsopn.sty
+Package: amsopn 1999/12/14 v2.01 operator names
+)
+\inf@bad=\count80
+LaTeX Info: Redefining \frac on input line 211.
+\uproot@=\count81
+\leftroot@=\count82
+LaTeX Info: Redefining \overline on input line 307.
+\classnum@=\count83
+\DOTSCASE@=\count84
+LaTeX Info: Redefining \ldots on input line 379.
+LaTeX Info: Redefining \dots on input line 382.
+LaTeX Info: Redefining \cdots on input line 467.
+\Mathstrutbox@=\box26
+\strutbox@=\box27
+\big@size=\dimen108
+LaTeX Font Info:    Redeclaring font encoding OML on input line 567.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 568.
+\macc@depth=\count85
+\c@MaxMatrixCols=\count86
+\dotsspace@=\muskip10
+\c@parentequation=\count87
+\dspbrk@lvl=\count88
+\tag@help=\toks17
+\row@=\count89
+\column@=\count90
+\maxfields@=\count91
+\andhelp@=\toks18
+\eqnshift@=\dimen109
+\alignsep@=\dimen110
+\tagshift@=\dimen111
+\tagwidth@=\dimen112
+\totwidth@=\dimen113
+\lineht@=\dimen114
+\@envbody=\toks19
+\multlinegap=\skip42
+\multlinetaggap=\skip43
+\mathdisplay@stack=\toks20
+LaTeX Info: Redefining \[ on input line 2666.
+LaTeX Info: Redefining \] on input line 2667.
+)
+Document Class 'sig-alternate' <22nd. April '09>. Modified by G.K.M. Tobin/Gerr
+y Murray
+Based in part upon document Style `acmconf' <22 May 89>. Hacked 4/91 by
+shivers@cs.cmu.edu, 4/93 by theobald@cs.mcgill.ca
+Excerpts were taken from (Journal Style) 'esub2acm.cls'.
+****** Bugs/comments/suggestions/technicalities to Gerry Murray -- murray@hq.ac
+m.org ******
+Questions on the style, SIGS policies, etc. to Adrienne Griscti griscti@acm.org
+
+\footheight=\dimen115
+\@maxsep=\dimen116
+\@dblmaxsep=\dimen117
+\aucount=\count92
+\originalaucount=\count93
+\auwidth=\dimen118
+\auskip=\dimen119
+\auskipcount=\count94
+\auskip=\dimen120
+\allauboxes=\dimen121
+\addauthors=\toks21
+\addauflag=\count95
+\subtitletext=\toks22
+\savesection=\count96
+\sectioncntr=\count97
+\c@figure=\count98
+\c@table=\count99
+\titleboxnotes=\toks23
+\titleboxnoteflag=\count100
+Document Class: sig-alternate 2009/04/22 - V2.4 - based on acmproc.cls V1.3 <No
+v. 30 '99>
+(/usr/share/texmf/tex/latex/base/latexsym.sty
+Package: latexsym 1998/08/17 v2.2e Standard LaTeX package (lasy symbols)
+\symlasy=\mathgroup6
+LaTeX Font Info:    Overwriting symbol font `lasy' in version `bold'
+(Font)                  U/lasy/m/n --> U/lasy/b/n on input line 47.
+)
+\@acmtitlebox=\box28
+\titlenotecount=\count101
+\tntoks=\toks24
+\tntokstwo=\toks25
+\tntoksthree=\toks26
+\tntoksfour=\toks27
+\tntoksfive=\toks28
+\catcount=\count102
+\copyrightnotice=\toks29
+\conf=\toks30
+\confinfo=\toks31
+\c@part=\count103
+\c@section=\count104
+\c@subsection=\count105
+\c@subsubsection=\count106
+\c@paragraph=\count107
+
+Using 'Abbrev' bibliography style
+LaTeX Info: Redefining \cite on input line 1211.
+\bibindent=\dimen122
+\colcntr=\count108
+\saveb@x=\box29
+\copyrtyr=\toks32
+\acmcopyr=\toks33
+\boilerplate=\toks34
+\copyrightetc=\toks35
+(/usr/share/texmf/tex/latex/base/fontenc.sty
+Package: fontenc 2005/09/27 v1.99g Standard LaTeX package
+
+(/usr/share/texmf/tex/latex/base/t1enc.def
+File: t1enc.def 2005/09/27 v1.99g Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding T1 on input line 43.
+)
+LaTeX Font Info:    Try loading font information for T1+aer on input line 100.
+
+(/usr/share/texmf/tex/latex/ae/t1aer.fd
+File: t1aer.fd 1997/11/16 Font definitions for T1/aer.
+)))
+(/usr/share/texmf/tex/latex/tools/xspace.sty
+Package: xspace 2006/05/08 v1.12 Space after command names (DPC,MH)
+)
+(/usr/share/texmf/tex/latex/psnfss/times.sty
+Package: times 2005/04/12 PSNFSS-v9.2a (SPQR) 
+)
+(/usr/share/texmf/tex/latex/algorithmicx/algorithmicx.sty
+Package: algorithmicx 2005/04/27 v1.2 Algorithmicx
+
+(/usr/share/texmf/tex/latex/base/ifthen.sty
+Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+)
+Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
+\c@ALG@line=\count109
+\c@ALG@rem=\count110
+\c@ALG@nested=\count111
+\ALG@tlm=\skip44
+\ALG@thistlm=\skip45
+\c@ALG@Lnr=\count112
+\c@ALG@blocknr=\count113
+\c@ALG@storecount=\count114
+\c@ALG@tmpcounter=\count115
+\ALG@tmplength=\skip46
+) (/usr/share/texmf/tex/latex/cite/cite.sty
+LaTeX Info: Redefining \cite on input line 302.
+LaTeX Info: Redefining \nocite on input line 373.
+Package: cite 2010/09/10  v 5.3
+)
+(/usr/share/texmf/tex/latex/graphics/color.sty
+Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
+
+(/usr/share/texmf/tex/latex/latexconfig/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package color Info: Driver file: pdftex.def on input line 130.
+)
+(/usr/share/texmf/tex/latex/algorithmicx/algpseudocode.sty
+Package: algpseudocode 
+
+Document Style - pseudocode environments for use with the `algorithmicx' style
+) (/usr/share/texmf/tex/latex/algorithms/algorithm.sty
+Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating enviro
+nment
+
+(/usr/share/texmf/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count116
+\float@exts=\toks36
+\float@box=\box30
+\@float@everytoks=\toks37
+\@floatcapt=\box31
+)
+\@float@every@algorithm=\toks38
+\c@algorithm=\count117
+)
+\c@definition=\count118
+\c@problem=\count119
+\c@lemma=\count120
+ (./spcache.aux
+
+LaTeX Warning: Label `fig:levelVsHitRatio' multiply defined.
+
+
+LaTeX Warning: Label `fig:cacheSizeVsHitRuntime' multiply defined.
+
+
+LaTeX Warning: Label `fig:cacheSizeVsNodesvisited' multiply defined.
+
+)
+\openout1 = `spcache.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Try loading font information for T1+ptm on input line 38.
+ (/usr/share/texmf/tex/latex/psnfss/t1ptm.fd
+File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
+)
+(/usr/share/texmf/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2011/04/22 v0.16 Utilities of pdfTeX for LuaTeX (HO)
+
+(/usr/share/texmf/tex/generic/oberdiek/ifluatex.sty
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
+(/usr/share/texmf/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+(/usr/share/texmf/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
+
+(/usr/share/texmf/tex/latex/oberdiek/grfext.sty
+Package: grfext 2010/08/19 v1.1 Managing graphics extensions (HO)
+
+(/usr/share/texmf/tex/generic/oberdiek/kvdefinekeys.sty
+Package: kvdefinekeys 2011/04/07 v1.3 Defining keys (HO)
+))
+(/usr/share/texmf/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2010/12/23 v3.10 Keyval support for LaTeX options (HO)
+
+(/usr/share/texmf/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2011/04/07 v1.13 Key value parser (HO)
+
+(/usr/share/texmf/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2011/02/16 v1.5 Prefix for e-TeX command names (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 452.
+
+(/usr/share/texmf/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+LaTeX Font Info:    Try loading font information for U+msa on input line 47.
+
+(/usr/share/texmf/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2009/06/22 v3.00 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 47.
+
+(/usr/share/texmf/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2009/06/22 v3.00 AMS symbols B
+)
+LaTeX Font Info:    Try loading font information for U+lasy on input line 47.
+
+(/usr/share/texmf/tex/latex/base/ulasy.fd
+File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
+)
+
+LaTeX Warning: No \author given.
+
+<figures/scenario.pdf, id=1, 450.58739pt x 291.28223pt>
+File: figures/scenario.pdf Graphic file (type pdf)
+
+<use figures/scenario.pdf>
+Package pdftex.def Info: figures/scenario.pdf used on input line 98.
+(pdftex.def)             Requested size: 167.99927pt x 108.60387pt.
+LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <9> not available
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 99.
+
+<figures/rxmap.pdf, id=2, 303.94655pt x 141.97543pt>
+File: figures/rxmap.pdf Graphic file (type pdf)
+ <use figures/rxmap.pdf>
+Package pdftex.def Info: figures/rxmap.pdf used on input line 161.
+(pdftex.def)             Requested size: 167.99927pt x 78.4745pt.
+
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
+
+
+ <./figures/scenario.pdf, page is rotated 90 degrees> <./figures/rxmap.pdf, pag
+e is rotated 90 degrees>]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [2]
+LaTeX Font Info:    Try loading font information for U+euf on input line 484.
+
+(/usr/share/texmf/tex/latex/amsfonts/ueuf.fd
+File: ueuf.fd 2009/06/22 v3.00 Euler Fraktur
+)
+Underfull \hbox (badness 1048) in paragraph at lines 511--516
+\T1/ptm/m/it/9 along the path. We can rep-re-sent $\OML/cmm/m/it/9 P[]$ \T1/ptm
+/m/it/9 as a list of nodes:
+ []
+
+
+Underfull \hbox (badness 3323) in paragraph at lines 527--533
+[]\T1/ptm/m/n/9 Shortest paths ex-hibit the op-ti-mal sub-path prop-erty (see
+ []
+
+
+Underfull \hbox (badness 1845) in paragraph at lines 572--578
+\T1/ptm/m/n/9 As dis-cussed in Sec-tion 2[], re-cent lit-er-a-ture on web searc
+h
+ []
+
+[3] <figures/routequery.pdf, id=44, 625.89032pt x 257.28831pt>
+File: figures/routequery.pdf Graphic file (type pdf)
+
+<use figures/routequery.pdf>
+Package pdftex.def Info: figures/routequery.pdf used on input line 627.
+(pdftex.def)             Requested size: 240.0pt x 98.65782pt.
+
+<figures/AAL_dist.pdf, id=45, 587.41736pt x 520.60832pt>
+File: figures/AAL_dist.pdf Graphic file (type pdf)
+
+<use figures/AAL_dist.pdf>
+Package pdftex.def Info: figures/AAL_dist.pdf used on input line 669.
+(pdftex.def)             Requested size: 120.0pt x 106.35204pt.
+
+<figures/BJ_dist.pdf, id=46, 581.75626pt x 520.60832pt>
+File: figures/BJ_dist.pdf Graphic file (type pdf)
+
+<use figures/BJ_dist.pdf>
+Package pdftex.def Info: figures/BJ_dist.pdf used on input line 671.
+(pdftex.def)             Requested size: 120.0pt x 107.38472pt.
+
+Overfull \hbox (2.25pt too wide) in paragraph at lines 668--673
+ [] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 701--709
+
+ []
+
+[4 <./figures/routequery.pdf, page is rotated 90 degrees> <./figures/AAL_dist.p
+df, page is rotated 90 degrees> <./figures/BJ_dist.pdf, page is rotated 90 degr
+ees>]
+Underfull \hbox (badness 7613) in paragraph at lines 830--842
+[]\T1/ptm/m/n/9 According to Ref. [3], the fre-quency of a query is
+ []
+
+
+Underfull \hbox (badness 2717) in paragraph at lines 830--842
+\T1/ptm/m/n/9 counted as the num-ber of queries in $[]$ that are iden-ti-
+ []
+
+
+Underfull \hbox (badness 1052) in paragraph at lines 830--842
+\T1/ptm/m/n/9 cal to it. Let us con-sider an ex-am-ple query log: $[] \OT1/cmr/
+m/n/9 =
+ []
+
+[5] <figures/mappartition.pdf, id=82, 305.947pt x 144.64137pt>
+File: figures/mappartition.pdf Graphic file (type pdf)
+
+<use figures/mappartition.pdf>
+Package pdftex.def Info: figures/mappartition.pdf used on input line 1271.
+(pdftex.def)             Requested size: 167.99927pt x 79.42497pt.
+ [6 <./figures/mappartition.pdf, page is rotated 90 degrees>]
+Overfull \hbox (12.45601pt too wide) in paragraph at lines 1503--1520
+ [] 
+ []
+
+[7]
+Underfull \hbox (badness 2600) in paragraph at lines 1708--1713
+\T1/ptm/m/it/9 Given a short-est path $\OML/cmm/m/it/9 P[]$\T1/ptm/m/it/9 , its
+ in-cre-men-tal benefit-per-size
+ []
+
+
+LaTeX Font Warning: Command \small invalid in math mode on input line 1714.
+
+LaTeX Font Info:    Font shape `T1/ptm/bx/it' in size <9> not available
+(Font)              Font shape `T1/ptm/b/it' tried instead on input line 1780.
+[8] <figures/cachegraph.pdf, id=112, 243.6302pt x 184.59865pt>
+File: figures/cachegraph.pdf Graphic file (type pdf)
+
+<use figures/cachegraph.pdf>
+Package pdftex.def Info: figures/cachegraph.pdf used on input line 2234.
+(pdftex.def)             Requested size: 107.99927pt x 81.83206pt.
+
+Overfull \hbox (9.5248pt too wide) in paragraph at lines 2214--2240
+ [] 
+ []
+
+[9 <./figures/cachegraph.pdf, page is rotated 90 degrees>] (./experiments.tex
+Overfull \hbox (6.45355pt too wide) in paragraph at lines 81--86
+ [] 
+ []
+
+<figures/cachesize_hitratio_aal.pdf, id=128, 180.675pt x 126.4725pt>
+File: figures/cachesize_hitratio_aal.pdf Graphic file (type pdf)
+
+<use figures/cachesize_hitratio_aal.pdf>
+Package pdftex.def Info: figures/cachesize_hitratio_aal.pdf used on input line 
+155.
+(pdftex.def)             Requested size: 120.0pt x 84.00087pt.
+
+<figures/cachesize_hitratio_bei.pdf, id=129, 180.675pt x 126.4725pt>
+File: figures/cachesize_hitratio_bei.pdf Graphic file (type pdf)
+
+<use figures/cachesize_hitratio_bei.pdf>
+Package pdftex.def Info: figures/cachesize_hitratio_bei.pdf used on input line 
+157.
+(pdftex.def)             Requested size: 120.0pt x 84.00087pt.
+
+Overfull \hbox (2.25pt too wide) in paragraph at lines 154--161
+ [] 
+ []
+
+[10 <./figures/cachesize_hitratio_aal.pdf> <./figures/cachesize_hitratio_bei.pd
+f>] <figures/split_hitratio_aal.pdf, id=143, 180.675pt x 126.4725pt>
+File: figures/split_hitratio_aal.pdf Graphic file (type pdf)
+
+<use figures/split_hitratio_aal.pdf>
+Package pdftex.def Info: figures/split_hitratio_aal.pdf used on input line 189.
+
+(pdftex.def)             Requested size: 120.0pt x 84.00087pt.
+
+<figures/split_hitratio_bei.pdf, id=144, 180.675pt x 126.4725pt>
+File: figures/split_hitratio_bei.pdf Graphic file (type pdf)
+
+<use figures/split_hitratio_bei.pdf>
+Package pdftex.def Info: figures/split_hitratio_bei.pdf used on input line 191.
+
+(pdftex.def)             Requested size: 120.0pt x 84.00087pt.
+
+Overfull \hbox (2.25pt too wide) in paragraph at lines 188--195
+ [] 
+ []
+
+
+Overfull \hbox (13.23206pt too wide) in paragraph at lines 261--284
+ [] 
+ []
+
+<figures/split_hitratio_aal_server.pdf, id=145, 180.675pt x 126.4725pt>
+File: figures/split_hitratio_aal_server.pdf Graphic file (type pdf)
+
+<use figures/split_hitratio_aal_server.pdf>
+Package pdftex.def Info: figures/split_hitratio_aal_server.pdf used on input li
+ne 306.
+(pdftex.def)             Requested size: 120.0pt x 84.00087pt.
+
+<figures/split_hitratio_bei_server.pdf, id=146, 180.675pt x 126.4725pt>
+File: figures/split_hitratio_bei_server.pdf Graphic file (type pdf)
+
+<use figures/split_hitratio_bei_server.pdf>
+Package pdftex.def Info: figures/split_hitratio_bei_server.pdf used on input li
+ne 308.
+(pdftex.def)             Requested size: 120.0pt x 84.00087pt.
+
+Overfull \hbox (2.25pt too wide) in paragraph at lines 305--312
+ [] 
+ []
+
+<figures/split_runtime_aal_server.pdf, id=147, 180.675pt x 126.4725pt>
+File: figures/split_runtime_aal_server.pdf Graphic file (type pdf)
+
+<use figures/split_runtime_aal_server.pdf>
+Package pdftex.def Info: figures/split_runtime_aal_server.pdf used on input lin
+e 319.
+(pdftex.def)             Requested size: 120.0pt x 84.00087pt.
+
+<figures/split_runtime_bei_server.pdf, id=148, 180.675pt x 126.4725pt>
+File: figures/split_runtime_bei_server.pdf Graphic file (type pdf)
+
+<use figures/split_runtime_bei_server.pdf>
+Package pdftex.def Info: figures/split_runtime_bei_server.pdf used on input lin
+e 321.
+(pdftex.def)             Requested size: 120.0pt x 84.00087pt.
+
+Overfull \hbox (2.25pt too wide) in paragraph at lines 318--325
+ [] 
+ []
+
+<figures/split_nodes_aal_server.pdf, id=149, 180.675pt x 126.4725pt>
+File: figures/split_nodes_aal_server.pdf Graphic file (type pdf)
+
+<use figures/split_nodes_aal_server.pdf>
+Package pdftex.def Info: figures/split_nodes_aal_server.pdf used on input line 
+332.
+(pdftex.def)             Requested size: 120.0pt x 84.00087pt.
+
+<figures/split_nodes_bei_server.pdf, id=150, 180.675pt x 126.4725pt>
+File: figures/split_nodes_bei_server.pdf Graphic file (type pdf)
+
+<use figures/split_nodes_bei_server.pdf>
+Package pdftex.def Info: figures/split_nodes_bei_server.pdf used on input line 
+334.
+(pdftex.def)             Requested size: 120.0pt x 84.00087pt.
+
+Overfull \hbox (2.25pt too wide) in paragraph at lines 331--338
+ [] 
+ []
+
+<figures/cachesize_runtime_aal.pdf, id=151, 180.675pt x 126.4725pt>
+File: figures/cachesize_runtime_aal.pdf Graphic file (type pdf)
+
+<use figures/cachesize_runtime_aal.pdf>
+Package pdftex.def Info: figures/cachesize_runtime_aal.pdf used on input line 3
+59.
+(pdftex.def)             Requested size: 120.0pt x 84.00087pt.
+
+<figures/cachesize_runtime_bei.pdf, id=152, 180.675pt x 126.4725pt>
+File: figures/cachesize_runtime_bei.pdf Graphic file (type pdf)
+
+<use figures/cachesize_runtime_bei.pdf>
+Package pdftex.def Info: figures/cachesize_runtime_bei.pdf used on input line 3
+61.
+(pdftex.def)             Requested size: 120.0pt x 84.00087pt.
+
+Overfull \hbox (2.25pt too wide) in paragraph at lines 358--365
+ [] 
+ []
+
+<figures/cachesize_nodes_aal.pdf, id=153, 180.675pt x 126.4725pt>
+File: figures/cachesize_nodes_aal.pdf Graphic file (type pdf)
+
+<use figures/cachesize_nodes_aal.pdf>
+Package pdftex.def Info: figures/cachesize_nodes_aal.pdf used on input line 374
+.
+(pdftex.def)             Requested size: 120.0pt x 84.00087pt.
+
+<figures/cachesize_nodes_bei.pdf, id=154, 180.675pt x 126.4725pt>
+File: figures/cachesize_nodes_bei.pdf Graphic file (type pdf)
+
+<use figures/cachesize_nodes_bei.pdf>
+Package pdftex.def Info: figures/cachesize_nodes_bei.pdf used on input line 376
+.
+(pdftex.def)             Requested size: 120.0pt x 84.00087pt.
+
+Overfull \hbox (2.25pt too wide) in paragraph at lines 373--380
+ [] 
+ []
+
+) [11 <./figures/split_hitratio_aal.pdf> <./figures/split_hitratio_bei.pdf> <./
+figures/split_hitratio_aal_server.pdf> <./figures/split_hitratio_bei_server.pdf
+> <./figures/split_runtime_aal_server.pdf> <./figures/split_runtime_bei_server.
+pdf> <./figures/split_nodes_aal_server.pdf> <./figures/split_nodes_bei_server.p
+df>] (./spcache.bbl) [12 <./figures/cachesize_runtime_aal.pdf> <./figures/cache
+size_runtime_bei.pdf> <./figures/cachesize_nodes_aal.pdf> <./figures/cachesize_
+nodes_bei.pdf>] (./spcache.aux)
+
+LaTeX Warning: There were multiply-defined labels.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 3548 strings out of 493633
+ 46563 string characters out of 3150839
+ 118026 words of memory out of 3500000
+ 6710 multiletter control sequences out of 15000+200000
+ 71511 words of font info for 106 fonts, out of 3000000 for 9000
+ 831 hyphenation exceptions out of 8191
+ 41i,18n,26p,1326b,405s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/usr/share/texmf/fonts/enc/dvips/base/8r.enc}</usr/share/texmf/fonts/type1/p
+ublic/amsfonts/cm/cmbx8.pfb></usr/share/texmf/fonts/type1/public/amsfonts/cmext
+ra/cmex9.pfb></usr/share/texmf/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/
+share/texmf/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texmf/fonts/t
+ype1/public/amsfonts/cm/cmmi5.pfb></usr/share/texmf/fonts/type1/public/amsfonts
+/cm/cmmi6.pfb></usr/share/texmf/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/
+share/texmf/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texmf/fonts/ty
+pe1/public/amsfonts/cm/cmr5.pfb></usr/share/texmf/fonts/type1/public/amsfonts/c
+m/cmr6.pfb></usr/share/texmf/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/shar
+e/texmf/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texmf/fonts/type1/p
+ublic/amsfonts/cm/cmsy5.pfb></usr/share/texmf/fonts/type1/public/amsfonts/cm/cm
+sy6.pfb></usr/share/texmf/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/
+texmf/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texmf/fonts/type1/pu
+blic/amsfonts/euler/eufm10.pfb></usr/share/texmf/fonts/type1/public/amsfonts/eu
+ler/eufm7.pfb></usr/share/texmf/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share
+/texmf/fonts/type1/urw/times/utmb8a.pfb></usr/share/texmf/fonts/type1/urw/times
+/utmbi8a.pfb></usr/share/texmf/fonts/type1/urw/times/utmr8a.pfb></usr/share/tex
+mf/fonts/type1/urw/times/utmri8a.pfb>
+Output written on spcache.pdf (12 pages, 566017 bytes).
+PDF statistics:
+ 296 PDF objects out of 1000 (max. 8388607)
+ 204 compressed objects within 3 object streams
+ 0 named destinations out of 1000 (max. 500000)
+ 106 words of extra memory for PDF output out of 10000 (max. 10000000)
+

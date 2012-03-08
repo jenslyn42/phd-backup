@@ -1,0 +1,36 @@
+\begin{algorithm}[H!bt]
+\dontprintsemicolon
+\SetVline
+
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}\SetKw{Return}{return}
+
+
+
+\Input{
+	$\mathbf{\spath_{s,t}}$: A \spath.\;
+}
+
+\Output{
+	An integer representing the score
+}
+
+
+
+ \funcc{Score}{\spath_{s,t}}
+{
+	\textbf{H}.push($S(\chi, SP_{s,t}, \Psi), SP_{s,t}$) \;
+% 	\ForEach{edge $e \in \alpha.t$}
+% 	{
+% 		\ForEach {$psr \in PS$ }
+% 		{
+% 			\If{$e \in psr.p_{edges}$}
+% 			{
+% 				${\poins}cand \leftarrow {\poins}cand \cup psr$\;
+% 			}
+% 		} 
+% 	}
+}
+
+\caption{Score() function using statistics}
+\label{alg:score}
+\end{algorithm}
