@@ -14,7 +14,7 @@ and only differ in their cache structures:
 Our competitors are LRU (a dynamic caching method) and HQF (a static caching method).
 They have been introduced in Section~\ref{sec:competitors}.
 All the above methods are written in C++.
-We conduct our experiments on {\color{red} an Intel i7 3.4GHz PC running Debian.}
+We conduct our experiments on an Intel i7 3.4GHz PC running Debian.
 
 %  (ii) SPC$^+$ uses a graph cache (Section~\ref{sec:cacheSubgraph}),
 %SPC, our method, with the 3 cache representation schemes - List cache, Graph cache, Compressed Graph cache - described in section
@@ -78,10 +78,10 @@ The {\em query workload set} set can only used for testing the performance of ou
 
 \begin{table}
 \center
-\begin{tabular}{|c|c|c|}\hline
-Dataset & $\#$ Trajectories / Queries & $\#$ Nodes in Road Network \\\hline
-Aalborg & 3,286  & 136,347 \\\hline
-Beijing & 12,956 & 79,603 \\\hline
+\begin{tabular}{|c|r|r|r|}\hline
+Dataset & $\#$ Trajectories / Queries & $\#$ Nodes & $\#$ Edges \\\hline
+Aalborg & 4.401  & 129.680 & 137.470 \\\hline
+Beijing & 12.928 & 76.226 & 85.882 \\\hline
 \end{tabular}
 \caption{Description of real datasets}
 \label{tab:datasetsize}
@@ -146,7 +146,7 @@ For both datasets we vary the cache size and kD-tree levels to show the impact o
 \stitle{Effect of the cache size}
 %
 In Figure~\ref{fig:cSizeVsHitRatio}, we measure the hit ratio of the methods
-while varying the cache size from 10 kB to 2.5 MB.
+while varying the cache size from 1 kB to 5 MB.
 
 
 \begin{figure}[htb]
@@ -170,9 +170,15 @@ while varying the cache size from 10 kB to 2.5 MB.
 % \item SPC* grows faster than LRU and gets better cache hit ratio at all cache sizes than LRU and SPC, except for the smallest cache size.
 % \item The test on the Aalborg vs. Beijing sets show that SPC performs much better on the Aalborg set, where as LRU performs about 50\% worse. This can be explained by the fact that both methods rely on users behaving consistently over time, but where SPC relies on global consistency in user behavior, LRU need local consistency too. This makes SPC/SPC* more robust and we can expect them to always outperform LRU.
 % \end{itemize}
+{\color{red}
+We can see that LRU consistently perform worse than SPC and SPC$^*$ for all cache sizes. The cache hit ratio stabilizes at about 26 and 40\% for Aalborg and Beijing respectively. Since LRU levels out at a much lower cache hit ratio than all of it's competitors it is not a suitable choice for \spath cacheing.
 
-We can see that LRU perform well on small cache sizes, growing faster than both SPC and HQF. However, the cache hit ratio quickly levels out and stabilizes at a hit ratio of about 20 and 40 \% for city X and Y respectively. Since LRU levels out very at quite small cache size and stop growing, it cannot scale to larger cache sizes.
+
+The performance of HQF is quite poor a lower cache sizes, 
+
 The performance of HQF is very consistent, with the hit ratio varying only slightly. The hit ratio stays at just over 1\% for Aalborg experiments and around 0.2\% for Beijing experiments. The low hit ratio makes it not scalable and unusable for \spath caching.
+}
+
 SPC does not grow as fast as LRU for smaller cache sizes, but while the growth of LRU quickly stabilizes then SPC continues to grow and outperforms both LRU and HQF.
 SPC* outperforms both LRU and SPC by a large margin, only shortly having a lower cache hit ratio at smaller cache sizes. The test on Aalborg vs. Beijing  show that SPC performs much better on the Aalborg set, where as LRU performs about 50\% worse. This can be explained by the fact that both methods rely on users behaving consistently over time, but where SPC relies on global consistency in user behavior, LRU need local consistency too. This makes SPC/SPC* more robust and we expect them to always outperform LRU.
 
