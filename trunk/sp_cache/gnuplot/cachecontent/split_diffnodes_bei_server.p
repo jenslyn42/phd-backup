@@ -14,7 +14,7 @@ set xtic auto                          # set xtics automatically
 set ytic auto                          # set ytics automatically
 #set title "Cache Hitsrate when increasing cache size"
 set xlabel "kD-tree level"
-set ylabel "Nodes Visited"
+set ylabel "Visited Nodes Saving Ratio (%)"
 set key right bottom
 show xlabel
 show ylabel
