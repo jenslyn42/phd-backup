@@ -21,7 +21,7 @@ show ylabel
 #set label "Yield Point" at 0.003,260
 #set arrow from 0.0028,250 to 0.003,280
 #set xr [0:13000]
-#set yr [0:40000000]
+set yr [0:30]
 set pointsize 1.0
 
 
