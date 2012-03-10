@@ -16,16 +16,16 @@ set ytic auto                          # set ytics automatically
 #set title "Cache Hitsrate when increasing cache size"
 set xlabel "Cache size"
 set ylabel "Nodes Visited"
-set key right bottom
+set key left bottom
 show xlabel
 show ylabel
 #set label "Yield Point" at 0.003,260
 #set arrow from 0.0028,250 to 0.003,280
 set xr [1:10000]
-set yr [0:22000000]
+set yr [0:19000000]
 set pointsize 1.0
 
-plot    "v_cachesize_HQF_Aal.test" using (($8/8)/1024):5 title 'HQF' with linespoints pt 2 lw 2,\
-"v_cachesize_LRU_Aal.test" using (($8/8)/1024):5 title 'LRU' with linespoints pt 4 lw 2,\
-"v_cachesize_SPC_Aal.test" using (($8/8)/1024):5 title 'SPC' with linespoints pt 8 lw 2,\
-"v_cachesize_SPCSTAR_Aal.test" using (($8/8)/1024):5 title 'SPC^*' with linespoints pt 14 lw 2
+plot    "v_cachesize_HQF_aal.test" using (($8/8)/1024):5 title 'HQF' with linespoints pt 2 lw 2,\
+"v_cachesize_LRU_aal.test" using (($8/8)/1024):5 title 'LRU' with linespoints pt 4 lw 2,\
+"v_cachesize_SPC_aal.test" using (($8/8)/1024):5 title 'SPC' with linespoints pt 8 lw 2,\
+"v_cachesize_SPCSTAR_aAal.test" using (($8/8)/1024):5 title 'SPC^*' with linespoints pt 14 lw 2

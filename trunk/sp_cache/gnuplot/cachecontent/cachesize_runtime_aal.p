@@ -22,10 +22,10 @@ show ylabel
 #set label "Yield Point" at 0.003,260
 #set arrow from 0.0028,250 to 0.003,280
 set xr [1:10000]
-set yr [0:30]
+set yr [0:20]
 set pointsize 1.0
 
-plot    "v_cachesize_HQF_Aal.test" using (($8/8)/1024):1 title 'HQF' with linespoints pt 2 lw 2,\
-"v_cachesize_LRU_Aal.test" using (($8/8)/1024):1 title 'LRU' with linespoints pt 4 lw 2,\
-"v_cachesize_SPC_Aal.test" using (($8/8)/1024):1 title 'SPC' with linespoints pt 8 lw 2,\
-"v_cachesize_SPCSTAR_Aal.test" using (($8/8)/1024):1 title 'SPC^*' with linespoints pt 14 lw 2
+plot    "v_cachesize_HQF_aal.test" using (($8/8)/1024):1 title 'HQF' with linespoints pt 2 lw 2,\
+"v_cachesize_LRU_aal.test" using (($8/8)/1024):1 title 'LRU' with linespoints pt 4 lw 2,\
+"v_cachesize_SPC_aal.test" using (($8/8)/1024):1 title 'SPC' with linespoints pt 8 lw 2,\
+"v_cachesize_SPCSTAR_aal.test" using (($8/8)/1024):1 title 'SPC^*' with linespoints pt 14 lw 2

@@ -25,7 +25,7 @@ set xr [1:10000]
 #set yr [0:100]
 set pointsize 1.0
 
-plot    "v_cachesize_HQF_Aal.test" using (($8/8)/1024):(($2/($2+$3))*100) title 'HQF' with linespoints pt 2 lw 2,\
-"v_cachesize_LRU_Aal.test" using (($8/8)/1024):(($2/($2+$3))*100) title 'LRU' with linespoints pt 4 lw 2,\
-"v_cachesize_SPC_Aal.test" using (($8/8)/1024):(($2/($2+$3))*100) title 'SPC' with linespoints pt 8 lw 2,\
-"v_cachesize_SPCSTAR_Aal.test" using (($8/8)/1024):(($2/($2+$3))*100) title 'SPC^*' with linespoints pt 14 lw 2
+plot    "v_cachesize_HQF_aal.test" using (($8/8)/1024):(($2/($2+$3))*100) title 'HQF' with linespoints pt 2 lw 2,\
+"v_cachesize_LRU_aal.test" using (($8/8)/1024):(($2/($2+$3))*100) title 'LRU' with linespoints pt 4 lw 2,\
+"v_cachesize_SPC_aal.test" using (($8/8)/1024):(($2/($2+$3))*100) title 'SPC' with linespoints pt 8 lw 2,\
+"v_cachesize_SPCSTAR_aal.test" using (($8/8)/1024):(($2/($2+$3))*100) title 'SPC^*' with linespoints pt 14 lw 2

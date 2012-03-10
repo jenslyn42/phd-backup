@@ -1,6 +1,0 @@
-TestName	MapSize	numQueries	Cache Size	Cache pct.	queryRange-S	queryRange-E	FixedNumBuckets	Skewed Data	UseOptimalSubstructure	useGaussian	Sigma(Gaussian)	LRU-CacheHits	OSC-CacheHits	FIFO-CacheHits	LRU-CacheHitrate	OSC-CacheHitrate	FIFO-CacheHitrate
-GaussianEffectHS-20pctCache.test	10000	1000000	2000	20	0	10000	false	false	true	true	0.25		0	233288	0	NaN	23.3288	NaN
-GaussianEffectHS-20pctCache.test	10000	1000000	2000	20	0	10000	false	false	true	true	0.5		0	71759	0	NaN	7.1759	NaN
-GaussianEffectHS-20pctCache.test	10000	1000000	2000	20	0	10000	false	false	true	true	1.0		0	44742	0	NaN	4.4742	NaN
-GaussianEffectHS-20pctCache.test	10000	1000000	2000	20	0	10000	false	false	true	true	2.0		0	40731	0	NaN	4.0731	NaN
-GaussianEffectHS-20pctCache.test	10000	1000000	2000	20	0	10000	false	false	true	true	4.0		0	40017	0	NaN	4.0017	NaN
