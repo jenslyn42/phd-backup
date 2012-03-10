@@ -1,0 +1,7 @@
+     1	QueryTime	CacheHits	DijkstraCalls	SPcalls	NodesVisited	Algorithm	Scenario	CacheSize	CacheItems	Splits	QueryFile	NonEmptyRegions	CalcStatTime	FillCacheTime	
+     2	4.58	0	2200	2200	2929128	NONE	SERVER	0	1	14	aalborgNEW	0	0	0
+     3	4.5	0	2200	2200	2929128	NONE	SERVER	0	1	14	aalborgNEW	0	0	0
+     4	4.5	0	2200	2200	2929128	NONE	SERVER	0	1	14	aalborgNEW	0	0	0
+     5	4.48	0	2200	2200	2929128	NONE	SERVER	0	1	14	aalborgNEW	0	0	0
+     6	4.52	0	2200	2200	2929128	NONE	SERVER	0	1	14	aalborgNEW	0	0	0
+     7	4.52	0	2200	2200	2929128	NONE	SERVER	0	1	14	aalborgNEW	0	0	0
