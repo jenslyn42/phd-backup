@@ -174,7 +174,7 @@ while varying the cache size from 1 kB to 5 MB.
 We can see that LRU consistently perform worse than SPC and SPC$^*$ for all cache sizes. The cache hit ratio stabilizes at about 26 and 40\% for Aalborg and Beijing respectively. Since LRU levels out at a much lower cache hit ratio than all of it's competitors it is not a suitable choice for \spath cacheing.
 
 
-The performance of HQF is quite low at smaller cache sizes, 
+The performance of HQF is quite low at smaller cache sizes. While HQF can 
 
 The performance of HQF is very consistent, with the hit ratio varying only slightly. The hit ratio stays at just over 1\% for Aalborg experiments and around 0.2\% for Beijing experiments. The low hit ratio makes it not scalable and unusable for \spath caching.
 }
@@ -306,42 +306,69 @@ In Figure~\ref{fig:levelVsHitRatio}, we again vary the kD-tree level from 8 to 1
 
 
 
-\begin{figure}[htb]
-\center
-  \begin{tabular}{@{}c@{ }c@{}}
-     \includegraphics[width=0.5\columnwidth]{figures/split_hitratio_aal_server.pdf}
-     &
-     \includegraphics[width=0.5\columnwidth]{figures/split_hitratio_bei_server.pdf}
-      \\
-     (a) Aalborg & (b)  Beijing
-     \end{tabular}
-\caption{Hit ratio vs. Levels}
-\label{fig:levelVsHitRatio}
-\end{figure}
+% \begin{figure}[htb]
+% \center
+%   \begin{tabular}{@{}c@{ }c@{}}
+%      \includegraphics[width=0.5\columnwidth]{figures/split_hitratio_aal_server.pdf}
+%      &
+%      \includegraphics[width=0.5\columnwidth]{figures/split_hitratio_bei_server.pdf}
+%       \\
+%      (a) Aalborg & (b)  Beijing
+%      \end{tabular}
+% \caption{Hit ratio vs. Levels}
+% \label{fig:levelVsHitRatio}
+% \end{figure}
 
 \begin{figure}[htb]
 \center
   \begin{tabular}{@{}c@{ }c@{}}
-     \includegraphics[width=0.5\columnwidth]{figures/split_runtime_aal_server.pdf}
+     \includegraphics[width=0.5\columnwidth]{figures/split_diffruntime_aal_server.pdf}
      &
-     \includegraphics[width=0.5\columnwidth]{figures/split_runtime_bei_server.pdf}
+     \includegraphics[width=0.5\columnwidth]{figures/split_diffruntime_bei_server.pdf}
       \\
      (a) Aalborg & (b)  Beijing
      \end{tabular}
-\caption{Runtime vs. Levels}
+\caption{Runtime Saved vs. Levels}
 \label{fig:levelVsruntime}
 \end{figure}
 
 \begin{figure}[htb]
 \center
   \begin{tabular}{@{}c@{ }c@{}}
-     \includegraphics[width=0.5\columnwidth]{figures/split_nodes_aal_server.pdf}
+     \includegraphics[width=0.5\columnwidth]{figures/split_diffnodes_aal_server.pdf}
      &
-     \includegraphics[width=0.5\columnwidth]{figures/split_nodes_bei_server.pdf}
+     \includegraphics[width=0.5\columnwidth]{figures/split_diffnodes_bei_server.pdf}
       \\
      (a) Aalborg & (b)  Beijing
      \end{tabular}
-\caption{Nodes Visited vs. Levels}
+\caption{Node Visits Saved vs. Levels}
+\label{fig:levelVsNodesvisited}
+\end{figure}
+
+
+\begin{figure}[htb]
+\center
+  \begin{tabular}{@{}c@{ }c@{}}
+     \includegraphics[width=0.5\columnwidth]{figures/split_diffruntime_aal_server_astar.pdf}
+     &
+     \includegraphics[width=0.5\columnwidth]{figures/split_diffruntime_bei_server_astar.pdf}
+      \\
+     (a) Aalborg & (b)  Beijing
+     \end{tabular}
+\caption{Runtime Saved vs. Levels with $A^*$}
+\label{fig:levelVsruntime}
+\end{figure}
+
+\begin{figure}[htb]
+\center
+  \begin{tabular}{@{}c@{ }c@{}}
+     \includegraphics[width=0.5\columnwidth]{figures/split_diffnodes_aal_server_astar.pdf}
+     &
+     \includegraphics[width=0.5\columnwidth]{figures/split_diffnodes_bei_server_astar.pdf}
+      \\
+     (a) Aalborg & (b)  Beijing
+     \end{tabular}
+\caption{Node Visits Saved vs. Levels  with $A^*$}
 \label{fig:levelVsNodesvisited}
 \end{figure}
 
@@ -362,13 +389,26 @@ In the following experiments, we vary the cache size and observe the effect on t
 \begin{figure}[htb]
 \center
   \begin{tabular}{@{}c@{ }c@{}}
-     \includegraphics[width=0.5\columnwidth]{figures/cachesize_runtime_aal.pdf}
+     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffruntime_aal.pdf}
      &
-     \includegraphics[width=0.5\columnwidth]{figures/cachesize_runtime_bei.pdf}
+     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffruntime_bei.pdf}
       \\
      (a) Aalborg & (b)  Beijing
      \end{tabular}
-\caption{Runtime vs. Cache Size}
+\caption{Runtime Saved vs. Cache Size}
+\label{fig:cacheSizeVsHitRuntime}
+\end{figure}
+
+\begin{figure}[htb]
+\center
+  \begin{tabular}{@{}c@{ }c@{}}
+     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffruntime_aal_astar.pdf}
+     &
+     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffruntime_bei_astar.pdf}
+      \\
+     (a) Aalborg & (b)  Beijing
+     \end{tabular}
+\caption{Runtime Saved vs. Cache Size with $A^*$}
 \label{fig:cacheSizeVsHitRuntime}
 \end{figure}
 
@@ -377,12 +417,12 @@ In Figure \ref{fig:cacheSizeVsHitRuntime} and \ref{fig:cacheSizeVsNodesvisited},
 \begin{figure}[htb]
 \center
   \begin{tabular}{@{}c@{ }c@{}}
-     \includegraphics[width=0.5\columnwidth]{figures/cachesize_nodes_aal.pdf}
+     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffnodes_aal.pdf}
      &
-     \includegraphics[width=0.5\columnwidth]{figures/cachesize_nodes_bei.pdf}
+     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffnodes_bei.pdf}
       \\
      (a) Aalborg & (b)  Beijing
      \end{tabular}
-\caption{Nodes Visited vs. Cache Size}
+\caption{Node Visits Saved vs. Cache Size}
 \label{fig:cacheSizeVsNodesvisited}
 \end{figure}
