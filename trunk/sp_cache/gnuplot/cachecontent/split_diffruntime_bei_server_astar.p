@@ -21,7 +21,7 @@ show ylabel
 #set label "Yield Point" at 0.003,260
 #set arrow from 0.0028,250 to 0.003,280
 #set xr [0:13000]
-set yr [0:35]
+#set yr [0:35]
 set pointsize 1.0
 
 plot "a_split_SPC_NONE_bei_server_diff.test" using 11:(100*($16-$2)/$16) title 'SPC' with linespoints pt 8 lw 2,\
