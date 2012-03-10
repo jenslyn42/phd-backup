@@ -21,9 +21,9 @@ show ylabel
 #set label "Yield Point" at 0.003,260
 #set arrow from 0.0028,250 to 0.003,280
 #set xr [0:13000]
-set yr [0:31]
+set yr [0:20]
 set pointsize 1.0
 
 
-plot "v_split_SPC_Aal_server.test" using 10:1 title 'SPC' with linespoints pt 8 lw 2,\
-"v_split_SPCSTAR_Aal_server.test" using 10:1 title 'SPC^*' with linespoints pt 14 lw 2
+plot "v_split_SPC_aal_server.test" using 10:1 title 'SPC' with linespoints pt 8 lw 2,\
+"v_split_SPCSTAR_aal_server.test" using 10:1 title 'SPC^*' with linespoints pt 14 lw 2

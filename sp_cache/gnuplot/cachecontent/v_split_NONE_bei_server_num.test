@@ -1,0 +1,7 @@
+     1	QueryTime	CacheHits	DijkstraCalls	SPcalls	NodesVisited	Algorithm	Scenario	CacheSize	CacheItems	Splits	QueryFile	NonEmptyRegions	CalcStatTime	FillCacheTime	
+     2	43.59	3	6461	6461	41615917	NONE	SERVER	0	1	14	beijingNEW	0	0	0
+     3	44.38	3	6461	6461	41615917	NONE	SERVER	0	1	14	beijingNEW	0	0	0
+     4	43.72	3	6461	6461	41615917	NONE	SERVER	0	1	14	beijingNEW	0	0	0
+     5	43.73	3	6461	6461	41615917	NONE	SERVER	0	1	14	beijingNEW	0	0	0
+     6	43.6	3	6461	6461	41615917	NONE	SERVER	0	1	14	beijingNEW	0	0	0
+     7	43.47	3	6461	6461	41615917	NONE	SERVER	0	1	14	beijingNEW	0	0	0

@@ -1,7 +1,0 @@
-TestName	MapSize	numQueries	Cache Size	Cache pct.	queryRange-S	queryRange-E	FixedNumBuckets	Skewed Data	UseOptimalSubstructure	LRU-CacheHits	OSC-CacheHits	FIFO-CacheHits	LRU-CacheHitrate	OSC-CacheHitrate	FIFO-CacheHitrate
-querySize-G100.test	10000	10	1000	10	0	10000	false	false	true	0	0	0	0.0	0.0	0.0
-querySize-G100.test	10000	100	1000	10	0	10000	false	false	true	0	0	0	0.0	0.0	0.0
-querySize-G100.test	10000	1000	1000	10	0	10000	false	false	true	5	8	5	0.5	0.8	0.5
-querySize-G100.test	10000	10000	1000	10	0	10000	false	false	true	50	117	48	0.5	1.17	0.48
-querySize-G100.test	10000	100000	1000	10	0	10000	false	false	true	535	1130	514	0.535	1.13	0.514
-querySize-G100.test	10000	1000000	1000	10	0	10000	false	false	true	5200	11336	4875	0.52	1.1336	0.4875

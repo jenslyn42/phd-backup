@@ -16,13 +16,13 @@ set ytic auto                          # set ytics automatically
 #set title "Cache Hitsrate when increasing cache size"
 set xlabel "Cache size"
 set ylabel "Nodes Visited"
-set key right bottom
+set key left bottom
 show xlabel
 show ylabel
 #set label "Yield Point" at 0.003,260
 #set arrow from 0.0028,250 to 0.003,280
 set xr [1:10000]
-set yr [0:74000000]
+set yr [0:44000000]
 set pointsize 1.0
 
 plot    "v_cachesize_HQF_bei.test" using (($8/8)/1024):5 title 'HQF' with linespoints pt 2 lw 2,\

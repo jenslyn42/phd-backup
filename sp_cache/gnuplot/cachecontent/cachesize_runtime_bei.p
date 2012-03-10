@@ -22,7 +22,7 @@ show ylabel
 #set label "Yield Point" at 0.003,260
 #set arrow from 0.0028,250 to 0.003,280
 set xr [1:10000]
-set yr [0:110]
+set yr [0:50]
 set pointsize 1.0
 
 plot    "v_cachesize_HQF_bei.test" using (($8/8)/1024):1 title 'HQF' with linespoints pt 2 lw 2,\

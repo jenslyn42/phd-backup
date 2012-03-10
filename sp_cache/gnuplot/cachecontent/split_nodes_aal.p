@@ -25,5 +25,5 @@ set yr [0:20500000]
 set pointsize 1.0
 
 
-plot "v_split_SPC_Aal.test" using 10:5 title 'SPC' with linespoints pt 8 lw 2,\
-"v_split_SPCSTAR_Aal.test" using 10:5 title 'SPC^*' with linespoints pt 14 lw 2
+plot "v_split_SPC_aal.test" using 10:5 title 'SPC' with linespoints pt 8 lw 2,\
+"v_split_SPCSTAR_aal.test" using 10:5 title 'SPC^*' with linespoints pt 14 lw 2
