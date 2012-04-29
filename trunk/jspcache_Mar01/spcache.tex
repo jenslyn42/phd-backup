@@ -657,7 +657,8 @@ and execute a shortest path algorithm (Dijkstra) for them.
 In Figure~\ref{fig:spcost}, each subfigure (for each road network) shows the shortest path distance (x-axis)
 and the cost (y-axis) of each individual query.
 Observe that there is a strong correlation between the cost and the shortest path distance.
-%
+{\color{blue} need to explain and mention figure \ref{tbl:directiondata} too!}
+
 Caching a short-range path may only provide a negligible improvement, even if the path is queried frequently.
 %On the other hand, caching a long
 Therefore, we plan to design a {\em benchmark} for the cost of calling the API.
@@ -674,7 +675,24 @@ Therefore, we plan to design a {\em benchmark} for the cost of calling the API.
   \label{fig:spcost}
 \end{figure}
 
-
+\begin{table}[hbt]
+\center
+\color{red}
+\begin{tabular}{|l|l|l|l|}\hline
+   Source & Target & Travel time(s) & Response time \\\hline \hline
+  Capitol Building & The Smithsonian & 372 & 101.24 \\\hline
+  The Smithsonian & Washington, DC & 419 & 110.94 \\\hline
+  Capitol Building & Washington Monument & 426 & 99 \\\hline
+  Whitehouse & War Memorials & 41831 & 168.44 \\\hline
+  Whitehouse & Washington Monument & 75461 & 220.9 \\\hline
+  Whitehouse & Capitol Building & 75805 & 278.44 \\\hline
+  Whitehouse & Statue of Liberty & 88947 & 362.8 \\\hline
+  Capitol Building & Mount Rushmore & 99456 & 364.68 \\\hline
+  Whitehouse & Golden Gate Bridge & 108353 & 342.8 \\\hline
+\end{tabular}
+\caption{Travel \& Response time obtained from Google Directions API}
+\label{tbl:directiondata}
+\end{table}
 
 Adopting the static caching paradigm, the server/proxy {\em collects the query log} and {\em builds the cache}
 periodically (e.g., daily).
@@ -2420,7 +2438,6 @@ higher compression power.
 
 
 \input{experiments}
-
 
 
 \section{Conclusion}\label{sec:conclusion}

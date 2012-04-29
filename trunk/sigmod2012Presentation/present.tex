@@ -1,0 +1,36 @@
+\documentclass[t,mathserif]{beamer}
+\setbeamertemplate{navigation symbols}{} %no nav symbols
+\usepackage{beamerthemeshadow}
+\usepackage{pgf,pgfarrows,pgfnodes}
+\usepackage{listing}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{multirow}
+\usetheme{Copenhagen} % Beamer theme v 3.0
+\usecolortheme{whale} % Beamer color theme
+
+
+\usepackage[boxed,linesnumbered,vlined,slide]{algorithm2eCustom}
+
+\newcommand{\spath}{SP\xspace}
+\newcommand{\zebox}[1]{$|\underline{\overline{#1}}|$}
+
+
+\title[SIGMOD 2012\hspace{17em}\insertframenumber/\inserttotalframenumber]{Effective Caching of Shortest Paths for Location-Based Services}
+\author[Jeppe, Man Lung, Christian]{Jeppe Rishede Thomsen\inst{1}, Man Lung Yiu\inst{1}, Christian S. Jensen\inst{2}}%\\ \small{jenslyn@cs.aau.dk}}
+\institute{\inst{1} Department of Computing\\Hong Kong Polytechnic University
+\and \inst{2} Department of Computer Science \\Aarhus University }
+
+% \date{}
+\begin{document}
+\begin{frame}[plain] % Cover slide
+\titlepage
+\end{frame}
+% Instead, you can use \frame{\titlepage}} (Beamer v 2.2 macro)
+
+\input{introduction.tex}
+\input{contribution.tex}
+\input{results.tex}
+\input{conclusion.tex}
+
+\end{document}

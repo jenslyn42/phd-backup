@@ -2,14 +2,14 @@
 
 \section{Experiments}\label{sec:experiments}
 %
-In this section, we evaluate the performance of our methods with our competitors on real datsets.
+In this section, we evaluate the performance of our methods with our competitors on real data sets.
 % We will conduct experiments
-We have implemented two variants of our methods (SPC and SPC*).
+We have implemented two variants of our methods (SPC and SPC$^*$).
 %for extracting statistics of queries, benchmarking the cost of a shortest path call,
 %and selecting promising paths from a query log $\mathcal{QL}$ into the cache.
 They share the same techniques in Section~\ref{sec:BenefitDriven},
 and only differ in their cache structures:
-(i) SPC uses a path array cache (Section~\ref{sec:cacheLookup}), and (ii) SPC* uses the compressed graph cache (Sections~\ref{sec:cacheSubgraph},\ref{sec:cacheCompress}).
+(i) SPC uses a path array cache (Section~\ref{sec:cacheLookup}), and (ii) SPC$^*$ uses the compressed graph cache (Sections~\ref{sec:cacheSubgraph},\ref{sec:cacheCompress}).
 %
 Our competitors are LRU (a dynamic caching method) and HQF (a static caching method).
 They have been introduced in Section~\ref{sec:competitors}.
@@ -18,12 +18,12 @@ We conduct our experiments on an Intel i7 3.4GHz PC running Debian.
 
 %  (ii) SPC$^+$ uses a graph cache (Section~\ref{sec:cacheSubgraph}),
 %SPC, our method, with the 3 cache representation schemes - List cache, Graph cache, Compressed Graph cache - described in section
-
+{\color{red}
 We will evaluate the above methods for a cache located at the proxy, and for a cache located at the server.
 For the proxy scenario, the performance measure is the hit ratio.
-For the server scenario, the performance measures are: (i) the total running time of the server,
-and (ii) the total number of road network nodes visited.
-
+For the server scenario, the performance measures are: (i) the percentage of running time saved on the server, compared to using no cache,
+and (ii) the percentage of road network nodes visits saved, compared to using no cache.
+}
 
 %in both the proxy
 %well both when considering the Proxy and Server scenario
@@ -44,21 +44,21 @@ and (ii) the total number of road network nodes visited.
 
 
 % In this section, we present the results of performance
-% experiments, demonstrating the efficiency and realworld applicability of the proposed algorithms. We
+% experiments, demonstrating the efficiency and real world applicability of the proposed algorithms. We
 
 
 \subsection{Experimental Setting}
 %
 We are unable to obtain real query log from online shortest path services (e.g., Google Map), due to their privacy policies.
-Thus, we can only simulate a query log from a trajectory dataset.
+Thus, we can only simulate a query log from a trajectory data set.
 For each trajectory, we extract its start location and its end location as the
 source $v_s$ and destination $v_t$ of a shortest path query respectively.
 
-We have used two real datasets and their details can be found in Table~\ref{tab:datasetsize}.
-Each dataset consists of (i) a collection of trajectories (which can be used to simulate a query log), and 
+We have used two real data sets, {\color{red} for their details see Table~\ref{tab:datasetsize}.
+Each data set consists of (i) a collection of trajectories, which we use to simulate a query log}, and 
 (ii) a corresponding road network for the trajectories.
 
-%Which historical query datasets do we have, and what is their size and origin.
+%Which historical query data sets do we have, and what is their size and origin.
 
 %- Aalborg: Query workload from and around the Danish city of Aalborg
 
@@ -73,17 +73,17 @@ for filling the cache content.
 The {\em query workload set} set can only used for testing the performance of our method.
 
 
-%We do not give a default size for the query-datasets Maps, as we will execute all of our tests, described in section \ref{subsec:expProxy} and \ref{subsec:expServer}, for each dataset.
+%We do not give a default size for the query-data sets Maps, as we will execute all of our tests, described in section \ref{subsec:expProxy} and \ref{subsec:expServer}, for each data set.
 
 
 \begin{table}
 \center
 \begin{tabular}{|c|r|r|r|}\hline
-Dataset & $\#$ Trajectories / Queries & $\#$ Nodes & $\#$ Edges \\\hline
+Data set & $\#$ Trajectories / Queries & $\#$ Nodes & $\#$ Edges \\\hline
 Aalborg & 4.401  & 129.680 & 137.470 \\\hline
 Beijing & 12.928 & 76.226 & 85.882 \\\hline
 \end{tabular}
-\caption{Description of real datasets}
+\caption{Description of real data sets}
 \label{tab:datasetsize}
 \end{table}
 %% Aalborg = Aalborg
@@ -94,7 +94,7 @@ Beijing & 12.928 & 76.226 & 85.882 \\\hline
 
 %according to XXX l
 
-%The size of training and test query datasets are given already. The size of each dataset, as well as the map they are captured on, is given in table \ref{tab:datasetsize}.
+%The size of training and test query data sets are given already. The size of each data set, as well as the map they are captured on, is given in table \ref{tab:datasetsize}.
 
 
 
@@ -102,7 +102,7 @@ Beijing & 12.928 & 76.226 & 85.882 \\\hline
 %% Beijing = Beijing
 
 
-%We do not give a default size for the query-datasets Maps, as we will execute all of our tests, described in section \ref{subsec:expProxy} and \ref{subsec:expServer}, for each dataset.
+%We do not give a default size for the query-data sets Maps, as we will execute all of our tests, described in section \ref{subsec:expProxy} and \ref{subsec:expServer}, for each data set.
 
 
 
@@ -110,20 +110,20 @@ Beijing & 12.928 & 76.226 & 85.882 \\\hline
 All caching methods, SPC, SPC*, HQF, and LRU, share a number of common settings which, unless stated otherwise, will be set to their default values:
 The number of levels in the kD-tree is 14 (i.e. 16,384 regions). We will use the list cache representation as the default cache representation, where each vertex use one byte. The default cache size is set to 625 kB.
 
-
+{\color{red} 
 The default cache size, as well as the maximum cache size in later experiments (Fig.~\ref{fig:cSizeVsHitRatio}, \ref{fig:cacheSizeVsHitRuntime}, \ref{fig:cacheSizeVsNodesvisited}), is choosen baring in mind the size of the Aalborg and Beijing query logs. 
-Had we had access to large datasets of real query logs, from online shortest path serveice providers, we would use a large cache size like 1 GB.
+Had we had access to large data sets of real query logs, from online shortest path service providers, we would use a large cache size like 1 GB.}
 
 % 
 % 
-% The size of our datasets is the limiting factor
+% The size of our data sets is the limiting factor
 % 
 
-
-
-\label{fig:cacheSizeVsHitRuntime}
-
-\label{fig:cacheSizeVsNodesvisited}
+% 
+% 
+% \label{fig:cacheSizeVsHitRuntime}
+% 
+% \label{fig:cacheSizeVsNodesvisited}
 
 
 % - Which parameters are common for all tests
@@ -139,8 +139,34 @@ In the proxy scenario, the shortest path call API would issue a shortest path qu
 rather than performing computation by itself (see Section~\ref{sec:benchmark}).
 Since the total cost is dominated by the communication round-trip time with server,
 we use the cache hit ratio as the performance measure in this scenario.
+In the default case it takes 61.4 and 43.4 seconds, for the Beijing and Aalborg data set respectively, to fill the cache with SPC. For SPC$^*$ filling the takes 123.4 and 100.9 seconds for the Beijing and Aalborg data set.
+%The fill time values for max cache size (8192 kB) are: SPC 175.3/102.5 sec and SPC$^*$ 175.4/100.4 sec. for the Beijing and Aalborg data sets respectively.
 
-For both datasets we vary the cache size and kD-tree levels to show the impact on the cache hit ratio. We have implemented a number of optimizations to the cache storage (See sec. \ref{sec:CacheStruct}) and show their impact on the cache hit ratio.
+For both data sets we vary the cache size and kD-tree levels to show the impact on the cache hit ratio. We have implemented a number of optimizations to the cache storage (See sec. \ref{sec:CacheStruct}) and show their impact on the cache hit ratio.
+
+
+\stitle{Effect of the kD-tree level}
+%
+In Figure~\ref{fig:levelVsHitRatio}, we vary the kD-tree level from 8 to 16 levels and show that using a kD-tree of about 14 levels can significantly increase the cache hit ratio of both the Aalborg and Beijing data set. SPC$^*$ performs better than SPC.
+
+
+\begin{figure}[htb]
+\center
+  \begin{tabular}{@{}c@{ }c@{}}
+     \includegraphics[width=0.5\columnwidth]{figures/split_hitratio_aal.pdf}
+     &
+     \includegraphics[width=0.5\columnwidth]{figures/split_hitratio_bei.pdf}
+      \\
+     (a) Aalborg & (b)  Beijing
+     \end{tabular}
+\caption{Hit ratio vs. Levels}
+\label{fig:levelVsHitRatio}
+\end{figure}
+
+{\color{red}
+On both data set SPC* outperforms SPC by 5-10\% in hit ratio. On both data sets SPC$^*$ performs 10\% better than SPC, up to level 12, in term of hit ratio. After level 12 SPC and SPC$^*$ start to converge toward the same hit ratio. Both data sets clearly show the benefit of using levels.
+}
+
 
 
 \stitle{Effect of the cache size}
@@ -158,96 +184,67 @@ while varying the cache size from 1 kB to 5 MB.
       \\
      (a) Aalborg & (b)  Beijing
      \end{tabular}
-\caption{Hit ratio vs. cache size }
+\caption{Hit ratio vs. cache size}
 \label{fig:cSizeVsHitRatio}
 \end{figure}
 
-% \begin{itemize}
-% \item We can see SPC* performs much better than competitors
-% \item LRU perform well on small cache sizes, but the cache hit ratio quickly level out and stop growing, thus LRU is not scalable.
-% \item HQF performance is very consistent, with the hit ratio varying only slightly. The hit ratio does however stay at just over 1\% for Aalborg experiments and around 0.2\% for Beijing experiments. It is not usable
-% \item We observe that SPC initially does not grow as fast as LRU, but the growth continues as we increase cache size, unlike for LRU.
-% \item SPC* grows faster than LRU and gets better cache hit ratio at all cache sizes than LRU and SPC, except for the smallest cache size.
-% \item The test on the Aalborg vs. Beijing sets show that SPC performs much better on the Aalborg set, where as LRU performs about 50\% worse. This can be explained by the fact that both methods rely on users behaving consistently over time, but where SPC relies on global consistency in user behavior, LRU need local consistency too. This makes SPC/SPC* more robust and we can expect them to always outperform LRU.
-% \end{itemize}
 {\color{red}
-We can see that LRU consistently perform worse than SPC and SPC$^*$ for all cache sizes. The cache hit ratio stabilizes at about 26 and 40\% for Aalborg and Beijing respectively. Since LRU levels out at a much lower cache hit ratio than all of it's competitors it is not a suitable choice for \spath cacheing.
 
 
-The performance of HQF is quite low at smaller cache sizes. While HQF can 
 
-The performance of HQF is very consistent, with the hit ratio varying only slightly. The hit ratio stays at just over 1\% for Aalborg experiments and around 0.2\% for Beijing experiments. The low hit ratio makes it not scalable and unusable for \spath caching.
+We can see that LRU consistently perform worse than SPC and SPC$^*$ for all cache sizes. The cache hit ratio stabilizes at about 26 and 40\% for Aalborg and Beijing respectively. Since LRU levels out at a much lower cache hit ratio than all of it's competitors it is not a suitable choice for \spath caching.
+
+The performance of HQF is quite low at smaller cache sizes. While HQF can outperform LRU at larger cache sizes, it is consistently performing worse than SPC and SPC$^*$, making it a sub-optimal choice for \spath caching.
+
+SPC and SPC$^*$ both outperform HQF and LRU for all sizes of the cache .Both SPC and SPC$^*$ have the same maximum cache hit ratio since they are using the same same caching scheme, with different representations of the cache. SPC$^*$ is the better choice of the two, as it performs as least as well, and often better, than SPC, for all cache sizes. 
 }
 
-SPC does not grow as fast as LRU for smaller cache sizes, but while the growth of LRU quickly stabilizes then SPC continues to grow and outperforms both LRU and HQF.
-SPC* outperforms both LRU and SPC by a large margin, only shortly having a lower cache hit ratio at smaller cache sizes. The test on Aalborg vs. Beijing  show that SPC performs much better on the Aalborg set, where as LRU performs about 50\% worse. This can be explained by the fact that both methods rely on users behaving consistently over time, but where SPC relies on global consistency in user behavior, LRU need local consistency too. This makes SPC/SPC* more robust and we expect them to always outperform LRU.
 
 
 
-\stitle{Effect of the kD-tree level}
-%
-In Figure~\ref{fig:levelVsHitRatio}, we vary the kD-tree level from 8 to 18 levels and show that using a kD-tree of about 14 levels can significantly increase the cache hit ratio of both the Aalborg and Beijing dataset. SPC* performs better than SPC.
-
-
-\begin{figure}[htb]
-\center
-  \begin{tabular}{@{}c@{ }c@{}}
-     \includegraphics[width=0.5\columnwidth]{figures/split_hitratio_aal.pdf}
-     &
-     \includegraphics[width=0.5\columnwidth]{figures/split_hitratio_bei.pdf}
-      \\
-     (a) Aalborg & (b)  Beijing
-     \end{tabular}
-\caption{Hit ratio vs. Levels}
-\label{fig:levelVsHitRatio}
-\end{figure}
-
-On both dataset SPC* outperforms SPC by a large margin. On the city X dataset SPC* achieves more than a 50\% increase in hit ratio, and when compared to SPC, it achieves a relative performance gain of 500-900\% at low levels up to the peak performance at level 14.
-On the Y dataset SPC* gets a lower hit ratio, but it still achieves more than 50\% cache hit ratio. The results are still very impressive, with SPC* performing 200-400\% better than SPC at all levels.
-
-% \noindent
-% \begin{tabular}{|l |p{0.58\columnwidth} |l |}
-% \hline
-% \textbf{Parameter} & \textbf{Meaning / used for} & \textbf{Standard value} \\\hline
-% Mapfile & The map which the test is performed on & \\\hline
-% NumQueries & Number of \spath queries in test & \\\hline
-% QuerySet & which dataset is used to provide queries & \\\hline
-% TrainSet & For generating region statistics, which dataset is used & \\\hline
-% CacheSize & Size of cache in bits & \\\hline
-% cacheType & Type of cache representation (list/graph) & \\\hline
-% kD-tree & Hight of the kD-tree & \\\hline
-% avgLenght & Average length of a shortest path & \\\hline
-% \end{tabular}
-
-% Write experiments to examine performance of goal 1 \& 2
-% Test ideas (several ideas may be combined, like item 1 can be done on all datasets from item 2):\\
-% \begin{itemize}
-% \item increase kd-tree hight from 0-18
-% \item different maps [Oldenburg, Aalborg, Beijing]
-% \item compare cache type performance
-% \item compare with baseline methods. [LRU dynamic, Dynamic(maxLevel)]
-% \item vary the cache size [10.000-2560000]
-% \item vary number of queries. [only for synthetic data]
-% \end{itemize}
 
 \subsection{Caching in the Server Scenario}\label{subsec:expServer}
 %
 In the server scenario, the shortest path API has to invoke a shortest path algorithm.
-Thus, the running time is the most important performance measure. We also measure the number of nodes visited in a shortest path algorithm, which serves an indicator of the running time.
+{\color{red}
+Thus, the relative savings running time, compared to not using a cache, is the most important performance measure. We also measure the relative saving in the number of nodes visited in a shortest path algorithm, which serves an indicator of the running time.
 %On a server our aim is slightly different than on the Proxy, as we also have to consider that there may be some paths that are so small that it may be cheaper to simply re-calculate the result, instead of caching it.
 %For the server scenario we will test the cache hit ratio, running time, and Nodes visited.
 %For all three experiments
 %We will vary kD-tree levels and cache size in the following experiments.
-As a case study, we use the Dijkstra's algorithm as the shortest path algorithm.
+As a case study, we use the Dijkstra's and A$^*$ algorithms as the shortest path algorithm to show the benefit of using a \spath cache with different \spath algorithms.
 
-In the following experiments, the running time (and nodes visited) refer to the total running time (and nodes visited) for processing the entire query workload. The running time is measured in the unit of seconds.
+In the following experiments, the query time saving ratio (and visited nodes saving ratio) refer to the running time saved (and nodes visited) when compared to not using any caching. 
+The query time saving ratio is calculated as total time used to execute query workload without using caching $NC_t$ minus the total time to execute the query workload using caching $C_t$, divided by the total time to execute query workload without using caching times 100. The equation to compute the time saving ratio: $ \frac{NC_t - C_t}{NC_t}*100$.
+
+Naming the total nodes visited by the shortest path algorithm without using caching as $NC_t$ and the total nodes visited by the shortest path algorithm using caching as $C_t$, we use the same equation to compute the visited nodes saving ratio.
+
+The total query time and total nodes visited using when not using caching is presented in table \ref{tl:nonemethod}.
+
+The results presented are for processing the entire query workload. The difference is presented as a ratio between using a caching scheme and using no caching scheme at all.
+}
 
 
+
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|l|r|r|}\hline
+ & Query time (sec.) & Nodes visited \\\hline \hline
+Aalborg - Dijkstra & 18.50 & 18580659 \\\hline
+Beijing - Dijkstra & 43.50 & 41615917 \\\hline
+Aalborg - A$^*$ & 4.5 & 2929128 \\\hline 
+Beijing - A$^*$ & 9.8 & 6544620 \\\hline
+\end{tabular}
+\caption{Query time and nodes visited, not using caching}
+\label{tbl:nonemethod}
+\end{table}
 
 
 
 \stitle{Estimation of shortest path running cost}
-%
+{\color{blue} Do the table and its explanation need to be updated since we have updated both approach, workload, and map data?}
+
 First, we test the estimation error of our cost estimation technique proposed in Section~\ref{sec:benchmark}.
 We measure the error percentage in terms of the relative error between the actual cost and the estimated cost.
 Table~\ref{tbl:estcost} shows the estimation error of our technique
@@ -264,6 +261,7 @@ The majority of errors are below 30\% and thus our estimation technique is reaso
 
 \begin{table}
 \center
+\color{blue}
 \begin{tabular}{cc}
     \begin{tabular}{|c|c|c|}
     \hline
@@ -301,36 +299,30 @@ The majority of errors are below 30\% and thus our estimation technique is reaso
 %
 \stitle{Effect of the kD-tree level}
 %
-In Figure~\ref{fig:levelVsHitRatio}, we again vary the kD-tree level from 8 to 18 levels. All three experiments shows a consistent advantage of using SPC* over SPC. SPC* still has an even higher advantage than in the proxy scenario, performing around 950\% better than SPC at its best. SPC, however, has a very low hit ratio in the server scenario, on both the city X and Y datasets. In figure \ref{fig:levelVsruntime}a and b we can see that SPC* is very fast at answering the query workload. SPC has a quite stable time in both figure\ref{fig:levelVsruntime}a and b, while the time for SPC* to answer the query workload actually decreases with more regions. In figure \ref{fig:levelVsNodesvisited} we can see that SPC* visits far fewer nodes than SPC, during shortest path calculations. This is expected since SPC* can answer many more queries from its cache.
+{\color{red}
+In Figure~\ref{fig:split_diffnodes_server}, \ref{fig:split_diffruntime_server}, \ref{fig:split_diffnodes_server_astar}, \ref{fig:split_diffruntime_server_astar}, we again vary the kD-tree level from 6 to 16 levels. 
+
+All four experiments shows a consistent advantage of using SPC$^*$ over SPC. 
 
 
+Figure \ref{fig:split_diffnodes_server}/\ref{fig:split_diffruntime_server} shows the performance SPC and SPC$^*$ using the Dijkstra \spath algorithm.
+
+In figure \ref{fig:split_diffnodes_server}a and b we can see that SPC and SPC$^*$ performs very stable, achieving almost the same saving in nodes visited on both the Aalborg and Beijing data set. SPC provides up to a 26\% saving in nodes visited, and SPC$^*$ gets up to a 30\% saving of nodes visited on the Beijing data set.
+
+In figure \ref{fig:split_diffruntime_server}a and b we can see that increasing the levels provide significant run time savings for both SPC and SPC$^*$.
+SPC does well, saving up to 15\% in running time, while SPC$^*$ achieves up to a 34\% reduction in running time. Both SPC and SPC$^*$ has a very stable performance. The time saved increases in all cases with more regions.
 
 
-% \begin{figure}[htb]
-% \center
-%   \begin{tabular}{@{}c@{ }c@{}}
-%      \includegraphics[width=0.5\columnwidth]{figures/split_hitratio_aal_server.pdf}
-%      &
-%      \includegraphics[width=0.5\columnwidth]{figures/split_hitratio_bei_server.pdf}
-%       \\
-%      (a) Aalborg & (b)  Beijing
-%      \end{tabular}
-% \caption{Hit ratio vs. Levels}
-% \label{fig:levelVsHitRatio}
-% \end{figure}
+Figure \ref{fig:split_diffnodes_server_astar}/\ref{fig:split_diffruntime_server_astar} shows the performance SPC and SPC$^*$ using the A$^*$ \spath algorithm.
 
-\begin{figure}[htb]
-\center
-  \begin{tabular}{@{}c@{ }c@{}}
-     \includegraphics[width=0.5\columnwidth]{figures/split_diffruntime_aal_server.pdf}
-     &
-     \includegraphics[width=0.5\columnwidth]{figures/split_diffruntime_bei_server.pdf}
-      \\
-     (a) Aalborg & (b)  Beijing
-     \end{tabular}
-\caption{Runtime Saved vs. Levels}
-\label{fig:levelVsruntime}
-\end{figure}
+In figure \ref{fig:split_diffnodes_server_astar}a and b we can see that SPC and SPC$^*$ performs very stable, achieving performance very similar to using Dijkstra (see fig. \ref{fig:split_diffnodes_server}).
+
+
+In figure \ref{fig:split_diffruntime_server_astar}a and b we can see that A$^*$s faster performance excludes SPC as a candidate, as it at its best still is about 18\% slower than not using any caching. Except for kD-tree level of 6 on the Aalborg data set, we can see that SPC$^*$ is very fast at answering the query workload as using it will consistently provide a time saving of 5-30\%. The time saved increases in all cases with more regions/ higher levels.
+
+}
+
+
 
 \begin{figure}[htb]
 \center
@@ -341,9 +333,38 @@ In Figure~\ref{fig:levelVsHitRatio}, we again vary the kD-tree level from 8 to 1
       \\
      (a) Aalborg & (b)  Beijing
      \end{tabular}
-\caption{Node Visits Saved vs. Levels}
-\label{fig:levelVsNodesvisited}
+\caption{Node Visits Saved vs. Levels using Dijkstra}
+\label{fig:split_diffnodes_server}
 \end{figure}
+
+
+\begin{figure}[htb]
+\center
+  \begin{tabular}{@{}c@{ }c@{}}
+     \includegraphics[width=0.5\columnwidth]{figures/split_diffruntime_aal_server.pdf}
+     &
+     \includegraphics[width=0.5\columnwidth]{figures/split_diffruntime_bei_server.pdf}
+      \\
+     (a) Aalborg & (b)  Beijing
+     \end{tabular}
+\caption{Runtime Saved vs. Levels using Dijkstra}
+\label{fig:split_diffruntime_server}
+\end{figure}
+
+
+\begin{figure}[htb]
+\center
+  \begin{tabular}{@{}c@{ }c@{}}
+     \includegraphics[width=0.5\columnwidth]{figures/split_diffnodes_aal_server_astar.pdf}
+     &
+     \includegraphics[width=0.5\columnwidth]{figures/split_diffnodes_bei_server_astar.pdf}
+      \\
+     (a) Aalborg & (b)  Beijing
+     \end{tabular}
+\caption{Node Visits Saved vs. Levels  using $A^*$}
+\label{fig:split_diffnodes_server_astar}
+\end{figure}
+
 
 
 \begin{figure}[htb]
@@ -355,33 +376,36 @@ In Figure~\ref{fig:levelVsHitRatio}, we again vary the kD-tree level from 8 to 1
       \\
      (a) Aalborg & (b)  Beijing
      \end{tabular}
-\caption{Runtime Saved vs. Levels with $A^*$}
-\label{fig:levelVsruntime}
+\caption{Runtime Saved vs. Levels using $A^*$}
+\label{fig:split_diffruntime_server_astar}
 \end{figure}
-
-\begin{figure}[htb]
-\center
-  \begin{tabular}{@{}c@{ }c@{}}
-     \includegraphics[width=0.5\columnwidth]{figures/split_diffnodes_aal_server_astar.pdf}
-     &
-     \includegraphics[width=0.5\columnwidth]{figures/split_diffnodes_bei_server_astar.pdf}
-      \\
-     (a) Aalborg & (b)  Beijing
-     \end{tabular}
-\caption{Node Visits Saved vs. Levels  with $A^*$}
-\label{fig:levelVsNodesvisited}
-\end{figure}
-
 
 
 
 
 
 \stitle{Effect of the cache size}
-%
-In the following experiments, we vary the cache size and observe the effect on the running time and nodes visited during shortest path calculations.
+{\color{red}
+In the following experiments, we vary the cache size and observe the effect on visited nodes saved ratio and the query time saving ratio.
 
 
+
+
+Figure \ref{fig:cachesize_diffnodes_server}/\ref{fig:cachesize_diffruntime_server} shows the performance SPC and  using the Dijkstra \spath algorithm.
+
+In figure \ref{fig:cachesize_diffnodes_server}a and b we can see that LRU consistently perform worse than SPC and SPC$^*$ for all cache sizes. For both the Aalborg and Beijing data set LRU stabilizes at a visited nodes saving ratio of 20\%, about 2/3 of its competitors. 
+For lower cache sizes SPC$^*$ outperforms all it its competitors. At larger cache sizes of a MB and above, HQF, SPC and SPC$^*$ all have the same visited nodes saving ratio of about 28\%.
+
+In figure \ref{fig:cachesize_diffruntime_server}a we can see that as the cache size increases all caching schemes save more query time. Compared to its competitors SPC$^*$ performs significantly better, with a query time saving ratio of almost twice that of all its competitors. 
+In figure \ref{fig:cachesize_diffruntime_server}b we can see that HQF, LRU, and SPC all perform poorly with a query time saving ratio of 0-5\%. SPC$^*$ performs consistently well and achieves a query time saving ratio above 30\%.
+
+
+Figure \ref{fig:cachesize_diffnodes_server_astar}/\ref{fig:cachesize_diffruntime_server_astar} shows the performance SPC and SPC$^*$ using the A$^*$ \spath algorithm.
+
+In figure \ref{fig:cachesize_diffnodes_server_astar}a and b we can see that SPC and SPC$^*$ performs very stable, achiving performance very similar to using Dijkstra (see fig. \ref{fig:cachesize_diffnodes_server}).
+
+In figure \ref{fig:cachesize_diffruntime_server_astar}a and b we can see a very similar behaviour in both graphs. It is clear that neither HQF, LRU, or SPC are viable caching schemes when using the A$^*$ in the server scenario. All 3 caching schemes adds significt added running time, up to 90\% extra time on the Beijing data set.
+}
 
 
 
@@ -389,40 +413,57 @@ In the following experiments, we vary the cache size and observe the effect on t
 \begin{figure}[htb]
 \center
   \begin{tabular}{@{}c@{ }c@{}}
-     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffruntime_aal.pdf}
+     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffnodes_aal_server.pdf}
      &
-     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffruntime_bei.pdf}
+     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffnodes_bei_server.pdf}
       \\
      (a) Aalborg & (b)  Beijing
      \end{tabular}
-\caption{Runtime Saved vs. Cache Size}
-\label{fig:cacheSizeVsHitRuntime}
+\caption{Node Visits Saved vs. Cache Size using Dijkstra}
+\label{fig:cachesize_diffnodes_server}
 \end{figure}
 
 \begin{figure}[htb]
 \center
   \begin{tabular}{@{}c@{ }c@{}}
-     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffruntime_aal_astar.pdf}
+     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffruntime_aal_server.pdf}
      &
-     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffruntime_bei_astar.pdf}
+     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffruntime_bei_server.pdf}
       \\
      (a) Aalborg & (b)  Beijing
      \end{tabular}
-\caption{Runtime Saved vs. Cache Size with $A^*$}
-\label{fig:cacheSizeVsHitRuntime}
+\caption{Runtime Saved vs. Cache Size using Dijkstra}
+\label{fig:cachesize_diffruntime_server}
 \end{figure}
-
-In Figure \ref{fig:cacheSizeVsHitRuntime} and \ref{fig:cacheSizeVsNodesvisited}, for both the city X and Y dataset,  we can see that the graph looks similar to Figure \ref{fig:cSizeVsHitRatio}, but in the upside-down manner. This is to be expected, since a higher cache hit ratio gives fewer \spath calculations, and a lower runnig time when answering queries.
 
 \begin{figure}[htb]
 \center
   \begin{tabular}{@{}c@{ }c@{}}
-     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffnodes_aal.pdf}
+     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffnodes_aal_server_astar.pdf}
      &
-     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffnodes_bei.pdf}
+     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffnodes_bei_server_astar.pdf}
       \\
      (a) Aalborg & (b)  Beijing
      \end{tabular}
-\caption{Node Visits Saved vs. Cache Size}
-\label{fig:cacheSizeVsNodesvisited}
+\caption{Node Visits Saved vs. Cache Size using $A^*$}
+\label{fig:cachesize_diffnodes_server_astar}
 \end{figure}
+
+
+\begin{figure}[htb]
+\center
+  \begin{tabular}{@{}c@{ }c@{}}
+     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffruntime_aal_server_astar.pdf}
+     &
+     \includegraphics[width=0.5\columnwidth]{figures/cachesize_diffruntime_bei_server_astar.pdf}
+      \\
+     (a) Aalborg & (b)  Beijing
+     \end{tabular}
+\caption{Runtime Saved vs. Cache Size using $A^*$}
+\label{fig:cachesize_diffruntime_server_astar}
+\end{figure}
+
+
+
+
+
