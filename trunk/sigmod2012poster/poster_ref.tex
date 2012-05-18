@@ -1,0 +1,387 @@
+\documentclass[a3shrink,landscape,final]{baposter}
+%\documentclass[a4shrink,portrait,final]{baposter}
+% Usa a4shrink for an a4 sized paper.
+
+\tracingstats=2
+
+\usepackage{times}
+\usepackage{calc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{relsize}
+\usepackage{multirow}
+\usepackage{bm}
+
+\usepackage{graphicx}
+\usepackage{multicol}
+
+\usepackage{pgfbaselayers}
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+\usepackage{helvet}
+%\usepackage{bookman}
+\usepackage{palatino}
+
+\newcommand{\captionfont}{\footnotesize}
+
+\selectcolormodel{cmyk}
+
+\graphicspath{{images/}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Some math symbols used in the text
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Format 
+\newcommand{\Matrix}[1]{\begin{bmatrix} #1 \end{bmatrix}}
+\newcommand{\Vector}[1]{\Matrix{#1}}
+\newcommand*{\SET}[1]  {\ensuremath{\mathcal{#1}}}
+\newcommand*{\MAT}[1]  {\ensuremath{\mathbf{#1}}}
+\newcommand*{\VEC}[1]  {\ensuremath{\bm{#1}}}
+\newcommand*{\CONST}[1]{\ensuremath{\mathit{#1}}}
+\newcommand*{\norm}[1]{\mathopen\| #1 \mathclose\|}% use instead of $\|x\|$
+\newcommand*{\abs}[1]{\mathopen| #1 \mathclose|}% use instead of $\|x\|$
+\newcommand*{\absLR}[1]{\left| #1 \right|}% use instead of $\|x\|$
+
+\def\norm#1{\mathopen\| #1 \mathclose\|}% use instead of $\|x\|$
+\newcommand{\normLR}[1]{\left\| #1 \right\|}% use instead of $\|x\|$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Multicol Settings
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\columnsep}{0.7em}
+\setlength{\columnseprule}{0mm}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Save space in lists. Use this after the opening of the list
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\compresslist}{%
+\setlength{\itemsep}{1pt}%
+\setlength{\parskip}{0pt}%
+\setlength{\parsep}{0pt}%
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Begin of Document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Here starts the poster
+%%%---------------------------------------------------------------------------
+%%% Format it to your taste with the options
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Define some colors
+\definecolor{silver}{cmyk}{0,0,0,0.3}
+\definecolor{yellow}{cmyk}{0,0,0.9,0.0}
+\definecolor{reddishyellow}{cmyk}{0,0.22,1.0,0.0}
+\definecolor{black}{cmyk}{0,0,0.0,1.0}
+\definecolor{darkYellow}{cmyk}{0,0,1.0,0.5}
+\definecolor{darkSilver}{cmyk}{0,0,0,0.1}
+
+\definecolor{lightyellow}{cmyk}{0,0,0.3,0.0}
+\definecolor{lighteryellow}{cmyk}{0,0,0.1,0.0}
+\definecolor{lightestyellow}{cmyk}{0,0,0.05,0.0}
+
+\definecolor{white}{cmyk}{0,0,0,0}
+\definecolor{blue}{cmyk}{0.74,0.27,0,0}
+\definecolor{lighterblue}{cmyk}{0.85,0.0,0.0,0.0}
+\definecolor{lightestblue}{cmyk}{0.09,0,0,0}
+\definecolor{borderblue}{cmyk}{0.74,0.27,0,0.4}
+\definecolor{headerblue}{cmyk}{0.74,0.27,0,0.5}
+\definecolor{bgblue}{cmyk}{0.9,0.5,0.1,0}
+\definecolor{bgblue2}{cmyk}{0,0,0,0}
+\definecolor{boxColor1}{cmyk}{0.1,0.05,0,0}
+
+
+%%
+\typeout{Poster Starts}
+\background{
+  \begin{tikzpicture}[remember picture,overlay]%
+    \draw (current page.north west)+(-2em,2em) node[anchor=north west] {\includegraphics[height=1.1\textheight]{images/silhouettes_background}};
+  \end{tikzpicture}%
+}
+
+\newlength{\leftimgwidth}
+\begin{poster}%
+  % Poster Options
+  {
+  % Show grid to help with alignment
+  grid=no,
+  % Column spacing
+  colspacing=1em,
+  % Color style
+%  bgColorOne=lightestyellow,
+%  bgColorTwo=lightestyellow,
+%  borderColor=reddishyellow,
+%  headerColorOne=yellow,
+%  headerColorTwo=reddishyellow,
+%  headerFontColor=black,
+%  boxColorOne=lightyellow,
+%  boxColorTwo=lighteryellow,
+  bgColorOne=bgblue2,
+  bgColorTwo=bgblue,
+  borderColor=borderblue,
+  headerColorOne=headerblue,
+  headerColorTwo=lightestblue,
+  headerFontColor=white,
+  boxColorOne=white,
+  boxColorTwo=boxColor1,
+  % Format of textbox
+  textborder=roundedleft,
+  % Format of text header
+  eyecatcher=no,
+  headerborder=open,
+  headerheight=0.08\textheight,
+  headershape=roundedright,
+  headershade=shade-lr,
+  headerfont=\Large\textsf, %Sans Serif
+  boxshade=shade-lr,
+  background=shade-tb,
+%  background=plain,
+  linewidth=2pt
+  }
+  % Eye Catcher
+  {\includegraphics[width=8.5em]{images/daisy-logo}} % eye catcher for this poster. (eyecatcher=no above). If an eye catcher is present, the title is centered between eye-catcher and logo.
+  % Title
+  {\sf %Sans Serif
+  %\bf% Serif
+  A Location Privacy Aware Friend Locator}
+  % Authors
+  {\sf %Sans Serif
+  % Serif
+  \vspace{0.1em} Laurynas \v{S}ik\v{s}nys, Jeppe R. Thomsen, Simonas \v{S}altenis, Man Lung Yiu, Ove Andersen\\
+  {\vspace{0.2em}\large Department of Computer Science, Aalborg University}
+  }
+  %{\sf
+  %\normalsize Department of Computer Science, Aalborg University}
+  % University logo
+  {% The makebox allows the title to flow into the logo, this is a hack because of the L shaped logo.
+    \makebox[8em][r]{%
+      \begin{minipage}{16em}
+        \hfill
+        \includegraphics[height=5.5em]{images/polyu_logo_l}
+      \end{minipage}
+    }
+  }
+
+  \tikzstyle{light shaded}=[top color=baposterBGtwo!30!white,bottom color=baposterBGone!30!white,shading=axis,shading angle=90]
+
+  % Width of left inset image
+     \setlength{\leftimgwidth}{0.78em+8.0em}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Now define the boxes that make up the poster
+%%%---------------------------------------------------------------------------
+%%% Each box has a name and can be placed absolutely or relatively.
+%%% The only inconvenience is that you can only specify a relative position 
+%%% towards an already declared box. So if you have a box attached to the 
+%%% bottom, one to the top and a third one which should be in between, you 
+%%% have to specify the top and bottom boxes before you specify the middle 
+%%% box.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %
+    % A coloured circle useful as a bullet with an adjustably strong filling
+    \newcommand{\colouredcircle}[1]{%
+      \tikz{\useasboundingbox (-0.2em,-0.32em) rectangle(0.2em,0.32em);
+\draw[draw=black,fill=borderblue!80!black!#1!white,line width=0.03em] (0,0)
+circle(0.18em);}}
+
+    \newenvironment{indentpar}[1]%
+    { \vspace{-1em}
+      \begin{list}{}%
+	    {\setlength{\leftmargin}{#1}}%
+	    \item[]%
+    }
+    {\end{list} \vspace{-1em}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \headerbox{Overview}{name=contribution,span=1.5,column=0,row=0}{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     \colouredcircle{100} \textbf{Applications:} the proposed centralized system notifies a user if he is geographically close to any of his friends.
+
+     \colouredcircle{100} \textbf{Privacy:} strong user location privacy is
+guaranteed via the encryption of user locations mapped to a spatial grid. The
+server can not deduce actual locations of any users. It can only detect
+proximity or separation between user pairs.
+
+     \colouredcircle{100} \textbf{Communication cost:} communication is
+optimized such that a client is not required to send any data if the user is far
+away from his closest friend.
+
+     \colouredcircle{100} \textbf{Experimental results:} the proposed solution
+is efficient and scalable to a large number of users.
+	 
+  \vspace{0.5em}
+ }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \headerbox{Functionality}{name=function,column=0,span=1.5,below=contribution}{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		 The central server sends notification to users $\MAT{u_1}$ and $\MAT{u_2}$ if the 
+		 proximity is detected according to the following conditions:		
+
+		 \begin{indentpar}{0.5cm}
+		  \colouredcircle{100}  if $dist(\MAT{u_1}, \MAT{u_2})$ $\leq$ 
+		      $\epsilon$ then $\MAT{u_1}$ and $\MAT{u_2}$ are in proximity;
+		  		  		 
+		  \colouredcircle{100}  if $dist(\MAT{u_1}, \MAT{u_2})$ $\geq$
+		  $\epsilon + \lambda$ then the users $\MAT{u_1}$ and $\MAT{u_2}$ are not in
+		  proximity;
+				
+		  \colouredcircle{100} if $\epsilon$ $<$ $dist(\MAT{u_1}, \MAT{u_2})$ $<$ $\epsilon$ + $\lambda$ then the server freely classifies 
+		  users $\MAT{u_1}$ and $\MAT{u_2}$ as being either in or not in proximity.
+		\end{indentpar}
+
+ 		Here, $dist(\MAT{u_1}, \MAT{u_2})$ is the Euclidean distance between the users $\MAT{u_1}$ and $\MAT{u_2}$. The 
+ 		$\epsilon$ is the proximity detection distance, which is selected by users $\MAT{u_1}$ and $\MAT{u_2}$ from 
+ 		a set of discrete values. The parameter	$\lambda = \epsilon(2\sqrt{2}-1)$ is the precision parameter of the service.		
+  \vspace{0.5em}
+  }
+
+  \headerbox{Grid-based Encryption}{name=questions,column=0,span=1.5,below=function,above=bottom}{
+		\begin{center}
+		   \includegraphics[width=0.95\linewidth]{images/LRS_drawings2}   
+		\end{center}
+   \vspace{0px} 
+
+User locations are mapped into four cells of a uniform spatial
+grid. These mappings are encrypted with an encryption function $\Psi$
+and then sent to the server. The function $\Psi$ is shared among small
+group of users that is a subset of all users in the system. If there
+is a match between the encrypted values of two users, the server
+either detects a proximity or asks them to use a finer grid. The
+proximity is detected only if the grid is fine enough to match
+$\epsilon$ setting of the two users. This process is called the
+\textit{Incremental Proximity Detection}.  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \headerbox{Incremental Proximity Detection}{name=incremental proximity detection,column=1.5,span=2.5,row=0}{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
+  \includegraphics[width=\linewidth]{images/dgDemo}
+ \vspace{0.5em}
+
+	This example illustrates the behavior of the incremental
+        proximity detection algorithm. The figure shows the
+        geographical locations of users \MAT {u_1} and \MAT {u_2} and
+        their mappings into the list of grids at 4 snapshots in
+        time. Users \MAT {u_1} and \MAT {u_2} have matching cells at
+        level 0~(a), so both \MAT{u_1} and \MAT{u_2} are asked to
+        switch to level 1, where they no longer have a match.  At the
+        second snapshot (b) both users have moved, but only \MAT{u_1}
+        has changed grid cells, so only \MAT{u_1} resends his
+        encrypted location for level 0. The new encrypted cells match
+        at the server and so \MAT{u_1} is asked to send his location
+        for level 1 (c).  As both \MAT {u_1} and \MAT {u_2} still
+        have a match at level 1, they both switch to level 2 (d), and,
+        as this level corresponds to their desired $\epsilon$ setting,
+        they both receive a proximity notification.
+  \vspace{0.5em}
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \headerbox{Results}{name=results,column=1.5,span=2.5,above=bottom,below=incremental proximity detection}{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+      	Our approach was evaluated on a workload generated over
+      	the German city of Oldenburg with 50000 users partitioned into 200 disjoint groups.
+      	\vspace{0.6em}
+      	
+      \begin{tabular}{cc}	
+      	\begin{tabular}{c}
+						\includegraphics[width=0.23\linewidth]{images/basic} \vspace{0.2em}\\ 
+						(a)
+				\end{tabular}
+	      \begin{tabular}{cc}
+						\includegraphics[width=0.33\linewidth]{images/epsilonEffect2} &
+						\includegraphics[width=0.33\linewidth]{images/allMsgOneUser} \\
+						(b) & (c)
+				\end{tabular} &
+      \end{tabular}
+      \vspace{1em}
+        
+        For comparison, an alternative approach, called {\em basic}, is used.
+        The {\em basic} approach detects proximity based on the filter-and-refine paradigm. The server
+        measures the maximum and minimum distances between user location cells of size $d$ (See (a)),
+        and either detects proximity/separation or asks the users to invoke a peer-to-peer refinement step.
+        
+        
+        Figure (a) shows how the communication cost is affected by the
+        changing $\epsilon$. The cost of our approach is robust to
+        different values of $\epsilon$ and, unlike {\em basic}, its
+        cost rises slowly when $\epsilon$ increases.
+      	
+        Figure (c) benchmarks our approach against {\em basic} with
+        different cell sizes, representing different privacy
+        levels. For our approach, in contrast to {\em basic},
+        increasing the number of users in each disjoint group has
+        almost no impact on the amount of messages a user has to send
+        to the server.
+
+        %larger than 150 users.
+        
+       
+       
+       %The baseline approach detects proximity based on a max and minimum distance, 
+       %with a cell size $d$. The proximity is detected if the distance between two
+       %friends is $\leq maxDist$, it does not detect proximity if the distance is $< minDist$       
+
+        
+
+  \vspace{0.5em}
+  }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  \headerbox{Robustness}{name=robustness,column=3,row=0,above=results,span=1}{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  \begin{tikzpicture}[x=0.3333\linewidth,y=-0.42\linewidth]
+%    \path [use as bounding box] (-0.5,-0.5) rectangle(2.5,1.7);
+%    \path
+%    (0,0) node{\includegraphics[width=0.42\linewidth]{D1160}}
+%    (1,0) node{\includegraphics[width=0.42\linewidth]{D1425}}
+%    (2,0) node{\includegraphics[width=0.42\linewidth]{D1205}}
+%
+%    (0,1) node{\includegraphics[width=0.28\linewidth]{D1160_fit_expression}}
+%    (1,1) node{\includegraphics[width=0.28\linewidth]{D1425_fit_expression}}
+%    (2,1) node{\includegraphics[width=0.28\linewidth]{D1205_fit_expression}}
+%
+%    (1,0.5) node {\smaller a) Target}
+%    (1,1.6) node {\smaller b) Robust Reconstruction};
+%  \end{tikzpicture}
+%  \vspace{0.5em}
+%
+%  The reconstruction (b) is robust against scans (a) with artifacts, noise, and
+%  holes.
+%  
+%  This is achieved by a robust iteratively reweighted ICP algorithm and outlier
+%  rejection based on angle comparisions between corresponding points.
+%  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  \headerbox{References}{name=references,column=0,span=1.5,above=bottom}{
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \smaller
+%    \vspace{-0.4em}
+%    \bibliographystyle{ieee}
+%    \renewcommand{\section}[2]{\vskip 0.05em}
+%      \begin{thebibliography}{1}\itemsep=-0.01em
+%      \setlength{\baselineskip}{0.4em}
+%      \bibitem{amberg07:nonrigid}
+%        B.~Amberg, S.~Romdhani, T. Vetter.
+%        \newblock {O}ptimal {S}tep {N}onrigid {ICP} {A}lgorithms for {S}urface {R}egistration
+%        \newblock In {\em Computer Vision and Pattern Recognition 2007}
+%      \bibitem{amberg08:recognition}
+%        B.~Amberg, R.~Knothe, T. Vetter.
+%        \newblock Expression Invariant Face Recognition with a 3D Morphable Model
+%        \newblock In {\em Automated Face and Gesture Recognition 2008}
+%      \end{thebibliography}
+%  }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{poster}%
+\end{document}
