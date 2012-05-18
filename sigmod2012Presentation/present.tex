@@ -3,12 +3,18 @@
 \usepackage{beamerthemeshadow}
 \usepackage{pgf,pgfarrows,pgfnodes}
 \usepackage{listing}
+\usepackage{tabularx}
+\usepackage{multirow}
 \usepackage{listings}
 \usepackage{verbatim}
 \usepackage{multirow}
 \usetheme{Copenhagen} % Beamer theme v 3.0
 \usecolortheme{whale} % Beamer color theme
 
+\newcommand*\gitem{%
+  \item[\color{green}\scalebox{0.9}{\textbullet}]}
+\newcommand*\ritem{%
+  \item[\color{red}\scalebox{0.9}{\textbullet}]}
 
 \usepackage[boxed,linesnumbered,vlined,slide]{algorithm2eCustom}
 
