@@ -38,7 +38,7 @@ public:
 
     CacheStorage cache;
 
-	
+
 	void buildCache();
 	void runQueryList();
 
@@ -47,8 +47,9 @@ private:
 	int calcScoreCounter;
 	boost::unordered_map<int, int> calcScoreMap;
 	intPairVector queries;
-	
+
     void fillCache();
+    void fillCacheRange();
     void checkCache(intPair query);
 };
 
@@ -64,10 +65,10 @@ public:
 
     CacheStorage cache;
     vector<CacheItem> runtimeCache;
-	
+
 	void buildCache();
 	void runQueryList();
-	
+
 
 private:
 	int calcScoreCounter;

@@ -32,7 +32,7 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM;
+LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM, RALG_ENUM;
 
 
 void InsertEnum(LookupList& list,int type,string name) {
@@ -52,15 +52,19 @@ void InitEnumMappings() {
 	InsertEnum(ALGO_ENUM,	ALGO_SCACHE,	"SCACHE");
 	InsertEnum(ALGO_ENUM,	ALGO_HQFLRU,	"HQFLRU");
 	InsertEnum(ALGO_ENUM,	ALGO_ORACLE,	"ORACLE");
-	
+
 	STORAGE_ENUM.clear();
 	InsertEnum(STORAGE_ENUM,	STORE_LIST,	"LIST");
 	InsertEnum(STORAGE_ENUM,	STORE_GRAPH,	"GRAPH");
 	InsertEnum(STORAGE_ENUM,	STORE_COMPRESS,	"COMPRESS");
-	
+
 	ARCH_ENUM.clear();
 	InsertEnum(ARCH_ENUM,	ARCH_SERVER,	"SERVER");
 	InsertEnum(ARCH_ENUM,	ARCH_PROXY,	"PROXY");
+
+	RALG_ENUM.clear();
+	InsertEnum(RALG_ENUM,   RALG_FAIR,  "FAIR");
+	InsertEnum(RALG_ENUM,   RALG_NAIVE, "NAIVE");
 }
 
 
@@ -72,13 +76,13 @@ void error(string error_msg) {
 int MatchEnumCode(LookupList& list,string str) {		// lookup an enum value by a string
 	// prerequisite: all strings in "list" are in upper-case
 	// convert the string to upper-case for matching
-	boost::to_upper(str);	
+	boost::to_upper(str);
 
 	BOOST_FOREACH(LookupPair& cpair, list) {
 		if (cpair.second==str)
 			return cpair.first;
 	}
-	
+
 	cout << str;
 	error("INVALID ENUM STRING");
 	return -1;
@@ -89,7 +93,7 @@ string MatchEnumString(LookupList& list,int code) { 	// lookup a string by an en
 		if (cpair.first==code)
 			return cpair.second;
 	}
-	
+
 	cout << code;
 	error("INVALID ENUM CODE");
 	return "";
@@ -101,22 +105,22 @@ int TestSetting::getEnumCode(LookupList& list,string key) {
 
 TestSetting::TestSetting() {
 	//InitEnumMappings();	// call "InitEnumMappings"
-	
+
 	testName = "";
-	testFile = "";
+	testFilePrefix = "";
 	cacheSize = 0;
 
 	splits = -1;
 	itemsInCache = 0;
 	nonEmptyRegionPairs = -1;
-	
+
 	fillCacheTime = buildStatisticsTime = 0;
 }
 
 
 TestSetting::~TestSetting() {
 	testName = "";
-	testFile = "";
+	testFilePrefix = "";
 }
 
 
@@ -125,26 +129,32 @@ TestSetting::~TestSetting() {
 void TestSetting::printSetting() {
 	cout << "\n\n--------------------------" << endl;
 	cout << "testName: " << testName << endl;
-	cout << "testFile, Type: " << testFile << " " << inputFileType << endl;
-	cout << "queryFileName: " << queryFileName << endl;
-	
+	cout << "testFilePrefix, Type: " << testFilePrefix << " " << inputFileType << endl;
+
 	cout << "testAlgo: " << testAlgo << " " << MatchEnumString(ALGO_ENUM,testAlgo) << endl;
 	cout << "testStorage: " << testStorage << " " << MatchEnumString(STORAGE_ENUM,testStorage) << endl;
 	cout << "testScenario: " << testScenario << " " << MatchEnumString(ARCH_ENUM,testScenario) << endl;
-	
+
 	cout << "cacheSize: " <<  cacheSize << endl;
 	cout << "scacheQueryType: " <<  scacheQueryType << endl;
 	cout << "splits, itemsInCache, nonEmptyRegionPairs: " <<  splits << " " << itemsInCache << " " << nonEmptyRegionPairs << endl;
 	cout << "fillCacheTime, buildStatisticsTime: " <<  fillCacheTime << " " << buildStatisticsTime << endl;
+
+	useRange ? cout << "useRange:\t True" << endl : cout << "useRange:\t False";
+    cout << "testRangetype:\t";
+    if(testRangetype == RALG_FAIR){cout << "FAIR" << endl;}
+    else if(testRangetype == RALG_NAIVE){cout << "NAIVE" << endl;}
+    else cout << "(the range search algorithm) is not set correctly" << endl;
+    cout << "Number of POI:\t" << numpoi << endl;
 	cout << "--------------------------\n\n" << endl;
 }
-	
+
 void TestSetting::trimSpace(char* str) {
 	if (str==NULL) return;
 
 	static char spaces[]={'\t','\n','\f','\r',' '};
 	int pos=0;
-	for (int i=0;i<strlen(str);i++) {
+	for (uint i=0;i<strlen(str);i++) {
 		bool found=false;
 		for (int j=0;j<5;j++)
 			if (str[i]==spaces[j]) found=true;
@@ -204,7 +214,6 @@ void TestSetting::listConfig() {
 	}
 }
 
-
 void TestSetting::printConfigError(string key,bool required) {
 	if (required) {
 		printf("Config key \"%s\" not found\n",key.c_str());
@@ -216,7 +225,7 @@ float TestSetting::getConfigFloat(string key,bool required,float _default) {
 	float value=_default;
 	if (cr.count(key))
 		value=atof(cr[key].c_str());
-	else 
+	else
 		printConfigError(key,required);
 	return value;
 }
@@ -225,8 +234,8 @@ int TestSetting::getConfigInt(string key,bool required,int _default) {
 	int value=_default;
 	if (cr.count(key))
 		value=atoi(cr[key].c_str());
-	else 
-		printConfigError(key,required);	
+	else
+		printConfigError(key,required);
 	return value;
 }
 
@@ -234,7 +243,7 @@ long TestSetting::getConfigLong(string key,bool required,long _default) {
 	long value=_default;
 	if (cr.count(key))
 		value=atol(cr[key].c_str());
-	else 
+	else
 		printConfigError(key,required);
 	return value;
 }
@@ -243,7 +252,7 @@ string TestSetting::getConfigString(string key,bool required,string _default) {
 	string value=_default;
 	if (cr.count(key))
 		value=cr[key];
-	else 
+	else
 		printConfigError(key,required);
 	return value;
 }
@@ -259,9 +268,9 @@ bool TestSetting::getConfigBool(string key,bool required,bool _default) {
 			value=false;
 		else {
 			printf("Config key \"%s\" invalid\n",key.c_str());
-			exit(1);	
+			exit(1);
 		}
-	} else 
+	} else
 		printConfigError(key,required);
 	return value;
 }

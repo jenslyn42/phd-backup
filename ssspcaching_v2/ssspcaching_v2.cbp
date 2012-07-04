@@ -26,18 +26,22 @@
 		<Unit filename="Cache.h" />
 		<Unit filename="Competitors.cpp" />
 		<Unit filename="Competitors.h" />
-		<Unit filename="Oracle.cpp" />
-		<Unit filename="Oracle.h" />
+		<Unit filename="Probcache.cpp" />
 		<Unit filename="Probcache.h" />
+		<Unit filename="ProtoStudy.cpp" />
+		<Unit filename="ProtoStudy.h" />
+		<Unit filename="Range.cpp" />
+		<Unit filename="Range.h" />
 		<Unit filename="RoadGraph.cpp" />
 		<Unit filename="RoadGraph.h" />
-		<Unit filename="RoadGraphTest.cpp" />
-		<Unit filename="Scache.cpp" />
-		<Unit filename="Scache.h" />
 		<Unit filename="Setting.cpp" />
 		<Unit filename="Setting.h" />
-		<Unit filename="TestObj.cpp" />
-		<Unit filename="TestObj.h" />
+		<Unit filename="TestObj.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="TestObj.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<envvars />

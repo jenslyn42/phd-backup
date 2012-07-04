@@ -31,11 +31,9 @@
 #define PROBSTATICCACHE_H
 
 
-
 #include "Setting.h"
 #include "RoadGraph.h"
 #include "Cache.h"
-
 
 
 /**
@@ -51,14 +49,14 @@ public:
 
 	void buildCache();
 	void runQueryList();
-	
+
 
 private:
 	int calcScoreCounter;
 	vector<intPair> queries;
 	boost::unordered_map<intPair, int > trainingQueriesPerRegionPair;
 
-	
+
 
 	// [Feb 14] added
 	intVector nodeid2regionid;
@@ -71,7 +69,7 @@ private:
 
 	double calcScore(intVector& sp, intPairSet& vSeen);
 	void extractStatistics();
-	
+
     bool makePartitions(int splits);
 	void split(vector<Region>& regions, int axis);
 	int mapNodeid2RegionId(int nid);

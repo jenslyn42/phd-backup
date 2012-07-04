@@ -11,5 +11,5 @@ ls -1 | grep cachesize.prob | while read fn; do
 echo "*****************************************************************"
 echo "executing ./mains -configName $fn"
 echo "*****************************************************************"
-./mains -configName "$fn" > "$fn".OUTPUT
+./mains -configName "$fn" 
 done

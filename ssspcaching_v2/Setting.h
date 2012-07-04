@@ -81,16 +81,20 @@ enum STORAGE_CHOICE { STORE_LIST, STORE_GRAPH, STORE_COMPRESS };
 // architecture choice
 enum ARCH_CHOICE { ARCH_SERVER, ARCH_PROXY };
 
+// range query algorithm
+enum RALG_CHOICE { RALG_FAIR, RALG_NAIVE };
 
 // Important: 	for each "ENUM" type, there is a corresponding "LookupList" in "Setting.cpp"
 //				they follow a naming convention.
 // 				make sure that "InitEnumMappings" is updated according to ENUM above
-extern LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM;
+extern LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM, RALG_ENUM;
 
 void InitEnumMappings(); // initialize the above "LookupList"
 int MatchEnumCode(LookupList& list,string str);		// lookup an enum value by a string
 string MatchEnumString(LookupList& list,int code); 	// lookup a string by an enum value
 
+// queryfile type, used to determine whether to read the test or training file.
+enum QLOG_CHOICE { QLOG_TRAIN, QLOG_TEST };
 
 
 
@@ -107,18 +111,21 @@ typedef std::pair<intPair,intPair> intPairPairs;
 typedef boost::unordered_set<intPair> intPairSet;
 typedef boost::unordered_map<int, intPair > intPairMap;
 typedef boost::unordered_map<intPair, int> intPairIntMap;
+typedef boost::unordered_map<intPair, Point> intPairPointMap;
 
 typedef boost::unordered_map<int, int> intMap;
 typedef boost::unordered_map<int, double> intDoubleMap;
 typedef boost::unordered_map<int, Point> intPointMap;
 typedef boost::unordered_map<int, intVector > intVectorMap;
 
+typedef boost::unordered_map<int, intMap > intintMapMap;
 typedef boost::unordered_map<int, std::pair<int, intVector > > intIntVectorMap;
 typedef boost::unordered_map<int, std::pair<intPair, intVector > > intIntPairVectorMap;
 
 
 typedef	boost::unordered_map<int, boost::dynamic_bitset<> > intDBitset;
 typedef	boost::unordered_map<Point, int> PointIntMap;
+typedef	boost::unordered_map<PointPairs, int> PointPairsIntMap;
 
 typedef boost::unordered_map<string,string> ConfigType;
 
@@ -143,31 +150,46 @@ struct Region {
 };
 
 
-class TestSetting {	
+template <class T>
+inline std::string to_string(const T& t)
+{
+    std::stringstream ss;
+    ss << t;
+    return ss.str();
+}
+
+
+class TestSetting {
     double fillCacheTime, buildStatisticsTime;
-	
+
 	void printConfigError(string key,bool required);
 	void trimSpace(char* str);
 	ConfigType cr;
-	
+
 public:
+
 	// these attributes can be accessed directly
 	std::string testName;
-	std::string testFile;
-	std::string queryFileName;
+	std::string testFilePrefix;
 
 	int inputFileType;		// used for RoadGraph
 	int scacheQueryType;	// used for SCACHE only
 	int splits, itemsInCache, nonEmptyRegionPairs;
-	
+    int numpoi; // used for rangesearch
+
+    bool useRange; //used for range queries
+	bool useDijkstra;
+
+
 	ALGO_CHOICE testAlgo;
 	STORAGE_CHOICE testStorage;
 	ARCH_CHOICE testScenario;
+	RALG_CHOICE testRangetype;
 	unsigned long cacheSize;
 
 	TestSetting();
-	~TestSetting();	
-	
+	~TestSetting();
+
 	void addConfigFromFile(const char* filename);
 	void addConfigFromCmdLine(int argc,char** argv);
 	void listConfig();
@@ -177,10 +199,10 @@ public:
 	long getConfigLong(string key,bool required=true,long _default=0);
 	string getConfigString(string key,bool required=true,string _default="");
 	bool getConfigBool(string key,bool required=true,bool _default=false);
-	
-	
+
+
 	int getEnumCode(LookupList& list,string key);
-	
+
     int getNonEmptyRegionPairs(){return nonEmptyRegionPairs;}
     void setNonEmptyRegionPairs(int rp){nonEmptyRegionPairs = rp;}
 
@@ -195,13 +217,8 @@ public:
 
 	std::string getTestName() const {return testName;}
 
- 	std::string getTestFile() const{return testFile;}
-
-	//int getStaticQueryType() const{return staticQueryType;}
-	
-	
 	int getSplits() const {return splits;}
-	
+
 	void printSetting();
 };
 
