@@ -42,19 +42,25 @@ class RoadGraph
 {
 public:
 	static RoadGraph* mapObject(TestSetting& ts);
+
+	static intVector computeSP(TestSetting& ts,int s, int t);
+
+
 	void setMapFile(string file);
-	//std::vector<Vertex> getMap(){return map;}
-	std::vector<int> dijkstraSSSP(int s, int t);
+	EdgeList* getMap(){return map;}
+
 	int getMapsize();
 	int ssspCalls;
-	unsigned long numNodeVisits;
-	string checkMapFilename(){return filename;}
+	unsigned long numNodeVisits, lastNodeVisits;	// [March 06]
+
+	//string checkMapFilename(){return filename;}
 	void resetRoadGraph(){
 		//mapInstance = NULL;
 		ssspCalls=0;
 		numNodeVisits=0;
+		lastNodeVisits=0;
 	}
-	void transformTrainOrTestFile(string cnodeFn, string trainTestFn);
+	//void transformTrainOrTestFile(string cnodeFn, string trainTestFn);
 
 private:
 	RoadGraph(){ };
@@ -63,13 +69,18 @@ private:
 	RoadGraph& operator=(RoadGraph const&); //private assignment operator
 	static RoadGraph* mapInstance;
 
+
+	Point* nodecoord;
 	EdgeList* map;
 
 	int mapSize;
 	int edges;
 	int parseFileType;
-	std::string filename;
-	
+	std::string filePrefix;
+
+	intVector dijkstraSP(int s, int t);
+	intVector astarSP(int s, int t);
+
 	void addEdge(int v1, int v2, double w);
 	void readRoadNetworkFile(string fn);
 	void readPPINetworkFile(string fn);
@@ -85,6 +96,8 @@ private:
 struct HeapEntry {
 	int id;
 	double dist;
+	double gdist,hdist;	// only used for A* search
+
 	int length;
 	int prev_id;
 	intPair pID;
@@ -130,8 +143,8 @@ struct HeapWorkloadEntryCompMaxLengthDevide {
 	{ return left.answeredPaths.second.size() / left.pathLength < right.answeredPaths.second.size() / right.pathLength ; }
 };
 
-template<typename _Tp, typename _Sequence, typename _Compare >
 
+template<typename _Tp, typename _Sequence, typename _Compare >
 class FAST_HEAP
 {
 
@@ -169,10 +182,20 @@ class FAST_HEAP
 		c.pop_back();
 	}
 };
-//typedef    priority_queue<HeapEntry,vector<HeapEntry>,HeapEntryComp> Heap;
-typedef    FAST_HEAP<HeapEntry, std::vector<HeapEntry>, HeapEntryComp> Heap;
+
+
+// not much difference in heap implementation
+
+// *** slow heap implementation
+typedef    priority_queue<HeapEntry, std::vector<HeapEntry>, HeapEntryComp> Heap;
+typedef    priority_queue<HeapEntry, std::vector<HeapEntry>, HeapEntryCompMax> maxHeap;
+typedef    priority_queue<HeapWorkloadEntry, std::vector<HeapWorkloadEntry>, HeapWorkloadEntryCompMax> maxWorkloadHeap;
+
+
+// *** fast heap implementation
+/*typedef    FAST_HEAP<HeapEntry, std::vector<HeapEntry>, HeapEntryComp> Heap;
 typedef    FAST_HEAP<HeapEntry, std::vector<HeapEntry>, HeapEntryCompMax> maxHeap;
 typedef    FAST_HEAP<HeapWorkloadEntry, std::vector<HeapWorkloadEntry>, HeapWorkloadEntryCompMax> maxWorkloadHeap;
-
+*/
 
 #endif

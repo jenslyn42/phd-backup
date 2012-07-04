@@ -10,7 +10,7 @@ CCOPTS   = -c -O
 LINK     = g++
 LINKOPTS = -lm
 
-PACK = Setting.o RoadGraph.o Cache.o Probcache.o Competitors.o ProtoStudy.o 
+PACK = Setting.o RoadGraph.o Cache.o Probcache.o Competitors.o ProtoStudy.o Range.o
 
 
 .cc.o:
@@ -31,7 +31,7 @@ Competitors.o: Competitors.cpp Competitors.h Cache.h RoadGraph.h Setting.h
 
 ProtoStudy.o: ProtoStudy.cpp ProtoStudy.h Cache.h RoadGraph.h Setting.h
 
-
+Range.o: Range.cpp Range.h Setting.h RoadGraph.h
 
 main: main.cpp $(PACK) 
 	$(LINK) -o mains main.cpp $(PACK) $(LINKOPTS)
@@ -41,4 +41,4 @@ main: main.cpp $(PACK)
 # $(LINK) -O2 -o mains main.cpp $(PACK) $(LINKOPTS)
 	
 clean:
-	rm *.o mains.*
+	rm *.o

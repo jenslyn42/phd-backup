@@ -1,4 +1,52 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Release" />
+	<File name="Cache.cpp" open="1" top="1" tabpos="5">
+		<Cursor position="4155" topLine="64" />
+	</File>
+	<File name="Cache.h" open="1" top="0" tabpos="6">
+		<Cursor position="2897" topLine="32" />
+	</File>
+	<File name="Competitors.cpp" open="1" top="0" tabpos="4">
+		<Cursor position="7179" topLine="270" />
+	</File>
+	<File name="Competitors.h" open="1" top="0" tabpos="7">
+		<Cursor position="107" topLine="29" />
+	</File>
+	<File name="Probcache.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="3774" topLine="85" />
+	</File>
+	<File name="Probcache.h" open="1" top="0" tabpos="8">
+		<Cursor position="0" topLine="30" />
+	</File>
+	<File name="ProtoStudy.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="13732" topLine="417" />
+	</File>
+	<File name="ProtoStudy.h" open="0" top="0" tabpos="0">
+		<Cursor position="1330" topLine="25" />
+	</File>
+	<File name="Range.cpp" open="1" top="0" tabpos="10">
+		<Cursor position="3849" topLine="98" />
+	</File>
+	<File name="Range.h" open="1" top="0" tabpos="9">
+		<Cursor position="386" topLine="0" />
+	</File>
+	<File name="RoadGraph.cpp" open="1" top="0" tabpos="11">
+		<Cursor position="5972" topLine="173" />
+	</File>
+	<File name="RoadGraph.h" open="1" top="0" tabpos="12">
+		<Cursor position="2055" topLine="28" />
+	</File>
+	<File name="Setting.cpp" open="1" top="0" tabpos="3">
+		<Cursor position="3102" topLine="27" />
+	</File>
+	<File name="Setting.h" open="1" top="0" tabpos="2">
+		<Cursor position="3734" topLine="89" />
+	</File>
+	<File name="TestObj.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="6397" topLine="113" />
+	</File>
+	<File name="main.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="11256" topLine="317" />
+	</File>
 </CodeBlocks_layout_file>

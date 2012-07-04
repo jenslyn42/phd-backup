@@ -30,9 +30,9 @@
 #ifndef CACHEITEM_H
 #define CACHEITEM_H
 
-
 #include "Setting.h"
 #include "RoadGraph.h"
+#include "Range.h"
 
 class CacheItem {
 	int accessKey;
@@ -50,14 +50,12 @@ public:
 	int key() const {return accessKey;}
 	void setScore(double score){this->score = score;}
 	double getScore(){return score;}
-	
+
  	inline bool operator< (CacheItem const& cItem)const {return (accessKey < cItem.key());}
 };
 
 typedef boost::unordered_map<int, CacheItem> intCacheitemMap;
 typedef boost::unordered_map<intPair, CacheItem> intPairCacheitemMap;
-
-enum QLOG_CHOICE { QLOG_TRAIN, QLOG_TEST };
 
 
 class AbstractCache {
@@ -68,7 +66,7 @@ protected:
 	PointIntMap Point2Nodeid;
 	intPointMap nodeid2Point;
 	intPairVector trainingSTPointPairs,testSTPointPairs;
-	
+
 	int numTotalQueries;
 	int numCacheHits;
 	int numDijkstraCalls;
@@ -83,6 +81,7 @@ public:
 	~AbstractCache(){ };
 
 	TestSetting ts;
+    Range rangeObj;
 
 	// virtual functions to be defined in subclasses
 	virtual void buildCache() {};
@@ -97,7 +96,11 @@ public:
     void plotCachePoints(vector<CacheItem>& cm);
 	bool plotShortestPaths(QLOG_CHOICE qlog);
 	void readQueryLogData(QLOG_CHOICE qlog);
-	
+//	void readRangeQueryLogData(QLOG_CHOICE qlog);
+
+    void generateRangeQueries(int range);
+    void generatePOI(); //filename of training file
+
 	double getElapsedTime(double& refTime) {
 		double oldTime=refTime;
 		refTime=clock();
@@ -163,13 +166,13 @@ public:
 	int numberOfItemsInCache(){return cache.size();}
 	//void writeOutBitmaps();
 	void printNodesTokensPaths();
-	
+
 	vector<CacheItem> cache;
-	
+
 private:
 	intVector* invertedLists;	// to support fast query processing
 	int mapSize;
-	
+
 	STORAGE_CHOICE testStorage;
 
 	double totalEntriesInCompressedBitsets; //only used with COMPRESSED_G_CACHE
@@ -177,7 +180,7 @@ private:
 	unsigned long cacheUsed;
 	uint numberOfNodes;
 	boost::unordered_map<int, boost::dynamic_bitset<> > nodeIdsInCache;
-	
+
 	CompressedPidTokens pidSets;
 
 	void updateCacheUsed(CacheItem ci);

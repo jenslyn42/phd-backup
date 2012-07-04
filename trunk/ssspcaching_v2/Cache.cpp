@@ -43,15 +43,15 @@ CacheItem::CacheItem(int key, intVector& item)
 	this->accessKey = key;
 	this->item = item;		// copy
 	this->size = item.size();
-	
+
 	this->s = -1;
 	this->t = -1;
-	
+
 	if (item.size()>0) {
 		this->s = item.front();
 		this->t = item.back();
 	}
-	
+
 	this->score = -1;
 };
 
@@ -74,12 +74,14 @@ void AbstractCache::readMapData() {
 	cout << "one, Base::readMapData start!" << endl;
 	mapSize = RoadGraph::mapObject(ts)->getMapsize();
 	cout << "mapsize: " << mapSize << endl;
-	string mapFile = ts.getTestFile();
+
+
 	std::pair<double, double> tmpPair;
 	string str;
 	std::vector<string> tokens;
 
-	mapFile.replace ((mapFile.size()-4), 4, "node"); //change file extention from .cedge to .cnode
+	string mapFile = ts.testFilePrefix;
+	mapFile.append(".cnode"); // extension .cnode
 	cout << "mapfile: " << mapFile << endl;
 	ifstream in_data (mapFile.c_str(), ios::in); //*.cnode file
 
@@ -103,19 +105,18 @@ void AbstractCache::readMapData() {
 
 void AbstractCache::plotCachePoints(vector<CacheItem>& cm) {
 	// obtain parameter from "ts"
-	string testbasename=ts.getTestName();
 	int numSplits=ts.getSplits();
 
 	cout << "Base::plotCachePoints start!";
 	vector<int> sp;
-	
+
 	ofstream of;
-	string fn = testbasename;
+	string fn = ts.testFilePrefix;
 	string app = "D" + boost::lexical_cast<std::string>(numSplits);
 	string app2 = "C" + boost::lexical_cast<std::string>(cacheSize);
 	app.append(app2);
  	app.append(".cache");
-	fn.replace ((fn.size()-5), 5, app); //change file extention from .test to fnD#splits.cache
+	fn.append(app); // extension: fnD#splits.cache
 	of.open(fn.c_str(), ios::out | ios::ate | ios::app);
 
 	int i=0;
@@ -134,18 +135,16 @@ void AbstractCache::plotCachePoints(vector<CacheItem>& cm) {
 	}
 
 	of.close();
-	
+
 	cout << " ... Done!" << endl;
 }
 
 
-
 bool AbstractCache::plotShortestPaths(QLOG_CHOICE qlog) {
 	// obtain parameter from "ts"
-	string testbasename=ts.getTestName();
 	string app="";
 	intPairVector* ptrPointPairs=NULL;
-	
+
 	if (qlog==QLOG_TRAIN) {
 		app = "TEST.cache";
 		ptrPointPairs=&trainingSTPointPairs;
@@ -157,21 +156,21 @@ bool AbstractCache::plotShortestPaths(QLOG_CHOICE qlog) {
 		exit(0);
 		return false;
 	}
-	
+
 	cout << "Base::plotShortestPaths start!";
 	intPairVector& stPointPairs=(*ptrPointPairs);
-	string fn = testbasename;
-	fn.replace ((fn.size()-5), 5, app); //change file extention from .test TEST.cache
+	string fn = ts.testFilePrefix;
+	fn.append(app); //change file extention from .test TEST.cache
 	ifstream ifile(fn.c_str());
 	if (ifile) { //file already exist
-		ifile.close(); 
+		ifile.close();
 		return false;
-	} 
+	}
 
 	ofstream of(fn.c_str(), ios::out | ios::ate | ios::app);
 
 	BOOST_FOREACH(intPair ip, stPointPairs) {
-		intVector sp = RoadGraph::mapObject(ts)->dijkstraSSSP(ip.first, ip.second);
+		intVector sp = RoadGraph::computeSP(ts,ip.first, ip.second);
 
 		BOOST_FOREACH(int v, sp) {
 			if(nodeid2Point.find(v) != nodeid2Point.end()) {
@@ -187,42 +186,42 @@ bool AbstractCache::plotShortestPaths(QLOG_CHOICE qlog) {
 	return true;
 }
 
-
 //file on the form:
 //record_id, S_id, T_id, S_x, S_y, T_x, T_y.
 void AbstractCache::readQueryLogData(QLOG_CHOICE qlog) {
 	// extract parameter from "ts"
-	string fn=ts.queryFileName;
 	string app="";
 	intPairVector* ptrPointPairs=NULL;
-	
+
 	if (qlog==QLOG_TRAIN) {
-		app = ".train";
+		app = ".qtrain";
 		ptrPointPairs=&trainingSTPointPairs;
 	} else if (qlog==QLOG_TEST) {
-		app = ".test";
+		app = ".qtest";
 		ptrPointPairs=&testSTPointPairs;
 	} else {
 		printf("*** invalid qlog parameter\n");
 		exit(0);
 		return;
-	}	
+	}
 	intPairVector& stPointPairs=(*ptrPointPairs);
 
 	std::pair<double, double> firstPair, secondPair;
 	int firstPnt, secondPnt, temp;
 	string str;
 	std::vector<string> tokens;
-	fn.replace ((fn.size()-5), 5, app); //change file extention from .test to .train
+
+	string fn=ts.testFilePrefix;
+	fn.append(app); //change file extention from .test to .train
 	ifstream qlogFile (fn.c_str(), ios::in); //*.train file
-    
+
 	cout << "Base::readQueryLogData start: " << fn << endl;
-	
+
 	//find all pairs of nodeids in the training set to have SP done for them. map nodeids to Points.
 	if (qlogFile.is_open()) {
-		if (debug) 
+		if (debug)
 			cout << "two, Base::readQueryLogData opened! " << endl;
-		
+
 		while(getline(qlogFile, str)) {
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 
@@ -243,6 +242,150 @@ void AbstractCache::readQueryLogData(QLOG_CHOICE qlog) {
 	cout << "Base::readQueryLogData end! size:" << stPointPairs.size() << endl;
 }
 
+///output file name testFn.[.rqtrain/.rqtest]
+///output file format: record_id, point_id, range, point_x, point_y.
+void AbstractCache::generateRangeQueries(int range){
+    //to make Point2Nodeid work
+	readMapData();
+
+	string app="";
+	intPairPointMap queryTrainPairs, queryTestPairs;
+
+	std::pair<double, double> firstPair;
+	int qPnt;
+	string str;
+	std::vector<string> tokens;
+
+    app = ".qtrain";
+	string fn=ts.testFilePrefix;
+	fn.append(app); //change file extention from .test to .train
+	ifstream rqtrainlogFile (fn.c_str(), ios::in); //*.train file
+
+	cout << "AbstractCache::generateRangeQueries start: " << fn << endl;
+
+	//find all pairs of nodeids in the training set to have SP done for them. map nodeids to Points.
+	if (rqtrainlogFile.is_open()) {
+		if (debug)
+			cout << "two, AbstractCache::generateRangeQueries opened! " << endl;
+
+		while(getline(rqtrainlogFile, str)) {
+			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+
+			firstPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
+			qPnt = Point2Nodeid[firstPair];
+			cout << "log0: " << queryTestPairs.size() << endl;
+			queryTrainPairs[std::make_pair(qPnt,range)] = firstPair;
+			cout << "log1: " << queryTestPairs.size() << endl;
+		}
+	}
+	rqtrainlogFile.close();
+	cout << "AbstractCache::generateRangeQueries end! trainsize:" << queryTrainPairs.size() << endl;
+
+    app = ".qtest";
+    fn=ts.testFilePrefix;
+	fn.append(app); //change file extention from .test to .train
+	ifstream rqtestlogFile (fn.c_str(), ios::in); //*.train file
+
+    if (rqtestlogFile.is_open()) {
+		if (debug)
+			cout << "two, AbstractCache::generateRangeQueries opened! " << endl;
+
+		while(getline(rqtestlogFile, str)) {
+			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+
+			firstPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
+			qPnt = Point2Nodeid[firstPair];
+
+			queryTestPairs[std::make_pair(qPnt,range)] = firstPair;
+		}
+	}
+	rqtestlogFile.close();
+	cout << "AbstractCache::generateRangeQueries end! test size:" << queryTestPairs.size() << endl;
+
+
+    int i = 0;
+    string tmp;
+    app = ".rqtrain";
+    fn=ts.testFilePrefix;
+    fn.append(to_string(range));
+	fn.append(app); //change file extention from .test to .train
+    ///file output
+	ofstream rqueryfile;
+	rqueryfile.open((fn).c_str(), ios::out | ios::ate);
+
+    //file format: record_id, point_id, range, point_x, point_y.
+    BOOST_FOREACH(intPairPointMap::value_type q, queryTrainPairs){
+        rqueryfile << i << " " << q.first.first << " " << q.first.second << " " << q.second.first << " " << q.second.second << endl;
+        i++;
+    }
+    rqueryfile.close();
+
+    i = 0;
+    app = ".rqtest";
+    fn=ts.testFilePrefix;
+    fn.append(to_string(range));
+	fn.append(app); //change file extention from .test to .train
+    ///file output
+	rqueryfile.open((fn).c_str(), ios::out | ios::ate);
+
+    BOOST_FOREACH(intPairPointMap::value_type q, queryTestPairs){
+        rqueryfile << i << " " << q.first.first << " " << q.first.second << " " << q.second.first << " " << q.second.second << endl;
+        i++;
+    }
+    rqueryfile.close();
+}
+
+///To use method it is neccecarry to specify both a XX.qtrain file and a mapfile
+///Output will be name fn.poi
+///format: record_id, point_id, point_x, point_y.
+void AbstractCache::generatePOI(){
+    //to make Point2Nodeid work
+	readMapData();
+
+    //point_id, (x, y)
+	intPointMap poi;
+	std::pair<double, double> coord;
+	int qPnt;
+	string str;
+	std::vector<string> tokens;
+
+	string fn=ts.testFilePrefix;
+	fn.append(".qtrain"); //change file extention from .test to .train
+	ifstream logFile (fn.c_str(), ios::in); //*.train file
+
+	cout << "generateRangeQueries::generatePOI start: " << fn << endl;
+
+	//find all pairs of nodeids in the training set to have SP done for them. map nodeids to Points.
+	if (logFile.is_open()) {
+		if (debug)
+			cout << "two, generateRangeQueries::generatePOI opened! " << endl;
+
+		while(getline(logFile, str)) {
+			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+
+			coord = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
+			qPnt = Point2Nodeid[coord];
+
+			poi[qPnt] = coord;
+		}
+	}
+	logFile.close();
+	cout << "generateRangeQueries::generatePOI end! trainsize:" << poi.size() << endl;
+
+
+    int i = 0;
+    fn=ts.testFilePrefix;
+	fn.append(".poi"); //change file extention from .test to .train
+    ///file output
+	ofstream rqueryfile;
+	rqueryfile.open((fn).c_str(), ios::out | ios::ate);
+
+    BOOST_FOREACH(intPointMap::value_type q, poi){
+        rqueryfile << i << " " << q.first << " " <<  q.second.first << " " <<  q.second.second << endl;
+        i++;
+    }
+    rqueryfile.close();
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -251,20 +394,18 @@ CacheStorage::CacheStorage() {
 
 }
 
-
 CacheStorage::CacheStorage(TestSetting ts) {
 	init(ts);
 }
 
-void CacheStorage::init(TestSetting ts)
-{
+void CacheStorage::init(TestSetting ts){
 	// assume that checking has been done for "testStorage" elsewhere
 	testStorage = ts.testStorage;
 	cacheSize = ts.cacheSize;
 	cacheUsed = 0;
 	numberOfNodes = 0;
 	totalEntriesInCompressedBitsets = 0;
-	
+
 	mapSize = RoadGraph::mapObject(ts)->getMapsize();
 	if (testStorage!=STORE_LIST)
 		invertedLists=new intVector[mapSize];
@@ -275,13 +416,13 @@ void CacheStorage::init(TestSetting ts)
 bool CacheStorage::insertItem(CacheItem ci) {
 	if (!hasEnoughSpace(ci)) return false;
 
-	
+
 	int path_id = numberOfItemsInCache();
-	
+
 	cache.push_back(ci);
 	updateCacheUsed(ci);
-	
-	
+
+
 	// update inverted list
 	// note that ci.id is not sorted (need to sort them later?)
 	if (testStorage!=STORE_LIST) {
@@ -290,10 +431,10 @@ bool CacheStorage::insertItem(CacheItem ci) {
 			assert(v>=0&&v<mapSize);
 			invertedLists[v].push_back(path_id);
 		}
-		
+
 		//printf("new old: %d %d, query (%d %d)\n",path_id,ci.id,ci.s,ci.t);
 	}
-	
+
 	return true;
 }
 
@@ -303,33 +444,32 @@ bool CacheStorage::insertItemWithScore(CacheItem ci, double score) {
 }
 
 bool CacheStorage::checkCache(intPair query) {
-	vector<int> cItem;
-
 	int s = query.first;
 	int t = query.second;
 	assert(s>=0&&s<mapSize);
 	assert(t>=0&&t<mapSize);
-	
-	
+
 	if (testStorage==STORE_LIST) {
-		BOOST_FOREACH(CacheItem& ci, cache ) {
-			cItem = ci.item;
-			if(find(cItem.begin(),cItem.end(), s) != cItem.end() && find(cItem.begin(),cItem.end(), t) != cItem.end())
-				return true;
-		}	
+		// March 12
+		for (uint z=0;z<cache.size();z++) {
+			intVector& cItem = cache[z].item;
+			if (find(cItem.begin(),cItem.end(),s) != cItem.end())
+				if (find(cItem.begin(),cItem.end(), t) != cItem.end())
+					return true;
+		}
 	} else {
 		intVector& vecA=invertedLists[s];
 		intVector& vecB=invertedLists[t];
 		if (vecA.size()==0 || vecB.size()==0)
 			return false;
-		
+
 		// *** merge algorithm (for sorted arrays)
 		//printf("\tQ(%d %d): %d %d\n",s,t,vecA.size(),vecB.size());
-		int posA=0,posB=0;
+		uint posA=0,posB=0;
 		while (posA<vecA.size() && posB<vecB.size()) {
 			if (vecA[posA]<vecB[posB])
 				posA++;
-			else if (vecA[posA]>vecB[posB]) 
+			else if (vecA[posA]>vecB[posB])
 				posB++;
 			else {// equal path_id
 				// printf("\tQ(%d %d): %d %d\n",s,t,vecA[posA],vecB[posB]);	// BUG?
@@ -337,33 +477,32 @@ bool CacheStorage::checkCache(intPair query) {
 			}
 		}
 	}
-	
+
 	return false;
 }
 
 //assumes cache item ci has NOT been added to vector<CacheItem> cache
-bool CacheStorage::hasEnoughSpace(CacheItem ci)
-{
+bool CacheStorage::hasEnoughSpace(CacheItem ci){
     return hasEnoughSpace(ci.item);
 }
 
 bool CacheStorage::hasEnoughSpace(intVector& sp) {
     if(testStorage == STORE_GRAPH) {
-		
+
 		int newNodes = 0; //nodes in ci which is not already in graph
 		BOOST_FOREACH(int v, sp) {
 			if (nodeIdsInCache.find(v) == nodeIdsInCache.end())
 				newNodes++;
 		}
 
-		if ( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize ) 
+		if ( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize )
 			return true;
-			
+
 	} else if(testStorage == STORE_LIST) {
-	
-		if ( cacheUsed + sp.size()*NODE_BITS < cacheSize ) 
+
+		if ( cacheUsed + sp.size()*NODE_BITS < cacheSize )
 			return true;
-			
+
 	} else if(testStorage == STORE_COMPRESS) {
 		// KEN: this part is commented because the size is already updated in "updateCacheUsed"
 		if ( cacheUsed < cacheSize )
@@ -377,11 +516,11 @@ bool CacheStorage::hasEnoughSpace(intVector& sp) {
 void CacheStorage::updateCacheUsed(CacheItem ci) {
 
 	if (testStorage == STORE_GRAPH) {
-	
+
 		// add a bitset for each new node
-		
+
 		intVector& sp = ci.item;
-		
+
 		BOOST_FOREACH(int v, sp) {
 			if (nodeIdsInCache.find(v) == nodeIdsInCache.end()) {
 				 //set all bits to zero in the bitmap for the first cache.size()-1 bits
@@ -399,14 +538,14 @@ void CacheStorage::updateCacheUsed(CacheItem ci) {
 
 		cacheUsed =  nodeIdsInCache.size() * (NODE_BITS + BIT*cache.size()) ;
 		numberOfNodes = nodeIdsInCache.size();
-		
+
 	} else if (testStorage == STORE_LIST) {
-	
+
 		cacheUsed = cacheUsed + ci.size*NODE_BITS;
 		numberOfNodes = numberOfNodes + ci.size;
-		
+
 	} else if (testStorage == STORE_COMPRESS) {
-	
+
 	    pidSets.insertPath(ci.item);
 
         int num_paths = cache.size();
@@ -415,10 +554,10 @@ void CacheStorage::updateCacheUsed(CacheItem ci) {
         int pid_bits = ceil( log( num_paths ) / log(2) );
         int token_bits = ceil( log(  num_tokens ) / log(2) );
 
-        cacheUsed =  	pidSets.getNumNodes() * ( NODE_BITS + token_bits ) + 
+        cacheUsed =  	pidSets.getNumNodes() * ( NODE_BITS + token_bits ) +
 						pidSets.GetTotalNumItems()  * ( pid_bits + 1 )  +  num_tokens * token_bits * 2 ;
 		numberOfNodes = pidSets.getNumNodes();
-		
+
 	}
 
 }
@@ -436,8 +575,7 @@ void CacheStorage::updateCacheUsed(CacheItem ci) {
 	cout << nodeIdsInCache.size()*nodeIdsInCache.at(nodeid).size() << endl;
 }*/
 
-void CacheStorage::printNodesTokensPaths()
-{
+void CacheStorage::printNodesTokensPaths(){
     pidSets.printNodesTokensPaths();
 }
 

@@ -36,35 +36,50 @@
 #define spDebug false
 
 
+
+
+//  March 09	(10% difference)
+//const bool isArrayInitOnce=true;
+const bool isArrayInitOnce=false;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+double lowerboundDist(Point* nodecoord,int nidA,int nidB) {
+	double xdiff = nodecoord[nidA].first - nodecoord[nidB].first ;
+	double ydiff = nodecoord[nidA].second - nodecoord[nidB].second ;
+	return sqrt( xdiff*xdiff + ydiff*ydiff );
+}
+
 
 RoadGraph* RoadGraph::mapInstance = NULL;
 
 RoadGraph* RoadGraph::mapObject(TestSetting& ts)
 {
 	// obtain parameter values
-	std::string testFile=ts.getTestFile();
 	int pt=ts.inputFileType;
-	
+
 	if (mapInstance==NULL){
+		std::string testFilePrefix=ts.testFilePrefix;
+
 		mapInstance = new RoadGraph();
 		mapInstance->parseFileType = pt;
 		mapInstance->ssspCalls = 0;
 		mapInstance->numNodeVisits = 0;
 printf("*** RoadGraph::read\n");
 
-		switch( (mapInstance->parseFileType) ){
+		cout << "[mapObject] testFilePrefix, parseFileType: " << testFilePrefix << " " << mapInstance->parseFileType << endl;
+
+		switch( (mapInstance->parseFileType) ) {
 			case 1:
-				cout << "mapObject[case1], parseFileType: " << mapInstance->parseFileType << " " << testFile << endl;
-				mapInstance->readRoadNetworkFile(testFile);
+				mapInstance->readRoadNetworkFile(testFilePrefix);
 				break;
 			case 2:
-				cout << "mapObject[case2], parseFileType: " << mapInstance->parseFileType << " " << testFile << endl;
-				mapInstance->readPPINetworkFile(testFile);
+				mapInstance->readPPINetworkFile(testFilePrefix);
 				break;
 			case 3:
-				cout << "mapObject[case3], parseFileType: " << mapInstance->parseFileType << " " << testFile;
-				mapInstance->readCedgeNetworkFile(testFile);
+				mapInstance->readCedgeNetworkFile(testFilePrefix);
 				cout << " ... done" << endl;
 				break;
 		}
@@ -77,58 +92,196 @@ printf("*** RoadGraph::read\n");
 	return mapInstance;
 }
 
+intVector RoadGraph::computeSP(TestSetting& ts,int s, int t) {
+	intVector trace;
+	RoadGraph* ins=mapObject(ts);
 
-// Ken: updated the correctness issue [Feb 13]
-vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {
-	std::vector<int> trace;
-	
-	ssspCalls++;
-	if (spDebug) 
-		cout << "one, dijkstraSSSP! map:" << mapSize <<" s,t:" << source <<"," <<dest << endl;
+	if (ins==NULL)
+		return trace;
 
-	if ( source<0 || dest<0 || source>=mapSize || dest>=mapSize ) {
+
+	ins->ssspCalls++;
+	ins->lastNodeVisits=0;
+
+	if ( s<0 || t<0 || s >= ins->mapSize || t >= ins->mapSize ) {
 		cout << "Invalid src/dest nodes, map\n";
 		return trace;
-	}
-	
-	if (source==dest) {
-		trace.push_back(source);
+	} else if (s==t) {
+		trace.push_back(s);
 		return trace;
 	}
-	
-	if(spDebug) cout << "four, dijkstraSSSP! " << endl;
-	
-	
-	static bool isInit=false;
+
+
+	if (ts.useDijkstra)
+		trace = ins->dijkstraSP(s,t);
+	else
+		trace = ins->astarSP(s,t);
+
+
+	return trace;
+}
+
+intVector RoadGraph::astarSP(int source, int dest) {	// March 7
+	intVector trace;
+
+	if(spDebug) cout << "one, dijkstraSSSP! " << endl;
+
+
+	const double MAXREAL=1.0e10;	// hard-coded constant, OK for most maps
+	double bestSPdist=MAXREAL;
+
+	// gdist,hdist
+
+	static int _mapsize=0;
+	static int* backtrace=NULL;
+	static double* ndists=NULL;
+
+	// March 09
+	if (isArrayInitOnce==false) {
+		if (ndists!=NULL)
+			delete[] ndists;
+		if (backtrace!=NULL)
+			delete[] backtrace;
+		ndists=NULL;
+		backtrace=NULL;
+	}
+
+	if (ndists==NULL) {
+		_mapsize=getMapsize();
+		backtrace=new int[_mapsize];
+		ndists=new double[_mapsize];
+		//printf("*** RoadGraph::init array\n");
+	} else
+		assert(_mapsize==getMapsize());
+
+	// init
+	fill( backtrace, backtrace+_mapsize, -1);
+	fill( ndists, ndists+_mapsize, MAXREAL);
+
+	//insert source node
+	Heap hp;
+	{
+		HeapEntry root_he;
+		root_he.id=source;
+
+		root_he.gdist=0;	// dist. so far
+		root_he.hdist=lowerboundDist(nodecoord,source,dest);
+		root_he.dist=root_he.gdist+root_he.hdist;    // LB dist to destination
+
+		root_he.prev_id=-1;
+		hp.push(root_he);
+	}
+
+	if(spDebug) cout << "six, dijkstraSSSP! " << endl;
+
+	while (hp.size()>0) {
+		HeapEntry he=hp.top();
+		hp.pop();
+
+		int curnode=he.id;
+		if (he.gdist>=ndists[curnode])  // current dist pruning, global dist pruning
+			continue;
+		if (he.dist>=bestSPdist)
+			break;
+
+
+		ndists[curnode]=he.gdist;
+		backtrace[curnode]=he.prev_id;	// prev node
+		numNodeVisits++;	// usage info
+		lastNodeVisits++;
+
+		if (curnode==dest) {
+			bestSPdist=he.gdist;
+			continue;
+		}
+
+
+		EdgeList& CurAdjList=map[curnode];
+		BOOST_FOREACH (Edge neighbour, CurAdjList)
+		{
+			int NextNodeID = neighbour.first; //id
+			double NextWeight = neighbour.second;
+
+			HeapEntry new_he=he;    // copy ...
+			new_he.id=NextNodeID;
+
+			new_he.gdist=he.gdist+NextWeight; //weight
+			new_he.hdist=lowerboundDist(nodecoord,NextNodeID,dest);
+			new_he.dist=new_he.gdist+new_he.hdist;
+			new_he.prev_id=curnode;
+
+			if (new_he.gdist<ndists[NextNodeID])
+				hp.push(new_he);    // propagation
+		}
+	}
+
+
+	//printf("*** %f %d\n",bestSPdist,lastNodeVisits);
+	//exit(0);
+
+	if (bestSPdist<MAXREAL) {
+		int prevNode = dest;
+		trace.push_back(prevNode);
+		while (prevNode!=source) {
+			assert(prevNode!=-1);
+			prevNode = backtrace[prevNode];
+			trace.push_back(prevNode);
+		}
+		return trace;
+	}
+
+
+
+	return trace;
+}
+
+// Ken: updated the correctness issue [Feb 13]
+intVector RoadGraph::dijkstraSP(int source, int dest) {
+	intVector trace;
+
+
+	if(spDebug) cout << "one, dijkstraSSSP! " << endl;
+
+
 	static int _mapsize=0;
 	static int* backtrace=NULL;
 	static bool* isVisited=NULL;
-	
-	if (isInit==false) {
-		isInit=true;	// be careful with this line!
+
+
+	// March 09
+	if (isArrayInitOnce==false) {
+		if (isVisited!=NULL)
+			delete[] isVisited;
+		if (backtrace!=NULL)
+			delete[] backtrace;
+		isVisited=NULL;
+		backtrace=NULL;
+	}
+
+	if (isVisited==NULL) {
 		_mapsize=getMapsize();
 		backtrace=new int[_mapsize];
 		isVisited=new bool[_mapsize];
-printf("*** RoadGraph::init array\n");		
+		//printf("*** RoadGraph::init array\n");
 	} else
 		assert(_mapsize==getMapsize());
-	
+
 	// init
 	fill( backtrace, backtrace+_mapsize, -1);
 	fill( isVisited, isVisited+_mapsize, false);
-		
+
 	//insert source node
 	Heap hp;
 	{
 		HeapEntry root_he;
 		root_he.id=source;
 		root_he.dist=0.0;    // dist. so far
-		root_he.prev_id=-1;	
+		root_he.prev_id=-1;
 		hp.push(root_he);
 	}
 
 	if(spDebug) cout << "six, dijkstraSSSP! " << endl;
-	
+
 	while (hp.size()>0) {
 		HeapEntry he=hp.top();
 		hp.pop();
@@ -136,16 +289,17 @@ printf("*** RoadGraph::init array\n");
 		int curnode=he.id;
 		if (isVisited[curnode])
 			continue;
-		
+
 		isVisited[curnode]=true;
 		backtrace[curnode]=he.prev_id;	// prev node
 		numNodeVisits++;	// usage info
-		
+		lastNodeVisits++;
+
 		EdgeList& CurAdjList=map[curnode];
 		BOOST_FOREACH (Edge neighbour, CurAdjList)
 		{
 			int NextNodeID = neighbour.first; //id
-			double NextWeight = neighbour.second; 
+			double NextWeight = neighbour.second;
 			if (isVisited[NextNodeID]==false) {
 				HeapEntry new_he=he;    // copy ...
 				new_he.id=NextNodeID;
@@ -154,14 +308,14 @@ printf("*** RoadGraph::init array\n");
 				hp.push(new_he);    // propagation
 			}
 		}
-		
+
 		if(curnode==dest) {
 			int prevNode = dest;
 			trace.push_back(prevNode);
 			while (prevNode!=source) {
-			
+
 				assert(prevNode!=-1);
-			
+
 				prevNode = backtrace[prevNode];
 				trace.push_back(prevNode);
 			}
@@ -179,7 +333,7 @@ int RoadGraph::getMapsize()
 //convert training and testfile format from [vertexID, vertexID] to [lineID, x1, y1, x2, y2]
 //.cnode file has format [nodeID, x, y]
 //assumes the full name of the cnode file "fn.cnode" but only assumes the name of the training/test file. "fn"
-void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
+/*void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
 {
     string nodeFile = cnodeFn;
 	string testname = trainTestFn;
@@ -261,14 +415,15 @@ void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
 	}
 	testfile.close();
 }
+*/
 
 void RoadGraph::addEdge(int v1, int v2, double w) {
 	assert( v1>=0 && v1<mapSize );
 	assert( v2>=0 && v2<mapSize );
-	
+
 	EdgeList& eList1=map[v1];
 	EdgeList& eList2=map[v2];
-	
+
 	bool isFound=false;
 	BOOST_FOREACH (Edge e, eList1) {
 		if (e.first==v2)
@@ -278,7 +433,7 @@ void RoadGraph::addEdge(int v1, int v2, double w) {
 		if (e.first==v1)
 			isFound=true;
 	}
-		
+
 	if (!isFound) {	// edge not inserted before
 		eList1.push_back(make_pair(v2,w));
 		eList2.push_back(make_pair(v1,w));
@@ -287,7 +442,8 @@ void RoadGraph::addEdge(int v1, int v2, double w) {
 
 void RoadGraph::readRoadNetworkFile(string fn)
 {
-	filename = fn;
+	filePrefix = fn;
+
 	string str;
 	std::vector<string> tokens;
 	ifstream in_data (fn.c_str(), ios::in);
@@ -296,10 +452,10 @@ void RoadGraph::readRoadNetworkFile(string fn)
 		if(debug) cout << "zero, readNetworkFile!" << endl;
 		getline(in_data, str);
 		mapSize = atoi(str.c_str());
-		
+
 		map=new EdgeList[mapSize];
 		if(debug) cout << "one, readNetworkFile! map: " << mapSize << endl;
-		
+
 		getline(in_data, str);
 		edges = atoi(str.c_str());
 
@@ -331,7 +487,8 @@ void RoadGraph::readRoadNetworkFile(string fn)
 
 void RoadGraph::readPPINetworkFile(string fn)
 {
-	filename = fn;
+	filePrefix = fn;
+
 	string str;
 	int woffset;
 	std::vector<string> tokens;
@@ -344,11 +501,11 @@ void RoadGraph::readPPINetworkFile(string fn)
 		boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //read the size of the two node sets
 		mapSize = atoi(tokens[0].c_str()) + atoi(tokens[1].c_str());
 		woffset = atoi(tokens[0].c_str());
-		
-		
+
+
 		map=new EdgeList[mapSize];
 		if(debug) cout << "one, readPPINetworkFile! map: " << mapSize << endl;
-		
+
 
 		while(getline(in_data, str))
 		{
@@ -366,27 +523,33 @@ void RoadGraph::readPPINetworkFile(string fn)
 	}
 }
 
-void RoadGraph::readCedgeNetworkFile(string fn)
-{
+void RoadGraph::readCedgeNetworkFile(string fn) {
 ///fileformat .cedge: 0 0 1 1.182663
-	filename = fn;
-	string str;
+	filePrefix = fn;
+
+
 	string nodeFN = fn;
-	nodeFN.replace ((nodeFN.size()-4), 4, "node"); //change file extention from .cedge to .cnode
+	string edgeFN = fn;
+
+	nodeFN.append(".cnode"); // extension .cnode
+	edgeFN.append(".cedge"); // extension .cedge
+
+	string str;
 	std::vector<string> tokens;
-	ifstream in_data (fn.c_str(), ios::in);
-	if(debug) cout << "s1, readCedgeNetworkFile! nodeFN: " <<nodeFN << endl;
-	if(in_data.is_open())
-	{
+
+	ifstream edgeFile (edgeFN.c_str(), ios::in);
+
+	if (debug) cout << "s1, readCedgeNetworkFile! edgeFN: " << edgeFN << endl;
+
+	if (edgeFile.is_open()) {
 		if(debug) cout << "zero, readCedgeNetworkFile! int maxsize: " << INT_MAX << endl;
 
  		mapSize = getFilelines(nodeFN.c_str()); //find number of lines in file
 
-		map=new EdgeList[mapSize];
+		map = new EdgeList[mapSize];
 		if(debug) cout << "three, readCedgeNetworkFile! map: " << mapSize << endl;
 
-		while(getline(in_data, str))
-		{
+		while(getline(edgeFile, str)) {
 // 			cout << "five, readCedgeNetworkFile! getline:" << str  << " check: " << endl;
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 			if(debug) cout << "five1, readCedgeNetworkFile! getline:" << str << endl;
@@ -394,9 +557,27 @@ void RoadGraph::readCedgeNetworkFile(string fn)
 			if(debug) cout << "five2, readCedgeNetworkFile! getline:" << str << endl;
 		}
 		if(debug) cout << "six, readCedgeNetworkFile!" << endl;
-		in_data.close();
+		edgeFile.close();
+	}
+
+
+	nodecoord=new Point[mapSize];
+
+	ifstream nodeFile (nodeFN.c_str(), ios::in);
+	if (nodeFile.is_open()) {
+		while(getline(nodeFile, str)) {
+			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+
+			int nid=atoi(tokens[0].c_str());
+			assert(nid>=0&&nid<mapSize);
+
+			nodecoord[nid].first = atof(tokens[1].c_str());
+			nodecoord[nid].second = atof(tokens[2].c_str());
+		}
+		nodeFile.close();
 	}
 }
+
 
 int RoadGraph::getFilelines(const char *filename)
 {

@@ -46,11 +46,11 @@
 class TestObject {
 public:
 	TestObject(TestSetting settings);
-	
+
 	~TestObject() {
 		delete test;
 	};
-	
+
 	void runStaticTest();
 	void printResults();
 
@@ -58,16 +58,16 @@ public:
 
 private:
 	TestSetting ts;
-	clock_t start,end;
+	double queryTime;
 };
 
 
-TestObject::TestObject(TestSetting settings) {	
+TestObject::TestObject(TestSetting settings) {
 	ts = settings;
-	
-	
+
+
 	cout << "TestObject:: constructor: " << MatchEnumString(ALGO_ENUM,ts.testAlgo) << " test choosen" <<endl;
-	
+
 	switch( ts.testAlgo ){
 		case ALGO_NONE:
 			ts.cacheSize = 0;	// a special case with 0 cacheSize
@@ -98,15 +98,15 @@ TestObject::TestObject(TestSetting settings) {
 
 void TestObject::runStaticTest() {
 	srand(0);	srand48(0);	// fix the random seed
-	
+
 	if (debug) cout << "TestObject::runStaticTest: static test started" <<endl;
 
 	test->buildCache();
 	if (debug) cout << "TestObject::runStaticTest: queries read" <<endl;
 
- 	start = clock();
+ 	clock_t start = clock();
  	test->runQueryList();
- 	end = clock();
+ 	queryTime = (double(clock()-start)/CLOCKS_PER_SEC);
 
   	if (debug) cout << "TestObject::runStaticTest: static test ended" <<endl;
  	printResults();
@@ -116,16 +116,16 @@ void TestObject::runStaticTest() {
 
 void TestObject::printResults() {
 	///Console output
-	
-	
+
+
 	// after the following update, we just use "ts" as "test->ts"
 	ts = test->ts;
 
 	unsigned long numNodeVisits = RoadGraph::mapObject(ts)->numNodeVisits;
 	int ssspCalls = RoadGraph::mapObject(ts)->ssspCalls;
-	
+
 	cout << "\n\n--------------------------" << endl;
-	cout << "QueryTime:\t" << (double(end-start))/CLOCKS_PER_SEC << " sec" << endl;
+	cout << "QueryTime:\t" << queryTime << " sec" << endl;
 	cout << "CacheHits:\t" << test->getCacheHits() << "(" << test->getTotalDijkstraCalls() << ")" << endl;
 	cout << "SPcalls:\t" << ssspCalls << endl;
 	cout << "NodesVisited:\t" << numNodeVisits << endl;
@@ -133,19 +133,27 @@ void TestObject::printResults() {
 	//cout << "Class:\t" << typeid(*test).name() <<  endl;
 	cout << "Algorithm:\t" << ts.testAlgo << " " << MatchEnumString(ALGO_ENUM,ts.testAlgo) << endl;
 	cout << "Storage:\t" << ts.testStorage << " " << MatchEnumString(STORAGE_ENUM,ts.testStorage) << endl;
-	cout << "Scenario:\t" << ts.testScenario << " " << MatchEnumString(ARCH_ENUM,ts.testScenario) << endl;	
-	
+	cout << "Scenario:\t" << ts.testScenario << " " << MatchEnumString(ARCH_ENUM,ts.testScenario) << endl;
+
 	cout << "CacheSize:\t" << ts.cacheSize << endl;
 	cout << "CacheItems:\t" << ts.getItemsInCache() << endl;
 
 	cout << "Splits:\t" << ts.getSplits() << endl;
-	cout << "QueryFile:\t" << ts.queryFileName << endl;
+	cout << "QueryFile:\t" << ts.testFilePrefix << endl;
 
 	cout << "NonEmptyRegions:\t" << ts.getNonEmptyRegionPairs() << endl;
 	cout << "CalcStatTime:\t" << ts.getBuildStatisticsTime() << " sec" <<endl;
 	cout << "FillCacheTime:\t" << ts.getFillCacheTime() << " sec" << endl;
+
+    ts.useRange ? cout << "useRange:\t True" << endl : cout << "useRange:\t False";
+    cout << "testRangetype:\t";
+    if(ts.testRangetype == RALG_FAIR){cout << "FAIR" << endl;}
+    else if(ts.testRangetype == RALG_NAIVE){cout << "NAIVE" << endl;}
+    else cout << "testRangetype (the range search algorithm) is not set correctly" << endl;
+    cout << "Number of POI: " << ts.numpoi << endl;
+
 	cout << "--------------------------\n\n" << endl;
-	
+
 
     bool fileExist = false;
     ifstream fin((ts.getTestName()).c_str());
@@ -162,23 +170,23 @@ void TestObject::printResults() {
 					<< "CacheSize\tCacheItems\tSplits\tQueryFile\t"
 					<< "NonEmptyRegions\tCalcStatTime\tFillCacheTime\t" << endl;
     }
-	
-	// note: "typeid(*test).name()" no longer used
-    resultfile 	<< (double(end-start))/CLOCKS_PER_SEC << "\t" 
-				<< test->getCacheHits() << "\t" 
-				<< test->getTotalDijkstraCalls() << "\t" 
-				<< ssspCalls << "\t" 
-				<< numNodeVisits << "\t" 
-				
-				<< MatchEnumString(ALGO_ENUM,ts.testAlgo)  << "\t" 
-				<< MatchEnumString(ARCH_ENUM,ts.testScenario) << "\t" 
 
-				<< ts.cacheSize << "\t" 
+	// note: "typeid(*test).name()" no longer used
+    resultfile 	<< queryTime << "\t"
+				<< test->getCacheHits() << "\t"
+				<< test->getTotalDijkstraCalls() << "\t"
+				<< ssspCalls << "\t"
+				<< numNodeVisits << "\t"
+
+				<< MatchEnumString(ALGO_ENUM,ts.testAlgo)  << "\t"
+				<< MatchEnumString(ARCH_ENUM,ts.testScenario) << "\t"
+
+				<< ts.cacheSize << "\t"
 				<< ts.getItemsInCache() << "\t"
-				<< ts.getSplits() << "\t" 
-				<< ts.queryFileName << "\t"
-				
-				<< ts.getNonEmptyRegionPairs() << "\t" 
+				<< ts.getSplits() << "\t"
+				<< ts.testFilePrefix << "\t"
+
+				<< ts.getNonEmptyRegionPairs() << "\t"
 				<< ts.getBuildStatisticsTime() << "\t"
 				<< ts.getFillCacheTime() << endl;
 
@@ -220,28 +228,34 @@ double             1.79769e+308
 */
 
 void extractTestParameters(TestSetting& ts) {
-	ts.testFile = ts.getConfigString("testFile");
+	ts.testFilePrefix = ts.getConfigString("testFilePrefix");
 	ts.testName = ts.getConfigString("testName");
-	ts.queryFileName = ts.getConfigString("queryFileName");
-	
+
 	//1:graph_large, 2: ppi.dat, 3:*.cedge
 	ts.inputFileType = ts.getConfigInt("inputFileType");
 	ts.splits = ts.getConfigInt("splits");	// for Probcache (SPC)
 	ts.scacheQueryType = ts.getConfigInt("scacheQueryType");	// for SCACHE
-	
+
 	ts.cacheSize = ts.getConfigLong("cachesize");	// as number of bits
 	ts.testAlgo = (ALGO_CHOICE) ts.getEnumCode(ALGO_ENUM,"testAlgo");
 	ts.testScenario = (ARCH_CHOICE) ts.getEnumCode(ARCH_ENUM,"testScenario");
-	
-	
-	// default storage method: the LIST cache 
+
+	ts.useDijkstra = ts.getConfigBool("useDijkstra");
+
+    //Range search parameters
+    ts.useRange = ts.getConfigBool("useRange");
+    ts.testRangetype = (RALG_CHOICE) ts.getEnumCode(RALG_ENUM, "testRangetype");
+    ts.numpoi = ts.getConfigInt("numpoi");
+
+
+	// default storage method: the LIST cache
 	ts.testStorage = STORE_LIST;
 	if ( ts.testAlgo == ALGO_SPCplus )
 		ts.testStorage = STORE_GRAPH;
 	else if ( ts.testAlgo == ALGO_SPCstar )
 		ts.testStorage = STORE_COMPRESS;
-	
-	
+
+
 	// format: "experiment"_"testAlgo"_"testFile (3 letters)".test
 	// 		   "experiment" to be added later
 	if (ts.getConfigBool("autoTestName")==true) {
@@ -249,12 +263,13 @@ void extractTestParameters(TestSetting& ts) {
 		tname="";
 		tname.append(MatchEnumString(ALGO_ENUM,ts.testAlgo));
 		tname.append("_");
-		tname.append( ts.testFile, 0, 3);	// first 3 latters of testFile
+		tname.append( ts.testFilePrefix, 0, 3);	// first 3 latters of testFile
+		if(ts.testScenario == ARCH_SERVER) tname.append("_server");
+		if(ts.getConfigBool("useDijkstra") == false) tname.append("_astar");
 		tname.append(".test");
 	}
-		
-}
 
+}
 
 
 
@@ -264,14 +279,14 @@ void ExperimentVaryCacheSize(TestSetting ts) {
 		ts.testName.insert(0,"v_cachesize_");
 		cout << "(auto) testName: " << ts.testName << endl;
 	}
-	
+
 	unsigned long lowCacheSize = ts.getConfigLong("lowCacheSize");
 	unsigned long highCacheSize = ts.getConfigLong("highCacheSize");
-	
+
 	for (unsigned long csize = lowCacheSize; csize <= highCacheSize ; csize*=2) {
 		ts.cacheSize = csize;
 		cout << "*** Now using ts.cacheSize = " << ts.cacheSize << endl;
-		
+
 		TestObject *expTest = new TestObject(ts);
 		expTest->runStaticTest();
 		delete expTest;
@@ -284,11 +299,11 @@ void ExperimentVarySplit(TestSetting ts) {
 		ts.testName.insert(0,"v_split_");
 		cout << "(auto) testName: " << ts.testName << endl;
 	}
-	
+
 	int lowSplit = ts.getConfigInt("lowSplit");
 	int highSplit = ts.getConfigInt("highSplit");
-	
-	for (int splits = lowSplit; splits <= highSplit ; splits+=2) {	
+
+	for (int splits = lowSplit; splits <= highSplit ; splits+=2) {
 		ts.splits = splits;
 		cout << "*** Now using ts.splits = " << ts.splits << endl;
 
@@ -304,19 +319,24 @@ void ExperimentSingle(TestSetting ts) {
 		ts.testName.insert(0,"v_single_");
 		cout << "(auto) testName: " << ts.testName << endl;
 	}
-	
+
 	TestObject *expTest = new TestObject(ts);
 	expTest->runStaticTest();
 	delete expTest;
 }
 
+// Tasks for Ken:
+// 0. test network connectivity
+// 1. add a row about  "communication cost" (no needed)
+// 2. add A* implementation
+
 int main(int argc, char *argv[]) {
 
 	InitEnumMappings();	// initialization
-	
+
 	srand(0);	srand48(0);
-	
-	
+
+
 cout << "******************************************" << endl;
 cout << "int \t\t" << std::numeric_limits<int>::max() << endl;
 cout << "unsigned int\t" << std::numeric_limits<unsigned int>::max() << endl;
@@ -332,31 +352,31 @@ cout << "******************************************" << endl;
 	//ts.addConfigFromFile("config.prop");	// load default parameter values
 	//ts.addConfigFromCmdLine(argc,argv);		// override parameter values
 	//ts.listConfig();		// list the content of the config
-	
+
 	///Load settings from commandline
 	TestSetting ts;
 	ts.addConfigFromCmdLine(argc,argv);    // get the "configName" parameter from command line
 	string configName= ts.getConfigString("configName");
 
-	ts.addConfigFromFile( configName.c_str() );    // load default parameter values
+//	ts.addConfigFromFile( "config_lru_aal_cachesize.prob");
+    ts.addConfigFromFile(configName.c_str() );    // load default parameter values
 	ts.addConfigFromCmdLine(argc,argv);     // override parameter values
 
-	
-	
+
 	extractTestParameters(ts);
 	ts.printSetting();
-	
-	
+
+
 	string experiment = ts.getConfigString("experiment");
 	boost::to_upper(experiment);
-	
+
 	if (experiment.compare("SINGLE")==0)
 		ExperimentSingle(ts);
 	else if (experiment.compare("SPLIT")==0)
 		ExperimentVarySplit(ts);
 	else if (experiment.compare("CACHESIZE")==0)
 		ExperimentVaryCacheSize(ts);
-	
+
 //cout << "avg path length D4: " << calcAVGpathlengthInCache("level_SPC_scoreLengthDevide_AALD4.cache") << endl;
 //cout << "avg path length D14: " << calcAVGpathlengthInCache("level_SPC_scoreLengthDevide_AALD14.cache") << endl;
 //cout << "avg path length D18: " << calcAVGpathlengthInCache("level_SPC_scoreLengthDevide_AALD18.cache") << endl;

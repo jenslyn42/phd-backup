@@ -42,7 +42,7 @@ void Oracle::buildPathId2spPath() {
     cout << "oracle::buildPathId2spPath start" << endl;
     BOOST_FOREACH(intPair rp, trainingSTPointPairs)
     {
-        spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(rp.first, rp.second);
+        spResult = RoadGraph::computeSP(ts, rp.first, rp.second);
         pathId2spPathTraining[i] = make_pair<intPair, intVector >(rp, spResult);
         i++;
     }
@@ -51,7 +51,7 @@ void Oracle::buildPathId2spPath() {
     i=0;
     BOOST_FOREACH(intPair rp2, testSTPointPairs)
     {
-        spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(rp2.first, rp2.second);
+        spResult = RoadGraph::computeSP(ts, rp2.first, rp2.second);
         pathId2spPathTest[i] = make_pair<intPair, intVector >(rp2, spResult);
         i++;
     }
@@ -213,7 +213,7 @@ void Oracle::checkCache(intPair query)
 	if(!cacheHit)
 	{
 		if(debug) cout << "three, probstaticcache::checkCache!" << endl;
-		spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
+		spResult = RoadGraph::computeSP(ts, query.first, query.second);
 		numDijkstraCalls++;
 	}
 	if(debug) cout << "four, probstaticcache::checkCache!" << endl;
@@ -271,7 +271,7 @@ void Scache::checkCache(intPair query)
 	if(!cacheHit)
 	{
 		if(debug) cout << "five, scache::checkCache!" << endl;
-		spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
+		spResult = RoadGraph::computeSP(ts, query.first, query.second);
 
 		numDijkstraCalls++;
 	}
@@ -305,7 +305,7 @@ void Scache::generateRandQueries(uint numQueries, uint maxVal, string outFn)
 		p.first = (rand()%(maxVal-1)) +1;
 		p.second = (rand()%(maxVal-1)) +1;
 		spResult.clear();
-		spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(p.first, p.second);
+		spResult = RoadGraph::computeSP(ts, p.first, p.second);
 
 // 		cout << i << " " << spResult.size() << " " << p.first <<":" <<p.second <<" ";
 // 		BOOST_FOREACH(int vertexID, spResult ){ cout << vertexID << " ";}
@@ -357,7 +357,7 @@ void Scache::generateRandLongQueries(uint numQueries, uint maxVal, uint k, strin
 		}
 		candQuery = findLargestQuery(tmpQueryCand, k);
 		spResult.clear();
-		spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(candQuery.first, candQuery.second);
+		spResult = RoadGraph::computeSP(ts, candQuery.first, candQuery.second);
 
 //	cout << i << " " << spResult.size() << " " << p.first <<":" <<p.second <<" ";
 // 	e problem, sa kan vi evt bestille flere hjem sammen.
@@ -383,7 +383,7 @@ intPair Scache::findLargestQuery(vector<intPair> cCandidates, uint k)
 	string line;
 	vector<string> tokens;
 	ifstream cnodeFile;
-	cnodeFile.open(ts.getTestFile().c_str(), ios::in);
+	cnodeFile.open(ts.testFilePrefix.c_str(), ios::in);
 
 	//extract all node ids from the queries for easier comparizon when reading .cnode file
 	int i = 0;
@@ -433,7 +433,7 @@ intPair Scache::findLargestQuery(vector<intPair> cCandidates, uint k)
 
 void Scache::buildCache() {
 	// extract parameter from "ts"
-	string inFn=ts.queryFileName;
+	string inFn=ts.testFilePrefix;
 	
 	switch(ts.scacheQueryType)
 	{
@@ -592,7 +592,7 @@ void Scache::readScoredQueries(string inFn)
 	readMapData(); //fill up structures such as coordinate2Nodeid
 	readQueryLogData(QLOG_TEST); //read *.test file into memory, queries for the cache.
 
-	cout << "ts.queryFileName: " << ts.queryFileName << endl;
+	
 	if( querysFile.is_open() )
 	{
 	cout << "scache::readScoredQueries! Starting to load queries into memory" << endl;
@@ -708,7 +708,7 @@ void Scache::readScoredQueriesFromTrainFile(string fn)
 	BOOST_FOREACH(intPair p, trainingSTPointPairs)
 	{
 		spResult.clear();
-		spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(p.first, p.second);
+		spResult = RoadGraph::computeSP(ts, p.first, p.second);
 		spSize = spResult.size();
 
 		//make new cache item
