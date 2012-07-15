@@ -41,7 +41,8 @@
 //  March 09	(10% difference)
 //const bool isArrayInitOnce=true;
 const bool isArrayInitOnce=false;
-
+boost::unordered_map<int, int*> RoadGraph::spTrace;
+int* RoadGraph::trackdist=NULL;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -67,6 +68,9 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts)
 		mapInstance->parseFileType = pt;
 		mapInstance->ssspCalls = 0;
 		mapInstance->numNodeVisits = 0;
+		if(ts.useSPtree)
+            mapInstance->readSPTreeFile(ts);
+
 printf("*** RoadGraph::read\n");
 
 		cout << "[mapObject] testFilePrefix, parseFileType: " << testFilePrefix << " " << mapInstance->parseFileType << endl;
@@ -85,6 +89,8 @@ printf("*** RoadGraph::read\n");
 		}
 	} else if((mapInstance->parseFileType) != pt)
 	{
+//	    if(ts.useSPtree)
+//            delete mapInstance->trackdist;
 		delete mapInstance;
 		mapInstance = NULL; //if type of file to be parsed changes, delete mapInstance
 	}
@@ -111,8 +117,9 @@ intVector RoadGraph::computeSP(TestSetting& ts,int s, int t) {
 		return trace;
 	}
 
-
-	if (ts.useDijkstra)
+    if(ts.useSPtree){
+        trace = ins->getSPfromSPTree(s,t);
+    }else if (ts.useDijkstra)
 		trace = ins->dijkstraSP(s,t);
 	else
 		trace = ins->astarSP(s,t);
@@ -641,6 +648,75 @@ bool RoadGraph::getLastLine(const char *filename, string &lastLine)
 	return true;
 }
 
+void RoadGraph::readSPTreeFile(TestSetting& ts){
+
+	string prefixFn = ts.testFilePrefix;
+	string str;
+	std::vector<string> tokens;
+	int curPoiNodeId=-1;
+
+	string fn = ts.testFilePrefix;
+	fn.append(".cnode"); // extension .cnode
+	int mapsize = getFilelines(fn.c_str());
+	trackdist = new int[mapsize];
+
+	prefixFn.append(".sptree"); // extension .sptree
+	ifstream sptFile (prefixFn.c_str(), ios::in);
+
+//	if (debug)
+        cout << "s1, readSPTreeFile! prefixFn: " << prefixFn << endl;
+
+	if (sptFile.is_open()) {
+//		if(debug)
+            cout << "zero, readSPTreeFile!" << endl;
+
+		while(getline(sptFile, str)) {
+			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+			if(debug)
+                cout << "two, readSPTreeFile! getline:" << str << endl;
+
+			if(atoi(tokens[2].c_str()) == -1337){
+                curPoiNodeId = atoi(tokens[0].c_str());
+                spTrace[curPoiNodeId] = new int[atoi(tokens[1].c_str())];
+			}
+//            cout << "three1, readSPTreeFile!" << endl;
+            spTrace[curPoiNodeId][atoi(tokens[0].c_str())] = atoi(tokens[2].c_str());
+//            cout << "three2, readSPTreeFile!" << atoi(tokens[0].c_str()) << " / " << atoi(tokens[2].c_str()) << endl;
+//            cout << "mapsize/index: " << mapsize <<"/";
+//            cout << atoi(tokens[1].c_str()) << endl;
+            trackdist[curPoiNodeId] = atoi(tokens[1].c_str());
+//            cout << "three3, readSPTreeFile!" << atoi(tokens[0].c_str()) << " / " << atoi(tokens[2].c_str()) << endl;
+		}
+//		if(debug)
+            cout << "four, readSPTreeFile!" << endl;
+		sptFile.close();
+	}
+//	if(debug)
+        cout << "five, readSPTreeFile END!" << endl;
+}
+
+
+
+intVector RoadGraph::getSPfromSPTree(int source, int target){
+
+	intVector trace;
+    int* backtrace=spTrace[target];
+//    cout << "(" <<source <<"/" << target << "): ";
+    if(backtrace == NULL) {
+        cout << "RoadGraph::getSPfromSPTree FUUUUUCK >_< s/t: " << source <<"/" << target << endl;
+        trace.push_back(target);
+        return trace;
+    }
+    int prevNode = source;
+    trace.push_back(prevNode);
+    while (prevNode!=target) {
+        assert(prevNode!=-1);
+
+        prevNode = backtrace[prevNode];
+        trace.push_back(prevNode);
+    }
+    return trace;
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

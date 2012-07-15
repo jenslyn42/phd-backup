@@ -140,12 +140,15 @@ void TestSetting::printSetting() {
 	cout << "splits, itemsInCache, nonEmptyRegionPairs: " <<  splits << " " << itemsInCache << " " << nonEmptyRegionPairs << endl;
 	cout << "fillCacheTime, buildStatisticsTime: " <<  fillCacheTime << " " << buildStatisticsTime << endl;
 
-	useRange ? cout << "useRange:\t True" << endl : cout << "useRange:\t False";
+	useRange ? cout << "useRange:\t True" << endl : cout << "useRange:\t False" << endl ;
     cout << "testRangetype:\t";
     if(testRangetype == RALG_FAIR){cout << "FAIR" << endl;}
     else if(testRangetype == RALG_NAIVE){cout << "NAIVE" << endl;}
     else cout << "(the range search algorithm) is not set correctly" << endl;
+    cout << "Range:\t" << range << endl;
     cout << "Number of POI:\t" << numpoi << endl;
+    useSPtree ? cout << "useSPtree:\t True" << endl : cout << "useSPtree:\t False" << endl;;
+    skipSPcalc ? cout << "skipSPcalc:\t True" << endl : cout << "skipSPcalc:\t False" << endl;
 	cout << "--------------------------\n\n" << endl;
 }
 

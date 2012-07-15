@@ -18,7 +18,8 @@ void Range::init(TestSetting ts){
     readPOIlist();
     readRangeQueries(QLOG_TEST);
     readRangeQueries(QLOG_TRAIN);
-    populateDistMaps();
+    if(!ts.useSPtree)
+        populateDistMaps(); //doing this will be incredibly slow
 }
 
 
@@ -65,21 +66,30 @@ intPairVector Range::rangeQuery(int q, int R, intPairVector spQueryCandidates){
         s = qc.first;
         t = qc.second;
 
-        intVector& first = vertexToPathids.at(s);
-        intVector& second = vertexToPathids.at(t);
+        if(ts.useSPtree){
+            int  spDistS, spDistT;
+            spDistS = RoadGraph::mapObject(ts)->getTrackdist(s);
+            spDistT = RoadGraph::mapObject(ts)->getTrackdist(t);
 
-        vector<int> v(first.size()+second.size()); //full of zeroe
-
-        sort(first.begin(), first.end());
-        sort(second.begin(), second.end());
-
-        set_intersection (first.begin(), first.end(), second.begin(), second.end(), v.begin());
-
-        if(v.front() != 0){
-            intMap sp = pathidMap.at(v.front());
-
-            if(sp.at(t) - sp.at(s) <= R)
+            if(abs(spDistT - spDistS) <= R)
                 result.push_back(qc);
+        }else{
+            intVector& first = vertexToPathids.at(s);
+            intVector& second = vertexToPathids.at(t);
+
+            vector<int> v(first.size()+second.size()); //full of zeroe
+
+            sort(first.begin(), first.end());
+            sort(second.begin(), second.end());
+
+            set_intersection (first.begin(), first.end(), second.begin(), second.end(), v.begin());
+
+            if(v.front() != 0){
+                intMap sp = pathidMap.at(v.front());
+
+                if(abs(sp.at(t) - sp.at(s)) <= R)
+                    result.push_back(qc);
+            }
         }
     }
     return result;
@@ -118,20 +128,21 @@ void Range::readPOIlist(){
   		}
 	}
 	file.close();
-	cout << "Range::readPOIlist end! number of POI/testRangetype:" << poiCoordMap.size() << "/"; if(ts.testRangetype == RALG_FAIR) {cout << "FAIR";} else {cout << "NAIVE";} cout << endl;
+	cout << "Range::readPOIlist end! number of POI/useRange/testRangetype:" << poiCoordMap.size() << "/";
+	ts.useRange ? cout << "TRUE" : cout << "FALSE"; cout << "/";
+	if(ts.testRangetype == RALG_FAIR) {cout << "FAIR";} else {cout << "NAIVE";} cout << endl;
 }
 
 ///input file format: record_id, point_id, range, point_x, point_y.
 void Range::readRangeQueries(QLOG_CHOICE qlog){
 
-	string app="";
+    string app = boost::lexical_cast<string>( ts.range );
+    app.append(".rqtrain");
 	intPairVector* ptrQueryPairs=NULL;
 
 	if (qlog==QLOG_TRAIN) {
-		app = "2000.rqtrain";
 		ptrQueryPairs=&trainingSRQueryPairs;
 	} else if (qlog==QLOG_TEST) {
-		app = "2000.rqtest";
 		ptrQueryPairs=&testSRQueryPairs;
 	} else {
 		printf("*** invalid qlog parameter\n");

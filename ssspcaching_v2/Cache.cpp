@@ -350,7 +350,7 @@ void AbstractCache::generatePOI(){
 	std::vector<string> tokens;
 
 	string fn=ts.testFilePrefix;
-	fn.append(".qtrain"); //change file extention from .test to .train
+	fn.append(".qtrain"); //make the extension .qtrain
 	ifstream logFile (fn.c_str(), ios::in); //*.train file
 
 	cout << "generateRangeQueries::generatePOI start: " << fn << endl;
@@ -375,7 +375,7 @@ void AbstractCache::generatePOI(){
 
     int i = 0;
     fn=ts.testFilePrefix;
-	fn.append(".poi"); //change file extention from .test to .train
+	fn.append(".poi"); //make the extension .poi
     ///file output
 	ofstream rqueryfile;
 	rqueryfile.open((fn).c_str(), ios::out | ios::ate);

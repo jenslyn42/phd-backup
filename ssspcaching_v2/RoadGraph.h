@@ -62,13 +62,15 @@ public:
 	}
 	//void transformTrainOrTestFile(string cnodeFn, string trainTestFn);
 
+    intVector getSPfromSPTree(int s, int t);
+    int getTrackdist(int i){return trackdist[i];}
+
 private:
 	RoadGraph(){ };
 	~RoadGraph(){delete mapInstance;}
 	RoadGraph(RoadGraph const&){}; //privatre copy constructor
 	RoadGraph& operator=(RoadGraph const&); //private assignment operator
 	static RoadGraph* mapInstance;
-
 
 	Point* nodecoord;
 	EdgeList* map;
@@ -77,6 +79,8 @@ private:
 	int edges;
 	int parseFileType;
 	std::string filePrefix;
+	static boost::unordered_map<int, int*> spTrace;//backtract the SP route from a node to its original source.
+	static int* trackdist; //all the distances from any node to a source node
 
 	intVector dijkstraSP(int s, int t);
 	intVector astarSP(int s, int t);
@@ -87,6 +91,7 @@ private:
 	void readCedgeNetworkFile(string fn);
 	int getFilelines(const char *filename);
 	bool getLastLine(const char *filename, string &lastLine);
+	void readSPTreeFile(TestSetting& ts);
 };
 
 
