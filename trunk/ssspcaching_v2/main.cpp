@@ -145,12 +145,15 @@ void TestObject::printResults() {
 	cout << "CalcStatTime:\t" << ts.getBuildStatisticsTime() << " sec" <<endl;
 	cout << "FillCacheTime:\t" << ts.getFillCacheTime() << " sec" << endl;
 
-    ts.useRange ? cout << "useRange:\t True" << endl : cout << "useRange:\t False";
+    ts.useRange ? cout << "useRange:\t True" << endl : cout << "useRange:\t False" << endl ;
+    cout << "range: " << ts.range << endl;
     cout << "testRangetype:\t";
     if(ts.testRangetype == RALG_FAIR){cout << "FAIR" << endl;}
     else if(ts.testRangetype == RALG_NAIVE){cout << "NAIVE" << endl;}
     else cout << "testRangetype (the range search algorithm) is not set correctly" << endl;
     cout << "Number of POI: " << ts.numpoi << endl;
+    ts.useSPtree ? cout << "useSPtree:\t True" << endl : cout << "useSPtree:\t False" << endl ;
+    ts.skipSPcalc ? cout << "skipSPcalc:\t True" << endl : cout << "skipSPcalc:\t False" << endl ;
 
 	cout << "--------------------------\n\n" << endl;
 
@@ -168,7 +171,8 @@ void TestObject::printResults() {
         resultfile 	<< "QueryTime\tCacheHits\tDijkstraCalls\tSPcalls\tNodesVisited\t"
 					<< "Algorithm\tScenario\t"
 					<< "CacheSize\tCacheItems\tSplits\tQueryFile\t"
-					<< "NonEmptyRegions\tCalcStatTime\tFillCacheTime\t" << endl;
+					<< "NonEmptyRegions\tCalcStatTime\tFillCacheTime\t"
+					<< "useRange\trange\tRangetype\tnumPOI\tuseSPtree\tskipSPcalc\t"<< endl;
     }
 
 	// note: "typeid(*test).name()" no longer used
@@ -188,7 +192,14 @@ void TestObject::printResults() {
 
 				<< ts.getNonEmptyRegionPairs() << "\t"
 				<< ts.getBuildStatisticsTime() << "\t"
-				<< ts.getFillCacheTime() << endl;
+				<< ts.getFillCacheTime() << "\t"
+
+				<< ts.useRange << "\t"
+				<< ts.range << "\t"
+                << MatchEnumString(RALG_ENUM,ts.testRangetype) << "\t"
+                << ts.numpoi  << "\t"
+                << ts.useSPtree  << "\t"
+                << ts.skipSPcalc  << "\t" <<  endl;
 
     resultfile.close();
 }
@@ -244,9 +255,12 @@ void extractTestParameters(TestSetting& ts) {
 
     //Range search parameters
     ts.useRange = ts.getConfigBool("useRange");
+    ts.range = ts.getConfigInt("range");
     ts.testRangetype = (RALG_CHOICE) ts.getEnumCode(RALG_ENUM, "testRangetype");
     ts.numpoi = ts.getConfigInt("numpoi");
 
+    ts.useSPtree = ts.getConfigBool("useSPtree");
+    ts.skipSPcalc = ts.getConfigBool("skipSPcalc");
 
 	// default storage method: the LIST cache
 	ts.testStorage = STORE_LIST;
@@ -256,11 +270,18 @@ void extractTestParameters(TestSetting& ts) {
 		ts.testStorage = STORE_COMPRESS;
 
 
-	// format: "experiment"_"testAlgo"_"testFile (3 letters)".test
+	// format: "experiment"_["R{range}"]_"testAlgo"_"testFile (3 letters)".test
 	// 		   "experiment" to be added later
 	if (ts.getConfigBool("autoTestName")==true) {
 		string& tname = ts.testName;
 		tname="";
+		if(ts.useRange){
+            tname.append("R");
+            tname.append(ts.getConfigString("range"));
+            tname.append("_");
+            tname.append(MatchEnumString(RALG_ENUM,ts.testRangetype));
+            tname.append("_");
+		}
 		tname.append(MatchEnumString(ALGO_ENUM,ts.testAlgo));
 		tname.append("_");
 		tname.append( ts.testFilePrefix, 0, 3);	// first 3 latters of testFile
@@ -366,7 +387,6 @@ cout << "******************************************" << endl;
 	extractTestParameters(ts);
 	ts.printSetting();
 
-
 	string experiment = ts.getConfigString("experiment");
 	boost::to_upper(experiment);
 
@@ -381,5 +401,6 @@ cout << "******************************************" << endl;
 //cout << "avg path length D14: " << calcAVGpathlengthInCache("level_SPC_scoreLengthDevide_AALD14.cache") << endl;
 //cout << "avg path length D18: " << calcAVGpathlengthInCache("level_SPC_scoreLengthDevide_AALD18.cache") << endl;
 
+//./mains -configName "config_hqf_bei_cachesize.prob" -useRange true -numpoi 1000 -testRangetype FAIR -useSPtree true -skipSPcalc false
 	return EXIT_SUCCESS;
 };

@@ -84,6 +84,7 @@ enum ARCH_CHOICE { ARCH_SERVER, ARCH_PROXY };
 // range query algorithm
 enum RALG_CHOICE { RALG_FAIR, RALG_NAIVE };
 
+
 // Important: 	for each "ENUM" type, there is a corresponding "LookupList" in "Setting.cpp"
 //				they follow a naming convention.
 // 				make sure that "InitEnumMappings" is updated according to ENUM above
@@ -176,8 +177,11 @@ public:
 	int scacheQueryType;	// used for SCACHE only
 	int splits, itemsInCache, nonEmptyRegionPairs;
     int numpoi; // used for rangesearch
+    int range; // used for rangesearch. For any range there has to exist a pregenerated file done with AbstractCache::generateRangeQueries(int range)
 
     bool useRange; //used for range queries
+    bool useSPtree; //used with range queries
+    bool skipSPcalc; //mainly to be used with range queries
 	bool useDijkstra;
 
 
