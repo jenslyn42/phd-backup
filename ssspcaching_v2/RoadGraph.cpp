@@ -42,7 +42,7 @@
 //const bool isArrayInitOnce=true;
 const bool isArrayInitOnce=false;
 boost::unordered_map<int, int*> RoadGraph::spTrace;
-int* RoadGraph::trackdist=NULL;
+boost::unordered_map<int, int*> RoadGraph::trackdist;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -102,8 +102,10 @@ intVector RoadGraph::computeSP(TestSetting& ts,int s, int t) {
 	intVector trace;
 	RoadGraph* ins=mapObject(ts);
 
-	if (ins==NULL)
+	if (ins==NULL){
+        cout << "PROBLEM: MapObject is NULL!!!" << endl;
 		return trace;
+	}
 
 
 	ins->ssspCalls++;
@@ -123,7 +125,6 @@ intVector RoadGraph::computeSP(TestSetting& ts,int s, int t) {
 		trace = ins->dijkstraSP(s,t);
 	else
 		trace = ins->astarSP(s,t);
-
 
 	return trace;
 }
@@ -532,9 +533,6 @@ void RoadGraph::readPPINetworkFile(string fn)
 
 void RoadGraph::readCedgeNetworkFile(string fn) {
 ///fileformat .cedge: 0 0 1 1.182663
-	filePrefix = fn;
-
-
 	string nodeFN = fn;
 	string edgeFN = fn;
 
@@ -584,7 +582,6 @@ void RoadGraph::readCedgeNetworkFile(string fn) {
 		nodeFile.close();
 	}
 }
-
 
 int RoadGraph::getFilelines(const char *filename)
 {
@@ -648,8 +645,58 @@ bool RoadGraph::getLastLine(const char *filename, string &lastLine)
 	return true;
 }
 
+///file format (space separated, blank line between different source nodes):
+///first line: source node_id, map size, -1337
+///remaining lines: node_id, node_distance, node_prev_id
 void RoadGraph::readSPTreeFile(TestSetting& ts){
+    readSPTreeFileBinary(ts);
+    //readSPTreeFileASCII(ts);
+}
 
+void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
+    double refTime = clock();
+	string prefixFn = ts.testFilePrefix;
+    int token1,token2,token3;
+	int curPoiNodeId=-1;
+
+	string fn = ts.testFilePrefix;
+	fn.append(".cnode"); // extension .cnode
+	int mapsize = getFilelines(fn.c_str());
+
+	prefixFn.append(".sptree"); // extension .sptree
+	ifstream sptFile (prefixFn.c_str(), ios::in|ios::binary);
+
+//	if (debug)
+        cout << "zero, readSPTreeFile! prefixFn: " << prefixFn << endl;
+
+	if (sptFile.is_open()) {
+//		if(debug)
+            cout << "one, readSPTreeFile! ";
+        cout<< "@TIME: " << ts.getElapsedTime(refTime) << endl;
+
+		while(!sptFile.eof()) {
+                sptFile.read((char*)&token1, sizeof(int));
+                sptFile.read((char*)&token2, sizeof(int));
+                sptFile.read((char*)&token3, sizeof(int));
+			if(token3 == -1337){
+                curPoiNodeId = token1;
+                spTrace[curPoiNodeId] = new int[token2];
+                trackdist[curPoiNodeId] = new int[mapsize];
+			}
+            spTrace[curPoiNodeId][token1] = token3;
+            trackdist[curPoiNodeId][token1] = token2;
+		}
+//		if(debug)
+            cout << "four, readSPTreeFile! ";
+		sptFile.close();
+	}
+//	if(debug)
+        cout << "five, readSPTreeFile END!";
+        cout<< "@TIME: " << ts.getElapsedTime(refTime) << endl;
+}
+
+void RoadGraph::readSPTreeFileASCII(TestSetting& ts){
+    double refTime = clock();
 	string prefixFn = ts.testFilePrefix;
 	string str;
 	std::vector<string> tokens;
@@ -658,53 +705,47 @@ void RoadGraph::readSPTreeFile(TestSetting& ts){
 	string fn = ts.testFilePrefix;
 	fn.append(".cnode"); // extension .cnode
 	int mapsize = getFilelines(fn.c_str());
-	trackdist = new int[mapsize];
 
 	prefixFn.append(".sptree"); // extension .sptree
 	ifstream sptFile (prefixFn.c_str(), ios::in);
 
 //	if (debug)
-        cout << "s1, readSPTreeFile! prefixFn: " << prefixFn << endl;
+        cout << "zero, readSPTreeFile! prefixFn: " << prefixFn << endl;
 
 	if (sptFile.is_open()) {
 //		if(debug)
-            cout << "zero, readSPTreeFile!" << endl;
+            cout << "one, readSPTreeFile! ";
+            cout<< "@TIME: " << ts.getElapsedTime(refTime) << endl;
 
 		while(getline(sptFile, str)) {
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 			if(debug)
-                cout << "two, readSPTreeFile! getline:" << str << endl;
+                cout << "two, readSPTreeFile! getline:" << str << " ";
 
 			if(atoi(tokens[2].c_str()) == -1337){
                 curPoiNodeId = atoi(tokens[0].c_str());
                 spTrace[curPoiNodeId] = new int[atoi(tokens[1].c_str())];
+                trackdist[curPoiNodeId] = new int[mapsize];
 			}
-//            cout << "three1, readSPTreeFile!" << endl;
+
             spTrace[curPoiNodeId][atoi(tokens[0].c_str())] = atoi(tokens[2].c_str());
-//            cout << "three2, readSPTreeFile!" << atoi(tokens[0].c_str()) << " / " << atoi(tokens[2].c_str()) << endl;
-//            cout << "mapsize/index: " << mapsize <<"/";
-//            cout << atoi(tokens[1].c_str()) << endl;
-            trackdist[curPoiNodeId] = atoi(tokens[1].c_str());
-//            cout << "three3, readSPTreeFile!" << atoi(tokens[0].c_str()) << " / " << atoi(tokens[2].c_str()) << endl;
+            trackdist[curPoiNodeId][atoi(tokens[0].c_str())] = atoi(tokens[1].c_str());
 		}
-//		if(debug)
-            cout << "four, readSPTreeFile!" << endl;
+		if(debug)
+            cout << "four, readSPTreeFile! ";
 		sptFile.close();
 	}
 //	if(debug)
-        cout << "five, readSPTreeFile END!" << endl;
+        cout << "five, readSPTreeFile END!";
+        cout<< "@TIME: " << ts.getElapsedTime(refTime) << endl;
 }
 
-
-
 intVector RoadGraph::getSPfromSPTree(int source, int target){
-
 	intVector trace;
     int* backtrace=spTrace[target];
-//    cout << "(" <<source <<"/" << target << "): ";
     if(backtrace == NULL) {
-        cout << "RoadGraph::getSPfromSPTree FUUUUUCK >_< s/t: " << source <<"/" << target << endl;
-        trace.push_back(target);
+        cout << "*!IN SPTree s/t: " << source <<"/" << target << "\t";
+//        trace.push_back(target);;
         return trace;
     }
     int prevNode = source;
@@ -717,6 +758,17 @@ intVector RoadGraph::getSPfromSPTree(int source, int target){
     }
     return trace;
 }
+
+int RoadGraph::getTrackdist(int nodeId, int sourcePOI){
+    int* tree = trackdist[sourcePOI];
+    if(tree == NULL) {
+//        cout << "RoadGraph::getTrackdist FAAAAACK >_< s/t: " << nodeId <<"/" << sourcePOI << endl;
+        return 9999999;
+    }
+    return trackdist[sourcePOI][nodeId];
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

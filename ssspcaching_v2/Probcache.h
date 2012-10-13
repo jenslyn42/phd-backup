@@ -50,11 +50,12 @@ public:
 	void buildCache();
 	void runQueryList();
 
-
 private:
 	int calcScoreCounter;
 	vector<intPair> queries;
-	boost::unordered_map<intPair, int > trainingQueriesPerRegionPair;
+	boost::unordered_map<intPair, int > trainingQueriesPerRegionPair; //statistics counting training ST pairs seen per region pair
+    boost::unordered_map<intPair, int > trainingPointsPerRegionPair; //statistics counting S or T point seen per region pair
+    //boost::unordered_map<intPair, int > emptyRegionsPerRegionPair; //statistics counting region pairs with no S or T point in them.
 
 
 

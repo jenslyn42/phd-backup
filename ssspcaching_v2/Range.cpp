@@ -14,12 +14,20 @@ Range::~Range()
 
 
 void Range::init(TestSetting ts){
+    cout<< "R3.0 done" << endl;
+    double refTime = clock();
     this->ts = ts;
     readPOIlist();
+    //generatePOIlist();
+    cout<< "R3.1R done, " << ts.getElapsedTime(refTime) << endl;
     readRangeQueries(QLOG_TEST);
+    cout<< "R3.2R done, " << ts.getElapsedTime(refTime) << endl;
     readRangeQueries(QLOG_TRAIN);
+    cout<< "R3.3R done, " << ts.getElapsedTime(refTime) << endl;
+
     if(!ts.useSPtree)
         populateDistMaps(); //doing this will be incredibly slow
+
 }
 
 
@@ -37,14 +45,13 @@ intPairVector Range::evalQuery(int q, int R){
 	}
 }
 
-
 intPairVector Range::evalQueryFair(int q, int R){
     intPairVector stQueryPairs;
     Point qCoordinate = qCoordMap.at(q);
 
-    BOOST_FOREACH(intPointMap::value_type p, poiCoordMap){
-        if(euclideanDist(qCoordinate, p.second) <= R)
-            stQueryPairs.push_back(std::make_pair(q, p.first));
+    BOOST_FOREACH(intPointMap::value_type poi, poiCoordMap){
+        if(euclideanDist(qCoordinate, poi.second) <= R)
+            stQueryPairs.push_back(std::make_pair(q, poi.first));
     }
     return stQueryPairs;
 }
@@ -68,8 +75,8 @@ intPairVector Range::rangeQuery(int q, int R, intPairVector spQueryCandidates){
 
         if(ts.useSPtree){
             int  spDistS, spDistT;
-            spDistS = RoadGraph::mapObject(ts)->getTrackdist(s);
-            spDistT = RoadGraph::mapObject(ts)->getTrackdist(t);
+            spDistS = RoadGraph::mapObject(ts)->getTrackdist(s,q);
+            spDistT = RoadGraph::mapObject(ts)->getTrackdist(t,q);
 
             if(abs(spDistT - spDistS) <= R)
                 result.push_back(qc);
@@ -118,7 +125,7 @@ void Range::readPOIlist(){
 			coord = std::make_pair(atof(tokens[2].c_str()),atof(tokens[3].c_str()));
 
 			poiCoordMap[atoi(tokens[1].c_str())] = coord;
-			if(atoi(tokens[0].c_str()) == ts.numpoi) {
+			if((unsigned int)atoi(tokens[0].c_str()) == ts.numpoi) {  //unsigned to make the compiler shut up...
 			    cout << "numpoi REACHED (numpoi/useRange/testRangetype):\t(" << ts.numpoi <<")/("; ts.useRange ? cout << "TRUE" : cout << "FALSE"; cout <<")/(";
                 if(ts.testRangetype == RALG_FAIR){cout << "FAIR";}
                 else if(ts.testRangetype == RALG_NAIVE){cout << "NAIVE";}
@@ -131,25 +138,99 @@ void Range::readPOIlist(){
 	cout << "Range::readPOIlist end! number of POI/useRange/testRangetype:" << poiCoordMap.size() << "/";
 	ts.useRange ? cout << "TRUE" : cout << "FALSE"; cout << "/";
 	if(ts.testRangetype == RALG_FAIR) {cout << "FAIR";} else {cout << "NAIVE";} cout << endl;
+//B****************************************************
+//    intMap poiDub;
+//    BOOST_FOREACH (intPointMap::value_type poi, poiCoordMap){
+//        if(poiCoordMap.find(poi.first) != poiCoordMap.end()) poiDub[poi.first] = poiDub[poi.first] +1;
+//        else poiDub[poi.first] = 1;
+//    }
+//
+//    BOOST_FOREACH(intPair poiIDcount, poiDub){
+//        if(poiIDcount.second > 1) cout << endl;
+//        cout << "(" << poiIDcount.first << "," << poiIDcount.second << ") ";
+//    }
+//    cout << endl;
+//
+//    cout << "DUB train: ";
+//    BOOST_FOREACH (intPointMap::value_type poi, poiCoordMap){
+//        BOOST_FOREACH (intPair query, trainingSRQueryPairs){
+//            if(query.first == poi.first) cout << "*" << query.first << "*";
+//        }
+//    }
+//    cout << endl;
+//    cout << "DUB test: ";
+//    BOOST_FOREACH (intPointMap::value_type poi, poiCoordMap){
+//        BOOST_FOREACH (intPair query, testSRQueryPairs){
+//            if(query.first == poi.first) cout << "*" << query.first << "*";
+//        }
+//    }
+//    cout << endl;
+
+//E****************************************************
 }
+
+void Range::generatePOIlist(){
+    cout << "Range::generatePOIlist start" << endl;
+    std::string testFilePrefix=ts.testFilePrefix;
+
+    string nodeFN = testFilePrefix + ".cnode";
+	string str;
+	std::vector<string> tokens;
+    intPointMap tmpPoiCoordMap;
+    Point coord;
+
+	ifstream nodeFile (nodeFN.c_str(), ios::in);
+	if (nodeFile.is_open()) {
+		while(getline(nodeFile, str)) {
+			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+
+			coord = std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str()));
+
+			tmpPoiCoordMap[atoi(tokens[0].c_str())] = coord;
+		}
+		nodeFile.close();
+	}
+	int poiPoolSize = RoadGraph::mapObject(ts)->getMapsize();
+    int tmpNid;
+    Point tmpPnt;
+    int index = 0;
+    vector<int> seenPOI;
+    string fn=ts.testFilePrefix;
+	fn.append(".poi"); //make the extension .poi
+    ///file output
+	ofstream rqueryfile;
+	rqueryfile.open((fn).c_str(), ios::out | ios::ate);
+	while(ts.numpoi >= (unsigned) index){
+	    tmpNid = rand() % poiPoolSize;
+        if (find(seenPOI.begin(), seenPOI.end(), tmpNid) == seenPOI.end()){
+            tmpPnt = tmpPoiCoordMap.at(tmpNid);
+            rqueryfile << index << " " << tmpNid << " " <<  tmpPnt.first << " " <<  tmpPnt.second << endl;
+            seenPOI.push_back(tmpNid);
+            index++;
+        }
+    }
+    rqueryfile.close();
+    cout << "Range::generatePOIlist end" << endl;
+}
+
 
 ///input file format: record_id, point_id, range, point_x, point_y.
 void Range::readRangeQueries(QLOG_CHOICE qlog){
 
     string app = boost::lexical_cast<string>( ts.range );
-    app.append(".rqtrain");
-	intPairVector* ptrQueryPairs=NULL;
+	intPairVector* srQueryPairs=NULL;
 
 	if (qlog==QLOG_TRAIN) {
-		ptrQueryPairs=&trainingSRQueryPairs;
+		srQueryPairs=&trainingSRQueryPairs;
+        app.append(".rqtrain");
 	} else if (qlog==QLOG_TEST) {
-		ptrQueryPairs=&testSRQueryPairs;
+		srQueryPairs=&testSRQueryPairs;
+        app.append(".rqtest");
 	} else {
 		printf("*** invalid qlog parameter\n");
 		exit(0);
 		return;
 	}
-	intPairVector& srQueryPairs=(*ptrQueryPairs);
 
     Point qPair;
     intPair queryPair;
@@ -157,7 +238,7 @@ void Range::readRangeQueries(QLOG_CHOICE qlog){
 	std::vector<string> tokens;
 
 	string fn=ts.testFilePrefix;
-	fn.append(app); //change file extention from .test to .train
+	fn.append(app); //change file extention to .rqtest / .rqtrain
 	ifstream qlogFile (fn.c_str(), ios::in); //*.train file
 
 	cout << "Range::readRangeQueries start: " << fn << endl;
@@ -170,15 +251,20 @@ void Range::readRangeQueries(QLOG_CHOICE qlog){
 		while(getline(qlogFile, str)) {
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 
-			qPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
-            queryPair = std::make_pair(atoi(tokens[1].c_str()),atoi(tokens[2].c_str()));
+            queryPair = std::make_pair(atoi(tokens[1].c_str()),atoi(tokens[2].c_str())); //(nid, range)
+			qPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str())); //(nid_x, nid_y)
 
             qCoordMap[atoi(tokens[1].c_str())] = qPair; //q_id, (q_x, q_y)
-			srQueryPairs.push_back(queryPair);
+			(*srQueryPairs).push_back(queryPair);
 		}
 	}
 	qlogFile.close();
-	cout << "Range::readRangeQueries end! size:" << srQueryPairs.size() << endl;
+	cout << "Range::readRangeQueries end! size:" << (*srQueryPairs).size() << endl;
+//
+//    BOOST_FOREACH (intPairVector::value_type rquery, (*srQueryPairs)){
+//        cout << "(" << rquery.first << "," << rquery.second << ")\t";
+//    }
+//    cout << endl;
 }
 
 int Range::euclideanDist(Point s, Point t){
