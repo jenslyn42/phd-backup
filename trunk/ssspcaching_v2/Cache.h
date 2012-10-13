@@ -101,11 +101,11 @@ public:
     void generateRangeQueries(int range);
     void generatePOI(); //filename of training file
 
-	double getElapsedTime(double& refTime) {
-		double oldTime=refTime;
-		refTime=clock();
-		return (double(clock()-oldTime))/CLOCKS_PER_SEC;
-	}
+//	double getElapsedTime(double& refTime) {
+//		double oldTime=refTime;
+//		refTime=clock();
+//		return (double(clock()-oldTime))/CLOCKS_PER_SEC;
+//	}
 
 };
 
@@ -168,6 +168,10 @@ public:
 	void printNodesTokensPaths();
 
 	vector<CacheItem> cache;
+
+//B*******************************************
+	intMap nodeScores;
+//E*******************************************
 
 private:
 	intVector* invertedLists;	// to support fast query processing

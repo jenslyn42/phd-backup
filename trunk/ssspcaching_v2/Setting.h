@@ -51,8 +51,6 @@
 #include <cstdlib>
 
 
-
-
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
@@ -97,7 +95,8 @@ string MatchEnumString(LookupList& list,int code); 	// lookup a string by an enu
 // queryfile type, used to determine whether to read the test or training file.
 enum QLOG_CHOICE { QLOG_TRAIN, QLOG_TEST };
 
-
+//predeclare in order to define intRegionMap
+struct Region;
 
 typedef std::pair<int,int> intPair;
 typedef std::vector<intPair>  intPairVector;
@@ -122,14 +121,14 @@ typedef boost::unordered_map<int, intVector > intVectorMap;
 typedef boost::unordered_map<int, intMap > intintMapMap;
 typedef boost::unordered_map<int, std::pair<int, intVector > > intIntVectorMap;
 typedef boost::unordered_map<int, std::pair<intPair, intVector > > intIntPairVectorMap;
-
+typedef boost::unordered_map<intPair, intVector> intPairIntVectorMap;
+typedef boost::unordered_map<int, Region> intRegionMap;
 
 typedef	boost::unordered_map<int, boost::dynamic_bitset<> > intDBitset;
 typedef	boost::unordered_map<Point, int> PointIntMap;
 typedef	boost::unordered_map<PointPairs, int> PointPairsIntMap;
 
 typedef boost::unordered_map<string,string> ConfigType;
-
 
 
 
@@ -176,7 +175,7 @@ public:
 	int inputFileType;		// used for RoadGraph
 	int scacheQueryType;	// used for SCACHE only
 	int splits, itemsInCache, nonEmptyRegionPairs;
-    int numpoi; // used for rangesearch
+    unsigned int numpoi; // used for rangesearch
     int range; // used for rangesearch. For any range there has to exist a pregenerated file done with AbstractCache::generateRangeQueries(int range)
 
     bool useRange; //used for range queries
@@ -224,6 +223,10 @@ public:
 	int getSplits() const {return splits;}
 
 	void printSetting();
+
+    double getElapsedTime(double& refTime) {
+		return (double(clock()-refTime))/CLOCKS_PER_SEC;
+	}
 };
 
 

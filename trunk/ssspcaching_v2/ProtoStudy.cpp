@@ -29,7 +29,7 @@ void Oracle::buildCache() {
 
 void Oracle::runQueryList() {
     RoadGraph::mapObject(ts)->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
-	BOOST_FOREACH(intPair q, testSTPointPairs ) { 
+	BOOST_FOREACH(intPair q, testSTPointPairs ) {
 		checkCache(q);
 		numTotalQueries++;
 	}
@@ -243,7 +243,7 @@ Scache::~Scache()
 
 void Scache::runQueryList()
 {
-	BOOST_FOREACH(intPair q, testSTPointPairs ) { 
+	BOOST_FOREACH(intPair q, testSTPointPairs ) {
 		checkCache(q);
 		numTotalQueries++;
 	}
@@ -258,7 +258,7 @@ void Scache::checkCache(intPair query)
 	if(debug) cout << "one1, scache::checkCache! :cacheSize:" << (int) cache.size() <<"::"<< endl;
 	BOOST_FOREACH(CacheItem ci, cache )
 	{
-		if (find(ci.item.begin(),ci.item.end(), query.first) != ci.item.end() && 
+		if (find(ci.item.begin(),ci.item.end(), query.first) != ci.item.end() &&
 		    find(ci.item.begin(),ci.item.end(), query.second) != ci.item.end())
 		{
 			numCacheHits++;
@@ -434,7 +434,7 @@ intPair Scache::findLargestQuery(vector<intPair> cCandidates, uint k)
 void Scache::buildCache() {
 	// extract parameter from "ts"
 	string inFn=ts.testFilePrefix;
-	
+
 	switch(ts.scacheQueryType)
 	{
 		case 1:
@@ -547,7 +547,8 @@ void Scache::readLargestQueries(string inFn)
 				//insert new element element if there is space enough in cache.
 				if(cacheUsed + spSize < cacheSize){
 					sp.clear();
-					for(int t = 0; t < spSize; t++) sp.push_back(atoi(tokens[t+2].c_str()));
+					for(int t = 0; t < spSize; t++)
+                        sp.push_back(atoi(tokens[t+2].c_str()));
 					CacheItem e (i++, sp);
  					tmpCache[i] = e;
 					cacheUsed += e.size;
@@ -592,7 +593,7 @@ void Scache::readScoredQueries(string inFn)
 	readMapData(); //fill up structures such as coordinate2Nodeid
 	readQueryLogData(QLOG_TEST); //read *.test file into memory, queries for the cache.
 
-	
+
 	if( querysFile.is_open() )
 	{
 	cout << "scache::readScoredQueries! Starting to load queries into memory" << endl;

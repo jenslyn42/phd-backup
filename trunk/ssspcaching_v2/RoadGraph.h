@@ -32,6 +32,7 @@
 
 
 #include "Setting.h"
+#include <stdio.h>
 
 
 typedef std::pair<int,double> Edge;
@@ -63,7 +64,7 @@ public:
 	//void transformTrainOrTestFile(string cnodeFn, string trainTestFn);
 
     intVector getSPfromSPTree(int s, int t);
-    int getTrackdist(int i){return trackdist[i];}
+    int getTrackdist(int sourcePOI, int nodeId);
 
 private:
 	RoadGraph(){ };
@@ -80,7 +81,7 @@ private:
 	int parseFileType;
 	std::string filePrefix;
 	static boost::unordered_map<int, int*> spTrace;//backtract the SP route from a node to its original source.
-	static int* trackdist; //all the distances from any node to a source node
+	static boost::unordered_map<int, int*> trackdist; //all the distances from any node to a source node
 
 	intVector dijkstraSP(int s, int t);
 	intVector astarSP(int s, int t);
@@ -92,6 +93,8 @@ private:
 	int getFilelines(const char *filename);
 	bool getLastLine(const char *filename, string &lastLine);
 	void readSPTreeFile(TestSetting& ts);
+    void readSPTreeFileBinary(TestSetting& ts);
+    void readSPTreeFileASCII(TestSetting& ts);
 };
 
 
@@ -148,6 +151,11 @@ struct HeapWorkloadEntryCompMaxLengthDevide {
 	{ return left.answeredPaths.second.size() / left.pathLength < right.answeredPaths.second.size() / right.pathLength ; }
 };
 
+struct HeapIntIntUnorderedMapCompMax {
+    bool operator () (std::pair<int,int> left, std::pair<int,int> right) const
+    { return left.second < right.second; }
+};
+
 
 template<typename _Tp, typename _Sequence, typename _Compare >
 class FAST_HEAP
@@ -195,7 +203,7 @@ class FAST_HEAP
 typedef    priority_queue<HeapEntry, std::vector<HeapEntry>, HeapEntryComp> Heap;
 typedef    priority_queue<HeapEntry, std::vector<HeapEntry>, HeapEntryCompMax> maxHeap;
 typedef    priority_queue<HeapWorkloadEntry, std::vector<HeapWorkloadEntry>, HeapWorkloadEntryCompMax> maxWorkloadHeap;
-
+typedef    priority_queue<std::pair<int,int>, std::vector<std::pair<int,int> >, HeapIntIntUnorderedMapCompMax> maxPairHeap;
 
 // *** fast heap implementation
 /*typedef    FAST_HEAP<HeapEntry, std::vector<HeapEntry>, HeapEntryComp> Heap;

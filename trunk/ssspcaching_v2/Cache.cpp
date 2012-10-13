@@ -258,8 +258,8 @@ void AbstractCache::generateRangeQueries(int range){
 
     app = ".qtrain";
 	string fn=ts.testFilePrefix;
-	fn.append(app); //change file extention from .test to .train
-	ifstream rqtrainlogFile (fn.c_str(), ios::in); //*.train file
+	fn.append(app); //file extention set to .qtrain
+	ifstream rqtrainlogFile (fn.c_str(), ios::in); //*.rqtrain file
 
 	cout << "AbstractCache::generateRangeQueries start: " << fn << endl;
 
@@ -273,9 +273,7 @@ void AbstractCache::generateRangeQueries(int range){
 
 			firstPair = std::make_pair(atof(tokens[3].c_str()),atof(tokens[4].c_str()));
 			qPnt = Point2Nodeid[firstPair];
-			cout << "log0: " << queryTestPairs.size() << endl;
 			queryTrainPairs[std::make_pair(qPnt,range)] = firstPair;
-			cout << "log1: " << queryTestPairs.size() << endl;
 		}
 	}
 	rqtrainlogFile.close();
@@ -308,7 +306,7 @@ void AbstractCache::generateRangeQueries(int range){
     app = ".rqtrain";
     fn=ts.testFilePrefix;
     fn.append(to_string(range));
-	fn.append(app); //change file extention from .test to .train
+	fn.append(app); //set file extention to .rqtrain
     ///file output
 	ofstream rqueryfile;
 	rqueryfile.open((fn).c_str(), ios::out | ios::ate);
@@ -324,7 +322,7 @@ void AbstractCache::generateRangeQueries(int range){
     app = ".rqtest";
     fn=ts.testFilePrefix;
     fn.append(to_string(range));
-	fn.append(app); //change file extention from .test to .train
+	fn.append(app); //change file extention from .rqtest to .rqtrain
     ///file output
 	rqueryfile.open((fn).c_str(), ios::out | ios::ate);
 
@@ -351,7 +349,7 @@ void AbstractCache::generatePOI(){
 
 	string fn=ts.testFilePrefix;
 	fn.append(".qtrain"); //make the extension .qtrain
-	ifstream logFile (fn.c_str(), ios::in); //*.train file
+	ifstream logFile (fn.c_str(), ios::in); //*.qtrain file
 
 	cout << "generateRangeQueries::generatePOI start: " << fn << endl;
 
@@ -389,7 +387,6 @@ void AbstractCache::generatePOI(){
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-
 CacheStorage::CacheStorage() {
 
 }
@@ -418,7 +415,9 @@ bool CacheStorage::insertItem(CacheItem ci) {
 
 
 	int path_id = numberOfItemsInCache();
-
+//B****************************************************
+    ci.updateKey(path_id);
+//E****************************************************
 	cache.push_back(ci);
 	updateCacheUsed(ci);
 
@@ -454,8 +453,16 @@ bool CacheStorage::checkCache(intPair query) {
 		for (uint z=0;z<cache.size();z++) {
 			intVector& cItem = cache[z].item;
 			if (find(cItem.begin(),cItem.end(),s) != cItem.end())
-				if (find(cItem.begin(),cItem.end(), t) != cItem.end())
+				if (find(cItem.begin(),cItem.end(), t) != cItem.end()){
+
+//B****************************************************
+                    BOOST_FOREACH(int member, cItem){
+                        if(nodeScores.find(member) != nodeScores.end()) nodeScores[member] = nodeScores[member] +1;
+                        else nodeScores[member] = 1;
+                    }
+//E****************************************************
 					return true;
+				}
 		}
 	} else {
 		intVector& vecA=invertedLists[s];
@@ -473,6 +480,16 @@ bool CacheStorage::checkCache(intPair query) {
 				posB++;
 			else {// equal path_id
 				// printf("\tQ(%d %d): %d %d\n",s,t,vecA[posA],vecB[posB]);	// BUG?
+
+//B****************************************************
+                CacheItem tmpCI;
+                BOOST_FOREACH(CacheItem c, cache){if(vecA[posA] == c.key()) tmpCI = c; break;}
+                BOOST_FOREACH(int member, tmpCI.item){
+                    if(nodeScores.find(member) != nodeScores.end()) nodeScores[member] = nodeScores[member] +1;
+                    else nodeScores[member] = 1;
+                }
+//E****************************************************
+
 				return true;
 			}
 		}

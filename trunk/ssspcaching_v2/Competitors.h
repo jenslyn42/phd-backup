@@ -20,6 +20,12 @@ public:
 	void buildCache();
 	void runQueryList();
 
+//B*******************************************
+	intMap nodeScores;
+	intPairIntVectorMap spWithCachehits;
+    intMap queriesPoints;
+//E*******************************************
+
 private:
 	void checkAndUpdateCache(intPair query);
 	void insertItem(intVector& sp);

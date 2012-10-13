@@ -253,7 +253,6 @@ void extractTestParameters(TestSetting& ts) {
 
 	ts.useDijkstra = ts.getConfigBool("useDijkstra");
 
-    //Range search parameters
     ts.useRange = ts.getConfigBool("useRange");
     ts.range = ts.getConfigInt("range");
     ts.testRangetype = (RALG_CHOICE) ts.getEnumCode(RALG_ENUM, "testRangetype");
@@ -314,7 +313,6 @@ void ExperimentVaryCacheSize(TestSetting ts) {
 	}
 }
 
-
 void ExperimentVarySplit(TestSetting ts) {
 	if (ts.getConfigBool("autoTestName")==true) {
 		ts.testName.insert(0,"v_split_");
@@ -327,6 +325,25 @@ void ExperimentVarySplit(TestSetting ts) {
 	for (int splits = lowSplit; splits <= highSplit ; splits+=2) {
 		ts.splits = splits;
 		cout << "*** Now using ts.splits = " << ts.splits << endl;
+
+		TestObject *expTest = new TestObject(ts);
+		expTest->runStaticTest();
+		delete expTest;
+	}
+}
+
+void ExperimentVaryRange(TestSetting ts) {
+	if (ts.getConfigBool("autoTestName")==true) {
+		ts.testName.insert(0,"v_range_");
+		cout << "(auto) testName: " << ts.testName << endl;
+	}
+
+	int lowRange = ts.getConfigInt("lowRange");
+	int highRange = ts.getConfigInt("highRange");
+
+	for (int range = lowRange; range <= highRange ; range*=2) {
+		ts.range = range;
+		cout << "*** Now using ts.range = " << ts.range << endl;
 
 		TestObject *expTest = new TestObject(ts);
 		expTest->runStaticTest();
@@ -364,6 +381,7 @@ cout << "unsigned int\t" << std::numeric_limits<unsigned int>::max() << endl;
 cout << "long\t\t" << std::numeric_limits<long>::max() << endl;
 cout << "unsigned long\t\t" << std::numeric_limits<unsigned long>::max() << endl;
 cout << "double\t\t" << std::numeric_limits<double>::max() << endl;
+cout << "Rand Max\t\t" << RAND_MAX << endl;
 cout << sizeof(long) << " " << sizeof(int) << " " << sizeof(unsigned long) << " " <<sizeof(double) <<endl;
 cout << "******************************************" << endl;
 
@@ -379,7 +397,11 @@ cout << "******************************************" << endl;
 	ts.addConfigFromCmdLine(argc,argv);    // get the "configName" parameter from command line
 	string configName= ts.getConfigString("configName");
 
+///these lines are used when generating *.rq(test|train) files
+///only one can be commented in at a time, and the existing config lines must be commented out
+/// the generation calls are currently in constructor of LRU
 //	ts.addConfigFromFile( "config_lru_aal_cachesize.prob");
+//	ts.addConfigFromFile( "config_lru_bei_cachesize.prob");
     ts.addConfigFromFile(configName.c_str() );    // load default parameter values
 	ts.addConfigFromCmdLine(argc,argv);     // override parameter values
 
@@ -390,7 +412,10 @@ cout << "******************************************" << endl;
 	string experiment = ts.getConfigString("experiment");
 	boost::to_upper(experiment);
 
-	if (experiment.compare("SINGLE")==0)
+
+    if (experiment.compare("RANGE")==0)
+		ExperimentVaryRange(ts);
+	else if (experiment.compare("SINGLE")==0)
 		ExperimentSingle(ts);
 	else if (experiment.compare("SPLIT")==0)
 		ExperimentVarySplit(ts);
@@ -401,6 +426,5 @@ cout << "******************************************" << endl;
 //cout << "avg path length D14: " << calcAVGpathlengthInCache("level_SPC_scoreLengthDevide_AALD14.cache") << endl;
 //cout << "avg path length D18: " << calcAVGpathlengthInCache("level_SPC_scoreLengthDevide_AALD18.cache") << endl;
 
-//./mains -configName "config_hqf_bei_cachesize.prob" -useRange true -numpoi 1000 -testRangetype FAIR -useSPtree true -skipSPcalc false
 	return EXIT_SUCCESS;
 };
