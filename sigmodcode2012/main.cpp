@@ -298,7 +298,7 @@ int main(int argc, char *argv[]) {
 	
 	
 cout << "******************************************" << endl;
-cout << "BEGIN TESTS" << endl
+cout << "BEGIN TESTS" << endl;
 cout << "******************************************" << endl;
 
 	//Test setting
