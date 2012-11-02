@@ -1,0 +1,28 @@
+
+
+
+- define a benefit model (short)
+
+- describe new cache structure (short)
+- implement extension
+- do some tests
+- update and flesh out the description of benefit model and cache structure.
+
+It'd be good to include some example/figure there to explain your notions.
+
+Previously, we said that some paths are identical for both edge weights.
+We can of course reuse them.
+
+Some other paths have 90% similarity.
+How can we take advantage of them?
+
+
+That would be like directions, where you only are told to act if you have to change your current heading. This would be what GPS assistants do, and also what directions for google maps are doing.
+So yes, this sounds very possible. However, having never looked at how to achieve this set of important points where the user have to act, I am not sure how much work it would take to do this, or how hard it is to calculate. If we however could just save those points then that would of cause make our cache able to hold more (partial) paths.
+I will think about this and how we might implement it. I think of the following contributions to the journal paper:
+1. Change to what the cache stores (points w/direction action vs. full path). i.e. show how to change the storage to efficiently store the new type of cache items.
+2. Show correctness of the new cache items, i.e. they can still lead the user from A to B.
+3. Show it is still fast enough (we require the cache to return result fast)
+4. Depending on how computationally expensive this approach is, then also propose a dynamic variant. This might be hard as I assume finding the "action points" and their "direction action (e.g. turn left/right, take 3 exit of round about)" might take to long to be usable
+
+As this is "only" a change to the cache it would also be Independent of the 2 other extensions we have discussed. 
