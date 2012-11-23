@@ -17,12 +17,12 @@ $|P_{s,t,w}|$		& The size of $P_{s,t,w}$ (in number of nodes) \\\hline
 $E_{s,t,w}$		& The expense of executing query $Q_{s,t,w}$ \\\hline
 $\chi_{s,t,w}$		& The frequency of a \spath with weight type w \\\hline
 $\Psi$ 			& The Cache \\\hline
-$\mathfrak{U}_w(P_{s,t,w})$& The set of all subpaths in $P_{s,t,w}$ \\\hline
-$\mathfrak{U}_w(\Psi)$	& The set of all subpaths of paths in $\Psi$ \\\hline
-$\gamma_w(\Psi)$		& The total benefit of the content in the cache \\\hline
+$\mathfrak{U}^w(P_{s,t,w})$& The set of all subpaths in $P_{s,t,w}$ \\\hline
+$\mathfrak{U}^w(\Psi)$	& The set of all subpaths of paths in $\Psi$ \\\hline
+$\gamma^w(\Psi)$		& The total benefit of the content in the cache \\\hline
 
 $d_{s,t,w}$		& The \spath distance of a path $P_{s,t,w}$ \\\hline
-$\mathcal{QL}$		& Query log of search queries \\\hline
+$\mathcal{QL}^w$		& Query log of search queries \\\hline
 \end{tabular*}
 \caption{Table of Symbols \textbf{MW}}
 \label{tab:symbols}
@@ -63,8 +63,9 @@ $\mathcal{QL}$		& Query log of search queries \\\hline
 % \end{algorithm}
 
 
-In multi-weight road networks\cite{icdeMouratidisLY10} a shortest path queries may be submitted to a service provider based on different shortest path metrics or categories. A metric could be the fastest route, the fewest number of edges to traverse, or of casue the actual shortest distance. These kind of queries require the \spath service provider to have several weights defined for each edge, a fair assumption on most service providers (TODO: CITE).
-Such queries precent a challange to effectively cache, as the same \spath $P_{s,t,w}$ may not be valid for all weights/metrics $w$.
+In multi-weight road networks\cite{icdeMouratidisLY10} a shortest path query may be submitted to a service provider based on different shortest path metrics or categories. A category could be the fastest route, the fewest number of edges to traverse, or of cause the actual shortest distance. These kind of queries require the \spath service provider to have several weights defined for each edge, a fair assumption on most service providers (TODO: CITE).
+Such queries present a challenge to effectively cache, as the same \spath $P_{s,t,w}$ may not be valid for all weights/metrics $w$.
+Two queries with identical start- and end-point can return two different \spathsns, depending on what weight category is issued with the query. Figure \ref{fig:map1} shows a map with two weight categories on each edge, $w_1,w_2$. The two queries $Q_{1,6,w_1}$ \& $Q_{1,6,w_2}$ are identical, except for the weight category. $\psi_1$ and $\psi_2$ in table \ref{tab:expsi} show the \spath result of the two queries in column "cache item". It is clear that the result of the two queries are very different because of the difference in weight category used for each result.
 
 
 
@@ -72,54 +73,73 @@ Such queries precent a challange to effectively cache, as the same \spath $P_{s,
 \begin{definition}
 Let $G(V, E)$ be a graph with a set $V$ of nodes and a set $E$ of edges.
 Each node $v_i \in V$ models a road junction. Each edge $(v_i, v_j) \in
-E$ models a road segment. The weight (length) of an edge is denoted as $W(v_i, v_j, w)$, where $w \in \mathcal{W}$ is the weight type (length, travel time, scenic value, ect.).
+E$ models a road segment. The weight or 'length' of an edge is denoted as $W(v_i, v_j, w)$, where $w \in \mathcal{W}$ is the weight type (length, travel time, scenic value, ect.).
 \end{definition}
 
 
 
 \begin{definition}{Multi-weight Search}\\
-A Multi-weight Search query, denoted by $Q_{s,t,w}$ consist of a source and target vertex $s$ and $t$, plus a weight type $w \in \mathcal{W}$ 
-The result of $Q_{s,t,w}$, denoted $SP_{s,t,w}$, is a collection of connected vertices $v_s,\dotsc,v_t$ such that they form a \spath on graph $G\mathbf{(V,E)}$ using weight-type $w \in \mathcal{W}$.
+A Multi-weight Search query, denoted by $Q_{s,t,w}$ consist of a source and target vertex $s$ and $t$, plus a category $w \in \mathcal{W}$ 
+The result of $Q_{s,t,w}$, denoted $P_{s,t,w}$, is a collection of connected vertices $v_s,\dotsc,v_t$ such that they form a \spath on graph $G\mathbf{(V,E)}$ using category $w \in \mathcal{W}$.
 \end{definition}
 
 
-Using the map in figure \ref{fig:map1} a multi-weight search query, $Q_{v_1,v_2,w}$, can be executed for two different weights, $w_1$ or $w_2$, possibly resulting in two different paths for the same start-/end-nodes, depending on the weight chosen. Table \ref{tab:expsi} shows the \spath $\psi_1$ and $\psi_2$ resulting from the same start-/end-node, but using different weights ($w_1, w_2$).
-
-
-\begin{definition}{Multi-weight Query Log ($\mathcal{QL_W}$)}\\
-A multi-weight search query log $\mathcal{QL_W}$ is a collection of time stamped queries that have been issued by users in the past.
-A query is on the form $(s,t,w)$, where $s$ and $t$ is the start- and end-point respectively. $W$ is the weight type to be used when calculating the SP. The full form of the log, $\mathcal{QL_W}$,  is then: $\{(s_0,t_0,w_0),\dots,(s_i,t_i,w_i)\}$. $\chi_{s,t}$ will be the number of sub paths seen, regardless of their weight type, the cost table for $E_{s,t}$ will however need to be maintained for each individual weight type, as each type can incur a different SP.
-\end{definition}
+Using the map1 (fig. \ref{fig:map1}) a multi-weight search query, $Q_{1,2,w}$, can be executed for two different weights, $w_1$ or $w_2$, possibly resulting in two different paths for the same start-/end-nodes, depending on the weight chosen. Table \ref{tab:expsi} shows the \spath $\psi_1$ and $\psi_2$ resulting from the same start-/end-node, but using different weights ($w_1, w_2$).
 
 
 \begin{figure}[hbt]
   \center
         \includegraphics[width=0.4\textwidth]{figures/map1}
-        \caption{Map of fig \ref{fig:wilist} and table \ref{tab:expsi}, with set of weights on the edges}
+        \caption{Map1. Has a set of two weights on each edge, $w_1,w_2$.}
   \label{fig:map1}
 \end{figure}
+
+\begin{table}
+\begin{tabular}{l|l|l}\hline
+$\psi$		& Cache item 			& Category \\\hline  \hline
+$\psi_1:$	& $\{v_1,v_3,v_4,v_5,v_6\}$ 	& ($w_1$)\\\hline
+$\psi_2:$	& $\{v_1,v_3,v_6\}$ 		& ($w_2$)\\\hline
+$\psi_3:$	& $\{v_1,v_3,v_4,v_5\}$ 	& ($w_1,w_2$)\\\hline
+\end{tabular}
+\caption{Cache items using queries $Q_{1,6,X}, Q_{1,5,X}$ with $X:\{w_1,w_2\}$, covering both weights on the map (fig \ref{fig:map1})}
+\label{tab:expsi}
+\end{table}
+
+
+\begin{definition}{Multi-weight Query Log ($\mathcal{QL}^{w}$)}\\
+A multi-weight search query log $\mathcal{QL}^w$ is a collection of time stamped queries that have been issued by users in the past.
+A query is on the form $(s,t,w)$, where $s$ and $t$ is the start- and end-point respectively. $w$ is the category to be used when calculating the SP. The full form of the log, $\mathcal{QL}^{w}$,  is then: $\{(s_0,t_0,w_0),\dots,(s_i,t_i,w_i)\}$.
+\end{definition}
+
 
 
 \subsection{Cache Structure}
 
-Paths stored as they are in the cache. Instead of using a single inverted list to look up whether the cache can answer a query, we use a collection of inverted lists to keep track of which $Q_{s,t,w}$ can be answered by the cache $\Psi$, for each weight type in $\mathcal{W}$.
+Paths are stored as sets of vertices $\{(s_0,t_0),\dots,(s_i,t_i)\}$ with an associated category $w \in W$ in the cache. Instead of using a single inverted list to look up whether the cache can answer a query, we use a collection of inverted lists to keep track of which $Q_{s,t,w}$ can be answered by the cache ($\Psi$), for each category in $\mathcal{W}$.
 Even if a full path can only answer a query for a single weight type, then by using this approach then any sub-path able to answer for more than one weight-type will still be utilized. 
 
-As a path that can answer a SP query for more than one weight type is more valuable then we maintain $\chi_{s,t,\_}$ without regards to the weight type, simply adding up the statistics for each query, for all weight types seen. (This does however not necessarily work very well when we calculate $\chi_{R_i,R_j,w}$ for a pair of regions). 
+The map in figure \ref{fig:map1} depicts a simple road system with 2 different weights on each edge. The first edge weight captures edge length, while the second weight captures the of number of edges traversed, which is why each edge always contributes 1.
 
-The map in  fig \ref{fig:map1} depicts a simple road system with 2 different weights on each edge. The first edge weight captures edge length, while the second weight captures the of number of edges traversed, which is why each edge always contributes 1.
+To answer a query $Q_{s,t,w}$ on the cache in table \ref{tab:expsi}, for each item $\psi_i$, we first check whether $w$ matches any of the entries in the category column. If $w$ matches an entry we then we check whether $s \in \psi_i$ and $t \in \psi_i$, if yes, then $\psi_i$ can answer $Q_{s,t,w}$. We search each entry in the table until either we find an match, or all entries have been examined.
 
-Using two example queries, $Q_{v1,v6,\_}, Q_{v1,v5,\_}$, on the map in figure \ref{fig:map1}, we will get the cache items in table \ref{tab:expsi}. Using this we build a inverted list for each weight in order to quickly answer queries (see fig. \ref{fig:wilist}). 
-To answer a query $Q_{v_s,v_t,w}$ we use $w$ to first find the relevant inverted list. Afterwards we do 2 look-ups in the inverted list, for $v_s$ \& $v_t$, and do the intersection of the resulting cache items. If the answer is non-empty there is a \spath for $Q_{v_s,v_t,w}$ in the cache.
+If we want to answer the query $Q_{1,4,w_2}$ we will first check the category column of $\psi_1$, as it does not include $w_2$ we know it can not answer our query and we proceed to check $\psi_2$. Since $\psi_2$ can answer some query with category $w_2$ we check whether $v_1 \in \psi_2$ and $v_4 \in \psi_2$. Since $v_4 \not \in \psi_2$ we proceed to check $\psi_3$. As the category of $\psi_3$ contains $w_2$ and $v_1, v_4 \in \psi_3$ we know that $\psi_3$ can answer $Q_{1,4,w_2}$.
 
-The same query with different weight can result in different cache items. In table \ref{tab:expsi} the query $Q_{v_1,v_6,X}$ ($X: w_1,w_2$) results in both $\psi_1$ and $\psi_2$ being added to the cache, since the query returns two different paths for weights $w_1$ and $w_2$. It might of cause also be the case that no matter what weight we use, then the \spath is the same. $Q_{v_1,v_5,X}$ show this well, as the \spath does not change for the two weights. One important aspect to notice is that if a full cache item is only valid for a single weight, but a sub path of the \spath is valid for several weights, then this fact will captured in the inverted lists, maximizing the reuse of items in the cache, making them more useful. 
+As the cache in table grows larger it becomes inefficient to search, so we extend the idea of using inverted list from \cite{thomsen2012}(sec. 4.2). Assuming the following four historical queries, \\
+$Q_{1,6,w_1},Q_{1,6,w_2}, Q_{1,5,w_1},Q_{1,5,w_2}$ from $\mathcal{QL}^{w}$, we will have the cache items in table \ref{tab:expsi}. Using this we build a inverted list for each weight in order to quickly answer queries (see fig. \ref{fig:wilist}). 
+To answer a query $Q_{v_s,v_t,w}$ we use $w$ to first find the relevant inverted list. Afterwards we do 2 look-ups in the inverted list, for $v_s$ \& $v_t$ respectively, and then check the intersection of the cache items. If the answer is non-empty there is a \spath for $Q_{v_s,v_t,w}$ in the cache. 
+A more efficient approach would be to combine all the tables together and make the key (weight,vertex). This would reduce the number required lookups to two, and since the tables most likely will have some identical items, then we may also have a chance to optimize the number of entries.
 
-
+\begin{figure}[hbt]
+  \center
+        \includegraphics[width=0.20\textwidth]{figures/wilist}
+        \caption{Cache structure for inverted lists using map1 (fig. \ref{fig:map1}) and cache elements from table \ref{tab:expsi}}
+  \label{fig:wilist}
+\end{figure}
 
 \subsection{Benefit Model}
 
 We extend the benefit driven benefit model introduced in \cite{thomsen2012}. We introduce what changes are needed to capture the benefit of \spaths with \textit{multi-weight search}.
-Equation \ref{eq:phiw}, \ref{eq:upsw}, \ref{eq:benefitw}, and \ref{eq:cachebenefitw} define the existing functions with restriction on $w$.
+Equation \ref{eq:phiw}, \ref{eq:benefitw}, \ref{eq:upsw}, and \ref{eq:cachebenefitw} define the existing functions with restriction on $w$.
 
 
 We have to answer two important questions:
@@ -128,40 +148,42 @@ We have to answer two important questions:
 \item \label{quest:imptwo} For query $Q_{s,t,w}$ what is the benefit if added to the cache.
 \end{enumerate}
 
-Question \ref{quest:impone} can be answered by the updated lemma \ref{lem:weightedoptimalproperty} (from \cite{thomsen2012}). A path $P_{a,b,d}$ contains the path $P_{s,t,w}$ if they share the same weight and both $v_s$ \& $v_t$ are on $P_{a,b,d}$. With this we get the updated definition for the \textit{answerable query set}, $\mathfrak{U}_w(P_{a,b,d})$, for path $P_{a,b,d}$:
+Question \ref{quest:impone} can be answered by the updated lemma \ref{lem:weightedoptimalproperty} (from \cite{thomsen2012}). A path $P_{a,b,d}$ contains the path $P_{s,t,w}$ if they share the same weight and both $v_s$ \& $v_t$ are on $P_{a,b,d}$. With this we get the updated definition for the \textit{answerable query set}, $\mathfrak{U}^w(P_{a,b,d})$, for path $P_{a,b,d}$:
 
 \begin{equation} \label{eq:phiw}
-\mathfrak{U}_w(P_{a,b,d}) = \{ P_{s,t,w} : s, t \in P_{a,b,d},  s \neq t,  d = w\}
+\mathfrak{U}^w(P_{a,b,d}) = \{ P_{s,t,w} : s, t \in P_{a,b,d},  s \neq t,  d = w\}
 \end{equation}
 
-Equation \ref{eq:phiw} finds all sub-paths of SP $sp$ with weight category $w$. Using cache item $\psi_1$ from $Q_{v_1,v_6}$ in table \ref{tab:expsi}, the answerable queryset is: $\mathfrak{U}_w(P_{1,6,w_1}) = \{P_{1,3,w_1},P_{1,4,w_1},P_{1,5,w_1},P_{1,6,w_1},P_{3,4,w_1},$ $P_{3,5,w_1},P_{3,6,w_1},P_{4,5,w_1},P_{4,6,w_1},P_{5,6,w_1}\}$ 
-
-
-\begin{table}
-\begin{tabular}{l|l|l}\hline
-$\psi$		& Cache item 			& Weight category \\\hline  \hline
-$\psi_1:$	& $\{v_1,v_3,v_4,v_5,v_6\}$ 	& ($w_1$)\\\hline
-$\psi_2:$	& $\{v_1,v_3,v_6\}$ 		& ($w_2$)\\\hline
-$\psi_3:$	& $\{v_1,v_3,v_4,v_5\}$ 	& ($w_1,w_2$)\\\hline
-\end{tabular}
-\caption{Cache items using queries $Q_{v_1,v_6,X}, Q_{v_1,v_5,X}$ with $X:\{w_1,w_2\}$, covering both weights on the map (fig \ref{fig:map1})}
-\label{tab:expsi}
-\end{table}
+Equation \ref{eq:phiw} finds all sub-paths of SP $sp$ with weight category $w$. Using cache item $\psi_1$ from $Q_{v_1,v_6}$ in table \ref{tab:expsi}, the answerable queryset is: $\mathfrak{U}^w(P_{1,6,w_1}) = \{P_{1,3,w_1},P_{1,4,w_1},P_{1,5,w_1},P_{1,6,w_1},P_{3,4,w_1},$ $P_{3,5,w_1},P_{3,6,w_1},P_{4,5,w_1},P_{4,6,w_1},P_{5,6,w_1}\}$ 
 
 
 In regards to question \ref{quest:imptwo} we update the \textit{benefit} equation $\gamma(\Psi)$ to consider weight categories:
 
 \begin{equation} \label{eq:benefitw}
-\gamma_w(P_{a,b,d}) = \sum\limits_{P_{s,t,w} \in \mathfrak{U}_w(P_{a,b,d})} \chi_{s,t,w} \bullet E_{s,t,w}
+\gamma^w(P_{a,b,d}) = \sum\limits_{P_{s,t,w} \in \mathfrak{U}^w(P_{a,b,d})} \chi_{s,t,w} \bullet E_{s,t,w}
 \end{equation}
 
-Equation \ref{eq:benefitw} defines $benefit$ and makes it clear how much can we expect to save, in total, if path $P_{a,b,d}$ is in the cache. It is calculed based on the historical statistics defined by $\chi_{a,b,d}$ (equation \ref{eq:chiw}) and the cost of calculating the \spathns, $E_{a,b,d}$.
+Equation \ref{eq:benefitw} defines $benefit$ and makes it clear how much can we expect to save, in total, if path $P_{a,b,d}$ is in the cache. It is calculated based on the historical statistics defined by $\chi_{a,b,d}$ (equation \ref{eq:chiw}) and the cost of calculating the \spathns, $E_{a,b,d}$.
 
 
 \begin{equation} \label{eq:chiw}
-\chi_{s,t,w} =  |\{ Q_{b,e,w} \in \mathcal{QL}: s, t \in Q_{b,e,w} \}|
+\chi_{s,t,w} =  |\{ Q_{b,e,w} \in \mathcal{QL}^{w}: s, t \in Q_{b,e,w} \}|
 \end{equation}
-Equation \ref{eq:chiw} defines the benefit of a path, based on how often we have seen the path, and its subpaths, in the query log $\mathcal{QL}$
+
+\begin{equation} \label{eq:chiSingleToRegw}
+ \hat{\chi}_{R_i, R_j, w} = \sum\limits_{v_s \in R_i} \sum\limits_{v_t \in R_j} \chi_{s,t,w}
+\end{equation}
+
+
+\begin{equation} \label{eq:chiregw}
+\chi_{s,t,w} = \frac{ \hat{\chi}_{R_i, R_j, w} }{|R_i| \cdot |R_j|}
+\end{equation}
+
+
+
+Based on how often we have seen the path, and its subpaths, in the query log $\mathcal{QL}^{w}$, equation \ref{eq:chiw} defines the benefit of a path, for a single path. Equation \ref{eq:chiSingleToRegw} for $\hat{\chi}_{R_i, R_j, w}$ sums up all $\chi_{s,t,w}$ going from a vertex $v_s$ in region $R_i$ to a vertex $v_t$ in $R_j$. Using equation \ref{eq:chiSingleToRegw} we can then define $\chi_{s,t,w}$ for regions as equation \ref{eq:chiregw}.
+
+
 
 
 \begin{lemma} \label{lem:weightedoptimalproperty}
@@ -177,33 +199,28 @@ We have $P_{s,t,w} = \langle v_{x_i},v_{x_i+1},...,v_{x_j}\rangle$ if $v_s = v_{
 
 For the general case where the cache contains more than one path, the updated equations are shown below:
 
-
-\begin{equation} \label{eq:phil}
-\mathfrak{U}_l(P_{a,b,m})= \{ P_{s,t,l}: s,t \in P_{a,b,m}, s \neq t, m = l\}
-\end{equation}
-
-
 \begin{equation} \label{eq:upsw}
- \mathfrak{U}_w(\Psi) = \bigcup\limits_{P_{a,b,w} \in \Psi} \mathfrak{U}_w(P_{a,b,d})
+ \mathfrak{U}^w(\Psi) = \bigcup\limits_{P_{a,b,w} \in \Psi} \mathfrak{U}^w(P_{a,b,d})
 \end{equation}
+
+Equation \ref{eq:upsw} finds the set of unique paths with weight $w$ from $\Psi$, which is either a path from $a$ to $b$, or a sub-path of such a path. This is the answerable set of paths using  $P_{a,b,d}$.
 
 \begin{equation} \label{eq:cachebenefitw}
-\gamma_w(\Psi) = \sum\limits_{P_{s,t,w} \in \mathfrak{U}_w(\Psi)} \chi_{s,t,w} \bullet E_{s,t,w}
+\gamma^w(\Psi) = \sum\limits_{P_{s,t,w} \in \mathfrak{U}^w(\Psi)} \chi_{s,t,w} \cdot E_{s,t,w}
 \end{equation}
 
 Equation \ref{eq:cachebenefitw} calculate the benefit of the cache with respect to a specific weight category, using $\chi_{s,t,w}$ and $E_{s,t,w}$, in the same way $\chi_{s,t}$ is calculated using $\chi_{s,t}$ and $E_{s,t}$.
 
-Equation \ref{eq:upsw} finds the set of unique paths with weight $w$ from $\Psi$, which is either a path from $a$ to $b$, or a sub-path of such a path. This is the answerable set of paths using  $P_{a,b,d}$.
 
 
 
 
-\begin{figure}[hbt]
-  \center
-        \includegraphics[width=0.25\textwidth]{figures/wilist}
-        \caption{Cache structure for inverted lists using map from fig \ref{fig:map1} and cache elements from table \ref{tab:expsi}}
-  \label{fig:wilist}
-\end{figure}
+The same query with different weight can result in different cache items. In table \ref{tab:expsi} the queries $Q_{1,6,w_1},Q_{1,6,w_2} \in \mathcal{QL}^{w}$, the two only differing on the weight parameter. The two queries results in both $\psi_1$ and $\psi_2$ being in the cache, since the query returns two different paths for weights $w_1$ and $w_2$. 
+It can of cause also be the case that no matter what weight we use, the \spath is the same. The queries $Q_{1,5,w_1},Q_{1,5,w_2} \in \mathcal{QL}^{w}$ are an example of this, as the \spath does not change for $w_1$ or $w_2$. 
+An important aspect to notice is that though a complete cache item may only valid for a single weight category, then a sub path of the \spath can be valid for several categories. This can e.g. be seen in $\psi_1$ (table \ref{tab:expsi}) where the path is only valid for $w_1$, but $\psi_1 \setminus v_6$ is identical to $\psi_3$ which we already know is valid for both $w_1,w_2$. Avoiding this duplication of information could e.g. be done by using inverted lists as in fig. \ref{fig:wilist} to store the information on weight category. If we do so we will not need to store $\psi_3$, since $\psi_3 \in \psi_1$.
+
+
+
 
 
 % 
@@ -237,55 +254,64 @@ $G\mathbf{(V,E)}$ 	& A graph with node set $V$ and edge set $E$ \\\hline
 $v_i$			& A node in $V$ \\\hline 
 $(v_i,v_j)$		& An edge in $E$ \\\hline 
 
-$Q_{s,t,l}$		& \spath query from node $v_s$ to node $v_t$, using \textit{path level l}\\\hline
-$P_{s,t,l}$		& The \spath result of $Q_{s,t,l}$, using \textit{path level l}. \\\hline
-$|P_{s,t,l}|$		& The size of $P_{s,t,l}$ (in number of nodes) \\\hline
+$Q_{s,t}$		& \spath query from node $v_s$ to node $v_t$, using \textit{path level l}\\\hline
+$P_{s,t}$		& The \spath result of $Q_{s,t,l}$, using \textit{path level l}. \\\hline
+$|P_{s,t}|$		& The size of $P_{s,t,l}$ (in number of nodes) \\\hline
 $E_{s,t,l}$		& The expense of executing query $Q_{s,t,l}$ \\\hline
 $\chi_{s,t,l}$		& The frequency of a \spath with level $l$ \\\hline
 $\Psi$ 			& The Cache \\\hline
 $\mathfrak{U}_l(P_{s,t,l})$& The set of all subpaths in $P_{s,t,l}$ \\\hline
 $\mathfrak{U}_l(\Psi)$	& The set of all subpaths of paths in $\Psi$ \\\hline
-$\gamma_l(\Psi)$		& The total benefit of the content in the cache \\\hline
+$\gamma_l(\Psi)$	& The total benefit of the content in the cache \\\hline
 
 $d_{s,t,l}$		& The \spath distance of a path $P_{s,t,l}$ \\\hline
 
-$\mathcal{QL}$		& Query log of search queries \\\hline
+$\mathcal{QL}$		& Query log of search queries (see \cite{thomsen2012}) \\\hline
 \end{tabular*}
 \caption{Table of Symbols \textbf{DA}}
 \label{tab:symbols}
 \end{table}
 
-When looking for directions to some place, a user who issues a \spath query does not actually care about the full \spathns\cite{sigmodTaoSP11}, but rather the user just wants to know when a new action is needed (turn left, right, or , besides following the current path. This is what GPS devices usually do. GPS devices usually only alerts the user if an action is needed, otherwise the user should just continue on the current path.
-There are 2 overall levels that directions to follow a \spath can be given:
+When looking for directions to some place, a user who issues a \spath query does not actually care about the full \spathns\cite{sigmodTaoSP11}, but rather the user just wants to know when a new action is needed (turn left, right, or any action other action, besides following the current path. This is what GPS devices usually do. GPS devices usually only alerts the user if an action is needed, otherwise the user should just continue on the current path.
 
-\begin{tabular}{@{}lp{21em} }
-Finest 		& Level 1, the directions can be given for every single node on the \spathns, regardless of whether there are any option to change directions. \\
-Coarsest	& Level 2, the directions can be given only when it is necessary to change directions, i.e. it does not matter how many side roads are passed, as long as the instruction is ostensibly "continue straight", then the instruction will not be included. Only if it is really necessary to make an action, such as turning, will the node be included in the instructions.
+
+The same query can be saved at many different levels of detail, figure \ref{fig:minroute} shows a route from S to T, where each node on the route is marked as belonging to the $fine$\textbf{(F)} or $coarse$\textbf{(C)} level of detail (difference explained later). Table \ref{tab:psilvlcontent}, $\psi_1$, shows the set of nodes included in a \spath depending on the level of detail desired. 
+
+
+There are 2 overall $levels$ that directions to follow a \spath can be given:
+
+\begin{tabular}{@{}l@{  } p{21em} }
+Fine ({\bf F})		& The directions are given for every single node on the \spathns, regardless of whether there are any option to change directions. \\
+Coarse ({\bf C})	& The directions are given only when it is necessary to change directions, i.e. it does not matter how many side roads are passed, as long as the instruction is ostensibly "continue straight", then the instruction will not be included. Only if it is really necessary to make an action, such as turning, will the node be included in the instructions.
 \end{tabular}
 
-Both $finest$ and $coarsest$ will always include the start- and end-node. An alternative 'middleway' could be to have the directions be given only for nodes where it is possible to change direction/turn. 
+Both $fine$ and $coarse$ will always include the start- and end-node. An alternative (\textbf{A}) middleway could be to have the directions be given only for nodes where it is possible to change direction/turn and we will be using this alternative in figure \ref{tab:psilvlcontent} and \ref{tab:directioninvlists}, however any alternative $(\textbf{A}):(\textbf{C}) \subseteq (\textbf{A}) \subseteq (\textbf{F})$ is possible. 
 
-When using $finest$ the advantage is that all subpaths of a \spath in the cache will be answerable, this scheme may however take op a lot of space for subpaths that are never seen, and therefor contribute no benefit to the cache.
+When using (\textbf{F}) the advantage is that all subpaths of a \spath in the cache will be answerable, this scheme may however take op a lot of space for subpaths that are never seen, and therefor contribute no benefit to the cache.
 
-Using $coarsest$ the advantage is that, especially on longer \spathsns, it will consume less space, while still maintaining enough information in the cache to be useful. The downside is of cause that the reduced number of vertices stored also negatively impacts the number of queries that can be answered by the \spath when it is in the cache.
+Using (\textbf{C}) the advantage is that, especially on longer \spathsns, it will consume less space, while still maintaining enough information in the cache, enabeling it to answer some sub-queries, assuming the result includes some actions. The downside is of cause that the reduced number of vertices stored also negatively impacts the number of queries that can be answered by the \spath when it is in the cache.
 
-In figure \ref{fig:minroute} a path from S to T is shown. Each vertex is enumerated based on what level of directions each node would be included in, according to the enumeration of \textit{finests} and \textit{coarsest} above
+It may be desireble to use some alternative (\textbf{A}) to gain the benefit of being able to answer more paths than a cache item found with (\textbf{C}) allows for, and at the same time not have to store any nodes that we do not consider useful (according to equation \ref{eq:benefitl} and \ref{eq:cachebenefitl}).
+
+
+In figure \ref{fig:minroute} a path from S to T is shown. Each vertex is labeled based on what level of directions each node would be included in, according to the enumeration of (\textbf{F}) and (\textbf{C}) above. Alternative \textbf{A}) is not shown on the map.
 
 
 \begin{figure}[hbt]
   \center
         \includegraphics[width=0.4\textwidth]{figures/minroute}
-        \caption{$Q_{1,11,l}$: Bold line from S to T denote travel route. $l$=Finest: All nodes on the path has a value 1, forming the complete path. 
-        $l$=Coarsest: Circles with a value 2 denote the minimum set of nodes needed to navigate from S to T}
+        \caption{$Q_{1,11}$: Bold line from S to T denote travel route. $l$=(\textbf{F}): All nodes on the path has an (F), forming the complete path. 
+        $l$=(\textbf{C}): Circles with a (C) denote the minimum set of nodes needed to navigate from S to T}
   \label{fig:minroute}
 \end{figure}
 
 
 \begin{definition}\label{def:direction} {Direction}\\
-The \textit{directions} of a query $Q_{s,t,l}$, where the detail level $l$ is specified by 1(finest) or 2(coarsest), are a set of vertex neighbour pairs $\{(v_i,v_j),...\}$, each pair consisting of two connected nodes on $P_{s,t,l}$, representing a instruction at a node $v_i$, to take the path towards node $v_j$, where$v_i,v_j \in V$ on the \spath $P_{s,t,l}$.
+The \textit{directions} of a query $Q_{s,t}$, where the detail level $l$ is specified by 1:(\textbf{F}), 100:(\textbf{C}), and some an Alternative(\textbf{A}):(\textbf{C}) $\leq$ (\textbf{A}) $\leq$ (\textbf{F}) , are a set of vertex neighbour pairs $\{(v_i,v_j),...\}$, each pair consisting of two connected nodes on $P_{s,t}$, representing a instruction at a node $v_i$, to take the path towards node $v_j$, where$v_i,v_j \in V$ on the \spath $P_{s,t}$.
+$l$ is a system parameter set by the service provider.
 \end{definition}
 
-Figure \ref{fig:minroute} illustrates the $directions$ on query $Q_{1,11,l}$ for l being set to both coarsest and finest. For l=finest the $directions$ include the all vertices on the bold path from S to T. For l=coarsest the $directions$ only include the circled vertices: The start- and end-vertex plus a pair of neighbouring nodes each time the default action of going straight needs to be changed because the path turns where there are more than one choice.
+Figure \ref{fig:minroute} illustrates the $directions$ on query $Q_{1,11}$ for $l$ being set to both (\textbf{C}) and (\textbf{F}). For l=(\textbf{F}) the $directions$ include the all vertices on the bold path from S to T. For l=(\textbf{C}) the $directions$ only include the circled vertices: The start- and end-vertex plus a pair of neighbouring nodes each time the default action of going straight needs to be changed because the path turns where there are more than one choice.
 
 \begin{definition}
 Let $G(V, E)$ be a graph with a set $V$ of nodes and a set $E$ of edges.
@@ -295,10 +321,10 @@ E$ models a road segment. The weight (length) of an edge is denoted as $W(v_i, v
 
 
 \begin{definition}{\spathns: Query and Result}\\
-A shortest path query, denoted by $Q_{s,t,l}$ consist of a source and target node, $v_s,v_t$.
+A shortest path query, denoted by $Q_{s,t}$ consist of a source and target node, $v_s,v_t$.
 
-The result of $Q_{s,t,l}$, denoted $P_{s,t,l}$, is a collection of nodes on the \spath from $v_s$ to $v_t$ (on the graph G) with each node associated with a direction (definition \ref{def:direction}).
-We can represent $P_{s,t,l}$ as a list of pairs (node, neighbour node): $\langle (v_{x_0},v_{x_{0n}}), (v_{x_1},v_{x_{1n}}), \dots ,(v_{x_n},v_{x_{nn}}) \rangle$, where each pair contains a set of neighbouring virtices from $G$ level $l$ makes it necessary in order to provide the level of instruction asked for in $Q_{s,t,l}$.
+The result of $Q_{s,t}$, denoted $P_{s,t}$, is a collection of nodes on the \spath from $v_s$ to $v_t$ (on the graph G) with each node associated with a direction (definition \ref{def:direction}).
+We can represent $P_{s,t}$ as a list of pairs (node, neighbour node): $\langle (v_{s},v_{x_{}}), (v_{x_1},v_{x_{1n}}), \dots ,(v_{x_n},v_{x_{nn}}) \rangle$, where each pair contains a set of neighbouring vertices from $G$.
 \end{definition}
 
 
@@ -306,19 +332,21 @@ We can represent $P_{s,t,l}$ as a list of pairs (node, neighbour node): $\langle
 
 \subsection{Cache Structure}
 
-Cache items can be stored just as they did before (\cite{thomsen2012}), either in a path array or as a graph representation. The main difference will be in the way the cache is accessed. Previously the key was simply the start and end node, and if they both had at least one common cache item then it was considered a cachehit (see figure 9 in \cite{thomsen2012}). Now the key will be a pair ($v_s, l$) and ($v_t, l$) for the start-/end-node. Table \ref{tab:directioninvlists} shows the inverted lists for different detail levels, based the cache content in table \ref{tab:psilvlcontent} and the map from figure \ref{fig:minroute}. Table \ref{tab:directioninvlists} shows the tables as three seperate tables, there is however no reason they could not be combined, so different keys ($v_i,l$) point to the same data.
+Cache items can be stored just as they did before \cite{thomsen2012}, either in a path array or as a graph representation. 
 
-Figuring out at what detail level paths should be stored in the cache, and whether the should be stored in a path array or as a graph representation is one of the interresting questions we want to answer. 
+Table \ref{tab:directioninvlists} shows the inverted lists for different detail levels, based the cache content in table \ref{tab:psilvlcontent} and the map from figure \ref{fig:minroute}. Table \ref{tab:directioninvlists} shows the tables as three separate tables, there is however no reason they could not be combined, so different keys, $v_i$, point to the same data.
 
-For longer \spaths that are relatively simple, meaning few instructions are needed, we will store very few nodes at level 3. This could be a problem as we have no information about how to traverse large parts of such a shortest path, even if such parts may be have high benefit (high $chi$ values for pairs of nodes on the path). We could possibly use the $\chi$ benefit values to determine how many extra vertices we have to store besides the ones at level 3. This would allow us to store only the nodes that are both necessary and useful for navigation.
+Figuring out at what detail level paths should be stored in the cache, and whether the should be stored in a path array or as a graph representation is one of the interesting questions we want to answer. 
+
+For longer \spaths that are relatively simple, meaning few instructions are needed, we will store very few nodes at level (\textbf{C}). This could be a problem as we have no information about how to traverse large parts of such a shortest path, even if such parts may be have high benefit (high $chi$ values for pairs of nodes on the path). We could possibly use the $\chi$ benefit values to determine how many extra vertices we have to store besides the ones at level (\textbf{C}). One such alternative is to simply calculate the result of all queries in $\mathcal{QL}$ and then simply union any resulting path which is fully a subpath of another path \ref{EXAMPLE}. This would allow us to store only the nodes that are both necessary and useful for navigation.
 
 
 \begin{table}
 \begin{tabular}{@{}l@{}l@{}|@{}l@{}|@{}l@{}|@{}l@{}|@{}}\cline{3-5}
-			&		& \bf l = 1				& \bf l = 2 			& \bf l = Alternative\\\cline{3-5}
-$Q_{v_1,v_{11},l}$	& ($\Psi_1$)	& $v_1,v_2,v_4,v_5,v_7,v_8,v_9,v_{11}$ 	& $v_1,v_4,v_5,v_9,v_{11}$ 	& $v_1,v_2,v_4,v_5,v_9,v_{11}$\\\cline{3-5}
-$Q_{v_3,v_8,l}$		& ($\Psi_2$)	& $v_3,v_2,v_4,v_5,v_7,v_8$		& $v_3,v_2,v_4,v_5,v_8$ 	& $v_3,v_2,v_4,_5,v_8$\\\cline{3-5}
-$Q_{v_2,v_6,l}$		& ($\Psi_3$)	& $v_2,v_4,v_6$				& $v_2,v_6$			& $v_2,v_4,v_6$\\\cline{3-5}
+			&		& \bf l = (F)				& \bf l = (C)			& \bf l = (A) \\\cline{3-5}
+$Q_{1,11}$		& ($\Psi_1$)	& $v_1,v_2,v_4,v_5,v_7,v_8,v_9,v_{11}$ 	& $v_1,v_4,v_5,v_9,v_{11}$ 	& $v_1,v_2,v_4,v_5,v_9,v_{11}$\\\cline{3-5}
+$Q_{3,8}$		& ($\Psi_2$)	& $v_3,v_2,v_4,v_5,v_7,v_8$		& $v_3,v_2,v_4,v_5,v_8$ 	& $v_3,v_2,v_4,_5,v_8$\\\cline{3-5}
+$Q_{2,6}$		& ($\Psi_3$)	& $v_2,v_4,v_6$				& $v_2,v_6$			& $v_2,v_4,v_6$\\\cline{3-5}
 \end{tabular}
   \caption{Example of how cache items will look when executed at different detail level}
   \label{tab:psilvlcontent}
@@ -347,7 +375,7 @@ $Q_{v_2,v_6,l}$		& ($\Psi_3$)	& $v_2,v_4,v_6$				& $v_2,v_6$			& $v_2,v_4,v_6$\\
   \end{tabular}
 &
   \begin{tabular}{l|l|}\cline{2-2}
-		  & \bf l = Alternative		 \\\cline{2-2}
+		  & \bf l = (\textbf{A})	 \\\cline{2-2}
   $v_2$		& $\Psi_1,\Psi_2,\Psi_3$	 \\\cline{2-2}
   $v_4$		& $\Psi_1,\Psi_2,\Psi_3$	 \\\cline{2-2}
   $v_5$		& $\Psi_1,\Psi_2$		 \\\cline{2-2}
@@ -357,7 +385,7 @@ $Q_{v_2,v_6,l}$		& ($\Psi_3$)	& $v_2,v_4,v_6$				& $v_2,v_6$			& $v_2,v_4,v_6$\\
    \\
    (a)	& (b)	& (c)
 \end{tabular}
-        \caption{Inverted lists for l= 1,2, and Alternative}
+        \caption{Inverted lists for l= (\textbf{F}),(\textbf{C}), and (\textbf{A})}
   \label{tab:directioninvlists}
 \end{table}
 
@@ -372,17 +400,17 @@ scenario. $\chi_{s,t,l}$ (equation \ref{eq:chil}) and $E_{s,t,l}$ are defined as
 \mathfrak{U}_l(P_{a,b,m}) = \{ P_{s,t,l} : s, t \in P_{a,b,m},  s \neq t,  m = l\}
 \end{equation}
 
-Equation \ref{eq:phil} finds all sub-paths of SP $sp$ with level = m. When using directions with coarsest level then we will not be able to answer as many subpaths from the path $P_{s,t,l}$ as we originally could, equation \ref{eq:phil} captures this reduction in value as the \textit{answerable query set} will be smaller.
+Equation \ref{eq:phil} finds all sub-paths of SP $sp$ with detail level = m. When using directions with coarsest level then we will not be able to answer as many subpaths from the path $P_{s,t,l}$ as we originally could, equation \ref{eq:phil} captures this reduction in value as the \textit{answerable query set} will be smaller.
 
 
 \begin{equation} \label{eq:benefitl}
-\gamma_l(P_{a,b,m}) = \sum\limits_{P_{s,t,l} \in \mathfrak{U}_l(P_{a,b,m})} \chi_{s,t,l} \bullet E_{s,t,l}
+\gamma_l(P_{a,b,m}) = \sum\limits_{P_{s,t,l} \in \mathfrak{U}_l(P_{a,b,m})} \chi_{s,t,l} \cdot E_{s,t,l}
 \end{equation}
 
 Using equation \ref{eq:chil} and \ref{eq:phil}, equation \ref{eq:benefitl} captures the benefit of adding a single path to the cache.
 
 \begin{equation} \label{eq:chil}
-\chi_{s,t,w} =  |\{ Q_{b,e,w} \in \mathcal{QL}: s, t \in Q_{b,e,w} \}|
+\chi_{s,t,l} =  |\{ Q_{b,e,l} \in \mathcal{QL}: s, t \in Q_{b,e,l} \}|
 \end{equation}
 
 
@@ -390,16 +418,22 @@ Using equation \ref{eq:chil} and \ref{eq:phil}, equation \ref{eq:benefitl} captu
  \mathfrak{U}_l(\Psi) = \bigcup\limits_{P_{a,b,m} \in \Psi} \mathfrak{U}_l(P_{a,b,m})
 \end{equation}
 
-Equation \ref{eq:upsl} finds the set of unique paths that $P_{a,b,d}$, and subpaths of it, can answer from the cache. With this we are able to answer how much value a new path can add to the cache, given the items already precent in the cache.
+Equation \ref{eq:upsl} finds the set of unique paths that $P_{a,b,d}$, and subpaths of it, can answer from the cache. With this we are able to answer how much value a new path can add to the cache, given the items already present in the cache.
 
 \begin{equation} \label{eq:cachebenefitl}
-\gamma_l(\Psi) = \sum\limits_{P_{s,t,l} \in \mathfrak{U}_l(\Psi)} \chi_{s,t,l} \bullet E_{s,t,l}
+\gamma_l(\Psi) = \sum\limits_{P_{s,t,l} \in \mathfrak{U}_l(\Psi)} \chi_{s,t,l} \cdot E_{s,t,l}
 \end{equation}
 
 Equation \ref{eq:cachebenefitl} calculate the benefit of the cache.
 
 
-
+\begin{figure}[hbt]
+  \center
+        \includegraphics[width=0.4\textwidth]{figures/altmap}
+        \caption{$Q_{1,11}$: Bold line from S to T denote travel route. $l$=(\textbf{F}): All nodes on the path has an (F), forming the complete path. 
+        $l$=(\textbf{C}): Circles with a (C) denote the minimum set of nodes needed to navigate from S to T}
+  \label{fig:minroute}
+\end{figure}
 
 % \section{Misc. Ideas } 
 
