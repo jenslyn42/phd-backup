@@ -195,10 +195,10 @@ void AbstractCache::readQueryLogData(QLOG_CHOICE qlog) {
 	intPairVector* ptrPointPairs=NULL;
 	
 	if (qlog==QLOG_TRAIN) {
-		app = ".train";
+		app = "train";
 		ptrPointPairs=&trainingSTPointPairs;
 	} else if (qlog==QLOG_TEST) {
-		app = ".test";
+		app = "test";
 		ptrPointPairs=&testSTPointPairs;
 	} else {
 		printf("*** invalid qlog parameter\n");
@@ -211,7 +211,7 @@ void AbstractCache::readQueryLogData(QLOG_CHOICE qlog) {
 	int firstPnt, secondPnt, temp;
 	string str;
 	std::vector<string> tokens;
-	fn.replace ((fn.size()-5), 5, app); //change file extention from .test to .train
+	fn.replace ((fn.size()-4), 4, app); //change file extention from .test to .train
 	ifstream qlogFile (fn.c_str(), ios::in); //*.train file
     
 	cout << "Base::readQueryLogData start: " << fn << endl;
@@ -229,9 +229,6 @@ void AbstractCache::readQueryLogData(QLOG_CHOICE qlog) {
 
 			firstPnt = Point2Nodeid[firstPair];
 			secondPnt = Point2Nodeid[secondPair];
-
-			if (firstPnt > secondPnt)
-				temp = firstPnt; firstPnt = secondPnt; secondPnt = temp;
 			
 			stPointPairs.push_back(std::make_pair(firstPnt,secondPnt));
 		}
