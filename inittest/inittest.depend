@@ -1,0 +1,68 @@
+# depslib dependency file v1.0
+1350256796 source:/home/jenslyn/phd-backup/inittest/Cache.cpp
+	"Cache.h"
+
+1358463512 /home/jenslyn/phd-backup/inittest/Cache.h
+	"Setting.h"
+	"RoadGraph.h"
+
+1355469316 /home/jenslyn/phd-backup/inittest/Setting.h
+	<utility>
+	<string>
+	<vector>
+	<list>
+	<map>
+	<typeinfo>
+	<iostream>
+	<fstream>
+	<algorithm>
+	<assert.h>
+	<ctime>
+	<cmath>
+	<cstdlib>
+	<boost/algorithm/string.hpp>
+	<boost/foreach.hpp>
+	<boost/unordered_map.hpp>
+	<boost/unordered_set.hpp>
+	<boost/lexical_cast.hpp>
+	<boost/dynamic_bitset.hpp>
+
+1350249035 /home/jenslyn/phd-backup/inittest/RoadGraph.h
+	"Setting.h"
+	<queue>
+
+1350249366 source:/home/jenslyn/phd-backup/inittest/Probcache.cpp
+	"Probcache.h"
+
+1350235840 /home/jenslyn/phd-backup/inittest/Probcache.h
+	"Setting.h"
+	"RoadGraph.h"
+	"Cache.h"
+
+1350249723 source:/home/jenslyn/phd-backup/inittest/RoadGraph.cpp
+	"RoadGraph.h"
+
+1350249833 source:/home/jenslyn/phd-backup/inittest/Setting.cpp
+	"Setting.h"
+
+1355473537 source:/home/jenslyn/phd-backup/inittest/main.cpp
+	"Setting.h"
+	"RoadGraph.h"
+	"Cache.h"
+	"Competitors.h"
+	"ProtoStudy.h"
+	"Probcache.h"
+
+1355496427 /home/jenslyn/phd-backup/inittest/Competitors.h
+	"Setting.h"
+	"RoadGraph.h"
+	"Cache.h"
+
+1350235840 /home/jenslyn/phd-backup/inittest/ProtoStudy.h
+	"Setting.h"
+	"RoadGraph.h"
+	"Cache.h"
+
+1355496419 source:/home/jenslyn/phd-backup/inittest/Competitors.cpp
+	"Competitors.h"
+

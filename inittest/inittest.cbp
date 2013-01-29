@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="inittest" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="inittest" prefix_auto="1" extension_auto="1" />
+				<Option object_output="/home/jenslyn/phd-backup/inittest/.objs" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="Cache.cpp" />
+		<Unit filename="Cache.h" />
+		<Unit filename="Competitors.cpp" />
+		<Unit filename="Competitors.h" />
+		<Unit filename="Probcache.cpp" />
+		<Unit filename="Probcache.h" />
+		<Unit filename="RoadGraph.cpp" />
+		<Unit filename="RoadGraph.h" />
+		<Unit filename="Setting.cpp" />
+		<Unit filename="Setting.h" />
+		<Unit filename="main.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
