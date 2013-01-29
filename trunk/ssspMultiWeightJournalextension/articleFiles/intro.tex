@@ -254,17 +254,17 @@ $G\mathbf{(V,E)}$ 	& A graph with node set $V$ and edge set $E$ \\\hline
 $v_i$			& A node in $V$ \\\hline 
 $(v_i,v_j)$		& An edge in $E$ \\\hline 
 
-$Q_{s,t}$		& \spath query from node $v_s$ to node $v_t$, using \textit{path level l}\\\hline
-$P_{s,t}$		& The \spath result of $Q_{s,t,l}$, using \textit{path level l}. \\\hline
-$|P_{s,t}|$		& The size of $P_{s,t,l}$ (in number of nodes) \\\hline
-$E_{s,t,l}$		& The expense of executing query $Q_{s,t,l}$ \\\hline
-$\chi_{s,t,l}$		& The frequency of a \spath with level $l$ \\\hline
+$Q_{s,t}$		& \spath query from node $v_s$ to node $v_t$\\\hline
+$P_{s,t}$		& The \spath result of $Q_{s,t}$. \\\hline
+$|P_{s,t}|$		& The size of $P_{s,t}$ (in number of nodes) \\\hline
+$E_{s,t}$		& The expense of executing query $Q_{s,t}$ \\\hline
+$\chi_{s,t}$		& The frequency of a \spath \\\hline
 $\Psi$ 			& The Cache \\\hline
-$\mathfrak{U}_l(P_{s,t,l})$& The set of all subpaths in $P_{s,t,l}$ \\\hline
-$\mathfrak{U}_l(\Psi)$	& The set of all subpaths of paths in $\Psi$ \\\hline
-$\gamma_l(\Psi)$	& The total benefit of the content in the cache \\\hline
+$\mathfrak{U}(P_{s,t})$& The set of all subpaths in $P_{s,t}$ \\\hline
+$\mathfrak{U}(\Psi)$	& The set of all subpaths of paths in $\Psi$ \\\hline
+$\gamma(\Psi)$	& The total benefit of the content in the cache \\\hline
 
-$d_{s,t,l}$		& The \spath distance of a path $P_{s,t,l}$ \\\hline
+$d_{s,t}$		& The \spath distance of a path $P_{s,t}$ \\\hline
 
 $\mathcal{QL}$		& Query log of search queries (see \cite{thomsen2012}) \\\hline
 \end{tabular*}
@@ -273,45 +273,44 @@ $\mathcal{QL}$		& Query log of search queries (see \cite{thomsen2012}) \\\hline
 \end{table}
 
 When looking for directions to some place, a user who issues a \spath query does not actually care about the full \spathns\cite{sigmodTaoSP11}, but rather the user just wants to know when a new action is needed (turn left, right, or any action other action, besides following the current path. This is what GPS devices usually do. GPS devices usually only alerts the user if an action is needed, otherwise the user should just continue on the current path.
-
-
-The same query can be saved at many different levels of detail, figure \ref{fig:minroute} shows a route from S to T, where each node on the route is marked as belonging to the $fine$\textbf{(F)} or $coarse$\textbf{(C)} level of detail (difference explained later). Table \ref{tab:psilvlcontent}, $\psi_1$, shows the set of nodes included in a \spath depending on the level of detail desired. 
-
-
-There are 2 overall $levels$ that directions to follow a \spath can be given:
+There are two extremes when calculating directions for a \spathns:
 
 \begin{tabular}{@{}l@{  } p{21em} }
 Fine ({\bf F})		& The directions are given for every single node on the \spathns, regardless of whether there are any option to change directions. \\
 Coarse ({\bf C})	& The directions are given only when it is necessary to change directions, i.e. it does not matter how many side roads are passed, as long as the instruction is ostensibly "continue straight", then the instruction will not be included. Only if it is really necessary to make an action, such as turning, will the node be included in the instructions.
 \end{tabular}
 
-Both $fine$ and $coarse$ will always include the start- and end-node. An alternative (\textbf{A}) middleway could be to have the directions be given only for nodes where it is possible to change direction/turn and we will be using this alternative in figure \ref{tab:psilvlcontent} and \ref{tab:directioninvlists}, however any alternative $(\textbf{A}):(\textbf{C}) \subseteq (\textbf{A}) \subseteq (\textbf{F})$ is possible. 
+Both $fine$ and $coarse$ will always include the start- and end-node. There are many possible alternatives to the two extremes, as they represent the maximum ({\bf F}) and minimum ({\bf C}) number of nodes a \spath can be recorded with. Any alternative $(\textbf{A}):(\textbf{C}) \subseteq (\textbf{A}) \subseteq (\textbf{F})$ is possible. 
+One possible alternative (\textbf{A}) could be to have the directions be given only for nodes where it is possible to change direction/turn and we will be using this alternative in figure \ref{tab:psilvlcontent} and \ref{tab:directioninvlists}. 
 
-When using (\textbf{F}) the advantage is that all subpaths of a \spath in the cache will be answerable, this scheme may however take op a lot of space for subpaths that are never seen, and therefor contribute no benefit to the cache.
+The same query can be saved at many different levels of detail, figure \ref{fig:minroute} shows a route from S to T, where each node on the route is marked as necessary for a $fine$\textbf{(F)} and/or $coarse$\textbf{(C)} level of detail. Table \ref{tab:psilvlcontent}, $\psi_1$, shows the set of nodes included in the path from $v_1$ to $v_{11}$, depending on whether the level of detail is set as \textbf{(F),(C)}, or a mix \textbf{(A)}. It is important to note that the end user will always be satified with \textbf{(C)}, and that the option of saving a full path \textbf{(F)} or something between the two \textbf{(A)} is decided at the service providers side to tweak the performance of the \spath cache.
+
+
+When using (\textbf{F}) the advantage is that all subpaths of a \spath in the cache will be answerable, this scheme may however take op a lot of space for subpaths that will never be part of a query answer, and therefor contribute no benefit to the cache.
 
 Using (\textbf{C}) the advantage is that, especially on longer \spathsns, it will consume less space, while still maintaining enough information in the cache, enabeling it to answer some sub-queries, assuming the result includes some actions. The downside is of cause that the reduced number of vertices stored also negatively impacts the number of queries that can be answered by the \spath when it is in the cache.
 
 It may be desireble to use some alternative (\textbf{A}) to gain the benefit of being able to answer more paths than a cache item found with (\textbf{C}) allows for, and at the same time not have to store any nodes that we do not consider useful (according to equation \ref{eq:benefitl} and \ref{eq:cachebenefitl}).
 
 
-In figure \ref{fig:minroute} a path from S to T is shown. Each vertex is labeled based on what level of directions each node would be included in, according to the enumeration of (\textbf{F}) and (\textbf{C}) above. Alternative \textbf{A}) is not shown on the map.
+In figure \ref{fig:minroute} a path from S to T is shown. Each vertex is labeled based on what level of directions each node would be included in, according to the enumeration of (\textbf{F}) and (\textbf{C}) above. No alternative \textbf{A}) is shown on the map.
 
 
 \begin{figure}[hbt]
   \center
         \includegraphics[width=0.4\textwidth]{figures/minroute}
-        \caption{$Q_{1,11}$: Bold line from S to T denote travel route. $l$=(\textbf{F}): All nodes on the path has an (F), forming the complete path. 
-        $l$=(\textbf{C}): Circles with a (C) denote the minimum set of nodes needed to navigate from S to T}
+        \caption{$Q_{1,11}$: Bold line from S to T denote travel route. (\textbf{F}): All nodes on the path has an (F), forming the complete path. 
+        (\textbf{C}): Circles with a (C) denote the minimum set of nodes needed to navigate from S to T}
   \label{fig:minroute}
 \end{figure}
 
 
 \begin{definition}\label{def:direction} {Direction}\\
-The \textit{directions} of a query $Q_{s,t}$, where the detail level $l$ is specified by 1:(\textbf{F}), 100:(\textbf{C}), and some an Alternative(\textbf{A}):(\textbf{C}) $\leq$ (\textbf{A}) $\leq$ (\textbf{F}) , are a set of vertex neighbour pairs $\{(v_i,v_j),...\}$, each pair consisting of two connected nodes on $P_{s,t}$, representing a instruction at a node $v_i$, to take the path towards node $v_j$, where$v_i,v_j \in V$ on the \spath $P_{s,t}$.
+The \textit{directions} of a query $Q_{s,t}$, where the detail level $l$ is specified by (\textbf{F}), (\textbf{C}), and some an Alternative(\textbf{A}):(\textbf{C}) $\leq$ (\textbf{A}) $\leq$ (\textbf{F}) , are a set of vertex neighbour pairs $\{(v_s,v_i),...,(v_j,v_k),...,(v_l,v_t)\}$, each pair consisting of two connected nodes on $P_{s,t}$, representing a instruction at a node $v_j$, to take the path towards node $v_k$, where$v_j,v_k \in V$ on the \spath $P_{s,t}$.
 $l$ is a system parameter set by the service provider.
 \end{definition}
 
-Figure \ref{fig:minroute} illustrates the $directions$ on query $Q_{1,11}$ for $l$ being set to both (\textbf{C}) and (\textbf{F}). For l=(\textbf{F}) the $directions$ include the all vertices on the bold path from S to T. For l=(\textbf{C}) the $directions$ only include the circled vertices: The start- and end-vertex plus a pair of neighbouring nodes each time the default action of going straight needs to be changed because the path turns where there are more than one choice.
+Figure \ref{fig:minroute} illustrates the $directions$ on query $Q_{1,11}$ for level being set to both (\textbf{C}) and (\textbf{F}). For (\textbf{F}) the $directions$ include the all vertices on the bold path from S to T. For (\textbf{C}) the $directions$ only include the circled vertices: The start- and end-vertex plus a pair of neighbouring nodes each time the default action of going straight needs to be changed because the path turns where there are more than one choice.
 
 \begin{definition}
 Let $G(V, E)$ be a graph with a set $V$ of nodes and a set $E$ of edges.
@@ -323,7 +322,7 @@ E$ models a road segment. The weight (length) of an edge is denoted as $W(v_i, v
 \begin{definition}{\spathns: Query and Result}\\
 A shortest path query, denoted by $Q_{s,t}$ consist of a source and target node, $v_s,v_t$.
 
-The result of $Q_{s,t}$, denoted $P_{s,t}$, is a collection of nodes on the \spath from $v_s$ to $v_t$ (on the graph G) with each node associated with a direction (definition \ref{def:direction}).
+The result of $Q_{s,t}$, denoted $P_{s,t}$, is a collection of nodes on the \spath from $v_s$ to $v_t$ (on the graph G) with, as minimum, a pair of nodes for each action to take (definition \ref{def:direction}).
 We can represent $P_{s,t}$ as a list of pairs (node, neighbour node): $\langle (v_{s},v_{x_{}}), (v_{x_1},v_{x_{1n}}), \dots ,(v_{x_n},v_{x_{nn}}) \rangle$, where each pair contains a set of neighbouring vertices from $G$.
 \end{definition}
 
@@ -338,12 +337,12 @@ Table \ref{tab:directioninvlists} shows the inverted lists for different detail 
 
 Figuring out at what detail level paths should be stored in the cache, and whether the should be stored in a path array or as a graph representation is one of the interesting questions we want to answer. 
 
-For longer \spaths that are relatively simple, meaning few instructions are needed, we will store very few nodes at level (\textbf{C}). This could be a problem as we have no information about how to traverse large parts of such a shortest path, even if such parts may be have high benefit (high $chi$ values for pairs of nodes on the path). We could possibly use the $\chi$ benefit values to determine how many extra vertices we have to store besides the ones at level (\textbf{C}). One such alternative is to simply calculate the result of all queries in $\mathcal{QL}$ and then simply union any resulting path which is fully a subpath of another path \ref{EXAMPLE}. This would allow us to store only the nodes that are both necessary and useful for navigation.
+For longer \spaths that are relatively simple, meaning few instructions are needed, we will store very few nodes at level (\textbf{C}). This could be a problem as we have no information about how to traverse large parts of such a shortest path, even if such parts may be have high benefit (high $\chi$ values for pairs of nodes on the path). We could possibly use the $\chi$ benefit values to determine how many extra vertices we have to store besides the ones at level (\textbf{C}). One such alternative is to simply calculate the result of all queries in $\mathcal{QL}$ and then simply union any resulting path which is fully a subpath of another path (example in section \ref{subsec:benmod}). This would allow us to store only the nodes that are both necessary and useful for navigation.
 
 
 \begin{table}
 \begin{tabular}{@{}l@{}l@{}|@{}l@{}|@{}l@{}|@{}l@{}|@{}}\cline{3-5}
-			&		& \bf l = (F)				& \bf l = (C)			& \bf l = (A) \\\cline{3-5}
+			&		& \bf \;(F)				& \bf \;(C)			& \bf \;(A) \\\cline{3-5}
 $Q_{1,11}$		& ($\Psi_1$)	& $v_1,v_2,v_4,v_5,v_7,v_8,v_9,v_{11}$ 	& $v_1,v_4,v_5,v_9,v_{11}$ 	& $v_1,v_2,v_4,v_5,v_9,v_{11}$\\\cline{3-5}
 $Q_{3,8}$		& ($\Psi_2$)	& $v_3,v_2,v_4,v_5,v_7,v_8$		& $v_3,v_2,v_4,v_5,v_8$ 	& $v_3,v_2,v_4,_5,v_8$\\\cline{3-5}
 $Q_{2,6}$		& ($\Psi_3$)	& $v_2,v_4,v_6$				& $v_2,v_6$			& $v_2,v_4,v_6$\\\cline{3-5}
@@ -355,7 +354,7 @@ $Q_{2,6}$		& ($\Psi_3$)	& $v_2,v_4,v_6$				& $v_2,v_6$			& $v_2,v_4,v_6$\\\cline
 \begin{table}
 \begin{tabular}{c c c}
   \begin{tabular}{l|l|}\cline{2-2}
-		  & \bf l = 1			 \\\cline{2-2}
+		  & \bf (F)			 \\\cline{2-2}
   $v_1$		& $\Psi_1$			 \\\cline{2-2}
   $v_2$		& $\Psi_1,\Psi_2,\Psi_3$	 \\\cline{2-2}
   $v_3$		& $\Psi_2$			 \\\cline{2-2}
@@ -368,14 +367,14 @@ $Q_{2,6}$		& ($\Psi_3$)	& $v_2,v_4,v_6$				& $v_2,v_6$			& $v_2,v_4,v_6$\\\cline
   \end{tabular}
 &
   \begin{tabular}{l|l|}\cline{2-2}
-		  & \bf l = 2			 \\\cline{2-2}
+		  & \bf (C)			 \\\cline{2-2}
   $v_2$		& $\Psi_1,\Psi_2,\Psi_3$	 \\\cline{2-2}
   $v_4$		& $\Psi_1,\Psi_2,\Psi_3$	 \\\cline{2-2}
   $v_9$		& $\Psi_1$			 \\\cline{2-2}
   \end{tabular}
 &
   \begin{tabular}{l|l|}\cline{2-2}
-		  & \bf l = (\textbf{A})	 \\\cline{2-2}
+		  & \bf (\textbf{A})		 \\\cline{2-2}
   $v_2$		& $\Psi_1,\Psi_2,\Psi_3$	 \\\cline{2-2}
   $v_4$		& $\Psi_1,\Psi_2,\Psi_3$	 \\\cline{2-2}
   $v_5$		& $\Psi_1,\Psi_2$		 \\\cline{2-2}
@@ -385,55 +384,86 @@ $Q_{2,6}$		& ($\Psi_3$)	& $v_2,v_4,v_6$				& $v_2,v_6$			& $v_2,v_4,v_6$\\\cline
    \\
    (a)	& (b)	& (c)
 \end{tabular}
-        \caption{Inverted lists for l= (\textbf{F}),(\textbf{C}), and (\textbf{A})}
+        \caption{Inverted lists for (\textbf{F}),(\textbf{C}), and (\textbf{A})}
   \label{tab:directioninvlists}
 \end{table}
 
 
-\subsection{Benefit model}
+\subsection{Benefit model}\label{subsec:benmod}
 
 The benefit model of \cite{thomsen2012} is extended to work with directions to make it clear how we define benefit in this
-scenario. $\chi_{s,t,l}$ (equation \ref{eq:chil}) and $E_{s,t,l}$ are defined as in \cite{thomsen2012}. Except for the introduction and restriction on level, there is no not much difference in the benefit model.
+scenario. $\chi_{s,t,l}$ (equation \ref{eq:chil}) and $E_{s,t,l}$ are defined as in \cite{thomsen2012}. Except for the introduction and restriction on level, there is no not much difference in the benefit equations. 
 
 
-\begin{equation} \label{eq:phil}
-\mathfrak{U}_l(P_{a,b,m}) = \{ P_{s,t,l} : s, t \in P_{a,b,m},  s \neq t,  m = l\}
-\end{equation}
+Saving \textbf{(F)} in the cache all the time will most likely waste cache space, as some nodes will never be needed to answer any query. Storing \textbf{(C)} all the time will save space and allow for more items in the cache, they will however only be able to answer very specific queries. Clearly the best choice is to choose some \textbf{(A)}, remember $(\textbf{C}) \subseteq (\textbf{A}) \subseteq (\textbf{F})$. The challenge is then to figure out $which$ \textbf{(A)} to save in the cache to achive maximum benefit, using the least amount of cache space. 
 
-Equation \ref{eq:phil} finds all sub-paths of SP $sp$ with detail level = m. When using directions with coarsest level then we will not be able to answer as many subpaths from the path $P_{s,t,l}$ as we originally could, equation \ref{eq:phil} captures this reduction in value as the \textit{answerable query set} will be smaller.
+To give an intuitive example of how such an \textbf{(A)} may be found we use the example paths shown in figure \ref{fig:altmap}. The example paths are found using a liniar map, where \textbf{Map} is the longest possible path in this example. As a map like this precludes the possibility of turns, it is clear that if we save paths at the granularity of \textbf{(C)}, then only the start- and end-point needs to be saved. However, when looking at path this The simple nature of the map clearly illustrates that if we were to add the the start-/end-points from A to F to the cache, we would be duplicating information several times. When trying to add path A to the cache we can find the set of other paths which are also subpaths of A. In figure \ref{fig:altmap} this set consist of path C,D, and E. Instead of adding the start-/end-points of path C,D,E directly to the cache as seperate cache items, we can simply added their nodes as internal nodes of A, so A is can now be stored as A$_{alt}: \{1,3,4,6\}$. Since C,D, and E all share node 4, plus C and E share their end node with A, then such an alternative would save 4 nodes less in the cache. Since we would originally have used 8 nodes to store A,C,D,E in the cache, we achive a reduction of 50\% in space consumption. Equation \ref{eq:optPath} illustrates how to find one such union of paths, when starting with a path $P_{s,t}$. 
 
 
-\begin{equation} \label{eq:benefitl}
-\gamma_l(P_{a,b,m}) = \sum\limits_{P_{s,t,l} \in \mathfrak{U}_l(P_{a,b,m})} \chi_{s,t,l} \cdot E_{s,t,l}
-\end{equation}
 
-Using equation \ref{eq:chil} and \ref{eq:phil}, equation \ref{eq:benefitl} captures the benefit of adding a single path to the cache.
-
-\begin{equation} \label{eq:chil}
-\chi_{s,t,l} =  |\{ Q_{b,e,l} \in \mathcal{QL}: s, t \in Q_{b,e,l} \}|
+\begin{equation}\label{eq:optPath}
+O_{a,b} = \{s,t : P_{s,t} \in \mathfrak{U}_l(P_{a,b}),  Q_{s,t} \in \mathcal{QL}\}
 \end{equation}
 
 
-\begin{equation} \label{eq:upsl}
- \mathfrak{U}_l(\Psi) = \bigcup\limits_{P_{a,b,m} \in \Psi} \mathfrak{U}_l(P_{a,b,m})
-\end{equation}
+Our problem then becomes how to choose the path $O_{s,t}$ with the maximum benefit to the cache.
 
-Equation \ref{eq:upsl} finds the set of unique paths that $P_{a,b,d}$, and subpaths of it, can answer from the cache. With this we are able to answer how much value a new path can add to the cache, given the items already present in the cache.
+Finding the most beneficial $O_{s,t}$ can be done by finding  $sp = |\{(P_{a,b}| : P_{s,t} \in P^{(F)}_{a,b},  Q_{s,t} \in \mathcal{QL}\}$, and finding $max(\mathfrak{U}(sp))$ from possible paths.
 
-\begin{equation} \label{eq:cachebenefitl}
-\gamma_l(\Psi) = \sum\limits_{P_{s,t,l} \in \mathfrak{U}_l(\Psi)} \chi_{s,t,l} \cdot E_{s,t,l}
-\end{equation}
 
-Equation \ref{eq:cachebenefitl} calculate the benefit of the cache.
+
+
 
 
 \begin{figure}[hbt]
   \center
         \includegraphics[width=0.4\textwidth]{figures/altmap}
-        \caption{$Q_{1,11}$: Bold line from S to T denote travel route. $l$=(\textbf{F}): All nodes on the path has an (F), forming the complete path. 
-        $l$=(\textbf{C}): Circles with a (C) denote the minimum set of nodes needed to navigate from S to T}
-  \label{fig:minroute}
+        \caption{Liniar map with path A-F shown at \textbf{(C)} granularity. A$_{alt}$ shows the union of path A,C,D,E.}
+  \label{fig:altmap}
 \end{figure}
+
+
+
+
+
+
+
+Below equation \ref{eq:phil}, \ref{eq:benefitl}, \ref{eq:upsl}, and \ref{eq:cachebenefitl} are briefly described, they are identical to the the equations in \cite{thomsen2012}. Equation \ref{eq:chil} does not appear in \cite{thomsen2012}, however, the definition is identical.
+
+\begin{equation} \label{eq:phil}
+\mathfrak{U}(P_{a,b}) = \{ P_{s,t} : s, t \in P_{a,b},  s \neq t\}
+\end{equation}
+
+Equation \ref{eq:phil} finds all sub-paths of $P_{a,b}$. When using directions at the coarsest level \textbf{(C)},  we will not be able to answer as many subpaths from the path $P_{a,b}$ as we originally could, equation \ref{eq:phil} captures this reduction in value as the \textit{answerable query set} will be smaller.
+
+
+\begin{equation} \label{eq:benefitl}
+\gamma(P_{a,b}) = \sum\limits_{P_{s,t} \in \mathfrak{U}(P_{a,b})} \chi_{s,t} \cdot E_{s,t}
+\end{equation}
+
+Using equation \ref{eq:phil} and \ref{eq:chil}, equation \ref{eq:benefitl} captures the benefit of adding a single path to the cache.
+
+\begin{equation} \label{eq:chil}
+\chi_{s,t} =  |\{ Q_{b,e} \in \mathcal{QL}: s, t \in Q_{b,e} \}|
+\end{equation}
+
+
+\begin{equation} \label{eq:upsl}
+ \mathfrak{U}(\Psi) = \bigcup\limits_{P_{a,b} \in \Psi} \mathfrak{U}(P_{a,b})
+\end{equation}
+
+Equation \ref{eq:upsl} finds the set of unique paths that $P_{a,b}$, and subpaths of it, can answer from the cache. With this we are able to answer how much value a new path can add to the cache, given the items already present in the cache.
+
+\begin{equation} \label{eq:cachebenefitl}
+\gamma(\Psi) = \sum\limits_{P_{s,t} \in \mathfrak{U}(\Psi)} \chi_{s,t} \cdot E_{s,t}
+\end{equation}
+
+Equation \ref{eq:cachebenefitl} calculate the benefit of the cache.
+
+
+
+
+
 
 % \section{Misc. Ideas } 
 
