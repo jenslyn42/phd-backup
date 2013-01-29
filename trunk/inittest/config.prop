@@ -1,0 +1,58 @@
+
+
+// NOTE: enum string options (values) are case-insensitive
+//		 both lower-case/upper-case choices are supported
+
+
+testAlgo = LRU
+// choices: NONE, LRU
+
+testScenario = PROXY
+// choices: SERVER, PROXY
+
+
+
+testName = someTest
+
+
+autoTestName = true
+// choices: true, false
+// if true, override the testName automatically  "experiment"_"testAlgo"_"testFile (3 letters)"
+
+
+
+
+testFile = aalborgNEW.cedge
+// choices: Aalborg.cedge, beijing_map.cedge
+
+
+queryFileName = aalborgNEW.qtest
+
+
+inputFileType = 3
+// 1:graph_large, 2: ppi.dat, 3:*.cedge
+
+
+splits = 14	
+
+
+cachesize = 5120000
+// 5120000
+// note: the cache size is expressed as the number of "bits"
+
+
+scacheQueryType = 3
+
+
+experiment = single
+// choices: single, split, cachesize
+
+
+ 
+lowCacheSize = 10
+highCacheSize = 250
+// used for the varying cachesize experiment
+
+lowSplit = 10
+highSplit = 20
+// used for the varying split experiment
