@@ -1,30 +1,30 @@
-./mains aalborgNEW 5 100
-./mains aalborgNEW 5 200                                                                                     
-./mains aalborgNEW 5 400                                                                                     
-./mains aalborgNEW 5 800                                                                                     
-./mains aalborgNEW 5 1200                                                                                     
-./mains aalborgNEW 5 1600                                                                                     
-./mains aalborgNEW 5 2000                                                                                     
-./mains aalborgNEW 10 100
-./mains aalborgNEW 10 200
-./mains aalborgNEW 10 400
-./mains aalborgNEW 10 800
-./mains aalborgNEW 10 1200
-./mains aalborgNEW 10 1600
-./mains aalborgNEW 10 2000
-./mains beijingNEW 5 100                                                                                     
-./mains beijingNEW 5 200
-./mains beijingNEW 5 400
-./mains beijingNEW 5 800
-./mains beijingNEW 5 1200
-./mains beijingNEW 5 1600
-./mains beijingNEW 5 2000
-./mains beijingNEW 10 100
-./mains beijingNEW 10 200
-./mains beijingNEW 10 400
-./mains beijingNEW 10 800
-./mains beijingNEW 10 1200
-./mains beijingNEW 10 1600
-./mains beijingNEW 10 2000
+./mains aalborgNEW 20000 5 100 
+./mains aalborgNEW 20000 5 200 
+./mains aalborgNEW 20000 5 400 
+./mains aalborgNEW 20000 5 800 
+./mains aalborgNEW 20000 5 1200 
+./mains aalborgNEW 20000 5 1600  
+./mains aalborgNEW 20000 5 2000 
+./mains aalborgNEW 20000 10 100 
+./mains aalborgNEW 20000 10 200 
+./mains aalborgNEW 20000 10 400 
+./mains aalborgNEW 20000 10 800 
+./mains aalborgNEW 20000 10 1200 
+./mains aalborgNEW 20000 10 1600
+./mains aalborgNEW 20000 10 2000 
+./mains beijingNEW 20000 5 100 
+./mains beijingNEW 20000 5 200 
+./mains beijingNEW 20000 5 400 
+./mains beijingNEW 20000 5 800 
+./mains beijingNEW 20000 5 1200 
+./mains beijingNEW 20000 5 1600 
+./mains beijingNEW 20000 5 2000 
+./mains beijingNEW 20000 10 100 
+./mains beijingNEW 20000 10 200 
+./mains beijingNEW 20000 10 400 
+./mains beijingNEW 20000 10 800 
+./mains beijingNEW 20000 10 1200
+./mains beijingNEW 20000 10 1600
+./mains beijingNEW 20000 10 2000 
 
 

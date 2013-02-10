@@ -1,20 +1,23 @@
 #include "Setting.h"
 #include "RoadGraph.h"
 
-#define QUERIES_TO_GENERATE (20000) //will be split into two files with half each
+//arg 1: input filename, no type (cedge/cnode assumed)
+//arg 2: queries to generate in, half in *.qtest, other half in *.qtrain
+//arg 3: number of points to use as example regions to pick vertices from
+//arg 4: radius of regions
 
-//arg 1: number of points to use as example regions to pick vertices from
-//arg 2: radius of regions
-//arg 3: input filename, no type (cedge/cnode assumed)
 
 int main(int argc, char *argv[]) {
 	srand(0);	srand48(0);
 
-if(argc != 4)
-  cout << "Wrong usage!\nUsage: " << argv[0] << "<mapname> <numPoints> <radius>" << endl;
+if(argc != 5){
+  cout << "Wrong usage!\nUsage: " << argv[0] << "<mapname> <numQueries> <numPoints> <radius>" << endl;
+  exit(-1);
+}
 string fn = argv[1];
-int numPoints = atoi(argv[2]);
-int radius = atof(argv[3]);
+int queriesToGenerate = atoi(argv[2]); //will be split into two files with half each
+int numPoints = atoi(argv[3]);
+int radius = atof(argv[4]);
 bool constWeight = false;
 boost::unordered_map<int,vector<int> > regionVerticelists;
 
@@ -44,6 +47,8 @@ string filename = fn + "GP";
 filename.append(boost::lexical_cast<std::string>(numPoints));
 filename.append("R");
 filename.append(boost::lexical_cast<std::string>(radius));
+filename.append("Q");
+filename.append(boost::lexical_cast<std::string>(queriesToGenerate));
 
 filename.append(".qtrain");
 pair<string,string> tmpPair;
@@ -58,7 +63,7 @@ resultfile.open(filename.c_str(), ios::out | ios::ate | ios::app);
 i=0;
 
 cout << "file writing started [" << filename << "]" << endl;
-for(;i<QUERIES_TO_GENERATE/2;i++)
+for(;i<queriesToGenerate/2;i++)
 {
 	tmpPick1 =rand()%numPoints;
 	tempList1 =regionVerticelists.at(random[tmpPick1]);
@@ -89,7 +94,7 @@ filename.replace ((filename.size())-5, 5, "test");
 resultfile.open(filename.c_str(), ios::out | ios::ate | ios::app);
 
 cout << "file writing started [" << filename << "]" << endl;
-for(;i<QUERIES_TO_GENERATE;i++)
+for(;i<queriesToGenerate;i++)
 {
 	tmpPick1 =rand()%numPoints;
 	tempList1 =regionVerticelists.at(random[tmpPick1]);
