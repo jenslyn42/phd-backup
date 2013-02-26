@@ -5,7 +5,7 @@ reset
 set terminal postscript eps enhanced monochrome solid rounded
 set output "split_hitratio_bei.eps"
 #set   autoscale                        # scale axes automatically
-set size 0.5,0.5			# scale whole graph, but not fonts
+set size 0.4,0.4			# scale whole graph, but not fonts
 set border				# adds borders to graph
 show border
 unset log                              # remove any log-scaling
@@ -25,4 +25,4 @@ set yr [0:55]
 set pointsize 1.0
 
 plot    "v_split_SPC_bei.test" using 10:(($2/($2+$3))*100) title 'SPC' with linespoints pt 8 lw 2,\
-"v_split_SPCSTAR_bei.test" using 10:(($2/($2+$3))*100) title 'SPC^*' with linespoints pt 14 lw 2
+"v_split_SPCSTAR_bei.test" using 10:(($2/($2+$3))*100) title 'SPC*' with linespoints pt 14 lw 2

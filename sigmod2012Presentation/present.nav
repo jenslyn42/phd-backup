@@ -1,4 +1,4 @@
-\beamer@endinputifotherversion {3.10pt}
+\beamer@endinputifotherversion {3.07pt}
 \headcommand {\slideentry {0}{0}{1}{1/1}{}{0}}
 \headcommand {\beamer@framepages {1}{1}}
 \headcommand {\sectionentry {1}{Introduction}{2}{Introduction}{0}}
@@ -7,62 +7,60 @@
 \headcommand {\beamer@subsectionentry {0}{1}{1}{2}{Motivation}}\headcommand {\beamer@subsectionpages {2}{1}}
 \headcommand {\slideentry {1}{1}{1}{2/2}{Motivation}{0}}
 \headcommand {\beamer@framepages {2}{2}}
-\headcommand {\slideentry {1}{1}{2}{3/3}{Motivation}{0}}
+\headcommand {\beamer@subsectionentry {0}{1}{2}{3}{Setting}}\headcommand {\beamer@subsectionpages {2}{2}}
+\headcommand {\slideentry {1}{2}{1}{3/3}{Setting}{0}}
 \headcommand {\beamer@framepages {3}{3}}
-\headcommand {\beamer@subsectionentry {0}{1}{2}{4}{Setting}}\headcommand {\beamer@subsectionpages {2}{3}}
-\headcommand {\slideentry {1}{2}{1}{4/4}{Setting}{0}}
+\headcommand {\slideentry {1}{2}{2}{4/4}{Setting}{0}}
 \headcommand {\beamer@framepages {4}{4}}
-\headcommand {\slideentry {1}{2}{2}{5/5}{Setting}{0}}
+\headcommand {\beamer@subsectionentry {0}{1}{3}{5}{Problem}}\headcommand {\beamer@subsectionpages {3}{4}}
+\headcommand {\slideentry {1}{3}{1}{5/5}{Problem}{0}}
 \headcommand {\beamer@framepages {5}{5}}
-\headcommand {\beamer@subsectionentry {0}{1}{3}{6}{Problem}}\headcommand {\beamer@subsectionpages {4}{5}}
-\headcommand {\slideentry {1}{3}{1}{6/6}{Problem}{0}}
+\headcommand {\slideentry {1}{3}{2}{6/6}{Problem}{0}}
 \headcommand {\beamer@framepages {6}{6}}
-\headcommand {\slideentry {1}{3}{2}{7/7}{Problem}{0}}
+\headcommand {\sectionentry {2}{Contribution}{7}{Contribution}{0}}
+\headcommand {\beamer@sectionpages {2}{6}}
+\headcommand {\beamer@subsectionpages {5}{6}}
+\headcommand {\beamer@subsectionentry {0}{2}{1}{7}{Statistics Extraction}}\headcommand {\beamer@subsectionpages {7}{6}}
+\headcommand {\slideentry {2}{1}{1}{7/7}{Statistics Extraction}{0}}
 \headcommand {\beamer@framepages {7}{7}}
-\headcommand {\sectionentry {2}{Contribution}{8}{Contribution}{0}}
-\headcommand {\beamer@sectionpages {2}{7}}
-\headcommand {\beamer@subsectionpages {6}{7}}
-\headcommand {\beamer@subsectionentry {0}{2}{1}{8}{Statistics Extraction}}\headcommand {\beamer@subsectionpages {8}{7}}
-\headcommand {\slideentry {2}{1}{1}{8/8}{Statistics Extraction}{0}}
+\headcommand {\slideentry {2}{1}{2}{8/8}{Statistics Extraction}{0}}
 \headcommand {\beamer@framepages {8}{8}}
-\headcommand {\slideentry {2}{1}{2}{9/9}{Statistics Extraction}{0}}
+\headcommand {\beamer@subsectionentry {0}{2}{2}{9}{Cost Estimation}}\headcommand {\beamer@subsectionpages {7}{8}}
+\headcommand {\slideentry {2}{2}{1}{9/9}{Cost Estimation}{0}}
 \headcommand {\beamer@framepages {9}{9}}
-\headcommand {\beamer@subsectionentry {0}{2}{2}{10}{Cost Estimation}}\headcommand {\beamer@subsectionpages {8}{9}}
-\headcommand {\slideentry {2}{2}{1}{10/10}{Cost Estimation}{0}}
+\headcommand {\beamer@subsectionentry {0}{2}{3}{10}{Benefit Model}}\headcommand {\beamer@subsectionpages {9}{9}}
+\headcommand {\slideentry {2}{3}{1}{10/10}{Benefit Model}{0}}
 \headcommand {\beamer@framepages {10}{10}}
-\headcommand {\beamer@subsectionentry {0}{2}{3}{11}{Benefit Model}}\headcommand {\beamer@subsectionpages {10}{10}}
-\headcommand {\slideentry {2}{3}{1}{11/11}{Benefit Model}{0}}
+\headcommand {\slideentry {2}{3}{2}{11/11}{Benefit Model}{0}}
 \headcommand {\beamer@framepages {11}{11}}
-\headcommand {\slideentry {2}{3}{2}{12/12}{Benefit Model}{0}}
+\headcommand {\slideentry {2}{3}{3}{12/12}{Benefit Model}{0}}
 \headcommand {\beamer@framepages {12}{12}}
-\headcommand {\slideentry {2}{3}{3}{13/13}{Benefit Model}{0}}
+\headcommand {\beamer@subsectionentry {0}{2}{4}{13}{Data Structure}}\headcommand {\beamer@subsectionpages {10}{12}}
+\headcommand {\slideentry {2}{4}{1}{13/13}{Data Structure}{0}}
 \headcommand {\beamer@framepages {13}{13}}
-\headcommand {\beamer@subsectionentry {0}{2}{4}{14}{Data Structure}}\headcommand {\beamer@subsectionpages {11}{13}}
-\headcommand {\slideentry {2}{4}{1}{14/14}{Data Structure}{0}}
+\headcommand {\slideentry {2}{4}{2}{14/14}{Data Structure}{0}}
 \headcommand {\beamer@framepages {14}{14}}
-\headcommand {\slideentry {2}{4}{2}{15/15}{Data Structure}{0}}
+\headcommand {\sectionentry {3}{Experimental Results}{15}{Experimental Results}{0}}
+\headcommand {\beamer@sectionpages {7}{14}}
+\headcommand {\beamer@subsectionpages {13}{14}}
+\headcommand {\beamer@subsectionentry {0}{3}{1}{15}{Experimental Setup}}\headcommand {\beamer@subsectionpages {15}{14}}
+\headcommand {\slideentry {3}{1}{1}{15/15}{Experimental Setup}{0}}
 \headcommand {\beamer@framepages {15}{15}}
-\headcommand {\sectionentry {3}{Experimental Results}{16}{Experimental Results}{0}}
-\headcommand {\beamer@sectionpages {8}{15}}
-\headcommand {\beamer@subsectionpages {14}{15}}
-\headcommand {\beamer@subsectionentry {0}{3}{1}{16}{Experimental Setup}}\headcommand {\beamer@subsectionpages {16}{15}}
-\headcommand {\slideentry {3}{1}{1}{16/16}{Experimental Setup}{0}}
+\headcommand {\beamer@subsectionentry {0}{3}{2}{16}{Hit ratio}}\headcommand {\beamer@subsectionpages {15}{15}}
+\headcommand {\slideentry {3}{2}{1}{16/16}{Hit ratio}{0}}
 \headcommand {\beamer@framepages {16}{16}}
-\headcommand {\beamer@subsectionentry {0}{3}{2}{17}{Hit ratio}}\headcommand {\beamer@subsectionpages {16}{16}}
-\headcommand {\slideentry {3}{2}{1}{17/17}{Hit ratio}{0}}
+\headcommand {\beamer@subsectionentry {0}{3}{3}{17}{Performance Savings}}\headcommand {\beamer@subsectionpages {16}{16}}
+\headcommand {\slideentry {3}{3}{1}{17/17}{Performance Savings}{0}}
 \headcommand {\beamer@framepages {17}{17}}
-\headcommand {\beamer@subsectionentry {0}{3}{3}{18}{Performance Savings}}\headcommand {\beamer@subsectionpages {17}{17}}
-\headcommand {\slideentry {3}{3}{1}{18/18}{Performance Savings}{0}}
+\headcommand {\slideentry {3}{3}{2}{18/18}{Performance Savings}{0}}
 \headcommand {\beamer@framepages {18}{18}}
-\headcommand {\slideentry {3}{3}{2}{19/19}{Performance Savings}{0}}
+\headcommand {\beamer@subsectionentry {0}{3}{4}{19}{Conclusion}}\headcommand {\beamer@subsectionpages {17}{18}}
+\headcommand {\slideentry {3}{4}{1}{19/19}{Conclusion}{0}}
 \headcommand {\beamer@framepages {19}{19}}
-\headcommand {\beamer@subsectionentry {0}{3}{4}{20}{Conclusion}}\headcommand {\beamer@subsectionpages {18}{19}}
-\headcommand {\slideentry {3}{4}{1}{20/20}{Conclusion}{0}}
+\headcommand {\slideentry {3}{4}{2}{20/20}{Conclusion}{0}}
 \headcommand {\beamer@framepages {20}{20}}
-\headcommand {\slideentry {3}{4}{2}{21/21}{Conclusion}{0}}
-\headcommand {\beamer@framepages {21}{21}}
-\headcommand {\beamer@partpages {1}{21}}
-\headcommand {\beamer@subsectionpages {20}{21}}
-\headcommand {\beamer@sectionpages {16}{21}}
-\headcommand {\beamer@documentpages {21}}
-\headcommand {\def \inserttotalframenumber {21}}
+\headcommand {\beamer@partpages {1}{20}}
+\headcommand {\beamer@subsectionpages {19}{20}}
+\headcommand {\beamer@sectionpages {15}{20}}
+\headcommand {\beamer@documentpages {20}}
+\headcommand {\def \inserttotalframenumber {20}}
