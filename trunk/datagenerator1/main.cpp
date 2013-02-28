@@ -27,6 +27,60 @@ cout << "******************************************" << endl;
 
 
 
+
+
+//comment out below and uncomment following loop to have random locations
+//---------------------------------------------------------
+
+///Aalborg data
+// 17283 558701.625000 6321532.000000 (558700, 6321500)
+// 9970 556530.375000 6325770.000000 (556500, 6325700)
+// 18596 555510.375000 6322083.500000 (555500, 6322000)
+// 17347 551536.562500 6314563.500000 (551500, 6314500)
+// 127966 558209.000000 6323511.000000 (582000, 6323500)
+// 94186 555708.812500 6348010.500000 (557000, 6348000)
+// 119685 537062.000000 6345856.500000 (537000, 6345800)
+// 24815 544502.937500 6335516.000000 (544500, 6335500)
+// 31652 567145.125000 6305505.500000 (550500, 6305500)
+// 33923 531641.562500 6295516.000000 (531600, 6295500)
+
+int random[10];
+int i=0; //just because i is used later on
+cout << RoadGraph::mapObject(fn)->getMapsize();
+
+random[0] = 17283;
+	regionVerticelists[random[0]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[0], -1, constWeight, radius);
+	cout << "Region " << 0 << " size: " << regionVerticelists[random[0]].size() << " " <<  endl;
+random[1] = 9970;
+	regionVerticelists[random[1]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[1], -1, constWeight, radius);
+	cout << "Region " << 1 << " size: " << regionVerticelists[random[1]].size() << " " <<  endl;
+random[2] = 18596;
+	regionVerticelists[random[2]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[2], -1, constWeight, radius);
+	cout << "Region " << 2 << " size: " << regionVerticelists[random[2]].size() << " " <<  endl;
+random[3] = 17347;
+	regionVerticelists[random[3]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[3], -1, constWeight, radius);
+	cout << "Region " << 3 << " size: " << regionVerticelists[random[3]].size() << " " <<  endl;
+random[4] = 127966;
+	regionVerticelists[random[4]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[4], -1, constWeight, radius);
+	cout << "Region " << 4 << " size: " << regionVerticelists[random[4]].size() << " " <<  endl;
+random[5] = 94186;
+	regionVerticelists[random[5]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[5], -1, constWeight, radius);
+	cout << "Region " << 5 << " size: " << regionVerticelists[random[5]].size() << " " <<  endl;
+random[6] = 119685;
+	regionVerticelists[random[6]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[6], -1, constWeight, radius);
+	cout << "Region " << 6 << " size: " << regionVerticelists[random[6]].size() << " " <<  endl;
+random[7] = 24815;
+	regionVerticelists[random[7]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[7], -1, constWeight, radius);
+	cout << "Region " << 7 << " size: " << regionVerticelists[random[7]].size() << " " <<  endl;
+random[8] = 31652;
+	regionVerticelists[random[8]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[8], -1, constWeight, radius);
+	cout << "Region " << 8 << " size: " << regionVerticelists[random[8]].size() << " " <<  endl;
+random[9] = 33923;
+	regionVerticelists[random[9]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[9], -1, constWeight, radius);
+	cout << "Region " << 9 << " size: " << regionVerticelists[random[9]].size() << " " <<  endl;
+//---------------------------------------------------------
+/*
+
 int random[numPoints];
 int i=0;
 
@@ -37,6 +91,8 @@ while(i<numPoints)
 	cout << "Region " << i << " size: " << regionVerticelists[random[i]].size() << " " <<  endl;
 	i++;
 }
+*/
+//--------------------------------------------------------
 cout << "regionVerticelists initialized" << endl;
 
 int tmpPick1, tmpPick2, sid, tid;

@@ -205,7 +205,7 @@ void HQF::fillCache()
  		if(bucketList.find(tmp.pID) != bucketList.end())
  		{
 			if(cache.hasEnoughSpace(bucketList.at(tmp.pID)))
-                if(cache.insertItem(bucketList.at(tmp.pID))){}
+			      if(cache.insertItem(bucketList.at(tmp.pID))){}
 		}else{
 			cout << "BLARG!! error occurred" << endl;
 		}
