@@ -192,6 +192,10 @@ public:
 	int getSplits() const {return splits;}
 	
 	void printSetting();
+	
+	double getElapsedTime(double& refTime){
+	  return (double(clock() -refTime))/CLOCKS_PER_SEC;
+	}
 };
 
 #endif

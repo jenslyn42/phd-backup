@@ -67,6 +67,8 @@ private:
 	int edges;
 	int parseFileType;
 	std::string filename;
+	static boost::unordered_map<int, int*> spTrace;//backtract the SP route from a node to its original source.
+	static boost::unordered_map<int, int*> trackdist; //all the distances from any node to a source node
 	
 	void addEdge(int v1, int v2, double w);
 	void readRoadNetworkFile(string fn);
@@ -74,6 +76,8 @@ private:
 	void readCedgeNetworkFile(string fn);
 	int getFilelines(const char *filename);
 	bool getLastLine(const char *filename, string &lastLine);
+	void readSPTreeFileBinary(TestSetting& ts);
+	intVector getSPfromSPTree(int source, int target);
 };
 
 
