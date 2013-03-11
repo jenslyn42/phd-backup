@@ -31,7 +31,7 @@
 #define ROADGRAPH_CPP
 
 #include "spTreeRG.h"
-#define debug false
+#define debug true
 //specifically for the dijkstraSSSP() method
 #define spDebug false
 
@@ -54,26 +54,26 @@ double lowerboundDist(Point* nodecoord,int nidA,int nidB) {
 }
 
 spTreeRG* spTreeRG::mapObject(string fnPrefix){
-    if(mapInstance == NULL) cout << "HELP ERROR" <<endl;
-
-    if(strcmp((fnPrefix).c_str(), (filePrefix).c_str()) !=0){ //true if strings are not equal
-        cout << "an error I believe arg1/arg2: " << fnPrefix <<"/" << filePrefix << endl;
-        delete mapInstance;
-        mapInstance = NULL;
-		if (backtrace!=NULL)
-			delete[] backtrace;
-        if (trackdist!=NULL)
-			delete[] trackdist;
-        backtrace=NULL;
-        trackdist=NULL;
-    }
+//     if(mapInstance == NULL) cout << "HELP ERROR" <<endl;
+// 
+//     if(strcmp((fnPrefix).c_str(), (filePrefix).c_str()) !=0){ //true if strings are not equal
+//         cout << "an error I believe arg1/arg2: " << fnPrefix <<"/" << filePrefix << endl;
+//         delete mapInstance;
+//         mapInstance = NULL;
+// 		if (backtrace!=NULL)
+// 			delete[] backtrace;
+//         if (trackdist!=NULL)
+// 			delete[] trackdist;
+//         backtrace=NULL;
+//         trackdist=NULL;
+//     }
 
 	if (mapInstance==NULL){
 		filePrefix=fnPrefix;
 		mapInstance = new spTreeRG();
         mapInstance->ssspCalls = 0;
 		mapInstance->numNodeVisits = 0;
-		cout << "[mapObject] filePrefix, parseFileType: " << filePrefix << " " << mapInstance->parseFileType;
+		cout << "[mapObject] filePrefix, parseFileType: " << filePrefix << "; " << mapInstance->parseFileType << endl;
 
         mapInstance->readCedgeNetworkFile(filePrefix);
         cout << " ... done" << endl;
@@ -279,6 +279,7 @@ void spTreeRG::readCedgeNetworkFile(string fn) {
 		if(debug) cout << "six, readCedgeNetworkFile!" << endl;
 		edgeFile.close();
 	}
+	else{cout << "file: " << edgeFN <<" could not be opended" << endl;}
 
 
 	nodecoord=new Point[mapSize];
@@ -392,30 +393,31 @@ void spTreeRG::writeSPtree(std::pair<int*, int> poiArray){
     outFile.close();
 }
 
-///input .poi format: record_id, point_id, point_x, point_y
-std::pair<int*, int> spTreeRG::readPOIlist(){
+/// input format of .poi format: 
+/// record_id, point_id, point_x, point_y
+std::pair<int*, int> spTreeRG::readPOIlist(string poifn){
 
 	string str;
 	int i=0;
-    std::pair<double, double> coord;
+	std::pair<double, double> coord;
 	std::vector<string> tokens;
-	string fn=filePrefix;
 	int* poiIDs = new int[mapSize];
 
-	fn.append(".poi"); //set the extension to be .poi
-	ifstream file (fn.c_str(), ios::in); //*.poi fil
+	poifn.append(".poi"); //set the extension to be .poi
+	ifstream file (poifn.c_str(), ios::in); //*.poi fil
 
-	cout << "spTreeRG::readPOIlist start: " << fn << endl;
+	cout << "spTreeRG::readPOIlist start: " << poifn << endl;
 
 	//find all pairs of nodeids in the training set to have SP done for them. map nodeids to Points.
 	if (file.is_open()) {
 		if (debug)
 			cout << "two, spTreeRG::readPOIlist opened! " << endl;
-
+		cout << i << endl;
 		while(getline(file, str)) {
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 			poiIDs[i] = atoi(tokens[1].c_str());
 			i++;
+			cout << i << endl;
   		}
 	}
 	file.close();

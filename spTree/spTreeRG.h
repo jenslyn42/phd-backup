@@ -82,7 +82,7 @@ public:
 	}
 
     void writeSPtree(std::pair<int*, int> poiArray);
-    std::pair<int*, int> readPOIlist();
+    std::pair<int*, int> readPOIlist(string poifn);
 
 private:
 	spTreeRG(){ };
