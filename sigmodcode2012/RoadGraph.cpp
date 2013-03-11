@@ -36,6 +36,8 @@
 #define spDebug false
 
 
+boost::unordered_map<int, int*> RoadGraph::spTrace;
+boost::unordered_map<int, int*> RoadGraph::trackdist;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 RoadGraph* RoadGraph::mapInstance = NULL;
@@ -51,6 +53,7 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts)
 		mapInstance->parseFileType = pt;
 		mapInstance->ssspCalls = 0;
 		mapInstance->numNodeVisits = 0;
+		mapInstance->readSPTreeFileBinary(ts);
 printf("*** RoadGraph::read\n");
 
 		switch( (mapInstance->parseFileType) ){
@@ -73,12 +76,16 @@ printf("*** RoadGraph::read\n");
 		delete mapInstance;
 		mapInstance = NULL; //if type of file to be parsed changes, delete mapInstance
 	}
-
+	
 	return mapInstance;
 }
 
 vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {
 	std::vector<int> trace;
+	
+	trace = getSPfromSPTree(source, dest);
+	if(!trace.empty()) return trace;
+	
 	
 	ssspCalls++;
 	if (spDebug) 
@@ -445,6 +452,68 @@ bool RoadGraph::getLastLine(const char *filename, string &lastLine)
 	return true;
 }
 
+void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
+    double refTime = clock();
+	string prefixFn = ts.queryFileName;
+	prefixFn.replace ((prefixFn.size())-6, 6, "");
+    int token1,token2,token3;
+	int curPoiNodeId=-1;
+
+	string fn = prefixFn;
+	fn.append(".cnode"); // extension .cnode
+	int mapsize = getFilelines(fn.c_str());
+
+	prefixFn.append(".sptree"); // extension .sptree
+	ifstream sptFile (prefixFn.c_str(), ios::in|ios::binary);
+
+//	if (debug)
+        cout << "zero, readSPTreeFile! prefixFn: " << prefixFn << endl;
+
+	if (sptFile.is_open()) {
+//		if(debug)
+            cout << "one, readSPTreeFile! ";
+        cout<< "@TIME1: " << ts.getElapsedTime(refTime)<< endl;
+
+		while(!sptFile.eof()) {
+                sptFile.read((char*)&token1, sizeof(int));
+                sptFile.read((char*)&token2, sizeof(int));
+                sptFile.read((char*)&token3, sizeof(int));
+			if(token3 == -1337){
+                curPoiNodeId = token1;
+                spTrace[curPoiNodeId] = new int[token2];
+                trackdist[curPoiNodeId] = new int[mapsize];
+			}
+            spTrace[curPoiNodeId][token1] = token3;
+            trackdist[curPoiNodeId][token1] = token2;
+		}
+//		if(debug)
+            cout << "four, readSPTreeFile! ";
+		sptFile.close();
+	}
+//	if(debug)
+        cout << "five, readSPTreeFile END!";
+        cout<< "@TIME2: " << ts.getElapsedTime(refTime)<< endl;
+}
+
+intVector RoadGraph::getSPfromSPTree(int source, int target){
+	intVector trace;
+    int* backtrace=spTrace[target];
+    if(backtrace == NULL) {
+        cout << "*!IN SPTree s/t: " << source <<"/" << target << "\t";
+//        trace.push_back(target);;
+        return trace;
+    }
+    cout << " (**||**) ";
+    int prevNode = source;
+    trace.push_back(prevNode);
+    while (prevNode!=target) {
+        assert(prevNode!=-1);
+
+        prevNode = backtrace[prevNode];
+        trace.push_back(prevNode);
+    }
+    return trace;
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
