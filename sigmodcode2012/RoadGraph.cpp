@@ -494,10 +494,16 @@ void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
         cout << "five, readSPTreeFile END!";
         cout<< "@TIME2: " << ts.getElapsedTime(refTime)<< endl;
 	
-	cout << "query 1 " << spTrace[103973] <<" ;" << endl;
+
+	
+	cout << "query 1 " <<" ;" << endl;
+	(spTrace[103973]==NULL)? cout << "OH NOES!": cout <<"OH YESES!";
 	cout << "query 1 " << spTrace[15929] <<" ;" << endl;
+	(spTrace[15929]==NULL)? cout <<"OH NOES!": cout << "OH YESES!";
 	cout << "query 6 " << spTrace[119270] <<" ;" << endl;
+	(spTrace[119270]==NULL)? cout <<"OH NOES!": cout <<"OH YESES!";
 	cout << "query 6 " << spTrace[98515] <<" ;" << endl;
+	(spTrace[98515]==NULL)? cout<< "OH NOES!": cout<< "OH YESES!";
 
 }
 
