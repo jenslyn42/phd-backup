@@ -485,7 +485,7 @@ void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
 		  }
 		  spTrace[curPoiNodeId][token1] = token3;
 		  trackdist[curPoiNodeId][token1] = token2;
-		  if(token1 == 15929 || token1 == 98515)		  
+		  if(curPoiNodeId == 15929 || curPoiNodeId == 98515)		  
 			cout << "[" << curPoiNodeId << "] [" << token1 << "]  \t " << token2 << ", " << token3 << endl; 
 		}
 //		if(debug)
