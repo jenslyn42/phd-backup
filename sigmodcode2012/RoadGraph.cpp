@@ -485,7 +485,7 @@ void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
 		  }
 		  spTrace[curPoiNodeId][token1] = token3;
 		  trackdist[curPoiNodeId][token1] = token2;
-		  if(curPoiNodeId == 15929 || curPoiNodeId == 98515)		  
+		  if(curPoiNodeId == 15929 || curPoiNodeId == 98515 || curPoiNodeId== 103973 || curPoiNodeId == 119270)		  
 			cout << "[" << curPoiNodeId << "] [" << token1 << "]  \t " << token2 << ", " << token3 << endl; 
 		}
 //		if(debug)
@@ -500,7 +500,7 @@ void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
 	
 	cout << "query 1 " <<" ;" << endl;
 	(spTrace[15929]==NULL)? cout <<"OH NOES!": cout << "OH YESES! "; 
-	cout << spTrace[15929][103973] << endl;
+// 	cout << spTrace[15929][103973] << endl;
 
 	cout << "query 6 " << spTrace[98515] <<" ;" << endl;
 	(spTrace[98515]==NULL)? cout<< "OH NOES!": cout<< "OH YESES! ";
