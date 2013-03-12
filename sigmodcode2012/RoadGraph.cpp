@@ -475,17 +475,18 @@ void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
         cout<< "@TIME1: " << ts.getElapsedTime(refTime)<< endl;
 
 		while(!sptFile.eof()) {
-                sptFile.read((char*)&token1, sizeof(int));
-                sptFile.read((char*)&token2, sizeof(int));
-                sptFile.read((char*)&token3, sizeof(int));
-			if(token3 == -1337){
-                curPoiNodeId = token1;
-                spTrace[curPoiNodeId] = new int[token2];
-                trackdist[curPoiNodeId] = new int[mapsize];
-			}
-            spTrace[curPoiNodeId][token1] = token3;
-            trackdist[curPoiNodeId][token1] = token2;
-	    cout << "[" << curPoiNodeId << "] [" << token1 << "]\t " << token2 << ", " << token3 << endl; 
+		  sptFile.read((char*)&token1, sizeof(int));
+		  sptFile.read((char*)&token2, sizeof(int));
+		  sptFile.read((char*)&token3, sizeof(int));
+		  if(token3 == -1337){
+		    curPoiNodeId = token1;
+		    spTrace[curPoiNodeId] = new int[token2];
+		    trackdist[curPoiNodeId] = new int[mapsize];
+		  }
+		  spTrace[curPoiNodeId][token1] = token3;
+		  trackdist[curPoiNodeId][token1] = token2;
+		  if(token1 == 103973 || token1 == 15929 || token1 == 119270 || token1 == 98515)		  
+			cout << "[" << curPoiNodeId << "] [" << token1 << "]\t " << token2 << ", " << token3 << endl; 
 		}
 //		if(debug)
             cout << "four, readSPTreeFile! ";
