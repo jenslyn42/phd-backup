@@ -485,8 +485,8 @@ void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
 		  }
 		  spTrace[curPoiNodeId][token1] = token3;
 		  trackdist[curPoiNodeId][token1] = token2;
-		  if(curPoiNodeId == 15929 || curPoiNodeId == 98515 || curPoiNodeId== 103973 || curPoiNodeId == 119270)		  
-			cout << "[" << curPoiNodeId << "] [" << token1 << "]  \t " << token2 << ", " << token3 << endl; 
+// 		  if(curPoiNodeId == 15929 || curPoiNodeId == 98515 || curPoiNodeId== 103973 || curPoiNodeId == 119270)		  
+// 			cout << "[" << curPoiNodeId << "] [" << token1 << "]  \t " << token2 << ", " << token3 << endl; 
 		}
 //		if(debug)
             cout << "four, readSPTreeFile! ";
@@ -498,19 +498,19 @@ void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
 	
 
 	
-	cout << "query 1 " <<" ;" << endl;
-	(spTrace[15929]==NULL)? cout <<"OH NOES!": cout << "OH YESES! "; 
-// 	cout << spTrace[15929][103973] << endl;
-
-	cout << "query 6 " << spTrace[98515] <<" ;" << endl;
-	(spTrace[98515]==NULL)? cout<< "OH NOES!": cout<< "OH YESES! ";
-	cout << spTrace[98515][119270] << endl;
-
-	cout << "query 1 " << spTrace[103973] <<" ;" << endl;
-	(spTrace[103973]==NULL)? cout << "OH NOES!": cout <<"OH YESES!"<< endl;
-	
-	cout << "query 6 " << spTrace[119270] <<" ;" << endl;
-	(spTrace[119270]==NULL)? cout <<"OH NOES!": cout <<"OH YESES!" << endl;
+// 	cout << "query 1 " <<" ;" << endl;
+// 	(spTrace[15929]==NULL)? cout <<"OH NOES!": cout << "OH YESES! "; 
+// // 	cout << spTrace[15929][103973] << endl;
+// 
+// 	cout << "query 6 " << spTrace[98515] <<" ;" << endl;
+// 	(spTrace[98515]==NULL)? cout<< "OH NOES!": cout<< "OH YESES! ";
+// 	cout << spTrace[98515][119270] << endl;
+// 
+// 	cout << "query 1 " << spTrace[103973] <<" ;" << endl;
+// 	(spTrace[103973]==NULL)? cout << "OH NOES!": cout <<"OH YESES!"<< endl;
+// 	
+// 	cout << "query 6 " << spTrace[119270] <<" ;" << endl;
+// 	(spTrace[119270]==NULL)? cout <<"OH NOES!": cout <<"OH YESES!" << endl;
 }
 
 intVector RoadGraph::getSPfromSPTree(int source, int target){
