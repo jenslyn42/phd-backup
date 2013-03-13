@@ -454,13 +454,16 @@ bool RoadGraph::getLastLine(const char *filename, string &lastLine)
 
 void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
     double refTime = clock();
-	string prefixFn = ts.queryFileName;
-	prefixFn.replace ((prefixFn.size())-6, 6, "");
+// 	string prefixFn = ts.queryFileName;
+// 	prefixFn.replace ((prefixFn.size())-6, 6, "");
+	string prefixFn = "MANUALaalborgNEWGP10R1600";
+	
     int token1,token2,token3;
 	int curPoiNodeId=-1;
 
-	string fn = prefixFn;
-	fn.append(".cnode"); // extension .cnode
+	string fn = ts.testFile;
+	fn.replace ((fn.size())-4, 4, "node"); // extension .cnode
+	cout << fn << endl;
 	int mapsize = getFilelines(fn.c_str());
 
 	prefixFn.append(".sptree"); // extension .sptree

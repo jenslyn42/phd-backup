@@ -232,11 +232,11 @@ void spTreeRG::readRoadNetworkFile(string fn) {
 		int check = 0;
 		while(getline(in_data, str))
 		{
-			if(debug) cout << "five, readNetworkFile! getline:" << str  << " check: " << check++ << endl;
+// 			if(debug) cout << "five0, readNetworkFile! getline:" << str  << " check: " << check++ << endl;
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-			if(debug) cout << "five1, readNetworkFile! getline:" << str  << " check: "  << check << endl;
+// 			if(debug) cout << "five1, readNetworkFile! getline:" << str  << " check: "  << check << endl;
 			addEdge(atoi(tokens[0].c_str()),atoi(tokens[1].c_str()),atof(tokens[2].c_str()));
-			if(debug) cout << "five2, readNetworkFile! getline:" << str  << " check: "  << check << endl;
+// 			if(debug) cout << "five2, readNetworkFile! getline:" << str  << " check: "  << check << endl;
 		}
 		if(debug) cout << "six, readNetworkFile!" << endl;
 		in_data.close();
@@ -272,9 +272,9 @@ void spTreeRG::readCedgeNetworkFile(string fn) {
 		while(getline(edgeFile, str)) {
 // 			cout << "five, readCedgeNetworkFile! getline:" << str  << " check: " << endl;
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-			if(debug) cout << "five1, readCedgeNetworkFile! getline:" << str << endl;
+// 			if(debug) cout << "five1, readCedgeNetworkFile! getline:" << str << endl;
 			addEdge(atoi(tokens[1].c_str()),atoi(tokens[2].c_str()),atof(tokens[3].c_str()));
-			if(debug) cout << "five2, readCedgeNetworkFile! getline:" << str << endl;
+// 			if(debug) cout << "five2, readCedgeNetworkFile! getline:" << str << endl;
 		}
 		if(debug) cout << "six, readCedgeNetworkFile!" << endl;
 		edgeFile.close();
@@ -412,12 +412,10 @@ std::pair<int*, int> spTreeRG::readPOIlist(string poifn){
 	if (file.is_open()) {
 		if (debug)
 			cout << "two, spTreeRG::readPOIlist opened! " << endl;
-		cout << i << endl;
 		while(getline(file, str)) {
 			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 			poiIDs[i] = atoi(tokens[1].c_str());
 			i++;
-			cout << i << endl;
   		}
 	}
 	file.close();
