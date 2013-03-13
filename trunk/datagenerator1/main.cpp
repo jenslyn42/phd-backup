@@ -1,6 +1,8 @@
 #include "Setting.h"
 #include "RoadGraph.h"
 
+#define WRITE_POI true // if true writes out all vertices of all regions 
+
 //arg 1: input filename, no type (cedge/cnode assumed)
 //arg 2: queries to generate in, half in *.qtest, other half in *.qtrain
 //arg 3: number of points to use as example regions to pick vertices from
@@ -95,10 +97,11 @@ while(i<numPoints)
 //--------------------------------------------------------
 cout << "regionVerticelists initialized" << endl;
 
+
+boost::unordered_map<int,std::pair<string,string> > nodelist = RoadGraph::mapObject(fn)->getNodelist();
 int tmpPick1, tmpPick2, sid, tid;
 vector<int> tempList1, tempList2;
 
-boost::unordered_map<int,std::pair<string,string> > nodelist = RoadGraph::mapObject(fn)->getNodelist();
 string filename = fn + "GP";
 filename.append(boost::lexical_cast<std::string>(numPoints));
 filename.append("R");
@@ -145,6 +148,8 @@ for(;i<queriesToGenerate/2;i++)
 }
 cout << "file writing ended" << endl;
 resultfile.close();
+
+
 filename.replace ((filename.size())-5, 5, "test");
 ///open file for output
 resultfile.open(filename.c_str(), ios::out | ios::ate | ios::app);
@@ -177,6 +182,24 @@ for(;i<queriesToGenerate;i++)
 }
 cout << "file writing ended" << endl;
 resultfile.close();
+
+
+if(WRITE_POI){
+  int linenum = 0;
+  pair<string,string> tempPair;
+  filename.replace ((filename.size())-5, 5, "poi");
+  ofstream poifile;
+  poifile.open(filename.c_str(), ios::out | ios::ate | ios::app);
+
+  BOOST_FOREACH(intVectorMap::value_type verticelist, regionVerticelists){
+    BOOST_FOREACH(int vertex, verticelist.second){
+      tempPair = nodelist[vertex];
+      poifile << linenum << " " << vertex << " " << tempPair.first << " " << tempPair.second << endl;
+      linenum++;
+    }
+  }
+  poifile.close();
+}
 
 //cout << "Unique pairs in stats: " << stats.size() << endl;
 //cout << "(x,y) - train / test / total" << endl;

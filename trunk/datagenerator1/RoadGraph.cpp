@@ -158,7 +158,7 @@ void RoadGraph::addEdge(int v1, int v2, double w) {
 	}
 }
 
-///fileformat .cedge: 0 0 1 1.182663 (linenum, vid1, vid2, dist)
+///fileformat .cedge: 0 0 1 1.182663 (linenum, v_id1, v_id2, dist)
 void RoadGraph::readCedgeNetworkFile(string fn)
 {
 	filename = fn + ".cedge";
@@ -214,9 +214,9 @@ int RoadGraph::getFilelines(const char *filename)
 		
 		boost::algorithm::split(tokens, line, boost::algorithm::is_space());
 		if(atof(tokens[1].c_str()) < minX) minX = atof(tokens[1].c_str());
-		if(atof(tokens[1].c_str()) > maxX) maxX = atof(tokens[1].c_str());
+		else if(atof(tokens[1].c_str()) > maxX) maxX = atof(tokens[1].c_str());
 		if(atof(tokens[2].c_str()) < minY) minY = atof(tokens[2].c_str());
-		if(atof(tokens[2].c_str()) > maxY) maxY = atof(tokens[2].c_str());
+		else if(atof(tokens[2].c_str()) > maxY) maxY = atof(tokens[2].c_str());
 		
 		nodelist[atoi(tokens[0].c_str())] = make_pair<string,string>(tokens[1],tokens[2]);
 	}
