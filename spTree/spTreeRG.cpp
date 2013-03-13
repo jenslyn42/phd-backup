@@ -369,7 +369,7 @@ void spTreeRG::writeSPtree(std::pair<int*, int> poiArray){
 
     ifstream fin((fn).c_str());
     if (fin)
-		fileExist = true;// check to see if file exists
+	fileExist = true;// check to see if file exists
     fin.close();
 
     ///file output
