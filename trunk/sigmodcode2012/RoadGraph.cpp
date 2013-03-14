@@ -37,7 +37,7 @@
 
 
 boost::unordered_map<int, int*> RoadGraph::spTrace;
-boost::unordered_map<int, int*> RoadGraph::trackdist;
+// boost::unordered_map<int, int*> RoadGraph::trackdist;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 RoadGraph* RoadGraph::mapInstance = NULL;
@@ -54,6 +54,8 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts)
 		mapInstance->ssspCalls = 0;
 		mapInstance->numNodeVisits = 0;
 		mapInstance->readSPTreeFileBinary(ts);
+		mapInstance->countSuccess=0;
+		mapInstance->countFail=0;
 printf("*** RoadGraph::read\n");
 
 		switch( (mapInstance->parseFileType) ){
@@ -484,47 +486,28 @@ void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
 		  if(token3 == -1337){
 		    curPoiNodeId = token1;
 		    spTrace[curPoiNodeId] = new int[token2];
-		    trackdist[curPoiNodeId] = new int[mapsize];
+// 		    trackdist[curPoiNodeId] = new int[mapsize];
 		  }
 		  spTrace[curPoiNodeId][token1] = token3;
-		  trackdist[curPoiNodeId][token1] = token2;
-// 		  if(curPoiNodeId == 15929 || curPoiNodeId == 98515 || curPoiNodeId== 103973 || curPoiNodeId == 119270)		  
-// 			cout << "[" << curPoiNodeId << "] [" << token1 << "]  \t " << token2 << ", " << token3 << endl; 
+// 		  trackdist[curPoiNodeId][token1] = token2;
 		}
-//		if(debug)
-            cout << "four, readSPTreeFile! ";
+		if(debug) cout << "four, readSPTreeFile! ";
 		sptFile.close();
 	}
-//	if(debug)
-        cout << "five, readSPTreeFile END!";
+	if(debug) cout << "five, readSPTreeFile END!";
         cout<< "@TIME2: " << ts.getElapsedTime(refTime)<< endl;
-	
-
-	
-// 	cout << "query 1 " <<" ;" << endl;
-// 	(spTrace[15929]==NULL)? cout <<"OH NOES!": cout << "OH YESES! "; 
-// // 	cout << spTrace[15929][103973] << endl;
-// 
-// 	cout << "query 6 " << spTrace[98515] <<" ;" << endl;
-// 	(spTrace[98515]==NULL)? cout<< "OH NOES!": cout<< "OH YESES! ";
-// 	cout << spTrace[98515][119270] << endl;
-// 
-// 	cout << "query 1 " << spTrace[103973] <<" ;" << endl;
-// 	(spTrace[103973]==NULL)? cout << "OH NOES!": cout <<"OH YESES!"<< endl;
-// 	
-// 	cout << "query 6 " << spTrace[119270] <<" ;" << endl;
-// 	(spTrace[119270]==NULL)? cout <<"OH NOES!": cout <<"OH YESES!" << endl;
 }
 
 intVector RoadGraph::getSPfromSPTree(int source, int target){
-	intVector trace;
+    intVector trace;
     int* backtrace=spTrace[target];
     if(backtrace == NULL) {
-        cout << "*!IN SPTree s/t: " << source <<"/" << target << "\t";
-//        trace.push_back(target);;
+	countFail++;
+        cout << "*!SPTree s/t (" << countFail <<"/" << countSuccess <<"): "<< source <<"/" << target << "\t";
+//        trace.push_back(target);
         return trace;
     }
-    cout << " (**||**) ";
+    countSuccess++;
     int prevNode = source;
     trace.push_back(prevNode);
     while (prevNode!=target) {
