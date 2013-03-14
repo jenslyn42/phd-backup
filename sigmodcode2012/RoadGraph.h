@@ -68,7 +68,8 @@ private:
 	int parseFileType;
 	std::string filename;
 	static boost::unordered_map<int, int*> spTrace;//backtract the SP route from a node to its original source.
-	static boost::unordered_map<int, int*> trackdist; //all the distances from any node to a source node
+//	static boost::unordered_map<int, int*> trackdist; //all the distances from any node to a source node
+	int countSuccess, countFail;
 	
 	void addEdge(int v1, int v2, double w);
 	void readRoadNetworkFile(string fn);
