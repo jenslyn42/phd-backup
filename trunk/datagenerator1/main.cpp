@@ -10,7 +10,7 @@
 
 
 int main(int argc, char *argv[]) {
-	srand(0);	srand48(0);
+	srand(99);	srand48(99);
 
 if(argc != 5){
   cout << "Wrong usage!\nUsage: " << argv[0] << "<mapname> <numQueries> <numPoints> <radius>" << endl;
@@ -28,10 +28,7 @@ cout << "Map/Clusters/Radius: " << fn << "/" << numPoints << "/" << radius << en
 cout << "******************************************" << endl;
 
 
-
-
-
-//comment out below and uncomment following loop to have random locations
+/*comment out below and uncomment following loop to have random locations
 //---------------------------------------------------------
 
 ///Aalborg data
@@ -81,7 +78,7 @@ random[9] = 33923;
 	regionVerticelists[random[9]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[9], -1, constWeight, radius);
 	cout << "Region " << 9 << " size: " << regionVerticelists[random[9]].size() << " " <<  endl;
 //---------------------------------------------------------
-/*
+*/
 
 int random[numPoints];
 int i=0;
@@ -90,11 +87,10 @@ while(i<numPoints)
 {
 	random[i] = rand()%RoadGraph::mapObject(fn)->getMapsize();
 	regionVerticelists[random[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[i], -1, constWeight, radius);
-	cout << "Region " << i << " size: " << regionVerticelists[random[i]].size() << " " <<  endl;
+	cout << "Region " << i << " size: " << regionVerticelists[random[i]].size() << " S:(" << random[i] << ")" <<  endl;
 	i++;
 }
-*/
-//--------------------------------------------------------
+
 cout << "regionVerticelists initialized" << endl;
 
 
