@@ -152,10 +152,14 @@ public:
 	int scacheQueryType;	// used for SCACHE only
 	int splits, itemsInCache, nonEmptyRegionPairs;
 	
+	bool useConcisepath;
+	bool measureConcisepathdegrees;
+	
 	ALGO_CHOICE testAlgo;
 	STORAGE_CHOICE testStorage;
 	ARCH_CHOICE testScenario;
 	unsigned long cacheSize;
+	
 
 	TestSetting();
 	~TestSetting();	
