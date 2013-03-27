@@ -226,6 +226,12 @@ void extractTestParameters(TestSetting& ts) {
 	else if ( ts.testAlgo == ALGO_SPCstar )
 		ts.testStorage = STORE_COMPRESS;
 	
+		
+	if (ts.getConfigBool("useConcisepath")==true) {
+		ts.useConcisepath = true;
+		ts.measureConcisepathdegrees = ts.getConfigBool("measureConcisepathdegrees");
+	}else ts.useConcisepath = false;
+	
 	
 	// format: "experiment"_"testAlgo"_"testFile (3 letters)".test
 	// 		   "experiment" to be added later

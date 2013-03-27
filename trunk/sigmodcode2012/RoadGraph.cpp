@@ -365,7 +365,9 @@ void RoadGraph::readPPINetworkFile(string fn)
 	}
 }
 
-///fileformat .cedge: 0 0 1 1.182663
+/// fileformat .cedge: linenum nid1 nid2 distance
+/// e.g.: 0 0 1 1.182663
+/// fileformat .cnode: nid x y
 void RoadGraph::readCedgeNetworkFile(string fn)
 {
 	filename = fn;
@@ -373,6 +375,7 @@ void RoadGraph::readCedgeNetworkFile(string fn)
 	string nodeFN = fn;
 	nodeFN.replace ((nodeFN.size()-4), 4, "node"); //change file extention from .cedge to .cnode
 	std::vector<string> tokens;
+	
 	ifstream in_data (fn.c_str(), ios::in);
 	if(debug) cout << "s1, readCedgeNetworkFile! nodeFN: " <<nodeFN << endl;
 	if(in_data.is_open())
@@ -391,6 +394,18 @@ void RoadGraph::readCedgeNetworkFile(string fn)
 			if(debug) cout << "five2, readCedgeNetworkFile! getline:" << str << endl;
 		}
 		if(debug) cout << "six, readCedgeNetworkFile!" << endl;
+		in_data.close();
+	}
+	
+	ifstream in_nodedist (nodeFN.c_str(), ios::in);
+	if(in_nodedist.is_open())
+	{
+		while(getline(in_nodedist, str))
+		{
+			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+			if(debug) cout << "five1, readCedgeNetworkFile! getline:" << str << endl;
+			addEdge(atoi(tokens[1].c_str()),atoi(tokens[2].c_str()),atof(tokens[3].c_str()));
+
 		in_data.close();
 	}
 }
