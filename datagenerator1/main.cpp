@@ -28,9 +28,9 @@ cout << "Map/Clusters/Radius: " << fn << "/" << numPoints << "/" << radius << en
 cout << "******************************************" << endl;
 
 
-/*comment out below and uncomment following loop to have random locations
+//comment out below and uncomment following loop to have random locations
 //---------------------------------------------------------
-
+// 2130052639
 ///Aalborg data
 // 17283 558701.625000 6321532.000000 (558700, 6321500)
 // 9970 556530.375000 6325770.000000 (556500, 6325700)
@@ -78,7 +78,7 @@ random[9] = 33923;
 	regionVerticelists[random[9]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[9], -1, constWeight, radius);
 	cout << "Region " << 9 << " size: " << regionVerticelists[random[9]].size() << " " <<  endl;
 //---------------------------------------------------------
-*/
+/*
 
 int random[numPoints];
 int i=0;
@@ -90,7 +90,7 @@ while(i<numPoints)
 	cout << "Region " << i << " size: " << regionVerticelists[random[i]].size() << " S:(" << random[i] << ")" <<  endl;
 	i++;
 }
-
+*/
 cout << "regionVerticelists initialized" << endl;
 
 

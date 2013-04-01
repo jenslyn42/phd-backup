@@ -50,6 +50,7 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts)
 	
 	if (mapInstance==NULL){
 		mapInstance = new RoadGraph();
+		mapInstance->useConcisepath = ts.useConcisepath;
 		mapInstance->parseFileType = pt;
 		mapInstance->ssspCalls = 0;
 		mapInstance->numNodeVisits = 0;
@@ -397,16 +398,18 @@ void RoadGraph::readCedgeNetworkFile(string fn)
 		in_data.close();
 	}
 	
-	ifstream in_nodedist (nodeFN.c_str(), ios::in);
-	if(in_nodedist.is_open())
-	{
-		while(getline(in_nodedist, str))
+	if(useConcisepath){
+		ifstream in_nodedist (nodeFN.c_str(), ios::in);
+		if(in_nodedist.is_open())
 		{
-			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-			if(debug) cout << "five1, readCedgeNetworkFile! getline:" << str << endl;
-			addEdge(atoi(tokens[1].c_str()),atoi(tokens[2].c_str()),atof(tokens[3].c_str()));
-
-		in_data.close();
+			while(getline(in_nodedist, str))
+			{
+				boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+				if(debug) cout << "six, readCedgeNetworkFile! getline:" << str << endl;
+				nid2Point.at(atoi(tokens[0].c_str())) = make_pair<double,double>(atoi(tokens[1].c_str()),atof(tokens[2].c_str()));
+			}
+			in_nodedist.close();
+		}
 	}
 }
 
@@ -513,6 +516,7 @@ void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
         cout<< "@TIME2: " << ts.getElapsedTime(refTime)<< endl;
 }
 
+
 intVector RoadGraph::getSPfromSPTree(int source, int target){
     intVector trace;
     int* backtrace=spTrace[target];
@@ -533,6 +537,17 @@ intVector RoadGraph::getSPfromSPTree(int source, int target){
     }
     return trace;
 }
+
+
+//find angle between current heading (prevNode -> source) and new heading (source -> target)
+double RoadGraph::getAngle(Point prevNode, Point source, Point target)
+{
+    double existingSlope = (prevNode.second - source.second) / (prevNode.first - source.first);
+    
+    
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 

@@ -70,6 +70,8 @@ private:
 	static boost::unordered_map<int, int*> spTrace;//backtract the SP route from a node to its original source.
 //	static boost::unordered_map<int, int*> trackdist; //all the distances from any node to a source node
 	int countSuccess, countFail;
+	bool useConcisepath;
+	intPointMap nid2Point;
 	
 	void addEdge(int v1, int v2, double w);
 	void readRoadNetworkFile(string fn);
@@ -79,6 +81,7 @@ private:
 	bool getLastLine(const char *filename, string &lastLine);
 	void readSPTreeFileBinary(TestSetting& ts);
 	intVector getSPfromSPTree(int source, int target);
+	double getAngle(Point prevNode, Point source, Point target);
 };
 
 
