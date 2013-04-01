@@ -305,12 +305,48 @@ int main(int argc, char *argv[]) {
 	
 cout << "******************************************" << endl;
 cout << "BEGIN TESTS" << endl;
+
+double a;
+double PI = 3.14159265;
+
+a=atan(0.25);
+cout << "0.25 " << a/PI*180 << endl;
+a=atan(0.5);
+cout << "0.5 " << a/PI*180 << endl;
+a=atan(0.75);
+cout << "0.75 " << a/PI*180 << endl;
+a=atan(1);
+cout << "1 " << a/PI*180 << endl;
+a=atan(1.5);
+cout << "1.5 " << a/PI*180 << endl;
+a=atan(2);
+cout << "2 " << a/PI*180 << endl;
+
+
+double s1 = 1.0;
+double s2 = 2.0;
+double b = (s2-s1)/(1+s1*s2);
+cout << b << endl;
+
+ b = (1.0)/(1+1*2);
+ cout << b << endl;
+a=atan(b);
+cout << "q1-2 " << a/PI*180.0 << endl;
+
+b = (1.0-3)/(1+1*3);
+a=atan(b);
+cout << "q1-3 " << a/PI*180.0 << endl;
+
+b = (2-3.0)/(1+2*3);
+a=atan(b);
+cout << "q2-3 " << a/PI*180.0 << endl;
+
 cout << "******************************************" << endl;
 
 	//Test setting
 	///Load settings from config.prob
 	//TestSetting ts;
-	//ts.addConfigFromFile("config.prop");	// load default parameter values
+	//ts.addConfigFromFile("config.prop");	// load dou parameter values
 	//ts.addConfigFromCmdLine(argc,argv);		// override parameter values
 	//ts.listConfig();		// list the content of the config
 	

@@ -27,25 +27,25 @@ show ylabel
 set pointsize 0.5
 set size ratio -1
 
-set object 1 circle center first 558700, 6321500, 0 size first 1600
+set object 1 circle center first 539330.3125, 6303432, 0 size first 1600
 set object 1 back lw 1.0 fc  rgb "red" fs transparent solid 0.5 noborder
-set object 2 circle center first 556500, 6325700, 0 size first 1600
+set object 2 circle center first 532598.8125, 6300312, 0 size first 1600
 set object 2 back lw 1.0 fc  rgb "red" fs transparent solid 1.5 noborder
-set object 3 circle center first 555500, 6322000, 0 size first 1600
+set object 3 circle center first 562804.25, 6330826, 0 size first 1600
 set object 3 back lw 1.0 fc  rgb "cyan" fs transparent solid 0.5 noborder
-set object 4 circle center first 551500, 6314500, 0 size first 1600
+set object 4 circle center first 564231.3125, 6318503, 0 size first 1600
 set object 4 back lw 1.0 fc  rgb "green" fs transparent solid 0.5 noborder
-set object 5 circle center first 582000, 6323500, 0 size first 1600
+set object 5 circle center first 550922.75, 6349731, 0 size first 1600
 set object 5 back lw 1.0 fc  rgb "purple" fs transparent solid 0.5 noborder
-set object 6 circle center first 557000, 6348000, 0 size first 1600
+set object 6 circle center first 551363.0625, 6328788, 0 size first 1600
 set object 6 back lw 1.0 fc  rgb "green" fs transparent solid 0.5 noborder
-set object 7 circle center first 537000, 6345800, 0 size first 1600
+set object 7 circle center first 550534.875, 6305558, 0 size first 1600
 set object 7 back lw 1.0 fc  rgb "magenta" fs transparent solid 0.5 noborder
-set object 8 circle center first 544500, 6335500, 0 size first 1600
+set object 8 circle center first 542396.125, 6312403, 0 size first 1600
 set object 8 back lw 1.0 fc  rgb "blue" fs transparent solid 0.5 noborder
-set object 9 circle center first 550500, 6305500, 0 size first 1600
+set object 9 circle center first 561657.5, 6344880, 0 size first 1600
 set object 9 back lw 1.0 fc  rgb "green" fs transparent solid 0.5 noborder
-set object 10 circle center first 531600, 6295500, 0 size first 1600
+set object 10 circle center first 553555.375, 6328181, 0 size first 1600
 set object 10 back lw 1.0 fc  rgb "cyan" fs transparent solid 1.5 noborder
 
 
