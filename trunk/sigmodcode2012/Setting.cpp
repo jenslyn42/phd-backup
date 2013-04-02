@@ -136,8 +136,10 @@ void TestSetting::printSetting() {
 	cout << "scacheQueryType: " <<  scacheQueryType << endl;
 	cout << "splits, itemsInCache, nonEmptyRegionPairs: " <<  splits << " " << itemsInCache << " " << nonEmptyRegionPairs << endl;
 	cout << "fillCacheTime, buildStatisticsTime: " <<  fillCacheTime << " " << buildStatisticsTime << endl;
+	cout << "useConcisePath, measureConcisepathdegrees: " << useConcisepath << " " << measureConcisepathdegrees << endl;
 	cout << "--------------------------\n\n" << endl;
 }
+
 	
 void TestSetting::trimSpace(char* str) {
 	if (str==NULL) return;
