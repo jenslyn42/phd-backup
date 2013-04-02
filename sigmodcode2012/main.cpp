@@ -157,7 +157,7 @@ void TestObject::printResults() {
 		resultfile 	<< "QueryTime\tCacheHits\tDijkstraCalls\tSPcalls\tNodesVisited\t"
 					<< "Algorithm\tScenario\t"
 					<< "CacheSize\tCacheItems\tSplits\tQueryFile\t"
-					<< "NonEmptyRegions\tCalcStatTime\tFillCacheTime\t" << endl;
+					<< "NonEmptyRegions\tCalcStatTime\tFillCacheTime\tuseConcisepath\tmeasureConcisepathdegrees" << endl;
 	}
 	
 	// note: "typeid(*test).name()" no longer used
@@ -177,7 +177,10 @@ void TestObject::printResults() {
 				
 				<< ts.getNonEmptyRegionPairs() << "\t" 
 				<< ts.getBuildStatisticsTime() << "\t"
-				<< ts.getFillCacheTime() << endl;
+				<< ts.getFillCacheTime() << "\t"
+				
+				<< ts.useConcisepath << "\t"
+				<< ts.measureConcisepathdegrees << endl;
 
 	resultfile.close();
 }

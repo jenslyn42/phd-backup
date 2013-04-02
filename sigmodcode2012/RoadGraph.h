@@ -71,6 +71,7 @@ private:
 //	static boost::unordered_map<int, int*> trackdist; //all the distances from any node to a source node
 	int countSuccess, countFail;
 	bool useConcisepath;
+	bool measureConcisepathdegrees;
 	intPointMap nid2Point;
 	
 	void addEdge(int v1, int v2, double w);
@@ -82,6 +83,8 @@ private:
 	void readSPTreeFileBinary(TestSetting& ts);
 	intVector getSPfromSPTree(int source, int target);
 	double getAngle(Point prevNode, Point source, Point target);
+	std::vector<int> calcConsisePath(std::vector<int>& trace);
+	std::vector<int> recoverPath(std::vector<int>& trace);
 };
 
 

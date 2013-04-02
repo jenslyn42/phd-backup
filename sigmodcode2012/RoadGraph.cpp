@@ -51,6 +51,7 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts)
 	if (mapInstance==NULL){
 		mapInstance = new RoadGraph();
 		mapInstance->useConcisepath = ts.useConcisepath;
+		if(ts.useConcisepath) mapInstance->measureConcisepathdegrees = ts.measureConcisepathdegrees;
 		mapInstance->parseFileType = pt;
 		mapInstance->ssspCalls = 0;
 		mapInstance->numNodeVisits = 0;
@@ -542,9 +543,81 @@ intVector RoadGraph::getSPfromSPTree(int source, int target){
 //find angle between current heading (prevNode -> source) and new heading (source -> target)
 double RoadGraph::getAngle(Point prevNode, Point source, Point target)
 {
+    double PI = 3.14159265359;
     double existingSlope = (prevNode.second - source.second) / (prevNode.first - source.first);
+    double targetSlope = (source.second - target.second) / (source.first - target.first);
     
+    double rad=atan((targetSlope-existingSlope)/(1+existingSlope*targetSlope));
     
+//find if angle between prevNode and target >90 deg 
+    int diffx,diffy;
+    double a,b,c, angle;
+    diffx = prevNode.first - target.first;
+    diffy = prevNode.second - target.second;
+    a = sqrt((diffx*diffx) + (diffy*diffy));
+    
+    diffx = prevNode.first - source.first;
+    diffy = prevNode.second - source.second;
+    b = sqrt((diffx*diffx) + (diffy*diffy));
+    
+    diffx = source.first - target.first;
+    diffy = source.second - target.second;
+    c = sqrt((diffx*diffx) + (diffy*diffy));
+        
+    angle = acos((b*b + c*c - a*a)/(2*b*c));
+    
+    if(angle < 90)
+	return abs(rad/PI*180.0)+180;
+   
+    return abs(rad/PI*180.0); //only works for 180 degree, fix with check if 180 should be added.
+}
+
+std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
+	
+	int outdegree, prevNode;
+	bool addnext = false;
+	vector<int> concisepath;
+	concisepath.push_back(trace.back());
+	double angleToNextNode=0.0, minAngle=0.0, tmp;
+	Point prev, curr;
+
+
+	for(std::vector<int>::size_type i = trace.size()-1; i != 0; i--){ //size()-1 because we already added the first nodeid to concisepath
+		if(addnext || i==1){ //if only one node left add it to concisepath
+			concisepath.push_back(trace[i]);
+		}else if(outdegree= map[trace[i]].size() > 2){
+			if(measureConcisepathdegrees){ //add nid to path based on the angle deviation from previous heading
+				EdgeList& edges = map[trace[i]];
+				prevNode = trace[i-1];
+				prev = nid2Point[prevNode];
+				curr = nid2Point[trace[i]];
+				angleToNextNode=0.0;
+				minAngle=0.0;
+				BOOST_FOREACH(Edge edge, edges){
+					if(edge.first != prevNode){
+						if(tmp=getAngle(prev, curr, nid2Point[edge.first]) < minAngle)
+							minAngle = tmp;
+						if(trace[i+1] == edge.first)
+							angleToNextNode = tmp;
+					}	  
+				}
+				
+				if(angleToNextNode > minAngle){
+					concisepath.push_back(trace[i]);
+					addnext = true;
+				}
+			}else{ //add node to path if outdegree larger than 2
+				concisepath.push_back(trace[i]);
+				addnext =true;
+			}
+		}
+	}
+}
+
+
+std::vector<int>  RoadGraph::recoverPath(std::vector<int>& trace){
+ //check with map  
+  
 }
 
 
