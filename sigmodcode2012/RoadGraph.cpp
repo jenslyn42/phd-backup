@@ -477,7 +477,7 @@ void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
     double refTime = clock();
 // 	string prefixFn = ts.queryFileName;
 // 	prefixFn.replace ((prefixFn.size())-6, 6, "");
-	string prefixFn = "VERIFYRANDaalborgNEWGP10R1600";
+	string prefixFn = "VERIFYSecondRANDaalborgNEWGP10R1600";
 	
     int token1,token2,token3;
 	int curPoiNodeId=-1;
@@ -572,6 +572,8 @@ double RoadGraph::getAngle(Point prevNode, Point source, Point target)
     return abs(rad/PI*180.0); //only works for 180 degree, fix with check if 180 should be added.
 }
 
+
+
 std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
 	
 	int outdegree, prevNode;
@@ -612,11 +614,21 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
 			}
 		}
 	}
+	
+	return concisepath;
 }
 
 
+
+//takes the input trace in the order t,..,s
 std::vector<int>  RoadGraph::recoverPath(std::vector<int>& trace){
  //check with map  
+ 
+ 
+	for(std::vector<int>::size_type i = 0; i != trace.size(); i++){
+	  
+	  
+	}
   
 }
 
