@@ -74,7 +74,7 @@ void LRU::checkAndUpdateCache(intPair query)
 		numDijkstraCalls++;
 		int querySize = spResult.size();
 		
-		cout << "LRU:queryID: " << numTotalQueries << ": " << RoadGraph::mapObject(ts)->numNodeVisits - existingNodesvisited << endl;
+		//cout << "LRU:queryID: " << numTotalQueries << ": " << RoadGraph::mapObject(ts)->numNodeVisits - existingNodesvisited << endl;
 	
 		if(cache.size() != 0){
 			if(debug) cout << "LRU::checkAndUpdateCache 1, querySize: "<< querySize << endl;
