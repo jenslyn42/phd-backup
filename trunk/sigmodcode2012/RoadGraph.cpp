@@ -400,14 +400,15 @@ void RoadGraph::readCedgeNetworkFile(string fn)
 	}
 	
 	if(useConcisepath){
+		if(debug) cout << "seven, readCedgeNetworkFile!" << endl;
 		ifstream in_nodedist (nodeFN.c_str(), ios::in);
 		if(in_nodedist.is_open())
 		{
 			while(getline(in_nodedist, str))
 			{
 				boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-				if(debug) cout << "six, readCedgeNetworkFile! getline:" << str << endl;
-				nid2Point.at(atoi(tokens[0].c_str())) = make_pair<double,double>(atoi(tokens[1].c_str()),atof(tokens[2].c_str()));
+				if(debug) cout << "nine, readCedgeNetworkFile! getline:" << str << endl;
+				nid2Point[atoi(tokens[0].c_str())] = make_pair<double,double>(atoi(tokens[1].c_str()),atof(tokens[2].c_str()));
 			}
 			in_nodedist.close();
 		}
@@ -634,7 +635,7 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
   for(std::vector<int>::size_type i = 1; i != conciseTrace.size(); i++){
     added=false;
     EdgeList& elist=map[i];
-    //Check if the i'th node in conciseTrace is also a neighbour node in the original path
+    //Check if the i'th node in conciseTrace is also a neighbor node in the original path
     for(std::vector<int>::size_type k = 0; k != elist.size(); k++){
       if(elist[k].first == rcPath.back()){
 	rcPath.push_back(conciseTrace[i]);
@@ -644,22 +645,30 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
     }
     //Find and add the nodes missing from the full path
     if(!added){
-      while(added){	
-	prevNode = rcPath[rcPath.size()-1];
-	curNode = rcPath.back();
-	EdgeList& edges = map[rcPath.back()];
-	minAngleEdgeID =-1;
-	minAngle = std::numeric_limits<double>::max();
-	BOOST_FOREACH(Edge edge, edges){
-	  if(edge.first != prevNode){
-	    if(tmp=getAngle(nid2Point[prevNode], nid2Point[curNode], nid2Point[edge.first]) < minAngle){
-	      minAngleEdgeID = edge.first;
-	      minAngle = tmp;
+      while(added){
+	if(measureConcisepathdegrees){
+	  prevNode = rcPath[rcPath.size()-2];
+	  curNode = rcPath.back();
+	  EdgeList& edges = map[rcPath.back()];
+	  minAngleEdgeID =-1;
+	  minAngle = std::numeric_limits<double>::max();
+	  BOOST_FOREACH(Edge edge, edges){
+	    if(edge.first != prevNode){
+	      if(tmp=getAngle(nid2Point[prevNode], nid2Point[curNode], nid2Point[edge.first]) < minAngle){
+		minAngleEdgeID = edge.first;
+		minAngle = tmp;
+	      }
 	    }
 	  }
+	  rcPath.push_back(minAngleEdgeID);
+	}else{//if measureConcisepathdegrees is false then nodes not in concise path only has outdegree of 2
+	  EdgeList& edges = map[rcPath.back()];
+	  if(edges.size() > 2) cout << "RoadGraph::recoverPath: ERROR, node should only have outdegree 2!! " << edges.size() << endl;
+	  if(edges[0].first == rcPath[rcPath.size()-2])
+	    rcPath.push_back(edges[1].first);
+	  else
+	    rcPath.push_back(edges[0].first);
 	}
-	rcPath.push_back(minAngleEdgeID);
-	
 	//check if the current node from concise path now can be added to the reconstructed rcPath
 	for(std::vector<int>::size_type j = 0; j != elist.size(); j++){
 	  if(elist[j].first == rcPath.back()){
