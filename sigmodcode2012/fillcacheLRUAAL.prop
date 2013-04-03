@@ -13,15 +13,12 @@ testScenario = PROXY
 // choices: SERVER, PROXY
 
 
-
 testName = cachesize_SPC_AAL.test
 
 
 autoTestName = true
 // choices: true, false
 // if true, override the testName automatically  "experiment"_"testAlgo"_"testFile (3 letters)"
-
-
 
 
 testFile = aalborgNEW.cedge
@@ -49,6 +46,9 @@ scacheQueryType = 3
 experiment = single
 // choices: single, split, cachesize
 
+
+useConcisepath = false
+measureConcisepathdegrees = false
 
  
 lowCacheSize = 10
