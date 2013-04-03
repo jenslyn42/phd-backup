@@ -174,10 +174,16 @@ printf("*** RoadGraph::init array\n");
 				prevNode = backtrace[prevNode];
 				trace.push_back(prevNode);
 			}
-			return trace;
+			if(useConcisepath)
+			  return calcConsisePath(trace);
+			else 
+			  return trace;
 		}
 	}
-	return trace;
+	if(useConcisepath)
+	  return calcConsisePath(trace);
+	else 
+	  return trace;
 }
 
 int RoadGraph::getMapsize()
