@@ -577,7 +577,7 @@ double RoadGraph::getAngle(Point prevNode, Point source, Point target)
 std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
 	
 	int outdegree, prevNode;
-	bool addnext = false;
+	bool addnext = true;
 	vector<int> concisepath;
 	concisepath.push_back(trace.back());
 	double angleToNextNode=0.0, minAngle=0.0, tmp;
@@ -587,6 +587,7 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
 	for(std::vector<int>::size_type i = trace.size()-1; i != 0; i--){ //size()-1 because we already added the first nodeid to concisepath
 		if(addnext || i==1){ //if only one node left add it to concisepath
 			concisepath.push_back(trace[i]);
+			addnext = false;
 		}else if(outdegree= map[trace[i]].size() > 2){
 			if(measureConcisepathdegrees){ //add nid to path based on the angle deviation from previous heading
 				EdgeList& edges = map[trace[i]];
@@ -594,7 +595,7 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
 				prev = nid2Point[prevNode];
 				curr = nid2Point[trace[i]];
 				angleToNextNode=0.0;
-				minAngle=0.0;
+				minAngle=std::numeric_limits<double>::max();
 				BOOST_FOREACH(Edge edge, edges){
 					if(edge.first != prevNode){
 						if(tmp=getAngle(prev, curr, nid2Point[edge.first]) < minAngle)
@@ -620,16 +621,56 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
 
 
 
-//takes the input trace in the order t,..,s
-std::vector<int>  RoadGraph::recoverPath(std::vector<int>& trace){
+//takes the input trace in the order t,..,s from calcConsisePath()
+std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
  //check with map  
  
- 
-	for(std::vector<int>::size_type i = 0; i != trace.size(); i++){
-	  
-	  
-	}
+  std::vector<int> rcPath;
+  rcPath.push_back(conciseTrace[0]);
+  bool added;
+  double minAngle, tmp, minAngleEdgeID;
+  int prevNode, curNode;
   
+  for(std::vector<int>::size_type i = 1; i != conciseTrace.size(); i++){
+    added=false;
+    EdgeList& elist=map[i];
+    //Check if the i'th node in conciseTrace is also a neighbour node in the original path
+    for(std::vector<int>::size_type k = 0; k != elist.size(); k++){
+      if(elist[k].first == rcPath.back()){
+	rcPath.push_back(conciseTrace[i]);
+	added=true;
+	break;
+      }
+    }
+    //Find and add the nodes missing from the full path
+    if(!added){
+      while(added){	
+	prevNode = rcPath[rcPath.size()-1];
+	curNode = rcPath.back();
+	EdgeList& edges = map[rcPath.back()];
+	minAngleEdgeID =-1;
+	minAngle = std::numeric_limits<double>::max();
+	BOOST_FOREACH(Edge edge, edges){
+	  if(edge.first != prevNode){
+	    if(tmp=getAngle(nid2Point[prevNode], nid2Point[curNode], nid2Point[edge.first]) < minAngle){
+	      minAngleEdgeID = edge.first;
+	      minAngle = tmp;
+	    }
+	  }
+	}
+	rcPath.push_back(minAngleEdgeID);
+	
+	//check if the current node from concise path now can be added to the reconstructed rcPath
+	for(std::vector<int>::size_type j = 0; j != elist.size(); j++){
+	  if(elist[j].first == rcPath.back()){
+	    rcPath.push_back(conciseTrace[i]);
+	    added=false;
+	    break;
+	  }
+	}
+      }
+    }
+  }
 }
 
 
