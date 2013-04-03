@@ -47,8 +47,8 @@ experiment = single
 // choices: single, split, cachesize
 
 
-useConcisepath = false
-measureConcisepathdegrees = false
+useConcisepath = true
+measureConcisepathdegrees = true
 
  
 lowCacheSize = 10
