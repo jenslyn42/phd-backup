@@ -706,15 +706,19 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
 	      rcPath.push_back(edges[0].first);
 	    }
 	  }else{  
+	    cout << "(" << prevNode << ")";
 	    BOOST_FOREACH(Edge edge, edges){
 	      if(edge.first != prevNode){
 		if(tmp=getAngle(nid2Point[prevNode], nid2Point[curNode], nid2Point[edge.first]) < minAngle){
+		  cout << (minAngle < tmp)? cout << "true: " << minAngle <<"," << tmp : cout << "false: " << minAngle <<"," << tmp;
 		  minAngleEdgeID = edge.first;
 		  minAngle = tmp;
 		}
+		cout << "(" << edge.first << "," << tmp << ")[" << minAngleEdgeID << "," << minAngle << "]";
+
 	      }
 	    }   
-	    cout << "fourth: " << endl;
+	    cout << "\nfourth: " << endl;
 	    rcPath.push_back(minAngleEdgeID);
 	    cout << "3.0=" << rcPath.size() << "=" << minAngleEdgeID << endl;
 	  }
