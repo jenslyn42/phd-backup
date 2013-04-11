@@ -560,29 +560,22 @@ double RoadGraph::getAngle(Point prevNode, Point source, Point target)
     double rad=atan((targetSlope-existingSlope)/(1+existingSlope*targetSlope));
     
 //find if angle between prevNode and target >90 deg 
-    int diffx,diffy;
-    double a,b,c, angle;
+    double diffx,diffy, angle, asquare, bsquare, csquare;
     diffx = prevNode.first - target.first;
     diffy = prevNode.second - target.second;
-    a = sqrt((diffx*diffx) + (diffy*diffy));
+    asquare = (diffx*diffx) + (diffy*diffy);
     
     diffx = prevNode.first - source.first;
     diffy = prevNode.second - source.second;
-    b = sqrt((diffx*diffx) + (diffy*diffy));
+    bsquare = (diffx*diffx) + (diffy*diffy);
     
     diffx = source.first - target.first;
     diffy = source.second - target.second;
-    c = sqrt((diffx*diffx) + (diffy*diffy));
-        
-    angle = acos((b*b + c*c - a*a)/(2*b*c));
+    csquare = (diffx*diffx) + (diffy*diffy);    
     
-    if(angle < 90){
-	return abs(rad/PI*180.0)+180;
-    }
-    else
-      cout << " |+|"<<angle <<"|+|";
+    angle = acos((bsquare + csquare - asquare)/(2*sqrt(bsquare*csquare)));
     
-    return abs(rad/PI*180.0); //only works for 180 degree, fix with check if 180 should be added.
+    return 180-angle;
 }
 
 
