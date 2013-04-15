@@ -608,9 +608,9 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
       concisepath.push_back(trace[i]);
       addnext = false;
 //       outdegree= map[trace[i]].size();
-      cout << "1.0: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
+      cout << "1..0: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
     }else if(outdegree > 2){
-      if(measureConcisepathdegrees){ //add nid to path based on the angle deviation from previous heading
+      if(measureConcisepathdegrees){ //(testsetting) add nid to path based on the angle deviation from previous heading
 	EdgeList& edges = map[trace[i]];
 	prevNode = trace[i-1];
 	prev = nid2Point[prevNode];
@@ -633,17 +633,17 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
 	if(angleToNextNode > minAngle){
 	  concisepath.push_back(trace[i]);
 	  addnext = true;
-	  cout << "3.0: (" << angleToNextNode <<", " << minAngle << ")[" << trace[i] << ", " << concisepath.size() << "]" << endl;
+	  cout << "3..0: (" << angleToNextNode <<", " << minAngle << ")[" << trace[i] << ", " << concisepath.size() << "]" << endl;
 	}
       }else{ //add node to path if outdegree larger than 2
 	concisepath.push_back(trace[i]);
 	addnext =true;
-	cout << "4.0: " << "[" << trace[i] << ", " << concisepath.size() << "]" << endl;
+	cout << "4..0: " << "[" << trace[i] << ", " << concisepath.size() << "]" << endl;
       }
     }
   }
   concisepath.push_back(trace[0]);
-  cout << "5.0: [" << trace[0] << ", " << concisepath.size() << "] " << endl;
+  cout << "5..0: [" << trace[0] << ", " << concisepath.size() << "] " << endl;
   
   
   vector<int> tmpRecpath;
@@ -777,11 +777,15 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//CONCISE: 54638 54637 54634 75670 48822 41920 41924 51321 63465 118115 94841 126987 52617 52616 71243 108365 38592 38029 125958 125959 127995 
+//CONCISE: 54638 54637 54634 75670 48822 41920 
+
+//41924 51321 63465 118115 94841 126987 52617 52616 71243 108365 38592 38029 125958 125959 127995 
+
 
 //54638 54637 54636 54635 54634 75670 75671 75672 75673 75674 112648 112649 112650 43965 48819 48820 48821 48822 41920 
 
 //41921 41922 41923 41924 51321 51320 66454 60169 19492 19491 19490 19489 14012 14011 14010 12002 12001 26654 26653 83159 83158 83157 83156 83155 83154 83153 117526 117527 117528 63463 63464 63465 118115 118116 118117 118118 118119 118120 54324 54325 118954 118955 118956 87789 59589 59681 60168 60167 50357 50358 45579 42624 42625 42626 104739 53204 76937 76938 76939 76940 76941 50411 50412 50413 50414 50415 50416 64743 64744 94838 94839 94840 94841 126987 128995 65669 52617 52616 65921 65948 81538 81539 81540 53887 66754 45047 45048 97483 38907 38891 38892 38902 38801 38802 38803 57561 57562 57563 57564 71237 71238 71239 71240 71241 71242 71243 108365 38592 38029 38030 38450 44765 44764 47424 47423 53749 73684 124576 124577 74477 47039 47038 82708 75022 47856 47883 48612 56499 127568 127362 129197 129198 129202 77401 49632 53804 53805 53806 53807 53808 56475 58465 126859 58723 127484 64975 128378 125958 125959 128548 127995
+
 
 //54638 54637 54636 54635 54634 75670 75671 75672 75673 75674 112648 112649 112650 43965 48819 48820 48821 48822 41920 
 
