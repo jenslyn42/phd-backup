@@ -35,6 +35,7 @@
 //specifically for the dijkstraSSSP() method
 #define spDebug false
 
+#define conciseDebug false
 
 boost::unordered_map<int, int*> RoadGraph::spTrace;
 // boost::unordered_map<int, int*> RoadGraph::trackdist;
@@ -86,6 +87,8 @@ printf("*** RoadGraph::read\n");
 
 vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {
 	std::vector<int> trace;
+	cout << "dijkstraSSSP: " << source << "," << dest << endl;
+	ssspCalls++;
 	
 	trace = getSPfromSPTree(source, dest);
 	if(!trace.empty()){
@@ -95,7 +98,7 @@ vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {
 	    return trace;
 	}
 	
-	ssspCalls++;
+
 	if (spDebug) 
 		cout << "one, dijkstraSSSP! map:" << mapSize <<" s,t:" << source <<"," <<dest << endl;
 
@@ -580,95 +583,109 @@ double RoadGraph::getAngle(Point prevNode, Point source, Point target)
 
 
 
-std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
-	
-  //int somePath[] = {24508, 24509, 24510, 7929, 7930, 16220, 16221, 24101, 24105, 24106, 24097, 11615, 24085, 24086, 23885, 24127, 24128, 16138, 24403, 24461, 24493, 24549, 24603, 24664, 47716, 37986, 38542, 38421, 38422, 38423, 38424, 38425, 38295, 38296, 38297, 38261, 38032, 38033, 38034, 38120, 38309, 38630, 100973, 100974, 100975, 100976, 69376, 69377, 83443, 106571, 106838, 106159, 107043, 107042, 107041, 107040, 129571, 106532, 129589, 107314, 107315, 107316, 86315, 70760, 70886, 70885, 70884, 107701, 107106, 107902, 108076, 108093, 108188, 59112, 59111, 108367, 108368, 71505, 71506, 87264, 87262, 87263, 99711, 87323, 87324, 108381, 22732, 22730, 27781, 22705, 22704, 22701, 10796, 9704, 9705, 9706, 11842, 30114, 30115, 18435, 27782, 27783, 27785, 30071, 22629, 22627, 32669, 13938, 22574, 22425, 22426, 12746, 29843, 22286, 22143, 34639, 22181, 22068, 21996, 32121, 21773, 21774, 21632, 21633, 31713, 105881, 105926, 44779, 44778, 44777, 44776, 44775, 44774, 43148, 43149, 75318, 40057, 40058, 74608, 39589, 39588, 42691, 41675, 49522, 63281, 63280, 63279, 63278, 41119, 41118, 86168, 50699, 99062, 99061, 99060, 57214, 57215, 127704, 98550, 129171, 129170, 97985, 97986, 62581, 62582, 62583, 67813, 67812, 67811, 67810, 67660, 67809, 42267, 40981, 38335, 38336, 38636, 38289, 38288, 38186, 38187, 48099, 48098, 51118, 45360, 39690, 93239, 46407, 93137, 93138, 126884, 126885, 93081, 92963, 92964, 49964, 92365, 38402, 38403, 38192, 38193, 38495, 12574, 12575, 16776, 16614, 15942, 16435, 15905, 16275, 28796, 16036, 16039, 15989, 15963, 15929, 15928, 15853, 15806, 15644, 15628, 15569, 15512, 19535, 19536, 66540, 129235, 53321, 129227, 53251, 53252, 59958, 40261, 40262, 39669, 86544, 86545, 86546, 70063, 70064, 70065, 70066, 70067, 70068, 70069, 129326, 57479, 129324, 127392, 40670, 21593, 21592, 38255, 27056, 35254, 12876, 26970, 38669, 16769, 14539, 12091, 12211, 15252, 38042, 38434, 13603, 37993, 13195, 30686, 10707, 26157, 30538, 38655, 38654, 25982, 38540, 38541, 18064, 17939, 38252, 38579, 129458, 128184, 126890, 127703, 127499, 127584, 38353, 38278, 34184, 13279, 13278, 127574, 127493, 127492, 129091, 128618, 24216, 126847, 15730, 11364, 11365, 9194, 7030, 7031, 15057, 10696, 15459, 11991, 15339, 9310, 9311, 28268, 9440, 9441, 9442, 26105, 26106, 28132, 11848, 11847, 10263, 10262, 9117, 11203, 11202, 13299, 13298, 13070, 13069, 7044, 7043, 16863, 21291, 7547, 10012, 9102, 9101, 11926, 24184, 24185, 11010, 7919, 7920, 38417, 38418, 38559, 126947, 126948, 128547, 129051, 128549, 127168, 127169, 6835, 127852, 128356, 127340, 13073, 127293, 127255, 7088, 126857, 33045, 129470, 9623, 128176, 10278, 127846, 38382, 38240, 38239, 38539, 38538, 23179, 38552, 38580, 126886, 127061, 127060, 128399, 128396, 128323, 128322, 128083, 129358, 129357, 129525, 129524, 129523, 32286, 127115, 126994, 126861, 126860, 127938, 127403, 128314, 128315, 38476, 37645, 38623, 38344, 8568, 31196, 7746, 38512, 37535, 34170, 38058, 38585, 129021, 127445, 14761, 127136, 30273, 126938, 30352, 128431, 128697, 38878, 25741, 38776, 8113, 127730, 127834, 127835, 29693, 128266, 38936, 38870, 38871, 39271, 63424, 127166, 63419, 129424, 76280, 62752, 62753, 62636, 74859, 74860, 74821, 62014, 61435, 38348, 38347, 61434, 127404, 61422, 127280, 60602, 38213, 38212, 38211, 38460, 38068, 38067, 38124, 27901, 27900, 22507, 22506, 22505, 25550, 13684, 13683, 27246, 27244, 33628, 33627, 26596, 26595, 55240, 126267, 127459, 122842, 127031, 101920, 69791, 101742, 122556, 122477, 52539, 52538, 51100, 65265, 128572, 128573, 128574, 
-  
-    int somePath[] = {127995, 128548, 125959, 125958, 128378, 64975, 127484, 58723, 126859, 58465, 56475, 53808, 53807, 53806, 53805, 53804, 49632, 77401, 129202, 129198, 129197, 127362, 127568, 56499, 48612, 47883, 47856, 75022, 82708, 47038, 47039, 74477, 124577, 124576, 73684, 53749, 47423, 47424, 44764, 44765, 38450, 38030, 38029, 38592, 108365, 71243, 71242, 71241, 71240, 71239, 71238, 71237, 57564, 57563, 57562, 57561, 38803, 38802, 38801, 38902, 38892, 38891, 38907, 97483, 45048, 45047, 66754, 53887, 81540, 81539, 81538, 65948, 65921, 52616, 52617, 65669, 128995, 126987, 94841, 94840, 94839, 94838, 64744, 64743, 50416, 50415, 50414, 50413, 50412, 50411, 76941, 76940, 76939, 76938, 76937, 53204, 104739, 42626, 42625, 42624, 45579, 50358, 50357, 60167, 60168, 59681, 59589, 87789, 118956, 118955, 118954, 54325, 54324, 118120, 118119, 118118, 118117, 118116, 118115, 63465, 63464, 63463, 117528, 117527, 117526, 83153, 83154, 83155, 83156, 83157, 83158, 83159, 26653, 26654, 12001, 12002, 14010, 14011, 14012, 19489, 19490, 19491, 19492, 60169, 66454, 51320, 51321, 41924, 41923, 41922, 41921, 41920, 48822, 48821, 48820, 48819, 43965, 112650, 112649, 112648, 75674, 75673, 75672, 75671, 75670, 54634, 54635, 54636, 54637, 54638};
- 
-//CONCISE: 54638 54637 54634 75670 48822 41920 41924 51321 63465 118115 94841 126987 52617 52616 71243 108365 38592 38029 125958 125959 127995     
-    
-  std::vector<int> examplePath (somePath, somePath + sizeof(somePath) / sizeof(int) );
-  trace = examplePath;
-  cout << "SIZE: " << trace.size() << endl;
-  
+std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){  
   int outdegree, prevNode;
-  bool addnext = true;
+  bool addnext = true, doadd = false;
   vector<int> concisepath;
   concisepath.push_back(trace.back());
-  cout << "S: " << trace.back() << ", " << concisepath.size() << endl;
+  cout << "calcConsisePath S: " << trace.size() << endl;
   double angleToNextNode=0.0, minAngle=0.0, tmp;
   Point prev, curr;
-  
+  if(trace.empty()) cout << "EMPTY TRACE!!" << endl;
 
+//     for(std::vector<int>::size_type it = trace.size()-1; it != 0; it--){ 
+// 	curr = nid2Point[trace[it]];
+// 	cout << curr.first << " " << curr.second << endl;
+//     }
+  
   for(std::vector<int>::size_type i = trace.size()-2; i != 0; i--){ //size()-1 because we already added the first nodeid to concisepath
     outdegree= map[trace[i]].size();
-     cout << "#" <<outdegree << "#";
+    if(conciseDebug) cout << "#" <<outdegree << "#";
     if(addnext || trace[i] == trace[0]){ //if only one node left add it to concisepath
-      concisepath.push_back(trace[i]);
-      addnext = false;
 //       outdegree= map[trace[i]].size();
-      cout << "1..0: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
-    }else if(outdegree > 2){
+
+      if(outdegree > 2) //used in the following code to ensure node is added to the concise path
+	doadd = true;
+      else
+	concisepath.push_back(trace[i]);
+
+      addnext = false;
+
+      if(conciseDebug) cout << "1..0: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
+    }
+    if(outdegree > 2){
       if(measureConcisepathdegrees){ //(testsetting) add nid to path based on the angle deviation from previous heading
 	EdgeList& edges = map[trace[i]];
-	prevNode = trace[i-1];
+	prevNode = trace[i+1];
 	prev = nid2Point[prevNode];
 	curr = nid2Point[trace[i]];
 	angleToNextNode=0.0;
 	minAngle=std::numeric_limits<double>::max();
-	cout << "prevNode: " << prevNode << endl;
+	if(conciseDebug) cout << "prevNode: " << prevNode << endl;
 	BOOST_FOREACH(Edge edge, edges){
 	  if(edge.first != prevNode){
 	    tmp=getAngle(prev, curr, nid2Point[edge.first]);
-	    (tmp < minAngle)? (cout << "true: " << tmp <<"," << minAngle << endl) : (cout << "false: " << tmp <<"," << minAngle << endl);
+	    if(conciseDebug) (tmp < minAngle)? (cout << "true: " << tmp <<"," << minAngle << endl) : (cout << "false: " << tmp <<"," << minAngle << endl);
 	    if(tmp < minAngle)
 	      minAngle = tmp;
-	    if(trace[i+1] == edge.first)
+	    if(trace[i-1] == edge.first)
 	      angleToNextNode = tmp;
 	  }
-	  cout << "(" << edge.first << "," << tmp << ")[" << minAngle << "," << angleToNextNode << "]" << endl;
+	  if(conciseDebug) cout << "(" << edge.first << "," << tmp << ")[" << minAngle << "," << angleToNextNode << "]" << endl;
 	}
-				
+	
 	if(angleToNextNode > minAngle){
 	  concisepath.push_back(trace[i]);
 	  addnext = true;
-	  cout << "3..0: (" << angleToNextNode <<", " << minAngle << ")[" << trace[i] << ", " << concisepath.size() << "]" << endl;
+	  if(conciseDebug) cout << "3..0: (" << angleToNextNode <<", " << minAngle << ")[" << trace[i] << ", " << concisepath.size() << "]" << endl;
+	}else if(doadd){
+	  concisepath.push_back(trace[i]);
 	}
       }else{ //add node to path if outdegree larger than 2
 	concisepath.push_back(trace[i]);
 	addnext =true;
-	cout << "4..0: " << "[" << trace[i] << ", " << concisepath.size() << "]" << endl;
+	if(conciseDebug) cout << "4..0: " << "[" << trace[i] << ", " << concisepath.size() << "]" << endl;
       }
     }
   }
   concisepath.push_back(trace[0]);
-  cout << "5..0: [" << trace[0] << ", " << concisepath.size() << "] " << endl;
+  if(conciseDebug) cout << "5..0: [" << trace[0] << ", " << concisepath.size() << "] " << endl;
+ 
   
-  
-  vector<int> tmpRecpath;
-  if((tmpRecpath=recoverPath(concisepath)) == trace)
-  cout << "EQ ";
-  else{
-    cout << "\nNEQ! " << concisepath.size() << endl;
+    if(concisepath.empty()) cout << "EMPTY CONCISE PATH!!" << endl;
+    vector<int> reverseTrace;
+    for(std::vector<int>::size_type k = trace.size()-1; k < trace.size(); k--){
+	reverseTrace.push_back(trace[k]);
+    }
+    
+    vector<int> tmpRecpath;
+    if((tmpRecpath=recoverPath(concisepath)) == reverseTrace)
+      cout << "EQ " << concisepath.size() << " " << ssspCalls << endl;
+    else
+      cout << "NEQ! " << concisepath.size() << endl;
+
+  if(conciseDebug) {      
     for(std::vector<int>::size_type i = 0; i != concisepath.size(); i++){
       cout << concisepath[i] << " ";
     }
-    cout << endl;
-	  
-    cout << "ORI: " << trace.size() << endl;
-    for(std::vector<int>::size_type k = trace.size()-1; k != 0; k--){
+	    
+    cout << "\nORI: " << trace.size() << endl;
+    for(std::vector<int>::size_type k = trace.size()-1; k < trace.size(); k--){
       cout << trace[k] << " ";
-    }
-    cout << trace[0] << endl;	   
-	  
-    cout << "REC: " << tmpRecpath.size() << endl;
+    }   
+	    
+    cout << "\nREC: " << tmpRecpath.size() << endl;
     for(std::vector<int>::size_type j = 0; j != tmpRecpath.size(); j++){
       cout << tmpRecpath[j] << " ";
     }
-    cout << endl;	   
+      
+    cout << "\nREVTRACE: " << reverseTrace.size() << endl;
+    for(std::vector<int>::size_type z = 0; z != reverseTrace.size(); z++){
+      cout << reverseTrace[z] << " ";
+    }
+    std::cin.ignore();
   }
-  std::cin.ignore();
+  cout << "calcConsisePath E " << concisepath.size() << endl;
   return concisepath;
 }
 
@@ -678,72 +695,80 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
 std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
   
  //check with map  
- 
-  cout << "CONCISE: ";
-  for(std::vector<int>::size_type i = 0; i != conciseTrace.size(); i++){
-    cout << conciseTrace[i] << " ";
+    cout << "recoverPath S " << conciseTrace.size() << endl; 
+  if(conciseDebug){
+    cout << "CONCISE: ";
+    for(std::vector<int>::size_type i = 0; i != conciseTrace.size(); i++){
+      cout << conciseTrace[i] << " ";
+    }
+    cout << endl;
+  
+    //print out the coordinates for concise path for plotting
+    Point curr;
+    for(std::vector<int>::size_type i = 0; i != conciseTrace.size(); i++){
+      curr = nid2Point[conciseTrace[i]];
+      cout << curr.first << ", " << curr.second << endl;
+    }
   }
-  cout << endl;
  
   std::vector<int> rcPath;
   rcPath.push_back(conciseTrace[0]);
-  cout << "TR: " << conciseTrace[0] << "=" << endl;
+  if(conciseDebug) cout << "TR: " << conciseTrace[0] << "=" << endl;
   bool added;
   double minAngle, tmp=-1.0, minAngleEdgeID;
   int prevNode, curNode;
   
   for(std::vector<int>::size_type i = 1; i != conciseTrace.size(); i++){
-    cout << "¾" << endl;
+    if(conciseDebug) cout << "¾" << endl;
     added=false;
     EdgeList& elist=map[conciseTrace[i]];
     //Check if the i'th node in conciseTrace is also a neighbor node in the original path
     for(std::vector<int>::size_type k = 0; k != elist.size(); k++){
       if(elist[k].first == rcPath.back()){
 	rcPath.push_back(conciseTrace[i]);
-	cout << "1.0=" << rcPath.size() << "=" << conciseTrace[i] << endl;;
+	if(conciseDebug) cout << "1.0=" << rcPath.size() << "=" << conciseTrace[i] << endl;;
 	added=true;
 	break;
       }
     }
     //Find and add the nodes missing from the full path
     if(!added){
-      cout <<"£";
+      if(conciseDebug) cout <<"£";
       while(!added){
-	cout << "&"; if(rcPath.size() > 200) break;
+	if(conciseDebug) cout << "&"; if(rcPath.size() > 700) break;
 	if(measureConcisepathdegrees){
 	  prevNode = rcPath[rcPath.size()-2];
 	  curNode = rcPath.back();
 	  EdgeList& edges = map[rcPath.back()];
 	  minAngleEdgeID =-1;
 	  minAngle = std::numeric_limits<double>::max();
-	  cout << "third: " << endl;
+	  if(conciseDebug) cout << "third: " << endl;
 	  
-	  cout << "edge size: " << edges.size() << endl;
+	  if(conciseDebug) cout << "edge size: " << edges.size() << endl;
 	  if(edges.size() == 2){
 	    if(edges[0].first == rcPath[rcPath.size()-2]){
-	      cout << "2.1=" << rcPath.size() << "=" << "(" << rcPath.back() << "," << rcPath[rcPath.size()-2] << "),(" << edges[0].first << "," << edges[1].first << ") " << edges[1].first << endl;
+	      if(conciseDebug) cout << "2.1=" << rcPath.size() << "=" << "(" << rcPath.back() << "," << rcPath[rcPath.size()-2] << "),(" << edges[0].first << "," << edges[1].first << ") " << edges[1].first << endl;
 	      rcPath.push_back(edges[1].first);
 	    }else{
-	      cout << "2.2=" << rcPath.size() << "=" << "(" << rcPath.back() << "," << rcPath[rcPath.size()-2] << "),(" << edges[0].first << "," << edges[1].first << ") " << edges[0].first << endl;
+	      if(conciseDebug) cout << "2.2=" << rcPath.size() << "=" << "(" << rcPath.back() << "," << rcPath[rcPath.size()-2] << "),(" << edges[0].first << "," << edges[1].first << ") " << edges[0].first << endl;
 	      rcPath.push_back(edges[0].first);
 	    }
 	  }else{  
-	    cout << "(" << prevNode << "," << curNode << ") @";
+	    if(conciseDebug) cout << "(" << prevNode << "," << curNode << ") @";
 	    BOOST_FOREACH(Edge edge, edges){
 	      if(edge.first != prevNode){
 		tmp=getAngle(nid2Point[prevNode], nid2Point[curNode], nid2Point[edge.first]);
-		(tmp < minAngle)? (cout << "true: " << tmp <<"," << minAngle << endl) : (cout << "false: " << tmp <<"," << minAngle << endl);
+		if(conciseDebug) (tmp < minAngle)? (cout << "true: " << tmp <<"," << minAngle << endl) : (cout << "false: " << tmp <<"," << minAngle << endl);
 		if(tmp < minAngle){
 		  minAngleEdgeID = edge.first;
 		  minAngle = tmp;
 		}
-		cout << "(" << edge.first << "," << tmp << ")[" << minAngleEdgeID << "," << minAngle << "]" << endl;
-
+		if(conciseDebug) cout << "(" << edge.first << "," << tmp << ")[" << minAngleEdgeID << "," << minAngle << "]" << endl;
 	      }
 	    }   
-	    cout << "fourth: " << endl;
+	    if(conciseDebug) cout << "fourth: " << endl;
 	    rcPath.push_back(minAngleEdgeID);
-	    cout << "3.0=" << rcPath.size() << "=" << minAngleEdgeID << endl;
+	    if(conciseDebug) cout << "3.0=" << rcPath.size() << "=" << minAngleEdgeID << endl;
 	  }
 	}else{//if measureConcisepathdegrees is false then nodes not in concise path only has outdegree of 2
  	  EdgeList& edges = map[rcPath.back()];
@@ -751,18 +776,18 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
 	  exit(1);
  	  if(edges[0].first == rcPath[rcPath.size()-2]){
  	    rcPath.push_back(edges[1].first);
- 	    cout <<"4.1=" << rcPath.size() << "=" << conciseTrace[1] << endl;
+ 	    if(conciseDebug) cout <<"4.1=" << rcPath.size() << "=" << conciseTrace[1] << endl;
  	  }else{
  	    rcPath.push_back(edges[0].first);
- 	    cout << "4.2=" << rcPath.size() << "=" << conciseTrace[0] << endl;
+ 	    if(conciseDebug) cout << "4.2=" << rcPath.size() << "=" << conciseTrace[0] << endl;
  	  }
  	}
- 	cout << "sixth" << endl;
+ 	if(conciseDebug) cout << "sixth" << endl;
 	//check if the current node from concise path now can be added to the reconstructed rcPath
 	for(std::vector<int>::size_type j = 0; j != elist.size(); j++){
 	  if(elist[j].first == rcPath.back()){
 	    rcPath.push_back(conciseTrace[i]);
-	    cout << "5.0=" << rcPath.size() << "=" << conciseTrace[i] << endl;
+	    if(conciseDebug) cout << "5.0=" << rcPath.size() << "=" << conciseTrace[i] << endl;
 	    added=true;
 	    break;
 	  }
@@ -770,27 +795,12 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
       }
     }
   }
-  cout << "@" << rcPath.size() << "@" << endl;
+  if(conciseDebug) cout << "@" << rcPath.size() << "@" << endl;
+  cout << "recoverPath E " << conciseTrace.size() << endl; 
   return rcPath;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//CONCISE: 54638 54637 54634 75670 48822 41920 
-
-//41924 51321 63465 118115 94841 126987 52617 52616 71243 108365 38592 38029 125958 125959 127995 
-
-
-//54638 54637 54636 54635 54634 75670 75671 75672 75673 75674 112648 112649 112650 43965 48819 48820 48821 48822 41920 
-
-//41921 41922 41923 41924 51321 51320 66454 60169 19492 19491 19490 19489 14012 14011 14010 12002 12001 26654 26653 83159 83158 83157 83156 83155 83154 83153 117526 117527 117528 63463 63464 63465 118115 118116 118117 118118 118119 118120 54324 54325 118954 118955 118956 87789 59589 59681 60168 60167 50357 50358 45579 42624 42625 42626 104739 53204 76937 76938 76939 76940 76941 50411 50412 50413 50414 50415 50416 64743 64744 94838 94839 94840 94841 126987 128995 65669 52617 52616 65921 65948 81538 81539 81540 53887 66754 45047 45048 97483 38907 38891 38892 38902 38801 38802 38803 57561 57562 57563 57564 71237 71238 71239 71240 71241 71242 71243 108365 38592 38029 38030 38450 44765 44764 47424 47423 53749 73684 124576 124577 74477 47039 47038 82708 75022 47856 47883 48612 56499 127568 127362 129197 129198 129202 77401 49632 53804 53805 53806 53807 53808 56475 58465 126859 58723 127484 64975 128378 125958 125959 128548 127995
-
-
-//54638 54637 54636 54635 54634 75670 75671 75672 75673 75674 112648 112649 112650 43965 48819 48820 48821 48822 41920 
-
-//43612 112613 112614 112311 112312 112180 112120 111656 111657 111658 111659 47610 63143 73886 13436 6138 5305 6220 6319 6320 5125 5126 6092 6516 5891 5890 6244 23678 33469 32266 32265 61050 81851 61147 111330 111331 47176 47177 47178 46649 51305 51306 51307 51308 112736 112737 112738 112739 113584 39887 39888 113980 113572 114260 114259 114258 114257 114749 114776 128268 128267 113832 51051 51050 51049 128055 56617 129055 129054 129053 51966 129059 113124 126930 126877 51049 128055 56617 129055 129054 129053 51966 129059 113124 126930 126877 51049 128055 56617 129055 129054 129053 51966 129059 113124 126930 126877 51049 128055 56617 129055 129054 129053 51966 129059 113124 126930 126877 51049 128055 56617 129055 129054 129053 51966 129059 113124 126930 126877 51049 128055 56617 129055 129054 129053 51966 129059 113124 126930 126877 51049 128055 56617 129055 129054 129053 51966 129059 113124 126930 126877 51049 128055 56617 129055 129054 129053 51966 129059 113124 126930 126877 51049 128055 56617 129055 129054 129053 51966 129059 113124 126930 126877 51049 128055 56617 129055 129054 129053 51966 129059 113124 126930 126877 51049 128055 56617 129055 129054 129053 51966 129059 
-
-
 
 #endif
