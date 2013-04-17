@@ -592,6 +592,7 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
   double angleToNextNode=0.0, minAngle=0.0, tmp;
   Point prev, curr;
   if(trace.empty()) cout << "EMPTY TRACE!!" << endl;
+  if(trace.size() == 1) return trace;
 
 //     for(std::vector<int>::size_type it = trace.size()-1; it != 0; it--){ 
 // 	curr = nid2Point[trace[it]];
