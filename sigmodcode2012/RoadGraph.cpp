@@ -52,7 +52,7 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts)
 	if (mapInstance==NULL){
 		mapInstance = new RoadGraph();
 		mapInstance->useConcisepath = ts.useConcisepath;
-		if(ts.useConcisepath) mapInstance->measureConcisepathdegrees = ts.measureConcisepathdegrees;
+		mapInstance->measureConcisepathdegrees = ts.measureConcisepathdegrees;
 		mapInstance->parseFileType = pt;
 		mapInstance->ssspCalls = 0;
 		mapInstance->numNodeVisits = 0;
@@ -593,6 +593,7 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
   Point prev, curr;
   if(trace.empty()) cout << "EMPTY TRACE!!" << endl;
   if(trace.size() == 1) return trace;
+  int degree2=0;
 
 //     for(std::vector<int>::size_type it = trace.size()-1; it != 0; it--){ 
 // 	curr = nid2Point[trace[it]];
@@ -607,9 +608,10 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
 
       if(outdegree > 2) //used in the following code to ensure node is added to the concise path
 	doadd = true;
-      else
+      else{
 	concisepath.push_back(trace[i]);
-
+	degree2++;
+      }
       addnext = false;
 
       if(conciseDebug) cout << "1..0: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
@@ -661,7 +663,7 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
     
     vector<int> tmpRecpath;
     if((tmpRecpath=recoverPath(concisepath)) == reverseTrace)
-      cout << "EQ " << concisepath.size() << " " << ssspCalls << endl;
+      cout << "EQ " << concisepath.size() << " " << ssspCalls << " D2: " << degree2 << endl;
     else
       cout << "NEQ! " << concisepath.size() << endl;
 
@@ -686,7 +688,7 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
     }
     std::cin.ignore();
   }
-  cout << "calcConsisePath E " << concisepath.size() << endl;
+  if(conciseDebug) cout << "calcConsisePath E " << concisepath.size() << endl;
   return concisepath;
 }
 
@@ -696,7 +698,7 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
 std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
   
  //check with map  
-    cout << "recoverPath S " << conciseTrace.size() << endl; 
+  if(conciseDebug) cout << "recoverPath S " << conciseTrace.size() << endl; 
   if(conciseDebug){
     cout << "CONCISE: ";
     for(std::vector<int>::size_type i = 0; i != conciseTrace.size(); i++){
@@ -797,7 +799,7 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
     }
   }
   if(conciseDebug) cout << "@" << rcPath.size() << "@" << endl;
-  cout << "recoverPath E " << conciseTrace.size() << endl; 
+  if(conciseDebug) cout << "recoverPath E " << conciseTrace.size() << endl; 
   return rcPath;
 }
 
