@@ -39,7 +39,6 @@
 
 boost::unordered_map<int, int*> RoadGraph::spTrace;
 // boost::unordered_map<int, int*> RoadGraph::trackdist;
-////////////////////////////////////////////////////////////////////////////////////////////////////
 
 RoadGraph* RoadGraph::mapInstance = NULL;
 
@@ -87,7 +86,7 @@ printf("*** RoadGraph::read\n");
 
 vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {
 	std::vector<int> trace;
-	cout << "dijkstraSSSP: " << source << "," << dest << endl;
+	//cout << "dijkstraSSSP: " << source << "," << dest << endl;
 	ssspCalls++;
 	
 	trace = getSPfromSPTree(source, dest);
@@ -282,6 +281,19 @@ void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
 	}
 	testfile.close();
 }
+
+void RoadGraph::writeoutEdgedegree()
+{
+  ofstream degreefile;
+  degreefile.open("nodeEdgedegree.txt", ios::out | ios::ate | ios::app);
+  int degree;
+
+  for(int i=0; i<mapSize; i++){
+    degree = map[i].size();
+    degreefile << i << " : " << degree << endl;
+  }
+}
+
 
 void RoadGraph::addEdge(int v1, int v2, double w) {
 	assert( v1>=0 && v1<mapSize );
@@ -583,12 +595,12 @@ double RoadGraph::getAngle(Point prevNode, Point source, Point target)
 
 
 
-std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){  
+std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
   int outdegree, prevNode;
   bool addnext = true, doadd = false;
   vector<int> concisepath;
   concisepath.push_back(trace.back());
-  cout << "calcConsisePath S: " << trace.size() << endl;
+  //cout << "calcConsisePath S: " << trace.size() << endl;
   double angleToNextNode=0.0, minAngle=0.0, tmp;
   Point prev, curr;
   if(trace.empty()) cout << "EMPTY TRACE!!" << endl;
@@ -660,33 +672,33 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
     for(std::vector<int>::size_type k = trace.size()-1; k < trace.size(); k--){
 	reverseTrace.push_back(trace[k]);
     }
-    
+ 
     vector<int> tmpRecpath;
     if((tmpRecpath=recoverPath(concisepath)) == reverseTrace)
       cout << "EQ " << concisepath.size() << " " << ssspCalls << " D2: " << degree2 << endl;
     else
       cout << "NEQ! " << concisepath.size() << endl;
 
-  if(conciseDebug) {      
+  if(conciseDebug) {
     for(std::vector<int>::size_type i = 0; i != concisepath.size(); i++){
       cout << concisepath[i] << " ";
     }
-	    
+
     cout << "\nORI: " << trace.size() << endl;
     for(std::vector<int>::size_type k = trace.size()-1; k < trace.size(); k--){
       cout << trace[k] << " ";
     }   
-	    
+ 
     cout << "\nREC: " << tmpRecpath.size() << endl;
     for(std::vector<int>::size_type j = 0; j != tmpRecpath.size(); j++){
       cout << tmpRecpath[j] << " ";
     }
-      
-    cout << "\nREVTRACE: " << reverseTrace.size() << endl;
-    for(std::vector<int>::size_type z = 0; z != reverseTrace.size(); z++){
-      cout << reverseTrace[z] << " ";
-    }
-    std::cin.ignore();
+  
+//    cout << "\nREVTRACE: " << reverseTrace.size() << endl;
+//    for(std::vector<int>::size_type z = 0; z != reverseTrace.size(); z++){
+//      cout << reverseTrace[z] << " ";
+//    }
+//    std::cin.ignore();
   }
   if(conciseDebug) cout << "calcConsisePath E " << concisepath.size() << endl;
   return concisepath;
@@ -697,7 +709,6 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
 //takes the input trace in the order t,..,s from calcConsisePath()
 std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
   
- //check with map  
   if(conciseDebug) cout << "recoverPath S " << conciseTrace.size() << endl; 
   if(conciseDebug){
     cout << "CONCISE: ";
@@ -803,7 +814,5 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
   return rcPath;
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #endif
