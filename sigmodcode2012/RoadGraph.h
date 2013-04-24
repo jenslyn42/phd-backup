@@ -85,6 +85,7 @@ private:
 	double getAngle(Point prevNode, Point source, Point target);
 	std::vector<int> calcConsisePath(std::vector<int>& trace);
 	std::vector<int> recoverPath(std::vector<int>& conciseTrace);
+	void writeoutEdgedegree();
 };
 
 
