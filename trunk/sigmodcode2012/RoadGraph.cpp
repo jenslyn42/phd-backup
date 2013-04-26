@@ -294,6 +294,20 @@ void RoadGraph::writeoutEdgedegree()
   }
 }
 
+void RoadGraph::findNode2degree()
+{
+  int degree5=0, degree4=0, degree3=0, degree2=0, degree1=0;
+  
+  for(int i=0; i<mapSize; i++){
+    node2degree[i] = map[i].size();
+    if(map[i].size() == 1) degree1++;
+    if(map[i].size() == 2) degree2++;
+    if(map[i].size() == 3) degree3++;
+    if(map[i].size() == 4) degree4++;
+    if(map[i].size() == 5) degree5++;
+  }
+  cout << "\n ##################################################\n" << degree1 <<" "<< degree2 <<" "<< degree3 <<" "<< degree4 <<" "<< degree5 << "\n ##################################################\n" << endl;
+}
 
 void RoadGraph::addEdge(int v1, int v2, double w) {
 	assert( v1>=0 && v1<mapSize );
@@ -397,72 +411,72 @@ void RoadGraph::readPPINetworkFile(string fn)
 /// fileformat .cnode: nid x y
 void RoadGraph::readCedgeNetworkFile(string fn)
 {
-	filename = fn;
-	string str;
-	string nodeFN = fn;
-	nodeFN.replace ((nodeFN.size()-4), 4, "node"); //change file extention from .cedge to .cnode
-	std::vector<string> tokens;
-	
-	ifstream in_data (fn.c_str(), ios::in);
-	if(debug) cout << "s1, readCedgeNetworkFile! nodeFN: " <<nodeFN << endl;
-	if(in_data.is_open())
-	{
-		if(debug) cout << "zero, readCedgeNetworkFile! int maxsize: " << INT_MAX << endl;
- 		mapSize = getFilelines(nodeFN.c_str()); //find number of lines in file
+  filename = fn;
+  string str;
+  string nodeFN = fn;
+  nodeFN.replace ((nodeFN.size()-4), 4, "node"); //change file extention from .cedge to .cnode
+  std::vector<string> tokens;
+	  
+  ifstream in_data (fn.c_str(), ios::in);
+  if(debug) cout << "s1, readCedgeNetworkFile! nodeFN: " <<nodeFN << endl;
+  if(in_data.is_open())
+  {
+    if(debug) cout << "zero, readCedgeNetworkFile! int maxsize: " << INT_MAX << endl;
+    mapSize = getFilelines(nodeFN.c_str()); //find number of lines in file
 
-		map=new EdgeList[mapSize];
-		if(debug) cout << "three, readCedgeNetworkFile! map: " << mapSize << endl;
+    map=new EdgeList[mapSize];
+    if(debug) cout << "three, readCedgeNetworkFile! map: " << mapSize << endl;
 
-		while(getline(in_data, str))
-		{
-			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-			if(debug) cout << "five1, readCedgeNetworkFile! getline:" << str << endl;
-			addEdge(atoi(tokens[1].c_str()),atoi(tokens[2].c_str()),atof(tokens[3].c_str()));
-			if(debug) cout << "five2, readCedgeNetworkFile! getline:" << str << endl;
-		}
-		if(debug) cout << "six, readCedgeNetworkFile!" << endl;
-		in_data.close();
-	}
-	
-	if(useConcisepath){
-		if(debug) cout << "seven, readCedgeNetworkFile!" << endl;
-		ifstream in_nodedist (nodeFN.c_str(), ios::in);
-		if(in_nodedist.is_open())
-		{
-			while(getline(in_nodedist, str))
-			{
-				boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-				if(debug) cout << "nine, readCedgeNetworkFile! getline:" << str << endl;
-				nid2Point[atoi(tokens[0].c_str())] = make_pair<double,double>(atoi(tokens[1].c_str()),atof(tokens[2].c_str()));
-			}
-			in_nodedist.close();
-		}
-	}
+    while(getline(in_data, str))
+    {
+      boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+      if(debug) cout << "five1, readCedgeNetworkFile! getline:" << str << endl;
+      addEdge(atoi(tokens[1].c_str()),atoi(tokens[2].c_str()),atof(tokens[3].c_str()));
+      if(debug) cout << "five2, readCedgeNetworkFile! getline:" << str << endl;
+    }
+    if(debug) cout << "six, readCedgeNetworkFile!" << endl;
+    in_data.close();
+  }
+
+  if(useConcisepath){
+    if(debug) cout << "seven, readCedgeNetworkFile!" << endl;
+    ifstream in_nodedist (nodeFN.c_str(), ios::in);
+    if(in_nodedist.is_open())
+    {
+      while(getline(in_nodedist, str))
+      {
+	boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+	if(debug) cout << "nine, readCedgeNetworkFile! getline:" << str << endl;
+	nid2Point[atoi(tokens[0].c_str())] = make_pair<double,double>(atoi(tokens[1].c_str()),atof(tokens[2].c_str()));
+      }
+      in_nodedist.close();
+      }
+    }
+  findNode2degree();
 }
 
 int RoadGraph::getFilelines(const char *filename)
 {
-	if(debug) cout << "one, getFilelines! filename: "<<filename << endl;
-	if (!filename || !*filename) // if no file to work on, return false
-        return false;
+  if(debug) cout << "one, getFilelines! filename: "<<filename << endl;
+  if (!filename || !*filename) // if no file to work on, return false
+  return false;
 
-	int size = 0;
-	string line;
+  int size = 0;
+  string line;
 
-	ifstream is;
-	is.open(filename);
+  ifstream is;
+  is.open(filename);
 
-	if (!is) // return false if couldn't open file
-		return -1;
+  if (!is) // return false if couldn't open file
+    return -1;
 
-	while (!is.eof()){
-		getline(is, line);
-		size++;
-	}
+  while (!is.eof()){
+    getline(is, line);	
+    size++;
+  }
 
-	is.close();
-
-	return size;
+  is.close();
+  return size;
 }
 
 bool RoadGraph::getLastLine(const char *filename, string &lastLine)
@@ -605,8 +619,10 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
   Point prev, curr;
   if(trace.empty()) cout << "EMPTY TRACE!!" << endl;
   if(trace.size() == 1) return trace;
-  int degree2=0;
-
+  int degree2=0, degree2Added=0;
+  
+  outdegree= map[trace.back()].size();
+  if(outdegree < 3) degree2++;
 //     for(std::vector<int>::size_type it = trace.size()-1; it != 0; it--){ 
 // 	curr = nid2Point[trace[it]];
 // 	cout << curr.first << " " << curr.second << endl;
@@ -614,19 +630,19 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
   
   for(std::vector<int>::size_type i = trace.size()-2; i != 0; i--){ //size()-1 because we already added the first nodeid to concisepath
     outdegree= map[trace[i]].size();
+    if(outdegree < 3) degree2++;
     if(conciseDebug) cout << "#" <<outdegree << "#";
     if(addnext || trace[i] == trace[0]){ //if only one node left add it to concisepath
 //       outdegree= map[trace[i]].size();
-
-      if(outdegree > 2) //used in the following code to ensure node is added to the concise path
+      if(outdegree > 2){ //used in the following code to ensure current node is added to the concise path
 	doadd = true;
-      else{
+      }else{
 	concisepath.push_back(trace[i]);
-	degree2++;
+	degree2Added++;
       }
       addnext = false;
 
-      if(conciseDebug) cout << "1..0: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
+      if(conciseDebug)	cout << "1..0: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
     }
     if(outdegree > 2){
       if(measureConcisepathdegrees){ //(testsetting) add nid to path based on the angle deviation from previous heading
@@ -653,32 +669,41 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
 	  concisepath.push_back(trace[i]);
 	  addnext = true;
 	  if(conciseDebug) cout << "3..0: (" << angleToNextNode <<", " << minAngle << ")[" << trace[i] << ", " << concisepath.size() << "]" << endl;
+	  //cout << "3.10: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
 	}else if(doadd){
 	  concisepath.push_back(trace[i]);
+	  //cout << "3.20: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
 	}
       }else{ //add node to path if outdegree larger than 2
 	concisepath.push_back(trace[i]);
 	addnext =true;
 	if(conciseDebug) cout << "4..0: " << "[" << trace[i] << ", " << concisepath.size() << "]" << endl;
+	//cout << "4.10: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
       }
     }
   }
   concisepath.push_back(trace[0]);
   if(conciseDebug) cout << "5..0: [" << trace[0] << ", " << concisepath.size() << "] " << endl;
- 
+  //cout << "5.10: (" << 0 << ") [" << trace[0] << ", " << concisepath.size() << "] " << outdegree << endl;
+  outdegree= map[trace[0]].size();
+  if(outdegree < 3){ degree2++; degree2Added++;}
   
+  
+    int originalDegree2 = 0; //++
     if(concisepath.empty()) cout << "EMPTY CONCISE PATH!!" << endl;
     vector<int> reverseTrace;
     for(std::vector<int>::size_type k = trace.size()-1; k < trace.size(); k--){
 	reverseTrace.push_back(trace[k]);
+	if(node2degree[trace[k]] < 3) originalDegree2++; //++
     }
  
     vector<int> tmpRecpath;
     if((tmpRecpath=recoverPath(concisepath)) == reverseTrace)
-      cout << "EQ " << concisepath.size() << " " << ssspCalls << " D2: " << degree2 << endl;
+      cout << "EQ " << concisepath.size() << " / " << reverseTrace.size() << " D2: (" << degree2Added <<") " << degree2 << endl;
     else
       cout << "NEQ! " << concisepath.size() << endl;
-
+    
+    
   if(conciseDebug) {
     for(std::vector<int>::size_type i = 0; i != concisepath.size(); i++){
       cout << concisepath[i] << " ";
