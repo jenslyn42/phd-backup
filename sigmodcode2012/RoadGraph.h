@@ -73,6 +73,7 @@ private:
 	bool useConcisepath;
 	bool measureConcisepathdegrees;
 	intPointMap nid2Point;
+	intMap node2degree;
 	
 	void addEdge(int v1, int v2, double w);
 	void readRoadNetworkFile(string fn);
@@ -86,6 +87,7 @@ private:
 	std::vector<int> calcConsisePath(std::vector<int>& trace);
 	std::vector<int> recoverPath(std::vector<int>& conciseTrace);
 	void writeoutEdgedegree();
+	void findNode2degree();
 };
 
 
@@ -110,8 +112,7 @@ struct HeapEntry {
 	}
 };
 
-struct HeapWorkloadEntry
-{
+struct HeapWorkloadEntry{
     int pathId; //path id
     int pathLength; //lenght of path
     std::pair<int, std::vector<int> > answeredPaths; //number of paths 'path id' can answer, and a vector holding the id of each of these.
@@ -122,6 +123,7 @@ struct HeapEntryComp {
 	bool operator () (HeapEntry left, HeapEntry right) const
 	{ return left.dist > right.dist; }
 };
+
 ///For MaxHeap
 struct HeapEntryCompMax {
 	bool operator () (HeapEntry left, HeapEntry right) const
@@ -143,7 +145,6 @@ template<typename _Tp, typename _Sequence, typename _Compare >
 
 class FAST_HEAP
 {
-
 	public:
 	typedef typename _Sequence::value_type                value_type;
 	typedef typename _Sequence::reference                 reference;
@@ -182,6 +183,5 @@ class FAST_HEAP
 typedef    FAST_HEAP<HeapEntry, std::vector<HeapEntry>, HeapEntryComp> Heap;
 typedef    FAST_HEAP<HeapEntry, std::vector<HeapEntry>, HeapEntryCompMax> maxHeap;
 typedef    FAST_HEAP<HeapWorkloadEntry, std::vector<HeapWorkloadEntry>, HeapWorkloadEntryCompMax> maxWorkloadHeap;
-
 
 #endif

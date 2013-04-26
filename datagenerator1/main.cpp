@@ -10,7 +10,7 @@
 
 
 int main(int argc, char *argv[]) {
-	srand(99);	srand48(99);
+	srand(50);	srand48(50);
 
 if(argc != 5){
   cout << "Wrong usage!\nUsage: " << argv[0] << "<mapname> <numQueries> <numPoints> <radius>" << endl;
