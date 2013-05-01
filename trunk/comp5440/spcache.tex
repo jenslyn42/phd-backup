@@ -1,0 +1,120 @@
+\documentclass{vldb}
+
+\usepackage{balance}
+\usepackage{url} 
+\usepackage{times}
+%For math symbols like number classes
+\usepackage{amsfonts}
+\usepackage{amssymb}
+%\usepackage{amsthm}
+%\usepackage{floatflt}
+\usepackage{wrapfig}
+\usepackage{multirow}
+\usepackage{color}
+
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{acronym}
+\interdisplaylinepenalty=2500
+\usepackage{xspace} % mellemrum efter forkortelser fra acronym package.
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{graphics}
+
+% \usepackage[cmex10]{amsmath}
+% \usepackage[pdftex]{graphicx}
+% \usepackage[pdftex]{graphics}
+
+
+% \usepackage[boxed,linesnumbered,vlined,slide]{algorithm2eCustom}
+\usepackage[boxed,linesnumbered,vlined,ruled]{algorithm2eCustom}
+
+\usepackage{cite}
+
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+
+\begin{document}
+\input{articleFiles/macro.tex}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lemma}[thm]{Lemma}
+
+%proof and definitions will not get numbers, meant to be used with lemma/corollary/theorem
+%like definition ... lemma (with numbering to reference) ... proof
+\newenvironment{definition}[1][Definition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+
+
+\SetKwBlockLRS{JRBegin}
+\pagestyle{plain}
+
+\title{Shortest Path Cache \\
+%\titlenote{for use with vldb.cls, (no clue what that means..)}\\ 
+{\textit{\small \today}}
+}
+
+\numberofauthors{2} 
+\author{
+% 1st. author
+\alignauthor
+Jeppe Rishede Thomsen \\%\titlenote{some author note, 1}\\
+       \affaddr{Department of Computing}\\
+       \affaddr{Hong Kong Polytechnic University}\\
+       \affaddr{Kowloon, Hong Kong}\\
+       \email{csjrthomsen@comp.polyu.edu.hk}
+% 2nd. author
+\alignauthor
+Man Lung Yiu \\
+       \affaddr{Department of Computing}\\
+       \affaddr{Hong Kong Polytechnic University}\\
+       \affaddr{Kowloon, Hong Kong}\\
+       \email{csmlyiu@comp.polyu.edu.hk}
+% % 3rd. author
+% \alignauthor Lars Th{\Large{\sf{\o}}}rv{$\ddot{\mbox{a}}$}ld\titlenote{This author is the
+% one who did all the really hard work.}\\
+%        \affaddr{The Th{\large{\sf{\o}}}rv{$\ddot{\mbox{a}}$}ld Group}\\
+%        \affaddr{1 Th{\large{\sf{\o}}}rv{$\ddot{\mbox{a}}$}ld Circle}\\
+%        \affaddr{Hekla, Iceland}\\
+%        \email{larst@affiliation.org}
+}
+
+
+\maketitle
+
+\input{articleFiles/acronyms.tex}
+\begin{abstract}
+\input{articleFiles/abstract.tex}
+\end{abstract}
+
+\input{articleFiles/intro}
+% \input{articleFiles/relWork}
+% \input{articleFiles/problem}%
+% \input{articleFiles/contribution}%
+% \input{articleFiles/analysis}
+\input{articleFiles/implementation}
+% \input{articleFiles/conclusion}
+
+%\newpage
+%\input{help}
+
+%\newpage
+ \clearpage
+%\input{articleFiles/proposal}
+% \input{articleFiles/relCollection}
+
+
+\bibliographystyle{abbrv}
+\bibliography{bibliography}\label{bibliography}
+% You must have a proper ".bib" file
+
+% before submission Insert that ~.bbl file into
+% the .tex source file and comment out
+% the command \texttt{{\char'134}thebibliography}.
+
+\end{document}
+%\textcolor{red}{ }
