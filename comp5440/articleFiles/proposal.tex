@@ -1,0 +1,196 @@
+\section{Proposal of project parts}
+
+% Mostly want to focus on the anonymization of GPS traces. I am having great difficulties coming up with a god way
+% of doing this though. Not what I want the end result to be like, but more solution-wise how to archeve this in
+% an efficient and nice way that I don't feel is just incremental compared to previous work.\\
+% This is where I could use some suggestions on papers to read, keywords to think about, or maybe I could "just" take an
+% existing suppression approach and use it with my concepts of time and sensitivity levels (see bullets below).
+% 
+% Remember I would like this to at some point be able to be published, so I want something that I can do alone, but
+% I need help defining the scope of the project.
+% I need your help on how to find the balance, so I can hopefully archeve this goal of a publication in the end of next
+% this or next semester.
+% (maybe suggestions on how to split the work, so I have a good project, but only "half" paper).\\
+
+In the last meeting we talked about expanding, and classifying, the motivational scenarios, especially with regards to 
+finding applications which has emphasis on working on subtrajectories. I have however been unable to come up with any good
+scenarios, since I feel I am constantly ending up with more "density query" scenarios, which is not the kind of problem I want
+to work on (which is why I have not added more scenarios in that category). 
+
+Although I feel I have come a step closer to coming up with a solution for my proposed problem, my problem is still that I
+feel like anything I come up with is too similar to existing work.
+
+The "Preliminary Problem definition" more or less contains duplicate definitions for all concepts ("intro" \& subsections), this is on purpose, so I am
+certain that I define all the concepts that I use so far. 
+
+I am still a bit uncertain as to how much I should try to define in terms of classes/sets/tuples.
+
+
+
+\subsection{Proposed system features}
+\begin{itemize}
+	\item Work on historical data (+ maybe updating the data continuesly with live data, depending on final solution).
+	\item handle sensitivity groups for users with time (different groups sensitive at different times).
+Groups are ways for "the system" classify users based on how much privacy they want in a given area, at a specific
+time range. Privacy is here the degree of anonymization a user wants guarantied to be willing to publish his data.
+	\item Have possibility to weight what is most sensitive factor when trying to anonymize: temporal or spacial.
+Taking the two extremes: only using temporal or spacial anonymization, they have the following impact:
+	\begin{itemize}
+		\item Using the spacial dimension as the important factor in anonymization the location of the users will be generalized
+uptil a factor satisfying the users privacy settings (street, block, part of city, etc.)
+		\item When considering the temporal dimension as the important factor in anonymization, the user will have his trajectory
+generalized over a time interval, making it impossible to identify when exactly the user traveled on the trajectory.
+
+The user may not have a problem with someone figuring out where is was at a single point in time, 
+but he may not want someone to find out that he is taking the same route at different times every day.
+	\end{itemize}
+\end{itemize}
+
+
+
+\subsection{Preliminary Problem definition}
+
+In this section we introduce relevant notations, define system requirements and specify
+the behavior of the proposed service. 
+
+We assume a setting where all users are equipped with a \ac{MD} able to communicate and report
+the users position. All  \ac{MD}s are online and are continuesly reporting the users location at
+predefined intervals. We use the terms {\it user, mobile device, and client} interchangeable and 
+denote the set of \ac{MD}s by  $\mathbf{U} \subset \mathbb{N}$.
+
+Let us assume a 2D scenario, where the movements of users in $\mathbf{U}$ are restricted to a road network 
+$G(V,E)$. $V$ is the set of vertices, where each one represents either a street intersection or an important 
+landmark. $E$ is the set of directed edges, where each one represents the smallest unit of road segment. All
+users $u \in \mathbf{U}$ are mapped to edges in $e \in \mathbf{E}$.
+
+All users specify at least one privacy profile. Each privacy profile specify the privacy settings for each road segment $e$
+such that for each road segment $e_i \in \mathbf{E}$ that the user traverses, the system will generalize $e_i$ in 
+the spatio-temporal domain
+
+
+
+\subsubsection{Users}
+Users are represented by a set $U$ where each user $u \in U$
+
+\subsubsection{Road network}
+The approach will assume all users $u \in U$, move on a road network which we define as a graph $G(V,E)$. $V$ is the set
+of vertices, where each one represents either a street intersection or an important landmark. $E$ is the
+set of directed edges, where each one represents the smallest unit of road segment. 
+
+\subsubsection{Trajectories}
+As the lowest level, a trajectory is a set of tubles $(time,longitude,latitude)$ ordered by the time attribute. 
+However, as the approach we want to end up with is going to work on a road network, a 
+higher level of abstraction is more appropriate. We define $T$ as the set of trajectories, where each trajectory 
+consist of an id$(tid)$ and sequence of edges traversed $(tid, \langle e_0,\ldots,e_j \rangle)$, where $e_i \in E$,
+the set of edges. I assume trajectories only move on the road network, and users users must traverse the entirety
+of an edge. 
+
+\subsubsection{Historical data}
+The historical data consist of $T$, sorted by start/end time. This enables the approach to use
+an appropriate time slice $(tid_g,\ldots,tid_h)$, where $tid_i \in T$, to do spatial anonymization, or work on all of $T$
+to do temporal anonymization
+
+
+\subsubsection{Privacy settings}
+For the approach to use, for the user, satisfactory levels of anonymization, the user needs to be 
+able to specify how $sensitive$ different areas(auto mapped to the edges $e \mid e \in E$ included in the area) are to the
+user at different times in the day. Users will also be put into groups
+
+
+
+\subsection{Taxonomy on Spatial-Temporal}
+The proposed solution works on the spatio-temporal domain. 
+Since a place/object can have different degrees of sensitivity associated with it at different 
+times it is important to consider both the spatial and the temporal domain when trying to ensure 
+the privacy of users in the solution.
+
+
+
+\subsection{Privacy Profile}
+
+Privacy profiles are a class of time constrained objects specifying a users road segment constrained
+spacial sensitivity for discrete time intervals.
+
+
+\subsubsection{list of things user would like to specify}
+
+\begin{itemize}
+	\item Sensitive places / road segments
+	\begin{itemize}
+		\item various degrees of sensitivity, some road segments/locations may
+		be more sensitive than others e.g. a user may find it annoying if
+		people knew he was shopping in some fancy store where things are expensive,
+		but only annoying, while he may be really upset if someone found out he
+		was seeing a psychiatrist. Thus the two have different levels of sensitivity. 
+		\item different sensitivity degree as different points in time. e.g. 
+		the free clinic is not a sensitive point on the trajectory at 8 am or 4 Pm when
+		the user is driving too and from work (assuming of cause it is on the path), but any
+		other time it would be a highly sensitive location/area.
+	\end{itemize}
+	\item Different profiles, e.g. a work profile, vacation profile
+	\begin{itemize}
+		\item profiles could be activated with a time limitation, he could have a choice of doing 
+		it either automatically or manually.
+	\end{itemize}
+	\item Minimum privacy 
+	\begin{itemize}
+		\item can be specified globally for any trajectory, or for each level of sensitivity
+		according to the area (road segments) the user is passing through.
+	\end{itemize}
+	\item 
+\end{itemize}
+
+\subsection{Motivational uses}
+For the users publishing their data, 
+they might want to access the trajectory dataset (possibly through a third party service provider on the data) to e.g. enable their 
+GPS device to make better route planning depending on the time and place (some GPS devices already have the ability to use 
+semi-live data to be better at suggesting routes to the user).
+
+The user may also use the data through a service provider to e.g. find car pooling opportunities to an from work based
+on what other users also takes the (close to) same route within a user specified time interval.
+
+The users might also just get nothing in return for publishing their trajectories, but might help the government (or
+similar organization) to better plan and build roads in the future. For some people the sense of "importance" may 
+be motivational enough to make them publish their data.
+
+
+
+\subsection{Scenarios}
+\begin{itemize}
+	\item {\bf Premise}
+	\begin{itemize}
+		\item {\bf User} Users are willing to publish their trajectories, if they are guarantied that no sensitive
+or personally identifying information is contained or deduceable from the data set.
+		\item {\bf Company} Companies wants to be able to query a public database with trajectories. They want the data
+to be as correct, complete and detailed as possible
+		\item {\bf service provider:} Collects, maintains and anonymizes a database of trajectories. Will make this dataset 
+available to Companies.
+	\end{itemize}
+	\item {\bf Density queries}
+	\begin{itemize}
+		\item {\bf Scenario One} A company wants to monitor when, and where, certain road segments are congested in order to
+{[optimize the duration of red/yellow/green at certain points in time, to make traffic flow better],
+[Advise the city about future investments in roads and public transport],
+[devise a system (for e.g. GPS devices) which is always able to predict the fastest route from point A to point B, irrespective of the actual length of the suggested route]}
+and thus make some money.
+		\item {\bf Scenario Two} A city or government could use collection of trajectories to analyze where people are going 
+to and from at different time intervals during the day, or even during the calendar year. This could be usefull to gain an 
+understanding of the general traffic patterns on their road network. This information could be usefull at several granularities 
+to plan investments in new roads, how often existing roads should be serviced, or just to devise an automatic road congestion 
+warning system
+	\end{itemize}
+	\item {\bf Outlier detection}
+	\begin{itemize}
+		\item {\bf Scenario Three} The police could do analysis of speed outliers on the dataset to see which road segments people are often driving to fast, 
+and then set up speed controls on those road segments more often. They could also look at the opposite, people stopping, on major roads, 
+where people would not normally have reason to stop, this could indicate traffic accidents, which could prompt more police presence on those roads
+to make people drive nicer.
+		\item {\bf Scenario Four} It could be usefull to do trajectory similarity analysis on many different levels. If is was possible
+for e.g. city officials to specify two points (or spatial areas) A/B they could do some analysis on how people who go from A to B travel i.e.
+what routes/trajectories they take to travel from A to B. It could also be examined if pattern changes over a day/week/month/year.
+This kind of analysis could e.g. be used to calculate the inter-dependency between roads, which could be used to predict the increase in
+load on other roads if one road is closed for some reason (e.g. maintenance, accident, or obstruction from some activity like a caneval or the like)
+		%\item {\bf Scenario Five} stuff...
+	\end{itemize}
+	
+\end{itemize}

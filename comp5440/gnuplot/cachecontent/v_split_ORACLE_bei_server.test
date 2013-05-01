@@ -1,0 +1,8 @@
+QueryTime	CacheHits	DijkstraCalls	SPcalls	NodesVisited	Algorithm	Scenario	CacheSize	CacheItems	Splits	QueryFile	NonEmptyRegions	CalcStatTime	FillCacheTime	
+75.6	2815	3664	3664	61752944	ORACLE	SERVER	5120000	0	6	beijing_all.test	-1	0	0
+75.52	2815	3664	3664	61752944	ORACLE	SERVER	5120000	0	8	beijing_all.test	-1	0	0
+75.5	2815	3664	3664	61752944	ORACLE	SERVER	5120000	0	10	beijing_all.test	-1	0	0
+75.57	2815	3664	3664	61752944	ORACLE	SERVER	5120000	0	12	beijing_all.test	-1	0	0
+75.72	2815	3664	3664	61752944	ORACLE	SERVER	5120000	0	14	beijing_all.test	-1	0	0
+75.56	2815	3664	3664	61752944	ORACLE	SERVER	5120000	0	16	beijing_all.test	-1	0	0
+75.56	2815	3664	3664	61752944	ORACLE	SERVER	5120000	0	18	beijing_all.test	-1	0	0
