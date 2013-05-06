@@ -35,7 +35,7 @@
 //specifically for the dijkstraSSSP() method
 #define spDebug false
 
-#define conciseDebug false
+#define conciseDebug true
 
 boost::unordered_map<int, int*> RoadGraph::spTrace;
 // boost::unordered_map<int, int*> RoadGraph::trackdist;
@@ -86,14 +86,16 @@ printf("*** RoadGraph::read\n");
 
 vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {
 	std::vector<int> trace;
-	//cout << "dijkstraSSSP: " << source << "," << dest << endl;
+	if(spDebug)cout << "dijkstraSSSP: " << source << "," << dest << " : " <<  useConcisepath << endl;
 	ssspCalls++;
 	
 	trace = getSPfromSPTree(source, dest);
+	if(spDebug) cout << "RoadGraph::dijkstraSSSP 2 " << trace.empty() << " " << trace.size() << endl; 
 	if(!trace.empty()){
-	  if(useConcisepath)
+	  if(useConcisepath){
+	    if(spDebug) cout << "RoadGraph::dijkstraSSSP 3 " << endl;
 	    return calcConsisePath(trace);
-	  else 
+	  }else 
 	    return trace;
 	}
 	
@@ -614,7 +616,7 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
   bool addnext = true, doadd = false;
   vector<int> concisepath;
   concisepath.push_back(trace.back());
-  //cout << "calcConsisePath S: " << trace.size() << endl;
+  if(conciseDebug) cout << "calcConsisePath S: " << trace.size() << endl;
   double angleToNextNode=0.0, minAngle=0.0, tmp;
   Point prev, curr;
   if(trace.empty()) cout << "EMPTY TRACE!!" << endl;
@@ -774,7 +776,7 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
     if(!added){
       if(conciseDebug) cout <<"£";
       while(!added){
-	if(conciseDebug) cout << "&"; if(rcPath.size() > 700) break;
+	if(conciseDebug) cout << "&"; //if(rcPath.size() > 700) break;
 	if(measureConcisepathdegrees){
 	  prevNode = rcPath[rcPath.size()-2];
 	  curNode = rcPath.back();

@@ -75,6 +75,7 @@ private:
 	intPair pickSTpair(intPair regionPair);
 	void buildRegionId2NodeidVector();
 	void buildRegionpair2NodepairVector();
+	void pathVal(intPair stPair, bool rand);
 };
 
 #endif
