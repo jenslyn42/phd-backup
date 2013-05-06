@@ -134,7 +134,6 @@ void Probcache::extractStatistics() {
 	cout << totalTrainingPairsSeen << " pairs, ... Done" << endl;
 }
 
-
 bool xxCompfunc(Point i,Point j) {return (i.first<j.first);} //sort based on x values
 bool yyCompfunc(Point i,Point j) {return (i.second<j.second);} //sort based on y values
 
@@ -232,8 +231,6 @@ void Probcache::split(std::vector<Region>& regions, int axis) {
 	tmpRegions.clear();	// clear temporary storage
 }
 
-
-
 // Note: the following function is called heavily
 // optimize this function tomorrow: use an "array" for direct "node-to-region" access!
 int Probcache::mapNodeid2RegionId(int nid) {
@@ -253,7 +250,6 @@ int Probcache::mapPoint2RegionId(Point coord) {
 		return -1;
 	}
 }
-
 
 double Probcache::calcScore(intVector& spResult, intPairSet& vSeen) {
 	double score = 0.0;
@@ -330,8 +326,7 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen) {
 	return score;
 }
 
-void Probcache::fillCache()
-{
+void Probcache::fillCache(){
 	fillCacheFromQueriesFileByStatistics();
 }
 
@@ -350,6 +345,7 @@ double refTime = clock();
 	// fill up bucketlist with one entry from each region pair.
 	RoadGraph* graph = RoadGraph::mapObject(ts);
 	boost::unordered_map<intPair,CacheItem> bucketList;	// bucket list
+	intPair stPair;
 	
 	cout << " @@2 TIME: " << getElapsedTime(refTime) << endl;
 
@@ -362,12 +358,12 @@ double refTime = clock();
 		intPair rp = rpint.first;
 		
 		if (debug)
-			cout << "3.1.  rp: (" << rp.first << "," << rp.second << ") " << endl;
+			cout << "3.1. rp: (" << rp.first << "," << rp.second << ") " << endl;
 
 		// pickSTpair is randomized; we try it several times in case it picks a pair with empty spResult
 		bool isPathFound = false;
 		for (int num_trials=0; num_trials<20; num_trials++ ) {	// a threshold
-			intPair stPair = pickSTpair(rp);	// a shortest path query
+			stPair = pickSTpair(rp);	// a shortest path query
 			if (debug)
 				cout << "3.2 stPair: (" << stPair.first << "," << stPair.second << ") (" << rp.first << "," << rp.second << ") num_trials: " << num_trials << endl;
 
@@ -378,6 +374,11 @@ double refTime = clock();
 				break; 
 			}
 		}
+		
+		///////////////////////////////////
+		pathVal(stPair, true);
+		if(mhCache.size() > 500) exit(0);
+		///////////////////////////////////////
 
 		if (isPathFound) {
 			if(debug)
@@ -524,4 +525,55 @@ void Probcache::buildRegionpair2NodepairVector() {
 			regionPair2nodePairVector[ip] = vector<intPair>();
 		regionPair2nodePairVector[ip].push_back(c);
 	}
+}
+
+void Probcache::pathVal(intPair stPair, bool random){
+  cout << "Probcache::pathVal 1" << endl;
+  intPairSet vSeen;
+  intVector spResultShort, spResultLong, spResultIntermediate, spDiff;
+  int longScore=0, conciseScore=0, intermediateScore=0, choice;
+  std::vector<int>::iterator originalIt, conciseIt;
+
+  cout << "Probcache::pathVal 2" << endl;
+  RoadGraph::mapObject(ts)->setConcisePathUse(false);
+  spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
+  longScore = calcScore(spResultLong, vSeen);
+    
+  cout << "Probcache::pathVal 3 " << spResultLong.size() << ", " << longScore << endl;
+  RoadGraph::mapObject(ts)->setConcisePathUse(true);
+  cout << "*@1*" << endl;
+  spResultShort = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
+  cout << "*@2*" << endl;
+  conciseScore = calcScore(spResultShort, vSeen);
+
+  cout << "Probcache::pathVal 4 " << spResultShort.size() << ", " << conciseScore << endl;
+  intVector tempLong, tempConsise;
+  tempLong = spResultLong;
+  tempConsise = spResultShort;
+  std::sort (tempLong.begin(),tempLong.end());
+  std::sort (tempConsise.begin(),tempConsise.end());
+
+  std::set_difference (tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), spDiff.begin());
+
+  spResultIntermediate = spResultShort;
+  cout << "Q:(" << stPair.first << "," << stPair.second << ") " << conciseScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << " " << spDiff.size() << endl;
+  if(random){
+    cout << "T";
+    while(!spDiff.empty()){
+      choice = spDiff[(int)rand()%spDiff.size()];
+      originalIt = find(spResultLong.begin(), spResultLong.end(), choice);
+      while(find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt) == spResultIntermediate.end()){
+	originalIt--;
+      }
+      conciseIt = find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt);
+      spResultIntermediate.insert(conciseIt+1, choice);
+      intermediateScore = calcScore(spResultIntermediate, vSeen);
+      cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << intermediateScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << endl;      
+      spDiff.erase(spDiff.begin()+choice);
+      
+    }
+  }else{
+	
+  }
+      
 }

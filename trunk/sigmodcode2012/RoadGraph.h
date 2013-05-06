@@ -53,6 +53,7 @@ public:
 		numNodeVisits=0;
 	}
 	void transformTrainOrTestFile(string cnodeFn, string trainTestFn);
+	void setConcisePathUse(bool use){useConcisepath = use; cout << "_" << useConcisepath << "_" << endl;}
 
 private:
 	RoadGraph(){ };
