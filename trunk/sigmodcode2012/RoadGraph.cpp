@@ -760,7 +760,7 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
   int prevNode, curNode;
   
   for(std::vector<int>::size_type i = 1; i != conciseTrace.size(); i++){
-    if(conciseDebug) cout << "¾" << endl;
+    if(conciseDebug) cout << "§" << endl;
     added=false;
     EdgeList& elist=map[conciseTrace[i]];
     //Check if the i'th node in conciseTrace is also a neighbor node in the original path
@@ -774,10 +774,11 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
     }
     //Find and add the nodes missing from the full path
     if(!added){
-      if(conciseDebug) cout <<"£";
+      if(conciseDebug) cout <<"£*1 ";
       while(!added){
-	if(conciseDebug) cout << "&"; //if(rcPath.size() > 700) break;
+	if(conciseDebug) cout << "£*2" << endl; //if(rcPath.size() > 700) break;
 	if(measureConcisepathdegrees){
+	  if(conciseDebug) cout <<"£*3.1" << endl; 
 	  prevNode = rcPath[rcPath.size()-2];
 	  curNode = rcPath.back();
 	  EdgeList& edges = map[rcPath.back()];
@@ -812,18 +813,22 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
 	    if(conciseDebug) cout << "3.0=" << rcPath.size() << "=" << minAngleEdgeID << endl;
 	  }
 	}else{//if measureConcisepathdegrees is false then nodes not in concise path only has outdegree of 2
- 	  EdgeList& edges = map[rcPath.back()];
-	  if(edges.size() > 2) cout << "RoadGraph::recoverPath: ERROR, node should only have outdegree 2!! " << edges.size() << endl;
-	  exit(1);
- 	  if(edges[0].first == rcPath[rcPath.size()-2]){
- 	    rcPath.push_back(edges[1].first);
- 	    if(conciseDebug) cout <<"4.1=" << rcPath.size() << "=" << conciseTrace[1] << endl;
- 	  }else{
- 	    rcPath.push_back(edges[0].first);
- 	    if(conciseDebug) cout << "4.2=" << rcPath.size() << "=" << conciseTrace[0] << endl;
- 	  }
- 	}
- 	if(conciseDebug) cout << "sixth" << endl;
+	  if(conciseDebug) cout <<"£*3.2" << endl; 
+	  EdgeList& edges = map[rcPath.back()];
+	  if(conciseDebug) cout <<"£*4.2" << endl; 
+	  if(edges.size() > 2){ 
+	    cout << "RoadGraph::recoverPath: ERROR, node should only have outdegree 2!! " << edges.size() << endl;
+	    exit(1);
+	  }
+	  if(edges[0].first == rcPath[rcPath.size()-2]){
+	    rcPath.push_back(edges[1].first);
+	    if(conciseDebug) cout <<"4.1=" << rcPath.size() << "=" << conciseTrace[1] << endl;
+	  }else{
+	    rcPath.push_back(edges[0].first);
+	    if(conciseDebug) cout << "4.2=" << rcPath.size() << "=" << conciseTrace[0] << endl;
+	  }
+	}
+	if(conciseDebug) cout << "sixth" << endl;
 	//check if the current node from concise path now can be added to the reconstructed rcPath
 	for(std::vector<int>::size_type j = 0; j != elist.size(); j++){
 	  if(elist[j].first == rcPath.back()){
@@ -840,6 +845,5 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
   if(conciseDebug) cout << "recoverPath E " << conciseTrace.size() << endl; 
   return rcPath;
 }
-
 
 #endif
