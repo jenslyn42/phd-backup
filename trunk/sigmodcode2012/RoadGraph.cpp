@@ -35,7 +35,7 @@
 //specifically for the dijkstraSSSP() method
 #define spDebug false
 
-#define conciseDebug true
+#define conciseDebug false
 
 boost::unordered_map<int, int*> RoadGraph::spTrace;
 // boost::unordered_map<int, int*> RoadGraph::trackdist;
@@ -558,7 +558,6 @@ void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
         cout<< "@TIME2: " << ts.getElapsedTime(refTime)<< endl;
 }
 
-
 intVector RoadGraph::getSPfromSPTree(int source, int target){
     intVector trace;
     int* backtrace=spTrace[target];
@@ -580,10 +579,8 @@ intVector RoadGraph::getSPfromSPTree(int source, int target){
     return trace;
 }
 
-
 //find angle between current heading (prevNode -> source) and new heading (source -> target)
-double RoadGraph::getAngle(Point prevNode, Point source, Point target)
-{
+double RoadGraph::getAngle(Point prevNode, Point source, Point target){
     double PI = 3.14159265359;
     double existingSlope = (prevNode.second - source.second) / (prevNode.first - source.first);
     double targetSlope = (source.second - target.second) / (source.first - target.first);
@@ -608,8 +605,6 @@ double RoadGraph::getAngle(Point prevNode, Point source, Point target)
     
     return 180-angle;
 }
-
-
 
 std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
   int outdegree, prevNode;
@@ -732,7 +727,6 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
 }
 
 
-
 //takes the input trace in the order t,..,s from calcConsisePath()
 std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
   
@@ -820,12 +814,15 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
 	    cout << "RoadGraph::recoverPath: ERROR, node should only have outdegree 2!! " << edges.size() << endl;
 	    exit(1);
 	  }
-	  if(edges[0].first == rcPath[rcPath.size()-2]){
-	    rcPath.push_back(edges[1].first);
-	    if(conciseDebug) cout <<"4.1=" << rcPath.size() << "=" << conciseTrace[1] << endl;
-	  }else{
-	    rcPath.push_back(edges[0].first);
-	    if(conciseDebug) cout << "4.2=" << rcPath.size() << "=" << conciseTrace[0] << endl;
+	  
+	 if(edges.size() == 2){
+	    if(edges[0].first == rcPath[rcPath.size()-2]){
+	      if(conciseDebug) cout << "2.1=" << rcPath.size() << "=" << "(" << rcPath.back() << "," << rcPath[rcPath.size()-2] << "),(" << edges[0].first << "," << edges[1].first << ") " << edges[1].first << endl;
+	      rcPath.push_back(edges[1].first);
+	    }else{
+	      if(conciseDebug) cout << "2.2=" << rcPath.size() << "=" << "(" << rcPath.back() << "," << rcPath[rcPath.size()-2] << "),(" << edges[0].first << "," << edges[1].first << ") " << edges[0].first << endl;
+	      rcPath.push_back(edges[0].first);
+	    }
 	  }
 	}
 	if(conciseDebug) cout << "sixth" << endl;

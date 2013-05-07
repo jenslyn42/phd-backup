@@ -49,6 +49,7 @@
 #include <ctime>
 #include <cmath>
 #include <cstdlib>
+#include <set>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>

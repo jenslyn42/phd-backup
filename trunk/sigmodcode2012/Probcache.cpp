@@ -528,39 +528,44 @@ void Probcache::buildRegionpair2NodepairVector() {
 }
 
 void Probcache::pathVal(intPair stPair, bool random){
-  cout << "Probcache::pathVal 1" << endl;
   intPairSet vSeen;
   intVector spResultShort, spResultLong, spResultIntermediate, spDiff;
   int longScore=0, conciseScore=0, intermediateScore=0, choice;
-  std::vector<int>::iterator originalIt, conciseIt;
+  std::vector<int>::iterator originalIt, conciseIt, choicePosIt;
 
-  cout << "Probcache::pathVal 2" << endl;
   RoadGraph::mapObject(ts)->setConcisePathUse(false);
   spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
   longScore = calcScore(spResultLong, vSeen);
     
   cout << "Probcache::pathVal 3 " << spResultLong.size() << ", " << longScore << endl;
   RoadGraph::mapObject(ts)->setConcisePathUse(true);
-  cout << "*@1*" << endl;
   spResultShort = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
-  cout << "*@2*" << endl;
   conciseScore = calcScore(spResultShort, vSeen);
 
-  cout << "Probcache::pathVal 4 " << spResultShort.size() << ", " << conciseScore << endl;
+  cout << "Probcache::pathVal 4 " << spResultShort.size() << ", " << conciseScore << "\n"<< endl;
   intVector tempLong, tempConsise;
   tempLong = spResultLong;
   tempConsise = spResultShort;
   std::sort (tempLong.begin(),tempLong.end());
   std::sort (tempConsise.begin(),tempConsise.end());
 
-  std::set_difference (tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), spDiff.begin());
-
+//       std::set<int> s_model( model.begin(), model.end() );
+//     std::set<int> s_pattern( pattern.begin(), pattern.end() );
+//     std::vector<int> result;
+// 
+//     std::set_difference( s_model.begin(), s_model.end(), s_pattern.begin(), s_pattern.end(),
+//         std::back_inserter( result ) );
+  
   spResultIntermediate = spResultShort;
-  cout << "Q:(" << stPair.first << "," << stPair.second << ") " << conciseScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << " " << spDiff.size() << endl;
+
+  std::set_symmetric_difference(tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), std::back_inserter(spDiff));
+  
+  cout << "Q:(" << stPair.first << "," << stPair.second << ") " << conciseScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << " (" << tempConsise.size() << "," << tempLong.size() << "," << spDiff.size() << ")" << endl;
+  //pick which node to insert randomly 
   if(random){
-    cout << "T";
     while(!spDiff.empty()){
       choice = spDiff[(int)rand()%spDiff.size()];
+      choicePosIt = find(spDiff.begin(), spDiff.end(), choice);
       originalIt = find(spResultLong.begin(), spResultLong.end(), choice);
       while(find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt) == spResultIntermediate.end()){
 	originalIt--;
@@ -569,7 +574,7 @@ void Probcache::pathVal(intPair stPair, bool random){
       spResultIntermediate.insert(conciseIt+1, choice);
       intermediateScore = calcScore(spResultIntermediate, vSeen);
       cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << intermediateScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << endl;      
-      spDiff.erase(spDiff.begin()+choice);
+      spDiff.erase(choicePosIt);
       
     }
   }else{
