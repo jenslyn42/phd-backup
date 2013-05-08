@@ -377,7 +377,7 @@ double refTime = clock();
 		
 		///////////////////////////////////
 		pathVal(stPair, true);
-		if(mhCache.size() > 500) exit(0);
+		if(mhCache.size() > 120) exit(0);
 		///////////////////////////////////////
 
 		if (isPathFound) {
@@ -563,6 +563,7 @@ void Probcache::pathVal(intPair stPair, bool random){
   cout << "Q:(" << stPair.first << "," << stPair.second << ") " << conciseScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << " (" << tempConsise.size() << "," << tempLong.size() << "," << spDiff.size() << ")" << endl;
   //pick which node to insert randomly 
   if(random){
+    int currentScore=conciseScore;
     while(!spDiff.empty()){
       choice = spDiff[(int)rand()%spDiff.size()];
       choicePosIt = find(spDiff.begin(), spDiff.end(), choice);
@@ -573,12 +574,20 @@ void Probcache::pathVal(intPair stPair, bool random){
       conciseIt = find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt);
       spResultIntermediate.insert(conciseIt+1, choice);
       intermediateScore = calcScore(spResultIntermediate, vSeen);
-      cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << intermediateScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << endl;      
+      if(intermediateScore > currentScore) {
+	currentScore=intermediateScore;
+	cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << intermediateScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << endl;   
+      }
       spDiff.erase(choicePosIt);
       
     }
   }else{
+    while(!spDiff.empty()){
+      int currentScore = conciseScore;
+      BOOST_FOREACH(int option, spDiff){
+	intermediateScore = calcScore(spResultIntermediate, vSeen);
 	
+      }
+    }
   }
-      
 }
