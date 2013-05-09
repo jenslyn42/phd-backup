@@ -376,8 +376,8 @@ double refTime = clock();
 		}
 		
 		///////////////////////////////////
-		pathVal(stPair, true);
-		if(mhCache.size() > 120) exit(0);
+		pathVal(stPair, false);
+		if(mhCache.size() > 80) exit(0);
 		///////////////////////////////////////
 
 		if (isPathFound) {
@@ -535,14 +535,12 @@ void Probcache::pathVal(intPair stPair, bool random){
 
   RoadGraph::mapObject(ts)->setConcisePathUse(false);
   spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
-  longScore = calcScore(spResultLong, vSeen);
-    
-  cout << "Probcache::pathVal 3 " << spResultLong.size() << ", " << longScore << endl;
+  longScore = calcScore(spResultLong, vSeen);    
+  
   RoadGraph::mapObject(ts)->setConcisePathUse(true);
   spResultShort = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
   conciseScore = calcScore(spResultShort, vSeen);
-
-  cout << "Probcache::pathVal 4 " << spResultShort.size() << ", " << conciseScore << "\n"<< endl;
+  
   intVector tempLong, tempConsise;
   tempLong = spResultLong;
   tempConsise = spResultShort;
@@ -582,12 +580,38 @@ void Probcache::pathVal(intPair stPair, bool random){
       
     }
   }else{
+    intVector tempResultIntermidiate, curBestResultIntermidieate;
+    int curBestOption, bestScore, currentScore = conciseScore;;
     while(!spDiff.empty()){
-      int currentScore = conciseScore;
+      bestScore=-1;
+      
       BOOST_FOREACH(int option, spDiff){
-	intermediateScore = calcScore(spResultIntermediate, vSeen);
-	
+	tempResultIntermidiate = spResultIntermediate;
+	originalIt = find(spResultLong.begin(), spResultLong.end(), option);
+
+	while(find(tempResultIntermidiate.begin(), tempResultIntermidiate.end(), *originalIt) == tempResultIntermidiate.end()){
+	  originalIt--;
+	}
+	conciseIt = find(tempResultIntermidiate.begin(), tempResultIntermidiate.end(), *originalIt);
+	tempResultIntermidiate.insert(conciseIt+1, option);
+	intermediateScore = calcScore(tempResultIntermidiate, vSeen);
+
+	if(intermediateScore > bestScore){
+	  bestScore = intermediateScore;
+	  curBestOption = option;
+	  curBestResultIntermidieate = tempResultIntermidiate;
+	}
       }
-    }
+      
+      choicePosIt = find(spDiff.begin(), spDiff.end(), curBestOption);
+      spDiff.erase(choicePosIt);
+      
+      spResultIntermediate = curBestResultIntermidieate;
+      
+      if(bestScore > currentScore) {
+	currentScore=bestScore;
+	cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << bestScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << endl;  	
+      }
+    } 
   }
 }
