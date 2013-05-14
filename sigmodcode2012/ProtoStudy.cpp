@@ -89,38 +89,33 @@ void Oracle::buildNodeId2pathId()
 
 void Oracle::futureWorkloadAnswers()
 {
-	cout << "oracle::futureWorkloadAnswers start" << endl;
-	intVector v1, v2, tmp; //vectors of which paths each node belongs to
-	boost::unordered_map<int, intVector >::iterator it1, it2;
-	Point coor;
+  cout << "oracle::futureWorkloadAnswers start" << endl;
+  intVector v1, v2, tmp; //vectors of which paths each node belongs to
+  boost::unordered_map<int, intVector >::iterator it1, it2;
+  Point coor;
 
-	BOOST_FOREACH(intIntPairVectorMap::value_type rp, pathId2spPathTest)
-	{
-		coor = rp.second.first;
-		if((it1 = nodeId2pathIdTraining.find(coor.first)) != nodeId2pathIdTraining.end() &&
-		  (it2 = nodeId2pathIdTraining.find(coor.second)) != nodeId2pathIdTraining.end())
-		{
-			v1 = it1->second;
-			v2 = it2->second;
-			if(v1 > v2) {tmp = v1; v1 = v2 ; v2 = tmp;}
+  BOOST_FOREACH(intIntPairVectorMap::value_type rp, pathId2spPathTest) {
+    coor = rp.second.first;
+    if((it1 = nodeId2pathIdTraining.find(coor.first)) != nodeId2pathIdTraining.end() &&
+      (it2 = nodeId2pathIdTraining.find(coor.second)) != nodeId2pathIdTraining.end()){
+      v1 = it1->second;
+      v2 = it2->second;
+      if(v1 > v2) {tmp = v1; v1 = v2 ; v2 = tmp;}
 
-			BOOST_FOREACH(int pid1, v1) //pid is path id
-			{
-				BOOST_FOREACH(int pid2, v2)
-				{
-					if(pid1 == pid2)
-					{
-						if(pathId2workloadAnswered.find(pid1) == pathId2workloadAnswered.end())
-							pathId2workloadAnswered[pid1] = make_pair<int, intVector >(0, intVector(0, 0));
-						
-						pathId2workloadAnswered.at(pid1).first = pathId2workloadAnswered.at(pid1).first + 1;
-						pathId2workloadAnswered[pid1].second.push_back(rp.first);
-					}
-				}
-			}
-		}
+      BOOST_FOREACH(int pid1, v1) {//pid is path id
+	BOOST_FOREACH(int pid2, v2) {
+	  if(pid1 == pid2){
+	    if(pathId2workloadAnswered.find(pid1) == pathId2workloadAnswered.end())
+	      pathId2workloadAnswered[pid1] = make_pair<int, intVector >(0, intVector(0, 0));
+
+	    pathId2workloadAnswered.at(pid1).first = pathId2workloadAnswered.at(pid1).first + 1;
+	    pathId2workloadAnswered[pid1].second.push_back(rp.first);
+	  }
 	}
-	cout << "... Done" << endl;
+      }
+    }
+  }
+  cout << "... Done" << endl;
 }
 
 void Oracle::fillCache()
