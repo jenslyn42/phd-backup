@@ -252,78 +252,78 @@ int Probcache::mapPoint2RegionId(Point coord) {
 }
 
 double Probcache::calcScore(intVector& spResult, intPairSet& vSeen) {
-	double score = 0.0;
-	bool isEmpty_vSeen=(vSeen.size()==0);
+  double score = 0.0;
+  bool isEmpty_vSeen=(vSeen.size()==0);
 
-	calcScoreCounter++;
+  calcScoreCounter++;
 
-	// analyze the continuous region in the path
-	int last_region=-2;
-	vector<intPair> regionset;
-	for (uint i=0;i<spResult.size();i++) {
-		int nid = spResult[i];
-		int rid = nodeid2regionid[nid];
-		if (rid!=last_region) {
-			last_region=rid;
-			regionset.push_back(make_pair(rid,1));
-		} else {
-			regionset.back().second++;
-		}
+  // analyze the continuous region in the path
+  int last_region=-2;
+  vector<intPair> regionset;
+  for (uint i=0;i<spResult.size();i++) {
+    int nid = spResult[i];
+    int rid = nodeid2regionid[nid];
+    if (rid!=last_region) {
+      last_region=rid;
+      regionset.push_back(make_pair(rid,1));
+    } else {
+      regionset.back().second++;
+    }
+  }
+
+  // do not repeat the same path
+  int start_iter1=0;
+  for (uint a=0;a<regionset.size();a++) {
+    int r1=regionset[a].first;
+    int length_iter1=regionset[a].second;
+
+  // incorrect to use "a" directly because of "wrong offset
+    int start_iter2=0;
+    for (uint b=0;b<regionset.size();b++) {// include "a" (different nodes in the same region)
+      int r2=regionset[b].first;
+      int length_iter2=regionset[b].second;
+      if (b<a) {// correct skipping
+	start_iter2+=length_iter2;
+	continue;
+      }
+
+      int temp_count=0;
+      for (int i=0;i<length_iter1;i++) {
+	int nid1 = spResult[start_iter1+i];
+	for (int j=0;j<length_iter2;j++){
+	  if (start_iter1+i<start_iter2+j){ // avoid duplicate check
+	    if (isEmpty_vSeen)
+	      temp_count++;
+	    else {
+	      int nid2 = spResult[start_iter2+j];
+	      intPair nodepair = (nid1<nid2)? make_pair(nid1,nid2):make_pair(nid2,nid1);
+	      if (vSeen.find(nodepair)==vSeen.end())  // if not in cache
+	      temp_count++;
+	    }
+	  }
 	}
+      }
+      if (temp_count>0) {
+	intPair regionpair = (r1 < r2)? make_pair(r1,r2):make_pair(r2,r1);
+	double temp_score=0;
+	if (trainingQueriesPerRegionPair.find(regionpair) != trainingQueriesPerRegionPair.end())
+	  temp_score = trainingQueriesPerRegionPair.at(regionpair);
+	score = score + temp_count*temp_score;
+      }
+    
+      start_iter2+=length_iter2;
+    }
+    start_iter1+=length_iter1;
+  }
 
-	// do not repeat the same path
-	int start_iter1=0;
-	for (uint a=0;a<regionset.size();a++) {
-		int r1=regionset[a].first;
-		int length_iter1=regionset[a].second;
-
-		// incorrect to use "a" directly because of "wrong offset
-		int start_iter2=0;
-		for (uint b=0;b<regionset.size();b++) {	// include "a" (different nodes in the same region)
-			int r2=regionset[b].first;
-			int length_iter2=regionset[b].second;
-			if (b<a) {	// correct skipping
-				start_iter2+=length_iter2;
-				continue;
-			}
-
-			int temp_count=0;
-			for (int i=0;i<length_iter1;i++) {
-				int nid1 = spResult[start_iter1+i];
-				for (int j=0;j<length_iter2;j++)
-					if (start_iter1+i<start_iter2+j) 	// avoid duplicate check
-					{
-						if (isEmpty_vSeen)
-							temp_count++;
-						else {
-						int nid2 = spResult[start_iter2+j];
-						intPair nodepair = (nid1<nid2)? make_pair(nid1,nid2):make_pair(nid2,nid1);
-						if (vSeen.find(nodepair)==vSeen.end())  // if not in cache
-							temp_count++;
-						}
-					}
-			}
-
-			if (temp_count>0) {
-				intPair regionpair = (r1 < r2)? make_pair(r1,r2):make_pair(r2,r1);
-				double temp_score=0;
-				if (trainingQueriesPerRegionPair.find(regionpair) != trainingQueriesPerRegionPair.end())
-					temp_score = trainingQueriesPerRegionPair.at(regionpair);
-				score = score + temp_count*temp_score;
-			}
-			start_iter2+=length_iter2;
-		}
-		start_iter1+=length_iter1;
-	}
-
-	// final update
-	if (spResult.size()>0) {
-		if (ts.testScenario == ARCH_SERVER)
-			score = score * pow(spResult.size(),2);
-		else
-			score = score / spResult.size();
-	}
-	return score;
+  // final update
+  if (spResult.size()>0) {
+    if (ts.testScenario == ARCH_SERVER)
+      score = score * pow(spResult.size(),2);
+    else
+      score = score / spResult.size();
+  }
+  return score;
 }
 
 void Probcache::fillCache(){
@@ -377,7 +377,7 @@ double refTime = clock();
 		
 		///////////////////////////////////
 		pathVal(stPair, false);
-		if(mhCache.size() > 80) exit(0);
+		if(mhCache.size() > 10) exit(0);
 		///////////////////////////////////////
 
 		if (isPathFound) {
@@ -530,7 +530,8 @@ void Probcache::buildRegionpair2NodepairVector() {
 void Probcache::pathVal(intPair stPair, bool random){
   intPairSet vSeen;
   intVector spResultShort, spResultLong, spResultIntermediate, spDiff;
-  int longScore=0, conciseScore=0, intermediateScore=0, choice;
+  double longScore=0.0, conciseScore=0.0, intermediateScore=0.0;
+  int choice;
   std::vector<int>::iterator originalIt, conciseIt, choicePosIt;
 
   RoadGraph::mapObject(ts)->setConcisePathUse(false);
@@ -561,7 +562,7 @@ void Probcache::pathVal(intPair stPair, bool random){
   cout << "Q:(" << stPair.first << "," << stPair.second << ") " << conciseScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << " (" << tempConsise.size() << "," << tempLong.size() << "," << spDiff.size() << ")" << endl;
   //pick which node to insert randomly 
   if(random){
-    int currentScore=conciseScore;
+    double currentScore=conciseScore;
     while(!spDiff.empty()){
       choice = spDiff[(int)rand()%spDiff.size()];
       choicePosIt = find(spDiff.begin(), spDiff.end(), choice);
@@ -572,18 +573,20 @@ void Probcache::pathVal(intPair stPair, bool random){
       conciseIt = find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt);
       spResultIntermediate.insert(conciseIt+1, choice);
       intermediateScore = calcScore(spResultIntermediate, vSeen);
-      if(intermediateScore > currentScore) {
+//      if(intermediateScore > currentScore) {	
+	cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << intermediateScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size();
+	(intermediateScore > currentScore)? (cout << " +++" << endl) : (cout << " ---" << endl);
 	currentScore=intermediateScore;
-	cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << intermediateScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << endl;   
-      }
+//    }
       spDiff.erase(choicePosIt);
       
     }
   }else{
     intVector tempResultIntermidiate, curBestResultIntermidieate;
-    int curBestOption, bestScore, currentScore = conciseScore;;
+    int curBestOption;
+    double bestScore, currentScore = conciseScore;
     while(!spDiff.empty()){
-      bestScore=-1;
+      bestScore=-1.0;
       
       BOOST_FOREACH(int option, spDiff){
 	tempResultIntermidiate = spResultIntermediate;
@@ -608,10 +611,11 @@ void Probcache::pathVal(intPair stPair, bool random){
       
       spResultIntermediate = curBestResultIntermidieate;
       
-      if(bestScore > currentScore) {
+//      if(bestScore > currentScore) {
+	cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << bestScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size();
+	(bestScore > currentScore)? (cout << " +++" << endl) : (cout << " ---" << endl);
 	currentScore=bestScore;
-	cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << bestScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << endl;  	
-      }
+//      }
     } 
   }
 }
