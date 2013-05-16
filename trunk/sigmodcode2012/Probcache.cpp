@@ -298,7 +298,7 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen) {
 	      int nid2 = spResult[start_iter2+j];
 	      intPair nodepair = (nid1<nid2)? make_pair(nid1,nid2):make_pair(nid2,nid1);
 	      if (vSeen.find(nodepair)==vSeen.end())  // if not in cache
-	      temp_count++;
+		temp_count++;
 	    }
 	  }
 	}
@@ -325,7 +325,7 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen) {
   }
   return score;
 }
-
+	
 void Probcache::fillCache(){
 	fillCacheFromQueriesFileByStatistics();
 }
@@ -584,32 +584,33 @@ void Probcache::pathVal(intPair stPair, bool random){
   }else{
     intVector tempResultIntermidiate, curBestResultIntermidieate;
     int curBestOption;
-    double bestScore, currentScore = conciseScore;
+    double bestScore, currentScore = conciseScore, intermediateScore, currentBasescore = conciseScore;
+    
     while(!spDiff.empty()){
       bestScore=-1.0;
       
       BOOST_FOREACH(int option, spDiff){
-	tempResultIntermidiate = spResultIntermediate;
-	originalIt = find(spResultLong.begin(), spResultLong.end(), option);
-
-	while(find(tempResultIntermidiate.begin(), tempResultIntermidiate.end(), *originalIt) == tempResultIntermidiate.end()){
-	  originalIt--;
-	}
-	conciseIt = find(tempResultIntermidiate.begin(), tempResultIntermidiate.end(), *originalIt);
-	tempResultIntermidiate.insert(conciseIt+1, option);
-	intermediateScore = calcScore(tempResultIntermidiate, vSeen);
+	intermediateScore = calcAdditionalScore(spResultIntermediate, option);
 
 	if(intermediateScore > bestScore){
 	  bestScore = intermediateScore;
 	  curBestOption = option;
-	  curBestResultIntermidieate = tempResultIntermidiate;
 	}
       }
+      
+      originalIt = find(spResultLong.begin(), spResultLong.end(), curBestOption);
+
+      while(find(tempResultIntermidiate.begin(), tempResultIntermidiate.end(), *originalIt) == tempResultIntermidiate.end()){
+	originalIt--;
+      }
+      conciseIt = find(tempResultIntermidiate.begin(), tempResultIntermidiate.end(), *originalIt);
+      tempResultIntermidiate.insert(conciseIt+1, curBestOption);
+      currentBasescore = currentBasescore + bestScore; 
       
       choicePosIt = find(spDiff.begin(), spDiff.end(), curBestOption);
       spDiff.erase(choicePosIt);
       
-      spResultIntermediate = curBestResultIntermidieate;
+      spResultIntermediate = tempResultIntermidiate;
       
 //      if(bestScore > currentScore) {
 	cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << bestScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size();
@@ -619,3 +620,32 @@ void Probcache::pathVal(intPair stPair, bool random){
     } 
   }
 }
+
+double Probcache::calcAdditionalScore(intVector& path, int nid){
+  double temp_score, score = 0.0;
+  int rid2, rid1 = nodeid2regionid[nid];
+  intPair regionpair;
+  
+  BOOST_FOREACH(int pnid, path){
+    rid2 = nodeid2regionid[pnid];
+    regionpair = (rid1 < rid2)? make_pair(rid1,rid2):make_pair(rid2,rid1);
+    temp_score=0;
+    if (trainingQueriesPerRegionPair.find(regionpair) != trainingQueriesPerRegionPair.end())
+      temp_score = trainingQueriesPerRegionPair.at(regionpair);
+    score = score + temp_score;
+  }
+}
+  
+  
+  
+// 	HeapEntry tmp;
+// 	tmp.pID = rp;
+// 	tmp.dist = calcScore(spResult, vSeen);
+// 	if (tmp.dist>0) // new
+// 		mhCache.push(tmp);
+
+
+  //int rid = nodeid2regionid[nid];
+//   intPair regionpair = (r1 < r2)? make_pair(r1,r2):make_pair(r2,r1);
+  //if (trainingQueriesPerRegionPair.find(regionpair) != trainingQueriesPerRegionPair.end())
+  //    temp_score = trainingQueriesPerRegionPair.at(regionpair);
