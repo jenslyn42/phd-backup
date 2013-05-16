@@ -76,6 +76,7 @@ private:
 	void buildRegionId2NodeidVector();
 	void buildRegionpair2NodepairVector();
 	void pathVal(intPair stPair, bool rand);
+	double calcAdditionalScore(intVector& path, int nid);
 };
 
 #endif
