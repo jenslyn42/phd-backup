@@ -600,17 +600,15 @@ void Probcache::pathVal(intPair stPair, bool random){
       
       originalIt = find(spResultLong.begin(), spResultLong.end(), curBestOption);
 
-      while(find(tempResultIntermidiate.begin(), tempResultIntermidiate.end(), *originalIt) == tempResultIntermidiate.end()){
+      while(find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt) == spResultIntermediate.end()){
 	originalIt--;
       }
-      conciseIt = find(tempResultIntermidiate.begin(), tempResultIntermidiate.end(), *originalIt);
-      tempResultIntermidiate.insert(conciseIt+1, curBestOption);
+      conciseIt = find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt);
+      spResultIntermediate.insert(conciseIt+1, curBestOption);
       currentBasescore = currentBasescore + bestScore; 
       
       choicePosIt = find(spDiff.begin(), spDiff.end(), curBestOption);
       spDiff.erase(choicePosIt);
-      
-      spResultIntermediate = tempResultIntermidiate;
       
 //      if(bestScore > currentScore) {
 	cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << bestScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size();
