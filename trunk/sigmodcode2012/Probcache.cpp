@@ -623,7 +623,7 @@ double Probcache::calcAdditionalScore(intVector& path, int nid){
   double temp_score, score = 0.0;
   int rid2, rid1 = nodeid2regionid[nid];
   intPair regionpair;
-  
+
   BOOST_FOREACH(int pnid, path){
     rid2 = nodeid2regionid[pnid];
     regionpair = (rid1 < rid2)? make_pair(rid1,rid2):make_pair(rid2,rid1);
