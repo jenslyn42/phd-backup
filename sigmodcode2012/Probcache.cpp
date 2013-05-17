@@ -605,15 +605,15 @@ void Probcache::pathVal(intPair stPair, bool random){
       }
       conciseIt = find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt);
       spResultIntermediate.insert(conciseIt+1, curBestOption);
-      currentBasescore = currentBasescore + bestScore; 
+      currentBasescore = ((currentBasescore*(double)(spResultIntermediate.size()-1)) + bestScore)/(double)spResultIntermediate.size();
       
       choicePosIt = find(spDiff.begin(), spDiff.end(), curBestOption);
       spDiff.erase(choicePosIt);
       
-//      if(bestScore > currentScore) {
-	cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << bestScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size();
-	(bestScore > currentScore)? (cout << " +++" << endl) : (cout << " ---" << endl);
-	currentScore=bestScore;
+//      if(currentBasescore > currentScore) {
+	cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << currentBasescore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size();
+	(currentBasescore > currentScore)? (cout << " +++" << endl) : (cout << " ---" << endl);
+	currentScore=currentBasescore;
 //      }
     } 
   }
@@ -633,17 +633,3 @@ double Probcache::calcAdditionalScore(intVector& path, int nid){
     score = score + temp_score;
   }
 }
-  
-  
-  
-// 	HeapEntry tmp;
-// 	tmp.pID = rp;
-// 	tmp.dist = calcScore(spResult, vSeen);
-// 	if (tmp.dist>0) // new
-// 		mhCache.push(tmp);
-
-
-  //int rid = nodeid2regionid[nid];
-//   intPair regionpair = (r1 < r2)? make_pair(r1,r2):make_pair(r2,r1);
-  //if (trainingQueriesPerRegionPair.find(regionpair) != trainingQueriesPerRegionPair.end())
-  //    temp_score = trainingQueriesPerRegionPair.at(regionpair);
