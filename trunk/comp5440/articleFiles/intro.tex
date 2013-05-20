@@ -1,168 +1,197 @@
 \section{Introduction} \label{sec:intro}
 
+This project is motivated by the Microsoft Kinect hardware's ability to capture both image and depth information. 
+The images can be captured from the Kinect as a set of raw data dump files or compressed JPEG files. 
+This project will focus on how these two sets of output files can be compressed with both lossy and lossless compression techniques on RGB + D image information. D is depth information the a RGB image.
 
-\begin{table}
-\begin{tabular*}{\columnwidth}{|l|p{0.76\columnwidth}|}
-\hline
-\bf Symbol		& \bf Meaning \\\hline
-$QR_{q,R}$		& Range query from $q$ to all $o_i : d_{q,o_i} \leq R$) \\\hline
-$Q_{s,t}$		& \spath query from $s$ to $t$ \\\hline
-$\chi_{s,t}$		& The frequency of a \spath \\\hline
-$P_{s,t}$		& A \spath from s to t \\\hline
-$d_{s,t}$		& The \spath distance of a path $P_{s,t}$ \\\hline
-$\mathfrak{d}_{s,t}$	& $\| t - s \|_2$, the euclidean distance \\\hline
-$\mathcal{O}$		& The set of $\poi \in \mathbf{V}$, the set of vertices\\\hline
-$o_i$			& Element i in $\mathcal{O}$ \\\hline
-$\mathcal{O}_{q,R}$	& The result set of  $o_i \in Q_{q,R}$ \\\hline
-$dist_{\mathcal{O}}$	& Table of distances between vertexes $v_s, v_t \in P_{s,t} :  P_{s,t} \in \spath_q$ \\\hline
-$\spath_{q}$		& A set of \spath from q to all $o_i$ \\\hline
+\subsection{Microsoft Kinect Background}
 
-$\mathcal{QL_R}$	& Query log of range search queries \\\hline
-$\Psi$ 			& The Cache \\\hline
-% $|SP|$			& Length of a \spath \\\hline
-% $|\Psi|$		& Number of vertexes in the cache \\\hline
-% $\Phi(sp)$		& The set of all sub-paths in a \spath $sp$ \\\hline
-% $\Phi^c(\Psi)$		& The set of all unique (sub-)paths in $\Psi$ \\\hline
-% $\Gamma(\Psi)$		& Calculates the total utility of the content in the cache \\\hline 
-$G\mathbf{(V,E)}$ 	& Graph representation of the Map \\\hline 
-% $\mathbf{V}$ 		& The set of vertexes in the Map \\\hline 
-% WL			& Historical workload \\\hline
-\end{tabular*}
-\caption{Table of Symbols}
-\label{tab:symbols}
-\end{table}
-
-\begin{algorithm}[bht]
-\dontprintsemicolon
-\SetVline
-
-\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}\SetKw{Return}{return}
-
-\Input{
-
-	$(q,R)$: A Range query\;
-	$\mathcal{O}$: A set of POI \;
-}
-
-\Output{
-
-	A set \poi $\in \mathcal{O}$ \;
-}
-
- \funcc{Naive}{(q,R), \mathcal{O}}
-{
-    \ForEach{$o_i \in \mathcal{O}$}
-    {
-      \If{$P_{q,o_i} \in \Psi$} 
-      { 
-	  insert $o_i$ into $result$ \;
-      }
-      Call \spath API on $Q_{q,o_i}$ \tcp{\emph{\spath from q to $o_i$}} \;
-      \If{$d_{q,o_i} \leq R$} 
-      {
-	  insert $o_i$ into $result$ \; 
-      }
-
-    }
-    \Return{result} \;
-}
-
-\caption{Naive Algorithm}
-\label{alg:naive}
-\end{algorithm}
-
-
-\begin{algorithm}[bht]
-\dontprintsemicolon
-\SetVline
-
-\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}\SetKw{Return}{return}
-
-\Input{
-
-	$(q,R)$: A Range query\;
-	$\mathcal{O}$: A set of POI \;
-}
-
-\Output{
-
-	A set \poi $\in \mathcal{O}$ \;
-}
-
-\funcc{Fair}{(q,R), \mathcal{O}}
-{
-    \ForEach{$o_i \in \mathcal{O} : \mathfrak{d}_{q,o_i} \leq R$}
-    {
-      $candidate_{\mathcal{O}} \leftarrow o_i$ \;
-    }
-    result $\leftarrow$ \naivens((q,R), $candidate_{\mathcal{O}}$) \;
-
-    \Return{result} \;
-}
-
-\caption{Fair Algorithm}
-\label{alg:fair}
-\end{algorithm}
-
-
-\begin{align}\label{eq:chinaive}
-\chi_{s,t}  = | \{ t :\;  QR_{s,R} \in \mathcal{QL_R}, t \in \mathcal{O}, R \in \mathbb{R}, t \in P_{s,t} \} |
-\end{align}
-
-\begin{align}\label{eq:chifair}
-\nonumber \chi_{s,t}  = | \{ t :\;  QR_{s,R} \in \mathcal{QL_R}, \{t \in \mathcal{O} | \mathfrak{d}_{s,t} \leq R \}, & &\\
-R \in \mathbb{R}, \exists P_{s,t} | d_{s,t} \leq R \} | &
-\end{align}
-
-
-
-
-\begin{definition}{Range Search}\\
-A range search query, denoted by $Q_{q,R}$ consist of a source vertex $q$ and a range $\mathbf{R}$.
-The result of $Q_{q,R}$, denoted $\mathcal{O}_{q,R}$, is a set of objects $o_i \in \mathcal{O}$ with \spath distance $d_{s,t} \leq R$ on graph $G\mathbf{(V,E)}$.
-\end{definition}
-
-
-\begin{definition}{Range Search Query Log ($\mathcal{QL_R}$)}\\
-A range search query log $\mathcal{QL_R}$ is a collection of timestamped queries that have been issued by users in the past.
-A query is on the form $(q,R)$, where $q$ is a query point and $R$ is a range. The full form of the log, $\mathcal{QL_R}$,  is then: $\{(q_0,R_0),\dots,(q_i,R_i)\}$
-\end{definition}
-
-
-Using a query log, $\mathcal{QL_R}: \{(q_0,R_0),\dots,(q_i,R_i)\}$, we first need to expand each query into its \spath result set containing \spaths from $q$ to each \poi reachable within R distance on a road network. 
-To find the result set of a query we use one of two algorithms: \naive or \fairns.
-
-The \naive algorithm will not only find the result set of \spath for each query $\in \mathcal{QL_R}$, but also the \spath from $q$ to all other possible \poins, before pruning and returning the result set of \poisns.
-\naive does so by first finding all paths from $q$ to any \poi in the cache. Afterwards it will issue \spath queries from $q$ to the remaining \pois not already found via the cache. 
-Once all paths are found \naive will prune the set of paths such that only the paths with distance < $R$ remain. This is the result so \naive returns it to the user.
-
-The idea behind the \fair algorithm (see alg. \ref{alg:fair}) is to prune \poisns, which can not belong to the result set of a query, before doing range search. The \fair algorithm works by, for a query (q,R), first finding the set {\it tmp\poins}, of \pois which lay within euclidean distance $R$ of the query point $q$. \fair then invokes the \naive algorithm using {\it tmp\poins} as the set of \poins.
-The pruning method of \fair is correct as the euclidean distance $R$ is also the longest \spathns, with length $R$, possible. It is however important to note that this pruning technique only work if the weights of edges in a road network are distances.
-
-Equation \ref{eq:chinaive} and \ref{eq:chifair} define the frequency of a \spath in $\Psi$, using \naive or \fair respectively.
-
-An Example of how \fair might work is shown in fig. \ref{fig:queryreg}. In it we have 2 queries: $q_1$ and $q_2$. Each query have a range $R=13$ associated with it, which is used to form the pruning areas (circles) of the queries. The pruning areas are the shown by the 2 circles, each covering a query. The  white circles are all vertices. $v_1,\ldots,v_{11}$ are the regular vertices. $o_1,\ldots,o_{10}$ represent the \poisns, and $q_1,q_2$ are the query points. Vertices ($\mathbf{V}$), and connecting lines,edges ($\mathbf{E}$), model a road network, $G\mathbf{(V,E)}$.
-
-In our problem the range $R$ is constrained on a road network, meaning that after pruning, when the vertexes more than $R$ euclidean distance away are no longer considered, the remaining vertexes may still be further than $R$ distance in the road network. 
-We can see an example of this with $q_2$, where only one out of the 3 \poi in the gray region is actually within $R$ \spath distance ($o_9$, the reader should visually easily be able to confirm this using the edge weights in fig \ref{fig:queryreg}).
-
-When we consider what to put into the cache, then we will include \spaths for all \poi within the pruning area, regardless of whether the \pois are contained in the result set or not. The reasoning behind this, is that if we only add the exact result, then we will not be able to determine if the entire result is in the cache or not, except in the special case that all vertexes in the pruning region is part of the result, as with query $q_1$.
-
-% To illustrate how we use the cache we will assume $q_1,q_2,$ and $q_3$ have all been executed and \spathsns, from their query points to the \pois in their respective pruning regions, have been added to the cache.
-% When $q_4$ is executed then we will first do the pruning to reduce the vertexes we consider. Then we check the cache for any \spath which contains the vertex of $q_4$, which it does in this case, namely the path from $q_1$ to $q_4$. We don't actually need the \spath them selves, but we need their distances (retrieved from $dist_{\mathcal{O}}$) to check whether the \pois are in the result or not, without invoking the \spath API.
-
-
-
-% \begin{figure}[hbt]
-%   \center
-%         \includegraphics[width=0.5\textwidth]{figures/queryregions}
-%         \caption{Query points $q_1,q_2,q_3$, with region defined by R. White points are \poins}
-%   \label{fig:queryreg}
-% \end{figure}
+Microsoft Kinect provides to developers with great opportunities for innovative programs, mainly in the areas of gaming and applications for facial recognition.
+In the past, it has been described as a "controller-free gaming and entertainment experience" and it is commonly sold bundled with the Microsoft Xbox 360. But just considering it an alternative way to play games is to underestimate its significance. It is a general purpose and low cost 3D input device, not to mention it amazing audio input 
+capabilities, enabling it to do speech recognition from several meters away.
 
 \begin{figure}[hbt]
   \center
-        \includegraphics[width=0.5\textwidth]{figures/queryreg}
-        \caption{Query points $q_1,q_2,q_3$, with region defined by R. White points are \poins}
-  \label{fig:queryreg}
+        \includegraphics[width=0.45\textwidth]{figures/kinectimage1}
+        \caption{Microsoft Kinect}
+  \label{fig:kinect}
+\end{figure}
+
+Microsoft released a development kit for Kinect June 16, 2011.
+It allows developers to build applications with .NET, providing API's for languages like C++, C\# or Visual Basic, using Microsoft Visual Studio 2010 or later. 
+A very important feature of Kinect is that developers can use it for their own applications, without paying a license fee.
+Essentially the Kinect is a box with 2 cameras, 4 microphones, and infra-red (IR) laser illumination, to obtain color images, sound, and depth data. 
+The IR is used as a distance ranging device by having an IR camera measure displacement of a number of generated IR dots. 
+The system can measure distance with 1 cm accuracy at 2 meter and has a resolution of 3 mm at 2 meter. 
+The depth image is also 640 x 480, i.e. standard VGA resolutions. 
+The color image is 1600 x 1200. 
+A custom chip processes the data to provide a depth field that is correlated with the color image. 
+That is the software can match each pixel with its approximate depth. The preprocessed data is fed to the machine via a USB interface in the form of a depth field map and a color image.
+
+\begin{figure}[hbt]
+  \center
+        \includegraphics[width=0.45\textwidth]{figures/Compressionkinectimage2}
+        \caption{A Kinect Sensors}
+  \label{fig:kinectsensors}
+\end{figure}
+
+\subsubsection{Depth map}
+The Kinect uses \textit{structured light} to detect distances. The idea is simple, if a known pattern of light is project onto a surface, then the projected spots of light are shifted according to the distance they are reflected back from (see fig. \ref{fig:kinectmeasuredist}).
+
+\begin{figure}[hbt]
+  \center
+        \includegraphics[width=0.45\textwidth]{figures/Compressionkinectimage3}
+        \caption{Kinect distance measurement}
+  \label{fig:kinectmeasuredist}
+\end{figure}
+
+By projecting a fixed grid of dots onto a scene and measuring how much each one has shifted when viewed with a video camera you can work how far away each dot was reflected back from. 
+The actual implementation is more complicated than this because the IR laser in the Kinect uses a hologram to project a random speckle pattern onto the scene. 
+It then measures the offset of each of the points to generate an 11 bit depth map. 
+A custom chip does the computation involved in converting the dot map into a depth map so that it can process the data at the standard frame rate.
+
+\subsubsection{Kinect Image}
+Kinect has two cameras, one for capturing a color image and the other for capturing 
+an IR image. Real-time depth information is provided by the IR camera by calculating a depth map based on its measurements. 
+The depth map tells how far the IR camera's pixels are. 
+The user doesn't know the depth information of the color image because the two cameras have different characteristics.
+
+\begin{figure}[hbt]
+  \center
+        \includegraphics[width=0.45\textwidth]{figures/Compressionkinectimage4}
+        \caption{Kinect IR and color camera image.}
+  \label{fig:kinectimages}
+\end{figure}
+
+The Kinect generates a lot of data. 
+One second of video at a resolution of 640 x 480 pixels for both depth and color and at 30 frames per second generates approximately 70Mb of data (640 x 480 * 4 bytes per pixel 
+* 30 frames per second * 2 = 73,728,000 bytes), together with a comparatively small amount of audio and skeletal tracking data.
+The Kinect uses standard compression techniques to reduce space and bandwidth requirements for all the data it generates. The Kinect uses lossy JPEG for color images and lossless PNG for depth maps, reducing the overall size of a typical recording.
+
+\subsubsection{Kinect Natural User Interface for Windows}
+The Natural User Interface (NUI) (see fig. \ref{fig:nuiapi}) is the core of the Kinect for Windows API. It can access the following sensor data in your application:
+
+\begin{itemize}
+\item Audio data streamed out by the audio stream.
+\item Color image data and depth image data streamed out by the color and depth streams.
+\end{itemize}
+
+In addition to the hardware capabilities, the Kinect software runtime implements:
+\begin{itemize}
+\item A software pipeline that can recognize and track a human body. The runtime converts depth information into skeleton joints, to track the major joints of the human body. This makes it possible to track up to two people in front of the camera.
+\item Integration with the Microsoft Speech API's, making developers able to implement a speech recognition engine in their Kinect-enabled application. It is possible to add e.g. voice commands, such as "Start Tracking" or "Stop Tracking", to an application.
+\item A tight integration with the Face Tracking SDK, which makes it possible to track human faces.
+\end{itemize}
+
+\begin{figure}[hbt]
+  \center
+        \includegraphics[width=0.48\textwidth]{figures/projectimage1}
+        \caption{Natural User Interface API for Kinect}
+  \label{fig:nuiapi}
+\end{figure}
+
+\subsubsection{Color Image Data on NUI}
+Color image data is available at different resolutions and formats. The format determines whether the color image data stream is encoded as RGB, YUV, or Bayer. Only one resolution and format may be used at a time.
+
+The sensor uses a USB 2.0 connection that provides a fixed amount of bandwidth for passing data (480 Mbit). The choice of resolution allows tuning of how the bandwidth is used. High-resolution images send more data per frame and update less frequently, while lower-resolution images update more frequently. Compression can be used, independently of the resolution, to increase frame rate.
+
+Color formats are computed from the same camera data, so all data types represent the same image.
+Available formats are given in table \ref{tab:imageformats}. 
+
+\begin{table*}
+\center
+\begin{tabular}{|l|p{30em}|} \hline
+Color Format 	& Description \\\hline
+RGB 		& 32-bit, linear X8R8G8B8-formatted color bitmaps, in sRGB color space \\\hline
+YUV 		& 16-bit, gamma-corrected linear UYVY-formatted color bitmaps, where the gamma correction in YUV space is equivalent to sRGB gamma in RGB space. Because the YUV stream uses 16 bits per pixel, this format uses less memory to hold bitmap data and allocates less buffer memory. YUV data is available only at the 640x480 resolution and only at 15 fps. \\\hline
+Bayer		& 32-bit, linear X8R8G8B8-formatted color bitmaps, in sRGB color space. \\\hline
+\end{tabular}
+\caption{Kinect NUI supported image formats}
+\label{tab:imageformats}
+\end{table*}
+
+The Bayer format\footnote{http://en.wikipedia.org/wiki/Bayer\_filter} more closely match the physiology of the human eye by including more green pixels values than blue or red. The Bayer color image data that the sensor returns at 1280x960 is compressed and converted to RGB before transmission to the runtime. The runtime then decompresses the data before it passes the data to any application using the Kinect. The use of compression makes it possible to return color data at frame rates up to 30 fps, but the algorithm leads to some loss of image fidelity.
+
+\subsubsection{Depth Data on NUI}
+The depth data stream provides frames in which each pixel contains the Cartesian distance (in millimeters) from the camera plane to the nearest object at that particular x and y coordinate in the depth sensor's field of view. There are two possible ranges for depth data: the default range and the near range which may be chosen by the developer, or automatically by the Kinect.
+
+Applications can process data from a depth stream to support various custom features, such as tracking users' motions and identifying background objects to ignore during play.
+
+Each pixel in the depth stream uses 13 bits for depth data and 3 bits to identify a player. A depth data value of 0 indicates that no depth data is available at that position because all the objects were either too close to the camera or too far away from it. When skeleton tracking is disabled, the 3 bits that identify a player are set to 0.
+
+\subsection{Code Implementation}
+{\color{red} is this section really that useful? it does not have much to do with what we do, and I think it may be better just simply omit any direct code references and just describe what a developer needs to do, to use a Kinect}
+\subsubsection{Natural User Interface (NUI) App initiation}
+To receive the information of Kinect API Receiver, it should through the Runtime object. Thus, the first step for the code implementation should be create the Runtime object and use the method "Initialize" for initiation, also call the method "Uninitialize" for closing the application to close the Kinect.
+
+\begin{verbatim}
+Create Runtime Object:
+Runtime nui = new Runtime();
+
+Initialize the Runtime Object:
+Nui.Initialize();
+
+Close the Runtime Object:
+Nui.Uninitialize();
+\end{verbatim}
+
+\subsubsection{Color Image Data}
+\textit{Image Quantity:} 
+The resolution of color image from the sensor of Kinect is 1280 x 1024 pixels. After converting it to RGB format and possibly image compression, it will be passed to the NUI. NUI will decompress the image data and pass to the application using the Kinect. Because image compression is added, the frame rate can be up to to 30 frames per second. It will however decrease if the quality of the image is set too high.
+
+\textit{Image Format:}
+RGB (32 bits) and YUV (16 bits)
+
+\textit{Image Acquirement:}
+\begin{itemize}
+\item Polling Model \\
+Using program to call the method "ImageStream.GetNextFrame()", and it will return the ImageFrame Object. The attribute "Image" of ImageFrame Object can get the image data.
+
+\item Event Model \\
+Using event method to getting the image data. (e.ImageFrame.Image)
+  \begin{itemize}
+  \item Runtime.DepthFrameReady
+  \item Runtime.VideoFrameReady
+  \end{itemize}
+\end{itemize}
+
+
+An example of an image captured from the RGB camera on a Kinect Device is shown on the left in figure \ref{fig:kinectcaptureimage}.
+
+\begin{figure}[hbt]
+  \center
+        \includegraphics[width=0.48\textwidth]{figures/Compressionkinectimage6}
+        \caption{Screen shot of Kinect NUI API output}
+  \label{fig:kinectcaptureimage}
+\end{figure}
+
+\subsubsection{Capture Depth Image}
+The depth image is the image from the IR CMOS camera on the Kinect. An example of how the output looks is shown on the right in figure \ref{fig:kinectcaptureimage}.
+
+Each pixel have 16 bits of depth data for each frame, with a distance range of 850mm - 4000mm. "0" indicates that no depth data is present, or the distance is unknown, e.g. when the Kinect faces a mirror. An Application can implement object tracking using the depth image data.
+
+Supported resolutions of depth stream:
+\begin{itemize}
+\item 640 x 480
+\item 320 x 240
+\item 80 x 60
+\end{itemize}
+
+\subsubsection{Image Acquirement}
+ImageFrame.Image.Bits: Byte array from the top and left, each element of this array has 2
+bytes from the ImageFormat object.
+ImageFormat.Depth: Starting from the second byte and then count 8 bits. (0,0) distance =
+(int)(Bits[0] | Bit[1] $<<$ 8)
+ImageFormat.DepthAndPlayerIndex: Kinect system can be detects two human objects throw
+the sensor with the Kinect for Windows SDK. Each human object has a user ID (see fig. \ref{fig:humobject}).
+\begin{itemize}
+\item (0,0) distance = (int)(Bits[0] $>>$ 3 | Bits[1] $<<$ 5)
+\item Last three bits of data is the user ID.
+\end{itemize}
+
+\begin{figure}[hbt]
+  \center
+        \includegraphics[width=0.48\textwidth]{figures/projectimage2}
+        \caption{Kinect ImageFormat object format}
+  \label{fig:humobject}
 \end{figure}
