@@ -1,138 +1,51 @@
 \section{Experiments}
 
+We will in the following show how the different methods described in the previous section actually perform on a dataset produced from a Kinect.
+For each method, Wavelet and JPEG, we will calculate the entropy for each picture to show how much we can save using each method, as well as finding the SNR for each. We will also show the actual space saved per file
+
+\subsubsection{Original image properties}
+
+{\color{red}describe the properties of the original image and give the entropy \& SNR for each of our test images.}
 
 
-\subsection{Query Sources \& Generation}
+\subsubsection{Haar Wavelet test result}
+The following example shows IMG01\_D.bmp for Haar wavelet compression.
+LHS side shows the original deep image and its entropy = 5.1979 (\textasciitilde 6 bit).
+RHS side shows the Haar wavelet compression and its entropy = 0.60657 (\textasciitilde 2bit)
+It show that the entropy is greatly decreased after using 3rd level 2D Haar wavelet compression.
 
+The table shows entropy of original and after compression in R, G, B, D and RGBD combined in one image.
 
-
-\subsection{Experimental Setting}
-
-% - Which parameters are common for all tests
-% - What are the ranges/values each parameter can take.
-% - Which parameters are set to a default value unless otherwise stated (and what are the default values)
-% - Which methods, and in which configuration, do we consider.
-% 
-% SPC: level/partitions
-% ALL: cacehe size
-% HQF, SPC: cache type
-% ALL: Map/dataset
-% ALL: number of queries
-
-Our 3 caching methods, SPC, HQF, and LRU, share a number of common settings which, unless stated otherwise, will be set to their default values: 
-The number of levels in the kD-tree are 14 (i.e. 16.384 regions). We will use the list cache representation as the default cache representation, where each vertex use one byte. The default cache size is set to 5.120.000 bytes.
-
-
-
-\subsection{Proxy}\label{subsec:expProxy}
-
-
-\subsubsection{Range}
-
-\begin{figure}[htb]
-\center
-  \begin{tabular}{ccc}
-     \includegraphics[width=0.5\columnwidth]{figures/cachesize_hitratio_rangenaive_aal.pdf}
-     &
-     \includegraphics[width=0.5\columnwidth]{figures/cachesize_hitratio_rangenaive_bei.pdf}
-      \\
-     (a) Aalborg & (b)  Beijing
-     \end{tabular}
-\caption{Hit ratio vs. cache size, NAIVE algorithm}
-\label{fig:cachesizeVsHitRatioRangeNaive}
+\begin{figure}[hbt]
+  \center
+        \includegraphics[width=0.45\textwidth]{figures/Wavletcompressionimage1}
+        \caption{Using Haar wavelet compression \color{red} needs to be referenced in the text}
+  \label{fig:haarwavelettest}
 \end{figure}
 
-\begin{figure}[htb]
-\center
-  \begin{tabular}{ccc}
-     \includegraphics[width=0.5\columnwidth]{figures/cachesize_hitratio_rangefair_aal.pdf}
-     &
-     \includegraphics[width=0.5\columnwidth]{figures/cachesize_hitratio_rangefair_bei.pdf}
-      \\
-     (a) Aalborg & (b)  Beijing
-     \end{tabular}
-\caption{Hit ratio vs. cache size, FAIR algorithm}
-\label{fig:cachesizeVsHitRatioRangeFair}
-\end{figure}
+\begin{table*}
+\begin{tabular}{|l||l|l|l|l|l|l|l|l|l|l|}\hline
+& \multicolumn{2}{|c|}{\color{red}RED} & \multicolumn{2}{|c|}{\color{green}GREEN} & \multicolumn{2}{|c|}{\color{blue}BLUE} & \multicolumn{2}{|c|}{DEEP} &  \multicolumn{2}{|c|}{RGBD} \\\hline
 
+& ORG & Haar & ORG & Haar & ORG & Haar & ORG & Haar & ORG & Haar \\\hline\hline
+IMG01 & 7.518 & 1.347 & 7.616 & 1.313 & 7.557 & 1.904 & 5.198 & 0.607 & 7.491 & 1.076 \\\hline
+IMG02 & 7.564 & 1.298 & 7.626 & 1.291 & 7.467 & 2.086 & 5.183 & 0.913 & 7.504 & 1.077 \\\hline
+IMG03 & 7.584 & 1.270 & 7.595 & 1.705 & 7.235 & 1.841 & 5.314 & 0.537 & 7.491 & 1.058 \\\hline
+IMG04 & 7.573 & 1.723 & 7.621 & 1.619 & 7.499 & 1.990 & 5.121 & 0.895 & 7.502 & 1.077 \\\hline
+IMG05 & 7.531 & 1.679 & 7.628 & 1.294 & 7.547 & 1.910 & 5.209 & 0.625 & 7.508 & 1.066 \\\hline
+IMG06 & 7.754 & 2.167 & 7.653 & 2.368 & 7.677 & 2.597 & 3.746 & 0.798 & 7.235 & 1.254 \\\hline
+IMG07 & 7.737 & 2.318 & 7.669 & 2.487 & 7.679 & 2.634 & 3.580 & 0.789 & 7.251 & 1.286 \\\hline
+IMG08 & 7.656 & 2.138 & 7.558 & 2.356 & 7.578 & 2.605 & 3.826 & 1.023 & 7.182 & 1.298 \\\hline
+IMG09 & 7.748 & 2.311 & 7.663 & 2.673 & 7.676 & 2.722 & 3.395 & 0.843 & 7.207 & 1.305 \\\hline
+IMG10 & 7.769 & 2.330 & 7.678 & 2.475 & 7.686 & 2.671 & 3.584 & 0.797 & 7.224 & 1.300 \\\hline
+IMG11 & 7.642 & 2.021 & 7.595 & 2.373 & 7.585 & 2.434 & 4.066 & 0.793 & 7.226 & 1.246 \\\hline
+IMG12 & 7.562 & 2.090 & 7.510 & 2.188 & 7.410 & 2.468 & 4.214 & 0.702 & 7.334 & 1.235 \\\hline
+IMG13 & 7.602 & 2.005 & 7.508 & 2.221 & 7.397 & 2.501 & 4.731 & 0.775 & 7.381 & 1.252 \\\hline
+IMG14 & 7.626 & 2.295 & 7.537 & 2.340 & 7.500 & 2.630 & 4.621 & 0.820 & 7.341 & 1.301 \\\hline
+IMG15 & 7.718 & 2.134 & 7.731 & 2.532 & 7.743 & 2.583 & 4.617 & 1.032 & 7.424 & 1.280 \\\hline\hline
+MIN & 7.518 & 1.270 & 7.508 & 1.291 & 7.235 & 1.841 & 3.395 & 0.537 & 7.182 & 1.058 \\\hline
+MAX & 7.769 & 2.330 & 7.731 & 2.673 & 7.743 & 2.722 & 5.314 & 1.032 & 7.508 & 1.305 \\\hline
+\end{tabular}
+\caption{\color{red}  ???????????????????????????? needs to be referenced in the text!}
+\end{table*}
 
-\begin{figure}[htb]
-\center
-  \begin{tabular}{ccc}
-     \includegraphics[width=0.5\columnwidth]{figures/range_hitratio_rangefair_aal.pdf}
-     &
-     \includegraphics[width=0.5\columnwidth]{figures/range_hitratio_rangefair_bei.pdf}
-      \\
-     (a) Aalborg & (b)  Beijing
-     \end{tabular}
-\caption{Hit ratio vs. Range, FAIR algorithm}
-\label{fig:rangeVsHitRatio}
-\end{figure}
-
-
-\subsection{Server}\label{subsec:expServer}
-
-
-
-% \begin{figure}[htb]
-% \center
-%   \begin{tabular}{ccc}
-%      \includegraphics[width=0.5\columnwidth]{figures/aalborgHitVsLevelServer.pdf}
-%      &
-%      \includegraphics[width=0.5\columnwidth]{figures/beijingHitVsLevelServer.pdf}
-%       \\
-%      (a) Aalborg data & (b)  Beijing data
-%      \end{tabular}
-% \caption{Hit ratio vs. Levels}
-% \label{fig:levelVsHitRatio}
-% \end{figure}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-% % 
-% % 
-% epstopdf aalborgHitVsCacheSize.eps
-% epstopdf aalborgHitVsCacheSizeServer.eps
-% epstopdf aalborgHitVsLevel.eps
-% epstopdf aalborgHitVsLevelServer.eps
-% epstopdf aalborgNodesVisitedVsCacheSize.eps
-% epstopdf aalborgNodesVisitedVsLevelServer.eps
-% epstopdf aalborgRuntimeVsCacheSize.eps
-% epstopdf aalborgRuntimeVsLevel.eps
-% epstopdf beijingHitVsCacheSize.eps
-% epstopdf beijingHitVsCacheSizeServer.eps
-% epstopdf beijingHitVsLevel.eps
-% epstopdf beijingHitVsLevelServer.eps
-% epstopdf beijingNodesVisitedVsCacheSize.eps
-% epstopdf beijingNodesVisitedVsLevelServer.eps
-% epstopdf beijingRuntimeVsCacheSize.eps
-% epstopdf beijingRuntimeVsLevelServer.eps
-% 
-% load './aalborgHitVsCacheSize.p
-% load './aalborgHitVsCacheSizeServer.p
-% load './aalborgHitVsLevel.p
-% load './aalborgHitVsLevelServer.p
-% load './aalborgNodesVisitedVsCacheSize.p
-% load './aalborgNodesVisitedVsLevel.p
-% load './aalborgRuntimeVsCacheSize.p
-% load './aalborgRuntimeVsLevel.p
-% load './beijingHitVsCacheSize.p
-% load './beijingHitVsCacheSizeServer.p
-% load './beijingHitVsLevel.p
-% load './beijingHitVsLevelServer.p
-% load './beijingNodesVisitedVsCacheSize.p
-% load './beijingNodesVisitedVsLevel.p
-% load './beijingRuntimeVsCacheSize.p
-% load './beijingRuntimeVsLevel.p
