@@ -1,6 +1,6 @@
 \section{Introduction} \label{sec:intro}
 
-This project is motivated by the Microsoft Kinect hardware's ability to capture both image and depth information. 
+This project is motivated by the Microsoft Kinect \cite{kinect} hardware's ability to capture both image and depth information. 
 The images can be captured from the Kinect as a set of raw data dump files or compressed JPEG files. 
 This project will focus on how these two sets of output files can be compressed with both lossy and lossless compression techniques on RGB + D image information. D is depth information the a RGB image.
 
@@ -117,44 +117,18 @@ The depth data stream provides frames in which each pixel contains the Cartesian
 
 Applications can process data from a depth stream to support various custom features, such as tracking users' motions and identifying background objects to ignore during play.
 
-Each pixel in the depth stream uses 13 bits for depth data and 3 bits to identify a player. A depth data value of 0 indicates that no depth data is available at that position because all the objects were either too close to the camera or too far away from it. When skeleton tracking is disabled, the 3 bits that identify a player are set to 0.
+Each pixel in the depth stream uses 13 bits for depth data and 3 bits to identify a player (see fig. \ref{fig:humobject}). A depth data value of 0 indicates that no depth data is available at that position because all the objects were either too close to the camera or too far away from it. When skeleton tracking is disabled, the 3 bits that identify a player are set to 0.
 
-\subsection{Code Implementation}
-{\color{red} is this section really that useful? it does not have much to do with what we do, and I think it may be better just simply omit any direct code references and just describe what a developer needs to do, to use a Kinect}
-\subsubsection{Natural User Interface (NUI) App initiation}
-To receive the information of Kinect API Receiver, it should through the Runtime object. Thus, the first step for the code implementation should be create the Runtime object and use the method "Initialize" for initiation, also call the method "Uninitialize" for closing the application to close the Kinect.
-
-\begin{verbatim}
-Create Runtime Object:
-Runtime nui = new Runtime();
-
-Initialize the Runtime Object:
-Nui.Initialize();
-
-Close the Runtime Object:
-Nui.Uninitialize();
-\end{verbatim}
+\begin{figure}[hbt]
+  \center
+        \includegraphics[width=0.48\textwidth]{figures/projectimage2}
+        \caption{Kinect object format}
+  \label{fig:humobject}
+\end{figure}
 
 \subsubsection{Color Image Data}
 \textit{Image Quantity:} 
 The resolution of color image from the sensor of Kinect is 1280 x 1024 pixels. After converting it to RGB format and possibly image compression, it will be passed to the NUI. NUI will decompress the image data and pass to the application using the Kinect. Because image compression is added, the frame rate can be up to to 30 frames per second. It will however decrease if the quality of the image is set too high.
-
-\textit{Image Format:}
-RGB (32 bits) and YUV (16 bits)
-
-\textit{Image Acquirement:}
-\begin{itemize}
-\item Polling Model \\
-Using program to call the method "ImageStream.GetNextFrame()", and it will return the ImageFrame Object. The attribute "Image" of ImageFrame Object can get the image data.
-
-\item Event Model \\
-Using event method to getting the image data. (e.ImageFrame.Image)
-  \begin{itemize}
-  \item Runtime.DepthFrameReady
-  \item Runtime.VideoFrameReady
-  \end{itemize}
-\end{itemize}
-
 
 An example of an image captured from the RGB camera on a Kinect Device is shown on the left in figure \ref{fig:kinectcaptureimage}.
 
@@ -168,7 +142,7 @@ An example of an image captured from the RGB camera on a Kinect Device is shown 
 \subsubsection{Capture Depth Image}
 The depth image is the image from the IR CMOS camera on the Kinect. An example of how the output looks is shown on the right in figure \ref{fig:kinectcaptureimage}.
 
-Each pixel have 16 bits of depth data for each frame, with a distance range of 850mm - 4000mm. "0" indicates that no depth data is present, or the distance is unknown, e.g. when the Kinect faces a mirror. An Application can implement object tracking using the depth image data.
+Each pixel have 16 bits of depth data for each frame. Kinect support a distance range of 850mm - 4000mm for each frame
 
 Supported resolutions of depth stream:
 \begin{itemize}
@@ -177,21 +151,5 @@ Supported resolutions of depth stream:
 \item 80 x 60
 \end{itemize}
 
-\subsubsection{Image Acquirement}
-ImageFrame.Image.Bits: Byte array from the top and left, each element of this array has 2
-bytes from the ImageFormat object.
-ImageFormat.Depth: Starting from the second byte and then count 8 bits. (0,0) distance =
-(int)(Bits[0] | Bit[1] $<<$ 8)
-ImageFormat.DepthAndPlayerIndex: Kinect system can be detects two human objects throw
-the sensor with the Kinect for Windows SDK. Each human object has a user ID (see fig. \ref{fig:humobject}).
-\begin{itemize}
-\item (0,0) distance = (int)(Bits[0] $>>$ 3 | Bits[1] $<<$ 5)
-\item Last three bits of data is the user ID.
-\end{itemize}
 
-\begin{figure}[hbt]
-  \center
-        \includegraphics[width=0.48\textwidth]{figures/projectimage2}
-        \caption{Kinect ImageFormat object format}
-  \label{fig:humobject}
-\end{figure}
+The rest of this report is organized as follows. Section 2 first describes DCT and Wavelet transform, followed by a description of Lossy JPEG and Lossless PNG compression. Section 3 shows our experimental results. Section 4 wraps up the report with a conclusion.

@@ -1,33 +1,30 @@
 \section{Methodology}
 
-{\color{red} bad form to start a section without describing what will be in it. Since several sections have been moved around this has not been written yet. 
+We will in the following introduce the Discrete Cosine Transform and the Wavelet Transform, along with an example of the Haar wavelet. 
 
-Suggestions are welcome (especially Ben, since you wrote a lot of the content of this section)}
+After this will will go through the main steps to do lossy JPEG and lossless PNG compression.
+
 
 \subsection{Discrete Cosine Transform (DCT)}
 
-The JPEG format on both RGB and grey level images, uses DCT when as part of its compression. 
+The JPEG format uses DCT \cite{dct} when as part of its compression, on both RGB and grey level images. 
 First, the image is broken into blocks of 8 x 8 pixels, which traversed from left to right, top to bottom. DCT is applied to each block. 
-{\color{red} can't fix following sentence, don't understand:} {\color{blue}The image start with a block of image pixel value and the particular block was chosen from the most upper-left hand corner of the image.}
 Since DCT is designed to work on pixel values ranging from -128 to 127, the original block
 is leveled off by subtracting 128 from each entry. 
-{\color{red} can't fix following sentence, don't understand:} {\color{blue}Each block is compressed to perform Discrete Cosine Transform through matrix multiplication which the array of compressed blocks that constitute the image is stored in a drastically reduced amount of space.}
+Each block is compressed through quantization. The array of compressed blocks that constitute the image is stored in a drastically reduced amount of space. 
 
-Generally, {\color{red} can't fix following sentence, don't understand:} {\color{blue}high frequency is less than low frequency block area} and human eyes are not sensitive to high frequency so it can be quantized using fewer bits for storage or communication.
+Generally, there are less high frequency values than low frequency in each block, and since the human eyes are not sensitive to high frequencies, they can be quantized using fewer bits for storage or communication.
 The compressed images are accepted as the same by the human eye. 
 After quantization of the DCT coefficients of each 8 x 8 block, compression will be applied to the coefficients.
-The final step for compression is to quantizize the matrix before storage which converted by an encoder to a stream of binary data. 
+The final step for compression is to quantize the matrix before storage which converted by an encoder to a stream of binary data. 
 After quantization, most of the coefficients will be equal to zero because the encoding  of quantized coefficient is done in as zig-zag sequence in JPEG image. 
 For decompression of image, reconstruction is done by decoding the bit stream representing the quantized matrix. The process uses the Inverse Discrete Cosine Transform (IDCT).
 
 \subsection{Wavelet Transform (WT)}
 
-Wavelet transform is a computational tool for signal and image processing, which is useful for compressing digital image files to reduce storage requirements or transmitting more reliably over low bandwidth networks. 
-{\color{red} can't fix following sentence, does it use both 1D \& 2D?:} {\color{blue}Haar wavelet transforms employed by JPEG one dimensional (1-D) and two dimensional (2-D) transform} are formed by applying 1-D transforms in both the horizontal and vertical direction. 
-{\color{red} explain how time and frequency relates to images!} {\color{blue}Wavelet analysis is based on a short duration wavelet of a specific center frequency. 
-It provides time frequency representation simultaneously which also provides variable resolution at high frequency wavelet transform gives good time resolution and poor frequency resolution whereas at low frequency wavelet transform gives good frequency resolution and poor time resolution. }
-Localized waves have finite energy and suited for analysis of transient signal. 
-{\color{red} shifting operation not mentioned, explain:} {\color{blue}Shifting operation gives time representation of the spectral component and scaling operation gives frequency. }
+Wavelet transform \cite{wt} is a computational tool for signal and image processing, which is useful for compressing digital image files to reduce storage requirements or transmitting more reliably over low bandwidth networks. 
+Wavelet analysis is based on a short duration wavelet of a specific center frequency. 
+It provides time frequency representation simultaneously which also provides variable resolution at high frequency wavelet transform gives good time resolution and poor frequency resolution whereas at low frequency wavelet transform gives good frequency resolution and poor time resolution.
 Computing the wavelet transform by recursively averaging and differentiating coefficients, is
 called a filter bank which generalize to other types of wavelet where no information has
 been gained or lost by the process. 
@@ -36,8 +33,36 @@ The advantage of using wavelet transform is that most of large numbers coefficie
 turn out to be very small in magnitude. Wavelet transform only has small error in reconstructed image, giving a form of lossy image compression by truncating or removing small coefficients from
 the representation.
 
+
+\subsection{2D Haar Wavelet Image Compression}
+In this project, we will use the Haar wavelets in two dimensions for image compression.
+
+The procedure for the 2D Haar wavelet compression is shown as follow:
+\begin{enumerate}
+\item The first step is to apply the 1D transform to each row of the original image;
+\item  The second step is to apply the 1D transform to each column of the 
+row-transformed image;
+\item Such a procedure can be iteratively implemented for multi-scale 2D Haar wavelet 
+compression.
+\end{enumerate}
+
+For 2D Haar Wavelet Transform, the original image will apply the 2D Haar Wavelet and divide the original image into 4 areas: top left, top right, bottom left, right, top and bottom. First, the original image figure \ref{fig:2dhaarwavelet}A performs haar wavelet with 2 times from left to right and then from top to bottom to produce the image figure \ref{fig:2dhaarwavelet}B. 
+Second, it will repeat perform the f from Figure \ref{fig:2dhaarwavelet}B to Figure \ref{fig:2dhaarwavelet}C.
+
+\begin{figure*}[!Hbt]
+  \center
+  \begin{tabular}{ccc}
+    \includegraphics[width=0.35\textwidth]{figures/barbara}&
+    \includegraphics[width=0.35\textwidth]{figures/"Haar_2D_1"}&
+    \includegraphics[width=0.35\textwidth]{figures/"Haar_2D_2"}\\
+    (A)&(B)&(C)\\
+  \end{tabular}
+    \caption{2D Haar wavelet image transform}
+  \label{fig:2dhaarwavelet}
+\end{figure*}
+
 \subsection{Lossy JPEG}
-JPEG is a compression technique for digital images, the compression ratio can be adjusted. Usually, it achieves 10:1 compression ratio with insignificant perceptible loss in image quality.
+JPEG \cite{jpeg} is a compression technique for digital images, the compression ratio can be adjusted. Usually, it achieves 10:1 compression ratio with insignificant perceptible loss in image quality.
 
 \subsubsection{JPEG Compression}
 JPEG lossy compression (see fig. \ref{fig:jpegcompressflow}) based on the DCT (discrete cosine transform). It converts the spatial domain to the frequency domain. The human visual system can not perceive high-frequency information well, such as color hue, so there's quantization procedure to reduce the high frequency information. Quantization is a method to reduce the number of unique values by compressing them into ranges, and then use the small entropy to encode the numbers. The JPEG compression is usually lossy, but there's an option for lossless compression, it's defined under JPEG 2000 standard.
@@ -56,16 +81,16 @@ The image needs to be converted from RGB to another color space, such as HSI or 
 \subsubsection{Down-sampling and Block Splitting}
 The human eye is more sensitive to the brightness of an image ( the Y component or intensity channel) than the Cb and Cr component which are the hue and color saturation. So we can reduce the spatial resolution of the Cb and Cr components, which we can call it down-sampling. After down sampling, we can split each channel into 8x8 blocks. 
 
-\subsubsection{Discrete cosine transform}
+\subsubsection{Discrete Cosine Transform}
 Each 8x8 block of each component YCbCr will be converted to the frequency domain, by using DCT (discrete cosine transform). After transformation, the low frequency pattern will be on left top side and high frequency on the right bottom side.
 
 \subsubsection{Quantization}
 The human eye is good at seeing the small differences in brightness, but not good to see the high frequency brightness. So we can reduce the high frequency components in order to save the space, we divide each component by a constant, and then rounding it to the nearest integer, as a result, many high frequency component will be rounded to 0, and many of the rest become small integer or negative value, which take less bits to represent.
 
 
-\subsection{Huffman Coding}
+\subsubsection{Huffman Coding}
 
-Huffman coding is an entropy encoding algorithm used for lossless data compression. It use a variable-length code table for encoding the source data, the method is base on the estimated probability of each value occurrence. Huffman coding uses \textit{prefix tree codes} to choose the representation for each value, it uses shorter bit strings to encode more likely values. 
+Huffman coding \cite{huffman} is an entropy encoding algorithm used for lossless data compression. It use a variable-length code table for encoding the source data, the method is base on the estimated probability of each value occurrence. Huffman coding uses \textit{prefix tree codes} to choose the representation for each value, it uses shorter bit strings to encode more likely values. 
 
 Figure \ref{fig:huffmancoding} illustrates how the string "Kenn" could be encoded with Huffman:
 
@@ -83,84 +108,9 @@ Figure \ref{fig:huffmancoding} illustrates how the string "Kenn" could be encode
   \label{fig:huffmancoding}
 \end{figure}
 
-
-
-% \subsubsection{Entropy coding}
-% The image component are scanned in "zigzag" order by using run-length encoding, it groups the similar frequencies together, and then use Huffman coding to reduce the bits needed for storage or transmission.
-% 
-% After comparing the original picture and JPEG picture, the quality is similar, there's no visible difference (see fig. \ref{fig:compress2} and \ref{fig:compress3}
-% 
-% \begin{figure}[hbt]
-%   \center
-%         \includegraphics[width=0.45\textwidth]{figures/jpegCompressionimage2}
-%         \caption{The original picture}
-%   \label{fig:compress2}
-% \end{figure}
-% 
-% \begin{figure}[hbt]
-%   \center
-%         \includegraphics[width=0.45\textwidth]{figures/jpegCompressionimage3}
-%         \caption{After JPEG compression}
-%   \label{fig:compress3}
-% \end{figure}
-% 
-% \begin{figure}[!Hbt]
-%   \center
-%         \includegraphics[width=0.45\textwidth]{figures/jpegCompressionimage4}
-%         \caption{After transform to DCT the values are mostly in the top corner}
-% \end{figure}
-% 
-% 
-% Comparing a small part of the matrix for the original picture and JPEG imgage (table. \ref{tab:originalbmpmatix} \& \ref{tab:jpegmatrix}), it is clear the values in both matrix are very close:
-% 
-% \begin{table}
-% BMPImage =\\
-% {\footnotesize
-%   174  174  174  174  173  172  172  172  171  172  174  174  174
-%   174  174  173  172  173  172  172  172  171  172  174  174  174
-%   174  174  173  172  173  173  173  173  172  173  174  174  174
-%   174  174  174  174  174  174  174  174  174  174  174  174  174
-%   174  174  174  173  173  174  174  174  174  174  176  176  175
-%   174  172  172  172  172  174  174  174  174  174  176  176  177
-%   174  172  172  172  173  174  174  174  174  174  176  176  178
-%   174  174  174  173  172  172  173  174  174  174  176  176  178
-%   174  174  174  172  171  171  172  173  174  174  175  176  178
-%   174  173  173  172  171  171  171  172  173  174  175  176  177
-%   173  172  171  172  172  172  171  171  172  174  174  176  176
-%   172  171  172  173  174  174  172  171  172  174  174  174  175
-%   172  172  172  174  172  171  171  171  172  174  174  174  174
-% }
-% \caption{Part of BMP matrix representation}
-% \label{tab:originalbmpmatix}
-% \end{table}
-% \vspace{1em}
-% 
-% \begin{table}
-% \noindent JPEG Image =\\
-% {\footnotesize
-%   174  174  174  174  174  172  172  172  173  173  173  174  174
-%   174  174  174  174  174  172  172  172  173  173  173  174  174
-%   174  174  174  174  174  172  173  173  173  174  174  174  175
-%   174  174  174  174  174  173  174  174  174  175  175  175  176
-%   174  174  174  174  174  174  174  175  175  175  176  176  176
-%   173  173  172  172  172  174  174  174  174  175  176  177  178
-%   173  173  172  172  172  174  173  173  174  174  176  177  178
-%   173  173  172  172  172  173  173  173  173  174  175  177  177
-%   173  173  172  172  172  173  173  173  173  174  175  176  177
-%   173  173  172  172  172  173  172  172  173  173  175  176  177
-%   173  173  172  172  172  172  172  172  172  173  174  176  176
-%   173  173  172  172  172  172  172  172  172  173  174  175  176
-%   173  173  172  172  172  172  172  171  172  173  174  175  176
-% }
-% \caption{Part of JPEG matrix representation}
-% \label{tab:jpegmatrix}
-% \end{table}
-
-
-
 \subsection{Lossless PNG}
 
-Portable Network Graphics (PNG) is a raster graphics file format that supports lossless data compression. PNG was patent-free to replace Graphics Interchange Format (GIF). PNG has better compression an interlacing than GIF and adds new features compared to GIF, e.g. gamma storage, alpha channel, true color support, and error detection. PNG supports two methods of transparency: one-color masking and alpha channel. PNG's full alpha channel makes it possible to create beautiful glows and drop which layer over different-colored backgrounds perfectly. PNG was designed for distribution of images on the internet not for professional graphics.
+Portable Network Graphics (PNG) \cite{png} is a raster graphics file format that supports lossless data compression. PNG was patent-free to replace Graphics Interchange Format (GIF). PNG has better compression an interlacing than GIF and adds new features compared to GIF, e.g. gamma storage, alpha channel, true color support, and error detection. PNG supports two methods of transparency: one-color masking and alpha channel. PNG's full alpha channel makes it possible to create beautiful glows and drop which layer over different-colored backgrounds perfectly. PNG was designed for distribution of images on the internet not for professional graphics.
 
 Lossless PNG uses two stages for compression process: Pre-compression: Filtering (Prediction) and Compression: DEFLATE.
 
@@ -195,17 +145,4 @@ JPEG (Low) 	& 60:1 - 100:1			& Poor quality - suitable for thumbnails and previe
 PNG 		& 10-30\% smaller than GIFs	& PNG's behave similarly to GIF's, only better; they work best with flat-color, sharp-edged art. PNGs compress both horizontally and vertically, so solid blocks of color generally compress best \\\hline
 \end{tabular}
 \end{table*}
-
-
-\subsection{2D Haar Wavelet Image Compression}
-Wavelets are a mathematical tool for hierarchically decomposing functions. They allow a function to be described in term of a coarse overall shape, plus details that range from broad to narrow. Wavelets offer an elegant technique for representing the levels of detail present. In this project, we will use the Haar wavelets in two dimensions for image compression.
-
-The procedure for the 2D Haar wavelet compression is shown as follow:
-\begin{enumerate}
-\item The first step is to apply the 1D transform to each row of the original image;
-\item  The second step is to apply the 1D transform to each column of the 
-row-transformed image;
-\item Such a procedure can be iteratively implemented for multi-scale 2D Haar wavelet 
-compression.
-\end{enumerate}
 
