@@ -3,49 +3,310 @@
 We will in the following show how the different methods described in the previous section actually perform on a dataset produced from a Kinect.
 For each method, Wavelet and JPEG, we will calculate the entropy for each picture to show how much we can save using each method, as well as finding the SNR for each. We will also show the actual space saved per file
 
-\subsubsection{Original image properties}
-
-{\color{red}describe the properties of the original image and give the entropy \& SNR for each of our test images.}
-
-
-\subsubsection{Haar Wavelet test result}
-The following example shows IMG01\_D.bmp for Haar wavelet compression.
+\subsection{Haar Wavelet test result}
+The following example shows IMG01\_D.bmp (fig. \ref{fig:haarwavelettest}) using Haar wavelet compression.
 LHS side shows the original deep image and its entropy = 5.1979 (\textasciitilde 6 bit).
 RHS side shows the Haar wavelet compression and its entropy = 0.60657 (\textasciitilde 2bit)
-It show that the entropy is greatly decreased after using 3rd level 2D Haar wavelet compression.
-
-The table shows entropy of original and after compression in R, G, B, D and RGBD combined in one image.
+It shows that the entropy is greatly decreased after using 3rd level 2D Haar wavelet compression.
 
 \begin{figure}[hbt]
   \center
-        \includegraphics[width=0.45\textwidth]{figures/Wavletcompressionimage1}
-        \caption{Using Haar wavelet compression \color{red} needs to be referenced in the text}
+        \includegraphics[width=0.50\textwidth]{figures/Wavletcompressionimage1}
+        \caption{Using Haar wavelet compression}
   \label{fig:haarwavelettest}
 \end{figure}
 
-\begin{table*}
-\begin{tabular}{|l||l|l|l|l|l|l|l|l|l|l|}\hline
-& \multicolumn{2}{|c|}{\color{red}RED} & \multicolumn{2}{|c|}{\color{green}GREEN} & \multicolumn{2}{|c|}{\color{blue}BLUE} & \multicolumn{2}{|c|}{DEEP} &  \multicolumn{2}{|c|}{RGBD} \\\hline
 
-& ORG & Haar & ORG & Haar & ORG & Haar & ORG & Haar & ORG & Haar \\\hline\hline
-IMG01 & 7.518 & 1.347 & 7.616 & 1.313 & 7.557 & 1.904 & 5.198 & 0.607 & 7.491 & 1.076 \\\hline
-IMG02 & 7.564 & 1.298 & 7.626 & 1.291 & 7.467 & 2.086 & 5.183 & 0.913 & 7.504 & 1.077 \\\hline
-IMG03 & 7.584 & 1.270 & 7.595 & 1.705 & 7.235 & 1.841 & 5.314 & 0.537 & 7.491 & 1.058 \\\hline
-IMG04 & 7.573 & 1.723 & 7.621 & 1.619 & 7.499 & 1.990 & 5.121 & 0.895 & 7.502 & 1.077 \\\hline
-IMG05 & 7.531 & 1.679 & 7.628 & 1.294 & 7.547 & 1.910 & 5.209 & 0.625 & 7.508 & 1.066 \\\hline
-IMG06 & 7.754 & 2.167 & 7.653 & 2.368 & 7.677 & 2.597 & 3.746 & 0.798 & 7.235 & 1.254 \\\hline
-IMG07 & 7.737 & 2.318 & 7.669 & 2.487 & 7.679 & 2.634 & 3.580 & 0.789 & 7.251 & 1.286 \\\hline
-IMG08 & 7.656 & 2.138 & 7.558 & 2.356 & 7.578 & 2.605 & 3.826 & 1.023 & 7.182 & 1.298 \\\hline
-IMG09 & 7.748 & 2.311 & 7.663 & 2.673 & 7.676 & 2.722 & 3.395 & 0.843 & 7.207 & 1.305 \\\hline
-IMG10 & 7.769 & 2.330 & 7.678 & 2.475 & 7.686 & 2.671 & 3.584 & 0.797 & 7.224 & 1.300 \\\hline
-IMG11 & 7.642 & 2.021 & 7.595 & 2.373 & 7.585 & 2.434 & 4.066 & 0.793 & 7.226 & 1.246 \\\hline
-IMG12 & 7.562 & 2.090 & 7.510 & 2.188 & 7.410 & 2.468 & 4.214 & 0.702 & 7.334 & 1.235 \\\hline
-IMG13 & 7.602 & 2.005 & 7.508 & 2.221 & 7.397 & 2.501 & 4.731 & 0.775 & 7.381 & 1.252 \\\hline
-IMG14 & 7.626 & 2.295 & 7.537 & 2.340 & 7.500 & 2.630 & 4.621 & 0.820 & 7.341 & 1.301 \\\hline
-IMG15 & 7.718 & 2.134 & 7.731 & 2.532 & 7.743 & 2.583 & 4.617 & 1.032 & 7.424 & 1.280 \\\hline\hline
-MIN & 7.518 & 1.270 & 7.508 & 1.291 & 7.235 & 1.841 & 3.395 & 0.537 & 7.182 & 1.058 \\\hline
-MAX & 7.769 & 2.330 & 7.731 & 2.673 & 7.743 & 2.722 & 5.314 & 1.032 & 7.508 & 1.305 \\\hline
+\subsection{Quantization and Thresholding}
+
+Most of the image data loss is due to the quantization and thresholding. Choosing appropriate values for quantization and thresholding can enhance the quality of reconstructed images while less number of bits can be used to represent the images.
+
+The IMG01\_RGB.bmp and IMG01\_D.bmp were used to demonstrate the level of distortion on the image due to the quantization and thresholding. Uniform quantization is applied instead of non-uniform quantization, therefore, to reduce the complexity for building the table. 
+
+\subsubsection{DCT Transform}
+The minimum acceptable visual quality level, for reconstructed images, is quantized by 4 and threshold 4.
+The SNR of that is 35.54 dB. When the quantization value or threshold is increased, a significant noise effect on the image is introduced. 
+In table \ref{fig:dctdepth}, it shows that small blocks, which are the DCT blocks, starts to appear. 
+The SNR is also decreased when quantization and thresholding is larger than 4.
+For the RGB channels, the higher values of quantization and thresholding are 8 and 
+2 respectively. The reconstructed RGB image samples are shown in table \ref{fig:dctrgb}. 
+With the increase of quantization value and threshold, the block effect, similar to the 
+depth channel, is introduced.
+
+\begin{table}
+\begin{tabular}{c c}
+Original Image & Q=4, T=2 \\
+\includegraphics[width=0.22\textwidth]{figures/"COMP5422 Experiment Part3image1"} &
+\includegraphics[width=0.22\textwidth]{figures/"COMP5422 Experiment Part3image2"} \\
+& SNR=41.59 dB  \\
+Q=4, T=4 & Q=4, T=16 \\
+\includegraphics[width=0.22\textwidth]{figures/"COMP5422 Experiment Part3image3"} &
+\includegraphics[width=0.22\textwidth]{figures/"COMP5422 Experiment Part3image4"} \\
+SNR= 34.54 dB & SNR= 22.64 dB \\
+Q=16, T=4 & Q=32, T=4 \\
+\includegraphics[width=0.22\textwidth]{figures/"COMP5422 Experiment Part3image5"} &
+\includegraphics[width=0.22\textwidth]{figures/"COMP5422 Experiment Part3image6"} \\
+ SNR= 23.26 dB & SNR= 19.47 dB \\\hline
 \end{tabular}
-\caption{\color{red}  ???????????????????????????? needs to be referenced in the text!}
+\caption{Reconstructed depth image from DCT matrix with different quantization(Q) and thresholding(T) values.}
+\label{fig:dctdepth}
+\end{table}
+
+
+\begin{table}
+\begin{tabular}{cc}
+Original Image & Q=2, T=2 \\ 
+\includegraphics[width=0.22\textwidth]{figures/"COMP5422 Experiment Part3image7"} &
+\includegraphics[width=0.22\textwidth]{figures/"COMP5422 Experiment Part3image8"} \\
+& SNR= 44.47 dB \\
+Q=8, T=2 & Q=8, T=4 \\
+\includegraphics[width=0.22\textwidth]{figures/"COMP5422 Experiment Part3image9"} &
+\includegraphics[width=0.22\textwidth]{figures/"COMP5422 Experiment Part3image10"} \\
+SNR= 35.23 dB & SNR= 31.43 dB \\
+Q=16, T=2 & Q=32, T=4 \\
+\includegraphics[width=0.22\textwidth]{figures/"COMP5422 Experiment Part3image11"} &
+\includegraphics[width=0.22\textwidth]{figures/"COMP5422 Experiment Part3image12"} \\
+SNR= 31.90 dB & SNR= 25.32 dB \\\hline
+\end{tabular}
+\caption{Reconstructed RGB image from DCT matrix with different quantization(Q) and thresholding(T) values}
+\label{fig:dctrgb}
+\end{table}
+
+\subsubsection{Wavelet Transform}
+By comparing the image quality, the highest acceptable values (without block effect) 
+of uniform quantization and thresholding for DCT are: 8 and 2 respectively for RGB channel. Both 4 for depth channel.
+It should ensure that the reconstructed image quality from DCT 
+transform and Wavelet transform are similar. Otherwise, it is not reasonable to 
+compare the compression ratio when the quality difference is too large.
+For the Wavelet Transform, 8-bit is the minimum number of bits to store single 
+pixel information by experiment. To obtain similar image quality of DCT, the highest 
+acceptable uniform quantization value is 4 and thresholding is 1.
+The quantization value for wavelet is smaller because the variation (range) of WT matrix is larger.
+The effect due to the quantization and thresholding are shown in Table \ref{tab:waveletdepth} and Table \ref{tab:waveletrgb}. 
+The above quantization value and thresholding value are used for the whole experiment before encoding the image matrix by Huffman Coding.
+
+\begin{table}
+\center
+\begin{tabular}{cc}
+Original Image & Q=4, T=4 \\
+\includegraphics[width=0.22\textwidth]{figures/"IMG11_D"} &
+\includegraphics[width=0.22\textwidth]{figures/"IMG11_D_Q8_H32"} \\
+& SNR=37.89 dB	\\
+Q=4, T=1 & Q=8, T=2 \\
+\includegraphics[width=0.22\textwidth]{figures/"IMG11_D_BEST_Q32_T8"} &
+\includegraphics[width=0.22\textwidth]{figures/"IMG11_D_Q32_H512"} \\
+SNR= 27.89 dB & SNR= 21.73 dB	\\
+Q=8, T=1 & Q=4, T=4 \\
+\includegraphics[width=0.22\textwidth]{figures/"IMG11_D_Q128_H128"} &
+\includegraphics[width=0.22\textwidth]{figures/"IMG11_D_Q512_H32"} \\
+SNR= 20.16 dB & SNR= 18.47 dB \\\hline
+\end{tabular}
+\caption{Reconstructed depth image from Wavelet transform matrix with different quantization(Q) and thresholding(T) values}
+\label{tab:waveletdepth}
+\end{table}
+
+
+\begin{table}
+\center
+\begin{tabular}{cc}
+Original Image & Q=4, T=4\\
+\includegraphics[width=0.22\textwidth]{figures/"IMG11_RGB"} &
+\includegraphics[width=0.22\textwidth]{figures/"IMG11_RGB_Q2_H2"} \\
+& SNR= 43.12 dB\\
+Q=4, T=1 & Q=8, T=2\\
+\includegraphics[width=0.22\textwidth]{figures/"IMG11_RGB_BEST_Q32_T8"} &
+\includegraphics[width=0.22\textwidth]{figures/"IMG11_RGB_Q32_H512"} \\
+SNR= 29.77 dB & SNR= 17.56 dB \\
+Q=8, T=1 & Q=4, T=4 \\
+\includegraphics[width=0.22\textwidth]{figures/"IMG11_RGB_Q128_H128"} &
+\includegraphics[width=0.22\textwidth]{figures/"IMG11_RGB_Q512_H32"} \\
+SNR= 18.90 dB	 & SNR= 15.37 dB \\\hline
+\end{tabular}
+\caption{Table Q: reconstructed RGB image from Wavelet transform matrix with different 
+quantization(Q) and thresholding(T) values}
+\label{tab:waveletrgb}
+\end{table}
+ 
+
+The SNR has also been used to show that the quality of DCT images and Wavelet images are similar.
+images is similar. Table \ref{tab:snr} shows that the SNQ of most of the reconstructed 
+RGBD image from DCT and Wavelet transform is between 30 dB to 35 dB. The SNR 
+of reconstructed depth channel from Wavelet Transform is higher because the 
+compression based on wavelet transform is limited by the uniform quantization.
+
+\begin{table*}
+\center
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|}\hline
+& \multicolumn{4}{|c|}{DCT} & \multicolumn{4}{|c|}{Wavelet Transform} \\\hline
+& R & G & B & D & R & G & B & D  \\\hline
+IMG01 & 34.27 & 32.37 & 30.73 & 34.54 & 36.36 & 35.05 & 33.40 & 40.54\\\hline
+IMG02 & 34.47 & 32.35 & 30.49 & 34.36 & 36.56 & 34.93 & 33.23 & 40.51\\\hline
+IMG03 & 34.38 & 32.09 & 30.31 & 35.13 & 36.42 & 34.71 & 33.09 & 40.48\\\hline
+IMG04 & 34.54 & 32.29 & 30.63 & 33.65 & 36.61 & 34.95 & 33.33 & 40.13\\\hline
+IMG05 & 34.49 & 32.57 & 30.80 & 34.84 & 36.56 & 35.18 & 33.50 & 40.65\\\hline
+IMG06 & 31.92 & 29.62 & 30.01 & 27.39 & 34.18 & 33.05 & 32.71 & 35.74\\\hline
+IMG07 & 32.54 & 29.94 & 30.27 & 24.87 & 34.73 & 33.40 & 32.97 & 33.34\\\hline
+IMG08 & 32.18 & 29.91 & 30.16 & 27.84 & 34.39 & 33.31 & 32.84 & 35.90\\\hline
+IMG09 & 32.15 & 29.63 & 30.18 & 24.69 & 34.40 & 33.15 & 32.86 & 33.37\\\hline
+IMG10 & 31.74 & 29.40 & 29.87 & 25.75 & 34.02 & 32.85 & 32.55 & 34.16\\\hline
+IMG11 & 31.85 & 29.95 & 29.91 & 27.89 & 34.00 & 33.08 & 32.61 & 35.79\\\hline
+IMG12 & 32.02 & 29.78 & 29.35 & 35.79 & 34.09 & 32.84 & 32.11 & 41.41\\\hline
+IMG13 & 31.50 & 29.38 & 29.11 & 34.17 & 33.63 & 32.53 & 31.87 & 40.86\\\hline
+IMG14 & 31.63 & 29.46 & 29.42 & 33.56 & 33.80 & 32.77 & 32.10 & 40.52\\\hline
+IMG15 & 33.12 & 30.91 & 30.90 & 31.92 & 35.24 & 34.15 & 33.55 & 39.35\\\hline
+\end{tabular}
+\caption{SNR of DCT and wavelet transformed RGBD channel}
+\label{tab:snr}
 \end{table*}
 
+
+\subsubsection{Huffman Coding}
+
+\textit{Entropy:} From table \ref{tab:entropy}, it shows that the entropy of original depth channel is lower than 8, which is around 5 bits. 
+The entropy of Wavelet Transform Depth image matrix is lower than that of DCT. For the RGB channel, the entropy of DCT is lower than the Wavelet Transform.
+
+\begin{table*}
+\center
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|}\hline
+& \multicolumn{4}{|c|}{DCT} & \multicolumn{4}{|c|}{Wavelet Transform} \\\hline
+& R & G & B & D & R & G & B & D  \\\hline
+IMG01 & 0.2203 & 0.2378 & 0.3252 & 0.2872 & 0.4658 & 0.4943 & 0.7022 & 0.2370 \\\hline
+IMG02 & 0.2198 & 0.2348 & 0.3230 & 0.2889 & 0.4598 & 0.4844 & 0.6960 & 0.2524 \\\hline
+IMG03 & 0.2243 & 0.2376 & 0.3032 & 0.2273 & 0.4651 & 0.4876 & 0.6550 & 0.1946 \\\hline
+IMG04 & 0.2216 & 0.2361 & 0.3282 & 0.2752 & 0.4610 & 0.4888 & 0.7048 & 0.2407 \\\hline
+IMG05 & 0.2175 & 0.2331 & 0.3182 & 0.2619 & 0.4433 & 0.4714 & 0.6830 & 0.2242 \\\hline
+IMG06 & 0.3749 & 0.4305 & 0.4584 & 0.3536 & 0.8332 & 0.9158 & 1.0084 & 0.3203 \\\hline
+IMG07 & 0.3813 & 0.4419 & 0.4658 & 0.3267 & 0.8474 & 0.9429 & 1.0226 & 0.3055 \\\hline
+IMG08 & 0.3686 & 0.4199 & 0.4541 & 0.3315 & 0.8124 & 0.8897 & 0.9940 & 0.3064 \\\hline
+IMG09 & 0.3919 & 0.4493 & 0.4670 & 0.3676 & 0.8657 & 0.9538 & 1.0190 & 0.3312 \\\hline
+IMG10 & 0.3901 & 0.4442 & 0.4645 & 0.3409 & 0.8629 & 0.9444 & 1.0165 & 0.3133 \\\hline
+IMG11 & 0.3460 & 0.3746 & 0.4270 & 0.3612 & 0.7538 & 0.8052 & 0.9269 & 0.3018 \\\hline
+IMG12 & 0.3275 & 0.3673 & 0.4258 & 0.3926 & 0.7407 & 0.8067 & 0.9348 & 0.2768 \\\hline
+IMG13 & 0.3392 & 0.3813 & 0.4360 & 0.4158 & 0.7693 & 0.8328 & 0.9554 & 0.3072 \\\hline
+IMG14 & 0.3635 & 0.4107 & 0.4572 & 0.4042 & 0.8291 & 0.8940 & 1.0023 & 0.3076 \\\hline
+IMG15 & 0.3567 & 0.3987 & 0.4473 & 0.3983 & 0.8100 & 0.8866 & 0.9838 & 0.3239 \\\hline
+\end{tabular}
+\caption{Entropy of DCT and wavelet transformed RGBD channel}
+\label{tab:entropy}
+\end{table*}
+
+The entropy of depth images is lower than that of RGB images, this means that depth 
+images can be encoded more effectively. In table \ref{tab:orgimage1}, the entropy of the RGB channels are close to 8 bits. 
+Interestingly, some pixel values in the depth channels seem to appear more frequently than the others. The reason may because there are not many objects which reflected the IR signal back to the Kinect sensor. 
+Some distance or area may not exists any objects, so some pixel appeared less often or even does not appear.
+
+
+\begin{table}
+\center
+\begin{tabular}{|l|r|r|r|r|}\hline
+& \multicolumn{4}{|c|}{Original Image} \\\hline 
+& \multicolumn{1}{|c|}{R} & \multicolumn{1}{|c|}{G} & \multicolumn{1}{|c|}{B} & \multicolumn{1}{|c|}{D} \\\hline 
+IMG01 & 7.5182 & 7.6155 & 7.5565 & 5.1979 \\\hline 
+IMG02 & 7.5640 & 7.6259 & 7.4671 & 5.1827  \\\hline 
+IMG03 & 7.5844 & 7.5947 & 7.2352 & 5.3144  \\\hline
+IMG04 & 7.5725 & 7.6209 & 7.4987 & 5.1205  \\\hline
+IMG05 & 7.5310 & 7.6283 & 7.5470 & 5.2094  \\\hline
+IMG06 & 7.7535 & 7.6534 & 7.6773 & 3.7462  \\\hline
+IMG07 & 7.7373 & 7.6691 & 7.6788 & 3.5797  \\\hline
+IMG08 & 7.6563 & 7.5580 & 7.5783 & 3.8256  \\\hline
+IMG09 & 7.7482 & 7.6625 & 7.6759 & 3.3949  \\\hline
+IMG10 & 7.7692 & 7.6780 & 7.6863 & 3.5842  \\\hline
+IMG11 & 7.6416 & 7.5947 & 7.5846 & 4.0662  \\\hline
+IMG12 & 7.5621 & 7.5096 & 7.4100 & 4.2142  \\\hline
+IMG13 & 7.6021 & 7.5079 & 7.3969 & 4.7312  \\\hline
+IMG14 & 7.6256 & 7.5365 & 7.5003 & 4.6212  \\\hline
+IMG15 & 7.7176 & 7.7311 & 7.7433 & 4.6165 \\\hline
+\end{tabular}
+\caption{Entropy of Original RGBD images}
+\label{tab:orgimage1}
+\end{table}
+
+
+\subsubsection{Total Size (code length in kB}
+The total sizes of the stored image matrix (with quantization and thresholding) are reduced. 
+After applied the Huffman coding, all the RGB-D images either from DCT or Wavelet transform are encoded. Based on the entropy result in table \ref{tab:entropy}, the depth channel should be smaller in size than the other channels. 
+From the table \ref{tab:totalsize1}, it shows that the size of the Depth channel is the lowest within the RGB-D channel after the Huffman Coding. The Wavelet Transform seems work better under the Depth channel.
+
+\begin{table*}
+\center
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|}\hline
+& \multicolumn{4}{|c|}{DCT} & \multicolumn{4}{|c|}{Wavelet Transform} \\\hline
+& R & G & B & D & R & G & B & D  \\\hline
+IMG01 & 56.22 & 57.95 & 66.26 & 60.02 & 59.91 & 61.55 & 72.99 & 50.07\\\hline
+IMG02 & 55.76 & 57.19 & 65.76 & 60.29 & 59.48 & 60.89 & 72.48 & 50.82\\\hline
+IMG03 & 56.31 & 57.64 & 63.62 & 54.34 & 59.94 & 61.15 & 69.70 & 47.82\\\hline
+IMG04 & 55.90 & 57.53 & 66.53 & 58.37 & 59.56 & 61.13 & 73.11 & 50.13\\\hline
+IMG05 & 55.59 & 57.15 & 65.16 & 57.63 & 58.74 & 60.29 & 71.66 & 49.35\\\hline
+IMG06 & 76.26 & 83.44 & 87.22 & 66.03 & 84.42 & 90.53 & 97.80 & 53.90\\\hline
+IMG07 & 77.38 & 85.31 & 88.28 & 62.03 & 85.56 & 92.71 & 99.08 & 52.74\\\hline
+IMG08 & 75.09 & 81.78 & 86.47 & 63.86 & 82.92 & 88.53 & 96.54 & 53.12\\\hline
+IMG09 & 78.73 & 86.31 & 88.53 & 65.87 & 86.98 & 93.62 & 98.74 & 54.13\\\hline
+IMG10 & 78.34 & 85.66 & 88.30 & 63.96 & 86.65 & 92.82 & 98.53 & 53.40\\\hline
+IMG11 & 71.78 & 75.34 & 81.27 & 66.96 & 78.57 & 82.08 & 90.83 & 53.12\\\hline
+IMG12 & 69.60 & 74.46 & 81.13 & 73.06 & 77.81 & 82.25 & 91.37 & 52.25\\\hline
+IMG13 & 71.51 & 76.22 & 82.91 & 75.74 & 79.77 & 84.21 & 93.16 & 54.18\\\hline
+IMG14 & 75.01 & 80.52 & 86.29 & 74.13 & 84.24 & 88.93 & 97.24 & 54.16\\\hline
+IMG15 & 74.02 & 79.33 & 85.15 & 72.72 & 82.80 & 88.35 & 95.70 & 54.91\\\hline
+\end{tabular}
+\caption{The bit-stream size of DCT and wavelet transformed RGBD channel after Huffman Coding}
+\label{tab:totalsize1}
+\end{table*}
+
+The original RGB-D images have been also tried to encode by the Huffman coding 
+and the results are shown in table \ref{tab:totalsize2}. The Huffman coding does not work well for the 
+RGB channels because the entropy of that is high, which is very close to 8 bits. The 
+depth channel can have better compression than the RGB channels.
+
+\begin{table}
+\center
+\small \begin{tabular}{|l|r|r|r|r|}\hline
+&\multicolumn{1}{|c|}{R} & \multicolumn{1}{|c|}{G} & \multicolumn{1}{|c|}{B} & \multicolumn{1}{|c|}{D} \\\hline 
+IMG01 & 869.28 & 880.79 & 874.25 & 605.99 \\\hline 
+IMG02 & 874.36 & 882.37 & 863.30 & 604.39 \\\hline 
+IMG03 & 877.79 & 878.01 & 838.08 & 618.82 \\\hline 
+IMG04 & 875.31 & 881.68 & 866.83 & 597.49 \\\hline 
+IMG05 & 870.63 & 881.85 & 873.41 & 607.89 \\\hline 
+IMG06 & 896.80 & 885.20 & 888.02 & 433.31 \\\hline 
+IMG07 & 895.95 & 886.41 & 888.46 & 414.48 \\\hline 
+IMG08 & 885.60 & 874.21 & 877.37 & 442.42 \\\hline 
+IMG09 & 897.13 & 886.08 & 888.47 & 393.16 \\\hline 
+IMG10 & 899.06 & 888.39 & 889.91 & 414.95 \\\hline 
+IMG11 & 884.47 & 879.84 & 876.78 & 470.23 \\\hline 
+IMG12 & 874.84 & 867.89 & 856.43 & 490.02 \\\hline 
+IMG13 & 879.54 & 867.69 & 854.78 & 550.23 \\\hline 
+IMG14 & 882.51 & 871.94 & 867.05 & 535.87 \\\hline 
+IMG15 & 892.03 & 893.67 & 895.27 & 535.08 \\\hline 
+\end{tabular}
+\caption{The bit-stream size of original RGBD channel after Huffman Coding}
+\label{tab:totalsize2}
+\end{table}
+
+
+\subsubsection{Compression Ratio}
+The compression ratio is calculated by dividing the transformed images size (table \ref{tab:totalsize1})
+by the size of encoded original image (table \ref{tab:totalsize2}) and then took the average. In Table 
+\ref{tab:compressionratio}, it clearly shows that Wavelet Transform did better on depth channel compression, 
+when the DCT did better on RGB channel. However, the results may not indicate 
+the highest efficient of the transform because the distribution and amplitude of 
+the transformed matrix did not consider in other experiment. The non-uniform 
+quantization can further enhance the compression ratio.
+
+\begin{table}
+\center
+\begin{tabular}{|l|l|l|l|}\hline
+\multicolumn{4}{|c|}{DCT} \\\hline
+R & G & B & D  \\\hline
+13.138 & 12.384 & 11.243 & 8.034 \\\hline
+\multicolumn{4}{|c|}{Wavelet Transform} \\\hline
+R & G & B & D  \\\hline
+12.041 & 11.464 & 10.106 & 9.897 \\\hline
+\end{tabular}
+\caption{Compression ratio}
+\label{tab:compressionratio}
+\end{table}
+
+
+From the experimental results (see table \ref{tab:compressionratio}), the Wavelet transform base method can achieve higher compression ratio for Depth channel, while DCT transform doing better for RGB channel. 
+Although the compression ratio is not very large, it is close to performance (1:10 - 1:15) of the built-in JPG coding in Matlab. 
+The reason that our coding method cannot perform high compression ratio is the uniform quantization. 
+Most of the loss of data is due to the quantization and uniform quantization limit the reduction of entropy because the same value of the transformed image matrix cannot be quantized.
