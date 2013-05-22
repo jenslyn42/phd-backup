@@ -375,9 +375,10 @@ double refTime = clock();
 			}
 		}
 		
+		spResult = optiPath(stPair, false);
 		///////////////////////////////////
-		pathVal(stPair, false);
-		if(mhCache.size() > 10) exit(0);
+// 		optiPath(stPair, false);
+// 		if(mhCache.size() > 10) exit(0);
 		///////////////////////////////////////
 
 		if (isPathFound) {
@@ -527,9 +528,9 @@ void Probcache::buildRegionpair2NodepairVector() {
 	}
 }
 
-void Probcache::pathVal(intPair stPair, bool random){
+intVector Probcache::optiPath(intPair stPair, bool random){
   intPairSet vSeen;
-  intVector spResultShort, spResultLong, spResultIntermediate, spDiff;
+  intVector spResultShort, spResultLong, spResultIntermediate, spDiff, returnResult;
   double longScore=0.0, conciseScore=0.0, intermediateScore=0.0;
   int choice;
   std::vector<int>::iterator originalIt, conciseIt, choicePosIt;
@@ -547,22 +548,17 @@ void Probcache::pathVal(intPair stPair, bool random){
   tempConsise = spResultShort;
   std::sort (tempLong.begin(),tempLong.end());
   std::sort (tempConsise.begin(),tempConsise.end());
-
-//       std::set<int> s_model( model.begin(), model.end() );
-//     std::set<int> s_pattern( pattern.begin(), pattern.end() );
-//     std::vector<int> result;
-// 
-//     std::set_difference( s_model.begin(), s_model.end(), s_pattern.begin(), s_pattern.end(),
-//         std::back_inserter( result ) );
   
   spResultIntermediate = spResultShort;
 
   std::set_symmetric_difference(tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), std::back_inserter(spDiff));
   
   cout << "Q:(" << stPair.first << "," << stPair.second << ") " << conciseScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << " (" << tempConsise.size() << "," << tempLong.size() << "," << spDiff.size() << ")" << endl;
+
   //pick which node to insert randomly 
   if(random){
-    double currentScore=conciseScore;
+    double currentScore=conciseScore, bestScore=conciseScore;
+    returnResult = spResultShort;
     while(!spDiff.empty()){
       choice = spDiff[(int)rand()%spDiff.size()];
       choicePosIt = find(spDiff.begin(), spDiff.end(), choice);
@@ -573,27 +569,33 @@ void Probcache::pathVal(intPair stPair, bool random){
       conciseIt = find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt);
       spResultIntermediate.insert(conciseIt+1, choice);
       intermediateScore = calcScore(spResultIntermediate, vSeen);
-//      if(intermediateScore > currentScore) {	
-	cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << intermediateScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size();
-	(intermediateScore > currentScore)? (cout << " +++" << endl) : (cout << " ---" << endl);
-	currentScore=intermediateScore;
-//    }
-      spDiff.erase(choicePosIt);
-      
+         
+      if(intermediateScore > bestScore)
+      {
+	bestScore=intermediateScore;
+	returnResult=spResultIntermediate;
+      }
+
+//      cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << intermediateScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size();
+//      (intermediateScore > currentScore)? (cout << " +++" << endl) : (cout << " ---" << endl);
+
+      currentScore=intermediateScore;
+      spDiff.erase(choicePosIt);     
     }
+    return returnResult;
   }else{
     intVector tempResultIntermidiate, curBestResultIntermidieate;
     int curBestOption;
-    double bestScore, currentScore = conciseScore, intermediateScore, currentBasescore = conciseScore;
+    double tmpBestScore, bestScore=conciseScore, currentScore = conciseScore, intermediateScore, currentBasescore = conciseScore;
     
     while(!spDiff.empty()){
-      bestScore=-1.0;
+      tmpBestScore=-1.0;
       
       BOOST_FOREACH(int option, spDiff){
 	intermediateScore = calcAdditionalScore(spResultIntermediate, option);
 
-	if(intermediateScore > bestScore){
-	  bestScore = intermediateScore;
+	if(intermediateScore > tmpBestScore){
+	  tmpBestScore = intermediateScore;
 	  curBestOption = option;
 	}
       }
@@ -604,17 +606,22 @@ void Probcache::pathVal(intPair stPair, bool random){
 	originalIt--;
       }
       conciseIt = find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt);
-      spResultIntermediate.insert(conciseIt+1, curBestOption);
-      currentBasescore = ((currentBasescore*(double)(spResultIntermediate.size()-1)) + bestScore)/(double)spResultIntermediate.size();
-      
-      choicePosIt = find(spDiff.begin(), spDiff.end(), curBestOption);
-      spDiff.erase(choicePosIt);
-      
-//      if(currentBasescore > currentScore) {
-	cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << currentBasescore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size();
-	(currentBasescore > currentScore)? (cout << " +++" << endl) : (cout << " ---" << endl);
-	currentScore=currentBasescore;
-//      }
+      currentBasescore = ((currentBasescore*(double)(spResultIntermediate.size())) + tmpBestScore)/(double)(spResultIntermediate.size()+1);
+
+       if(currentBasescore > currentScore)
+      {     
+	spResultIntermediate.insert(conciseIt+1, curBestOption);
+
+	choicePosIt = find(spDiff.begin(), spDiff.end(), curBestOption);
+	spDiff.erase(choicePosIt);
+      }else{
+	return spResultIntermediate;
+      }      
+
+//	cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << currentBasescore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size();
+//	(currentBasescore > currentScore)? (cout << " +++" << endl) : (cout << " ---" << endl);
+	
+      currentScore=currentBasescore;
     } 
   }
 }
