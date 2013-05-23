@@ -289,7 +289,7 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen) {
 	continue;
       }
 
-      int temp_count=0;
+      int temp_count=0; //incremented when a node-pair, not already in the cache, is found
       for (int i=0;i<length_iter1;i++) {
 	int nid1 = spResult[start_iter1+i];
 	for (int j=0;j<length_iter2;j++){
@@ -377,10 +377,10 @@ double refTime = clock();
 			}
 		}
 		
-		spResult = optiPath(stPair, false);
+		spResult = optiPath(stPair, vSeen, false);
 		//cout << "spResult.size():" << spResult.size() << endl;
 		///////////////////////////////////
-// 		optiPath(stPair, false);
+// 		optiPath(stPair, vSeen, false);
 // 		if(mhCache.size() > 10) exit(0);
 		///////////////////////////////////////
 		
@@ -532,9 +532,8 @@ void Probcache::buildRegionpair2NodepairVector() {
 	}
 }
 
-intVector Probcache::optiPath(intPair stPair, bool random){
+intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random){
 //   cout << "Probcache::optiPath((" << stPair.first <<","<<stPair.second << "), " << random << ")" << endl;
-  intPairSet vSeen;
   intVector spResultShort, spResultLong, spResultIntermediate, spDiff, returnResult;
   double longScore=0.0, conciseScore=0.0, intermediateScore=0.0;
   int choice;
@@ -598,7 +597,7 @@ intVector Probcache::optiPath(intPair stPair, bool random){
       tmpBestScore=-1.0;
       //cout << "Q3_2:" << endl;
       BOOST_FOREACH(int option, spDiff){
-	intermediateScore = calcAdditionalScore(spResultIntermediate, option);
+	intermediateScore = calcAdditionalScore(spResultIntermediate, option, vSeen);
 
 	if(intermediateScore > tmpBestScore){
 	  tmpBestScore = intermediateScore;
@@ -632,17 +631,20 @@ intVector Probcache::optiPath(intPair stPair, bool random){
   }
 }
 
-double Probcache::calcAdditionalScore(intVector& path, int nid){
+double Probcache::calcAdditionalScore(intVector& path, int nid, intPairSet& vSeen){
   double temp_score, score = 0.0;
   int rid2, rid1 = nodeid2regionid[nid];
-  intPair regionpair;
+  intPair regionpair, nodepair;
 
   BOOST_FOREACH(int pnid, path){
-    rid2 = nodeid2regionid[pnid];
-    regionpair = (rid1 < rid2)? make_pair(rid1,rid2):make_pair(rid2,rid1);
-    temp_score=0;
-    if (trainingQueriesPerRegionPair.find(regionpair) != trainingQueriesPerRegionPair.end())
-      temp_score = trainingQueriesPerRegionPair.at(regionpair);
-    score = score + temp_score;
+    nodepair = (nid < pnid)? make_pair(nid,pnid):make_pair(pnid,nid);
+    if (vSeen.find(nodepair)==vSeen.end()){  // if not in cache
+      rid2 = nodeid2regionid[pnid];
+      regionpair = (rid1 < rid2)? make_pair(rid1,rid2):make_pair(rid2,rid1);
+      temp_score=0;
+      if (trainingQueriesPerRegionPair.find(regionpair) != trainingQueriesPerRegionPair.end())
+	temp_score = trainingQueriesPerRegionPair.at(regionpair);
+      score = score + temp_score;
+    }
   }
 }
