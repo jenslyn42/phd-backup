@@ -378,7 +378,7 @@ double refTime = clock();
 		}
 		
 		spResult = optiPath(stPair, false);
-		cout << "spResult.size():" << spResult.size() << endl;
+		//cout << "spResult.size():" << spResult.size() << endl;
 		///////////////////////////////////
 // 		optiPath(stPair, false);
 // 		if(mhCache.size() > 10) exit(0);
@@ -558,7 +558,7 @@ intVector Probcache::optiPath(intPair stPair, bool random){
 
   std::set_symmetric_difference(tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), std::back_inserter(spDiff));
   
-  cout << "Q:(" << stPair.first << "," << stPair.second << ") " << conciseScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << " (" << tempConsise.size() << "," << tempLong.size() << "," << spDiff.size() << ")" << endl;
+  //cout << "Q:(" << stPair.first << "," << stPair.second << ") " << conciseScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << " (" << tempConsise.size() << "," << tempLong.size() << "," << spDiff.size() << ")" << endl;
 
   //pick which node to insert randomly 
   if(random){
@@ -592,7 +592,7 @@ intVector Probcache::optiPath(intPair stPair, bool random){
     intVector tempResultIntermidiate, curBestResultIntermidieate;
     int curBestOption;
     double tmpBestScore, bestScore=conciseScore, currentScore = conciseScore, intermediateScore, currentBasescore = conciseScore;
-    cout << "Q2_2: " << spDiff.size() << ", " << spDiff.empty() << "," << bestScore << endl;
+    //cout << "Q2_2: " << spDiff.size() << ", " << spDiff.empty() << "," << bestScore << endl;
     while(!spDiff.empty()){
       //cout << "Q3_22:" << endl;
       tmpBestScore=-1.0;
