@@ -55,6 +55,7 @@ Probcache::~Probcache() { }
 
 //does not use argument, but does instead get its info from a .train file.
 void Probcache::runQueryList() {
+	cout << "Probcache::runQueryList()" << endl;
 	intVector spResult;
 	unsigned long existingNodesvisited; //*1* used for keeping track of number of nodes visited by a SP call.
 	
@@ -252,6 +253,7 @@ int Probcache::mapPoint2RegionId(Point coord) {
 }
 
 double Probcache::calcScore(intVector& spResult, intPairSet& vSeen) {
+  //cout << "Probcache::calcScore(spResult.size():" << spResult.size() << ", vSeen.size():" <<vSeen.size() << ")" << endl;
   double score = 0.0;
   bool isEmpty_vSeen=(vSeen.size()==0);
 
@@ -376,10 +378,12 @@ double refTime = clock();
 		}
 		
 		spResult = optiPath(stPair, false);
+		cout << "spResult.size():" << spResult.size() << endl;
 		///////////////////////////////////
 // 		optiPath(stPair, false);
 // 		if(mhCache.size() > 10) exit(0);
 		///////////////////////////////////////
+		
 
 		if (isPathFound) {
 			if(debug)
@@ -529,6 +533,7 @@ void Probcache::buildRegionpair2NodepairVector() {
 }
 
 intVector Probcache::optiPath(intPair stPair, bool random){
+//   cout << "Probcache::optiPath((" << stPair.first <<","<<stPair.second << "), " << random << ")" << endl;
   intPairSet vSeen;
   intVector spResultShort, spResultLong, spResultIntermediate, spDiff, returnResult;
   double longScore=0.0, conciseScore=0.0, intermediateScore=0.0;
@@ -575,7 +580,7 @@ intVector Probcache::optiPath(intPair stPair, bool random){
 	bestScore=intermediateScore;
 	returnResult=spResultIntermediate;
       }
-
+      cout << "Q2_1: " << endl;
 //      cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << intermediateScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size();
 //      (intermediateScore > currentScore)? (cout << " +++" << endl) : (cout << " ---" << endl);
 
@@ -587,10 +592,11 @@ intVector Probcache::optiPath(intPair stPair, bool random){
     intVector tempResultIntermidiate, curBestResultIntermidieate;
     int curBestOption;
     double tmpBestScore, bestScore=conciseScore, currentScore = conciseScore, intermediateScore, currentBasescore = conciseScore;
-    
+    cout << "Q2_2: " << spDiff.size() << ", " << spDiff.empty() << "," << bestScore << endl;
     while(!spDiff.empty()){
+      //cout << "Q3_22:" << endl;
       tmpBestScore=-1.0;
-      
+      //cout << "Q3_2:" << endl;
       BOOST_FOREACH(int option, spDiff){
 	intermediateScore = calcAdditionalScore(spResultIntermediate, option);
 
@@ -599,7 +605,7 @@ intVector Probcache::optiPath(intPair stPair, bool random){
 	  curBestOption = option;
 	}
       }
-      
+      //cout << "Q4_2:" << endl;
       originalIt = find(spResultLong.begin(), spResultLong.end(), curBestOption);
 
       while(find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt) == spResultIntermediate.end()){
@@ -607,9 +613,8 @@ intVector Probcache::optiPath(intPair stPair, bool random){
       }
       conciseIt = find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt);
       currentBasescore = ((currentBasescore*(double)(spResultIntermediate.size())) + tmpBestScore)/(double)(spResultIntermediate.size()+1);
-
-       if(currentBasescore > currentScore)
-      {     
+      //cout << "Q5_2:" << endl;
+      if(currentBasescore > currentScore) {     
 	spResultIntermediate.insert(conciseIt+1, curBestOption);
 
 	choicePosIt = find(spDiff.begin(), spDiff.end(), curBestOption);
@@ -617,12 +622,13 @@ intVector Probcache::optiPath(intPair stPair, bool random){
       }else{
 	return spResultIntermediate;
       }      
-
+      //cout << "Q6_2.: " << endl;
 //	cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << currentBasescore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size();
 //	(currentBasescore > currentScore)? (cout << " +++" << endl) : (cout << " ---" << endl);
 	
       currentScore=currentBasescore;
-    } 
+    }
+    return spResultIntermediate;
   }
 }
 
