@@ -89,7 +89,7 @@ TestObject::TestObject(TestSetting settings) {
 		case ALGO_HQFLRU:
 			test = new HybridHQFLRU(ts);
 			break;
-		 case ALGO_ORACLE:
+		case ALGO_ORACLE:
 			test = new Oracle(ts);
 			break;
 	}
@@ -154,33 +154,33 @@ void TestObject::printResults() {
 	ofstream resultfile;
 	resultfile.open((ts.getTestName()).c_str(), ios::out | ios::ate | ios::app);
 	if(!fileExist){
-		resultfile 	<< "QueryTime\tCacheHits\tDijkstraCalls\tSPcalls\tNodesVisited\t"
-					<< "Algorithm\tScenario\t"
-					<< "CacheSize\tCacheItems\tSplits\tQueryFile\t"
-					<< "NonEmptyRegions\tCalcStatTime\tFillCacheTime\tuseConcisepath\tmeasureConcisepathdegrees" << endl;
+		resultfile << "QueryTime\tCacheHits\tDijkstraCalls\tSPcalls\tNodesVisited\t"
+				<< "Algorithm\tScenario\t"
+				<< "CacheSize\tCacheItems\tSplits\tQueryFile\t"
+				<< "NonEmptyRegions\tCalcStatTime\tFillCacheTime\tuseConcisepath\tmeasureConcisepathdegrees" << endl;
 	}
 	
 	// note: "typeid(*test).name()" no longer used
-	resultfile 	<< (double(end-start))/CLOCKS_PER_SEC << "\t" 
-				<< test->getCacheHits() << "\t" 
-				<< test->getTotalDijkstraCalls() << "\t" 
-				<< ssspCalls << "\t" 
-				<< numNodeVisits << "\t" 
-				
-				<< MatchEnumString(ALGO_ENUM,ts.testAlgo)  << "\t" 
-				<< MatchEnumString(ARCH_ENUM,ts.testScenario) << "\t" 
-
-				<< ts.cacheSize << "\t" 
-				<< ts.getItemsInCache() << "\t"
-				<< ts.getSplits() << "\t" 
-				<< ts.queryFileName << "\t"
-				
-				<< ts.getNonEmptyRegionPairs() << "\t" 
-				<< ts.getBuildStatisticsTime() << "\t"
-				<< ts.getFillCacheTime() << "\t"
-				
-				<< ts.useConcisepath << "\t"
-				<< ts.measureConcisepathdegrees << endl;
+	resultfile << (double(end-start))/CLOCKS_PER_SEC << "\t" 
+			<< test->getCacheHits() << "\t" 
+			<< test->getTotalDijkstraCalls() << "\t" 
+			<< ssspCalls << "\t" 
+			<< numNodeVisits << "\t" 
+			
+			<< MatchEnumString(ALGO_ENUM,ts.testAlgo)  << "\t" 
+			<< MatchEnumString(ARCH_ENUM,ts.testScenario) << "\t" 
+			
+			<< ts.cacheSize << "\t" 
+			<< ts.getItemsInCache() << "\t"
+			<< ts.getSplits() << "\t" 
+			<< ts.queryFileName << "\t"
+			
+			<< ts.getNonEmptyRegionPairs() << "\t" 
+			<< ts.getBuildStatisticsTime() << "\t"
+			<< ts.getFillCacheTime() << "\t"
+			
+			<< ts.useConcisepath << "\t"
+			<< ts.measureConcisepathdegrees << endl;
 
 	resultfile.close();
 }

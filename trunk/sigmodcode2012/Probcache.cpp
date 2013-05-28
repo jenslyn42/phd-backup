@@ -339,141 +339,135 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 	int cid=0;
 
 double refTime = clock();
-	cout << "One. Start fillCacheFromQueriesFileByStatistics" << endl;
+  cout << "One. Start fillCacheFromQueriesFileByStatistics" << endl;
 	
-	buildRegionId2NodeidVector();
-	buildRegionpair2NodepairVector();
+  buildRegionId2NodeidVector();
+  buildRegionpair2NodepairVector();
 
-	// fill up bucketlist with one entry from each region pair.
-	RoadGraph* graph = RoadGraph::mapObject(ts);
-	boost::unordered_map<intPair,CacheItem> bucketList;	// bucket list
-	intPair stPair;
+  // fill up bucketlist with one entry from each region pair.
+  RoadGraph* graph = RoadGraph::mapObject(ts);
+  boost::unordered_map<intPair,CacheItem> bucketList;	// bucket list
+  intPair stPair;
 	
-	cout << " @@2 TIME: " << getElapsedTime(refTime) << endl;
+  cout << " @@2 TIME: " << getElapsedTime(refTime) << endl;
 
-	ts.setNonEmptyRegionPairs(trainingQueriesPerRegionPair.size());
+  ts.setNonEmptyRegionPairs(trainingQueriesPerRegionPair.size());
 
-	cout << "three. Start fillCacheFromQueriesFileByStatistics " << trainingQueriesPerRegionPair.size() << endl;
+  cout << "three. Start fillCacheFromQueriesFileByStatistics " << trainingQueriesPerRegionPair.size() << endl;
 
-	//rank queries based on statistics
-	BOOST_FOREACH(intPairIntMap::value_type rpint, trainingQueriesPerRegionPair) {
-		intPair rp = rpint.first;
-		
-		if (debug)
-			cout << "3.1. rp: (" << rp.first << "," << rp.second << ") " << endl;
+  //rank queries based on statistics
+  BOOST_FOREACH(intPairIntMap::value_type rpint, trainingQueriesPerRegionPair) {
+    intPair rp = rpint.first;
+	
+    if (debug)
+    cout << "3.1. rp: (" << rp.first << "," << rp.second << ") " << endl;
 
-		// pickSTpair is randomized; we try it several times in case it picks a pair with empty spResult
-		bool isPathFound = false;
-		for (int num_trials=0; num_trials<20; num_trials++ ) {	// a threshold
-			stPair = pickSTpair(rp);	// a shortest path query
-			if (debug)
-				cout << "3.2 stPair: (" << stPair.first << "," << stPair.second << ") (" << rp.first << "," << rp.second << ") num_trials: " << num_trials << endl;
+    // pickSTpair is randomized; we try it several times in case it picks a pair with empty spResult
+    bool isPathFound = false;
+    for (int num_trials=0; num_trials<20; num_trials++ ) {	// a threshold
+      stPair = pickSTpair(rp);	// a shortest path query
+      if (debug)
+	cout << "3.2 stPair: (" << stPair.first << "," << stPair.second << ") (" << rp.first << "," << rp.second << ") num_trials: " << num_trials << endl;
 
-			spResult = graph->dijkstraSSSP(stPair.first, stPair.second);
+      spResult = graph->dijkstraSSSP(stPair.first, stPair.second);
 
-			if (spResult.size()>0) {
-				isPathFound = true;
-				break; 
-			}
-		}
-		
-		spResult = optiPath(stPair, vSeen, false);
-		//cout << "spResult.size():" << spResult.size() << endl;
-		///////////////////////////////////
-// 		optiPath(stPair, vSeen, false);
-// 		if(mhCache.size() > 10) exit(0);
-		///////////////////////////////////////
+      if (spResult.size()>0) {
+	isPathFound = true;
+	break; 
+      }
+    }
+
+    //spResult = optiPath(stPair, vSeen, false);
+    //cout << "spResult.size():" << spResult.size() << endl;
+
 		
 
-		if (isPathFound) {
-			if(debug)
-				cout << "3.3 spResult.size: " << spResult.size() << endl;
+    if (isPathFound) {
+      if(debug)
+	cout << "3.3 spResult.size: " << spResult.size() << endl;
 
-			//make new cache item
-			bucketList[rp] = CacheItem(cid, spResult);
-			cid++;
+      //make new cache item
+      bucketList[rp] = CacheItem(cid, spResult);
+      cid++;
 
-			HeapEntry tmp;
-			tmp.pID = rp;
-			tmp.dist = calcScore(spResult, vSeen);
+      HeapEntry tmp;
+      tmp.pID = rp;
+      tmp.dist = calcScore(spResult, vSeen);
 
-			if (tmp.dist>0) // new
-				mhCache.push(tmp);
-				
-			if(debug)
-				cout << "4. score: " << tmp.dist << " tmp.pID: (" << tmp.pID.first << "," << tmp.pID.second << ") tmp.dist: " << tmp.dist << " spLength: " << spResult.size() << " mhCache size: " << mhCache.size() << endl;
-		}
+      if (tmp.dist>0) // new
+	mhCache.push(tmp);
+
+      if(debug)
+	cout << "4. score: " << tmp.dist << " tmp.pID: (" << tmp.pID.first << "," << tmp.pID.second << ") tmp.dist: " << tmp.dist << " spLength: " << spResult.size() << " mhCache size: " << mhCache.size() << endl;
+    }
+  }
+
+  cout << " @@3 TIME: " << getElapsedTime(refTime) << endl;
+
+  // fill cache
+  int num_cache_paths=0,num_zero_paths=0;
+  while(!mhCache.empty()) {
+    HeapEntry tmp = mhCache.top();
+    mhCache.pop();
+
+    // print score, cid, key
+    if (bucketList.find(tmp.pID)==bucketList.end()) {
+      cout << "BLARG!! error occurred" << endl;
+      exit(0);
+    }
+
+    // "tmp.pID" must be found in "bucketList" for the following lines
+    CacheItem& tmpItem = bucketList.at(tmp.pID);
+    if (cache.hasEnoughSpace(tmpItem)) {
+      double curscore = calcScore(tmpItem.item, vSeen);
+
+      if ( (mhCache.size()==0) || (curscore>=mhCache.top().dist) ) {
+	if (curscore>0) {
+	  if (cache.insertItemWithScore(tmpItem, curscore)) {
+	    num_cache_paths++;
+    
+	    BOOST_FOREACH(int v1, tmpItem.item) {
+	      BOOST_FOREACH(int v2, tmpItem.item) {
+		if (v1 < v2)
+		  vSeen.insert(make_pair(v1,v2));
+	      }
+	    }
+	  }
 	}
-
-	cout << " @@3 TIME: " << getElapsedTime(refTime) << endl;
-
-	// fill cache
-	int num_cache_paths=0,num_zero_paths=0;
-	while(!mhCache.empty()) {
-		HeapEntry tmp = mhCache.top();
-		mhCache.pop();
-
-		// print score, cid, key
- 		if (bucketList.find(tmp.pID)==bucketList.end()) {
-			cout << "BLARG!! error occurred" << endl;
-			exit(0);
-		}
-
-		// "tmp.pID" must be found in "bucketList" for the following lines
-		CacheItem& tmpItem = bucketList.at(tmp.pID);
-		if (cache.hasEnoughSpace(tmpItem)) {
-			double curscore = calcScore(tmpItem.item, vSeen);
-
-			if ( (mhCache.size()==0) || (curscore>=mhCache.top().dist) ) {
-				if (curscore>0) {
-					if (cache.insertItemWithScore(tmpItem, curscore)) {
-						num_cache_paths++;
-						if (curscore==0)
-							num_zero_paths++;
-			
-						BOOST_FOREACH(int v1, tmpItem.item) {
-							BOOST_FOREACH(int v2, tmpItem.item) {
-								if (v1 < v2)
-									vSeen.insert(make_pair(v1,v2));
-							}
-						}
-					}
-				}
-
-				//find a new SP for the current region pair
-				intPair stPair = pickSTpair(tmp.pID);
-				spResult = graph->dijkstraSSSP(stPair.first, stPair.second);
-				
-				bucketList[tmp.pID] = CacheItem(cid, spResult);
-				cid++;
-				curscore = calcScore(spResult, vSeen); // update score
-			}
-
-			// update the new entry in mhCache
-			if (curscore>0) {
-				tmp.dist = curscore;
-				mhCache.push(tmp);
-			}
-		}
-
-	}
-
-	printf(" *** num_cache_paths: %d, num_zero_paths: %d\n",num_cache_paths,num_zero_paths);
-	cout << " @@4 TIME: " << getElapsedTime(refTime) << endl;
-
-	ts.setItemsInCache(cache.numberOfItemsInCache());
-	plotCachePoints(cache.cache);
+	//find a new SP for the current region pair
+	intPair stPair = pickSTpair(tmp.pID);
+	spResult = graph->dijkstraSSSP(stPair.first, stPair.second);
 	
-	// only uncomment these lines when we need to plot
-	//plotShortestPaths(QLOG_TRAIN);
-	//plotShortestPaths(QLOG_TEST);
-	
-	cout << "Probcache::calcScoreCounter: " << calcScoreCounter << endl;
+	bucketList[tmp.pID] = CacheItem(cid, spResult);
+	cid++;
+	curscore = calcScore(spResult, vSeen); // update score  
+      }
 
-	cout << " @@5 TIME: " << getElapsedTime(refTime) << endl;
+      // update the new entry in mhCache
+      
+      if (curscore>0) {
+	tmp.dist = curscore;
+	mhCache.push(tmp);
+      }
+    }
+  }
 
-//	cache.writeOutBitmaps();
-//	cache.printNodesTokensPaths();
+  printf("\n*** num_cache_paths: %d, numCacheBits left: %d\n",num_cache_paths, cache.getCachespaceleftBits());
+  cout << " @@4 TIME: " << getElapsedTime(refTime) << endl;
+
+  ts.setItemsInCache(cache.numberOfItemsInCache());
+  plotCachePoints(cache.cache);
+
+  // only uncomment these lines when we need to plot
+  //plotShortestPaths(QLOG_TRAIN);
+  //plotShortestPaths(QLOG_TEST);
+
+  cout << "Probcache::calcScoreCounter: " << calcScoreCounter << endl;
+
+  cout << " @@5 TIME: " << getElapsedTime(refTime) << endl;
+
+  //cache.writeOutBitmaps();
+  //cache.printNodesTokensPaths();
 }
 
 intPair Probcache::pickSTpair(intPair regionPair) {

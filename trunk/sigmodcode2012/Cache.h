@@ -93,7 +93,7 @@ public:
 	int getTotalDijkstraCalls(){return numDijkstraCalls;}
 
 	void readMapData();
-    void plotCachePoints(vector<CacheItem>& cm);
+	void plotCachePoints(vector<CacheItem>& cm);
 	bool plotShortestPaths(QLOG_CHOICE qlog);
 	void readQueryLogData(QLOG_CHOICE qlog);
 	
@@ -159,6 +159,7 @@ public:
 	int numberOfNodesInCache(){return numberOfNodes;}
 	int numberOfItemsInCache(){return cache.size();}
 	void printNodesTokensPaths();
+	int getCachespaceleftBits(){return cacheSize - cacheUsed;}
 	
 	vector<CacheItem> cache;
 	
