@@ -333,12 +333,13 @@ void Probcache::fillCache(){
 }
 
 void Probcache::fillCacheFromQueriesFileByStatistics() {
-    intVector spResult;
-    intPairSet vSeen;
-    maxHeap mhCache;
-	int cid=0;
-
-double refTime = clock();
+  intVector spResult;
+  intPairSet vSeen;
+  maxHeap mhCache;
+  int cid=0;
+  bool isPathFound = false;
+	
+  double refTime = clock();
   cout << "One. Start fillCacheFromQueriesFileByStatistics" << endl;
 	
   buildRegionId2NodeidVector();
@@ -363,7 +364,7 @@ double refTime = clock();
     cout << "3.1. rp: (" << rp.first << "," << rp.second << ") " << endl;
 
     // pickSTpair is randomized; we try it several times in case it picks a pair with empty spResult
-    bool isPathFound = false;
+    isPathFound = false;
     for (int num_trials=0; num_trials<20; num_trials++ ) {	// a threshold
       stPair = pickSTpair(rp);	// a shortest path query
       if (debug)
@@ -406,6 +407,7 @@ double refTime = clock();
   // fill cache
   int num_cache_paths=0,num_zero_paths=0;
   while(!mhCache.empty()) {
+    cout << "mhCache size:" << mhCache.size() << endl;
     HeapEntry tmp = mhCache.top();
     mhCache.pop();
 
@@ -417,6 +419,10 @@ double refTime = clock();
 
     // "tmp.pID" must be found in "bucketList" for the following lines
     CacheItem& tmpItem = bucketList.at(tmp.pID);
+    cout << "hasEnoughSpace / item size: ";
+    (cache.hasEnoughSpace(tmpItem))? cout << "true / " : cout << "false / ";
+    cout << tmpItem.item.size() << endl;
+    
     if (cache.hasEnoughSpace(tmpItem)) {
       double curscore = calcScore(tmpItem.item, vSeen);
 
@@ -433,13 +439,23 @@ double refTime = clock();
 	    }
 	  }
 	}
+	
 	//find a new SP for the current region pair
-	intPair stPair = pickSTpair(tmp.pID);
-	spResult = graph->dijkstraSSSP(stPair.first, stPair.second);
+	// pickSTpair is randomized; we try it several times in case it picks a pair with empty spResult
+	isPathFound = false;
+	for (int num_trials=0; num_trials<20; num_trials++ ) {	// num_trials: a threshold
+	  stPair = pickSTpair(tmp.pID);
+	  spResult = graph->dijkstraSSSP(stPair.first, stPair.second);
+	  curscore = calcScore(spResult, vSeen); // update score  
+
+	  if (spResult.size()>0) {
+	    isPathFound = true;
+	    break; 
+	  }
+	}
 	
 	bucketList[tmp.pID] = CacheItem(cid, spResult);
 	cid++;
-	curscore = calcScore(spResult, vSeen); // update score  
       }
 
       // update the new entry in mhCache
