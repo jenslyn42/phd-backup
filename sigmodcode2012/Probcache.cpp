@@ -235,21 +235,21 @@ void Probcache::split(std::vector<Region>& regions, int axis) {
 // Note: the following function is called heavily
 // optimize this function tomorrow: use an "array" for direct "node-to-region" access!
 int Probcache::mapNodeid2RegionId(int nid) {
-    if(nodeid2Point.find(nid) != nodeid2Point.end())
-        return mapPoint2RegionId(nodeid2Point[nid]);
-    else {
-        cout << "node " << nid << " is not in nodeid2Point"  << endl;
-        return -1;
-    }
+  if(nodeid2Point.find(nid) != nodeid2Point.end())
+    return mapPoint2RegionId(nodeid2Point[nid]);
+  else {
+    cout << "node " << nid << " is not in nodeid2Point"  << endl;
+      return -1;
+  }
 }
 
 int Probcache::mapPoint2RegionId(Point coord) {
-	if(Point2regionidMap.find(coord) != Point2regionidMap.end())
-		return Point2regionidMap[coord];
-	else {
-		cout << "Point (" << coord.first << "," << coord.second << ") does not fit in a region" << endl;
-		return -1;
-	}
+  if(Point2regionidMap.find(coord) != Point2regionidMap.end())
+    return Point2regionidMap[coord];
+  else {
+    cout << "Point (" << coord.first << "," << coord.second << ") does not fit in a region" << endl;
+    return -1;
+  }
 }
 
 double Probcache::calcScore(intVector& spResult, intPairSet& vSeen) {
@@ -377,15 +377,14 @@ double refTime = clock();
       }
     }
 
-    //spResult = optiPath(stPair, vSeen, false);
-    //cout << "spResult.size():" << spResult.size() << endl;
-
-		
 
     if (isPathFound) {
       if(debug)
 	cout << "3.3 spResult.size: " << spResult.size() << endl;
 
+      //optimal path
+      spResult = optiPath(stPair, vSeen, false);
+      
       //make new cache item
       bucketList[rp] = CacheItem(cid, spResult);
       cid++;
@@ -455,6 +454,7 @@ double refTime = clock();
   printf("\n*** num_cache_paths: %d, numCacheBits left: %d\n",num_cache_paths, cache.getCachespaceleftBits());
   cout << " @@4 TIME: " << getElapsedTime(refTime) << endl;
 
+  ts.setNodesInCache(cache.numberOfNodesInCache());
   ts.setItemsInCache(cache.numberOfItemsInCache());
   plotCachePoints(cache.cache);
 
@@ -471,59 +471,60 @@ double refTime = clock();
 }
 
 intPair Probcache::pickSTpair(intPair regionPair) {
-	intPair ansPair;
+  intPair ansPair;
 
-	vector<intPair>& nodePairVector = regionPair2nodePairVector[regionPair];
-	if (debug)
-		cout << "nodepairVector size: " << nodePairVector.size() << endl;
+  vector<intPair>& nodePairVector = regionPair2nodePairVector[regionPair];
+  if (debug)
+    cout << "nodepairVector size: " << nodePairVector.size() << endl;
 	
-	if (nodePairVector.size()>0) { // pick path WITHOUT REPLACEMENT
-		///random choice
-		int slot=(int)rand()%nodePairVector.size();
-		ansPair=nodePairVector[slot];
-		
-		nodePairVector[slot]=nodePairVector.back();	// WITHOUT REPLACEMENT
-		nodePairVector.pop_back();
-	} else { // random choice
-		intVector& nodeVectorRegion1 = regionid2nodeidVector[regionPair.first];
-		intVector& nodeVectorRegion2 = regionid2nodeidVector[regionPair.second];
+  if (nodePairVector.size()>0) { // pick path WITHOUT REPLACEMENT
+    ///random choice
+    int slot=(int)rand()%nodePairVector.size();
+    ansPair=nodePairVector[slot];
 
-		///random choice
-		int nid1 = nodeVectorRegion1[(int)rand()%nodeVectorRegion1.size()];
-		int nid2 = nodeVectorRegion2[(int)rand()%nodeVectorRegion2.size()];
+    nodePairVector[slot]=nodePairVector.back();// WITHOUT REPLACEMENT
+    nodePairVector.pop_back();
+  } else { // random choice
+    intVector& nodeVectorRegion1 = regionid2nodeidVector[regionPair.first];
+    intVector& nodeVectorRegion2 = regionid2nodeidVector[regionPair.second];
 
-		if (nid1 < nid2)
-			ansPair=make_pair<int,int>(nid1,nid2);
-		else
-			ansPair=make_pair<int,int>(nid2,nid1);
-	}
+    ///random choice
+    int nid1 = nodeVectorRegion1[(int)rand()%nodeVectorRegion1.size()];
+    int nid2 = nodeVectorRegion2[(int)rand()%nodeVectorRegion2.size()];
 
-	return ansPair;
+    if (nid1 < nid2)
+      ansPair=make_pair<int,int>(nid1,nid2);
+    else
+      ansPair=make_pair<int,int>(nid2,nid1);
+  }
+
+return ansPair;
 }
 
 void Probcache::buildRegionId2NodeidVector() {
-	BOOST_FOREACH(intPointMap::value_type ic, nodeid2Point) {
-		int rid = mapPoint2RegionId(ic.second);
-		if (regionid2nodeidVector.find(rid) == regionid2nodeidVector.end())
-			regionid2nodeidVector[rid] = vector<int>();
-		regionid2nodeidVector[rid].push_back(ic.first);
-	}
+  BOOST_FOREACH(intPointMap::value_type ic, nodeid2Point) {
+    int rid = mapPoint2RegionId(ic.second);
+    if (regionid2nodeidVector.find(rid) == regionid2nodeidVector.end())
+      regionid2nodeidVector[rid] = vector<int>();
+    regionid2nodeidVector[rid].push_back(ic.first);
+  }
 }
 
 void Probcache::buildRegionpair2NodepairVector() {
-	int rid1,rid2,temp;
-	BOOST_FOREACH(intPair c, trainingSTPointPairs) {
-		rid1 = mapNodeid2RegionId(c.first);
-		rid2 = mapNodeid2RegionId(c.second);
-		if (rid1 > rid2) {
-			temp = rid1; rid1 = rid2; rid2 = temp;
-		}
-		
-		intPair ip = make_pair(rid1,rid2);
-		if (regionPair2nodePairVector.find(ip) == regionPair2nodePairVector.end())
-			regionPair2nodePairVector[ip] = vector<intPair>();
-		regionPair2nodePairVector[ip].push_back(c);
-	}
+  int rid1,rid2,temp;
+  BOOST_FOREACH(intPair c, trainingSTPointPairs) {
+    rid1 = mapNodeid2RegionId(c.first);
+    rid2 = mapNodeid2RegionId(c.second);
+    if (rid1 > rid2) {
+      temp = rid1; rid1 = rid2; rid2 = temp;
+    }
+
+    intPair ip = make_pair(rid1,rid2);
+    if (regionPair2nodePairVector.find(ip) == regionPair2nodePairVector.end()){
+      regionPair2nodePairVector[ip] = vector<intPair>();
+    }
+    regionPair2nodePairVector[ip].push_back(c);
+  }
 }
 
 intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random){
