@@ -442,16 +442,13 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 	
 	//find a new SP for the current region pair
 	// pickSTpair is randomized; we try it several times in case it picks a pair with empty spResult
-	isPathFound = false;
 	for (int num_trials=0; num_trials<20; num_trials++ ) {	// num_trials: a threshold
 	  stPair = pickSTpair(tmp.pID);
 	  spResult = graph->dijkstraSSSP(stPair.first, stPair.second);
 	  curscore = calcScore(spResult, vSeen); // update score  
 
-	  if (spResult.size()>0) {
-	    isPathFound = true;
+	  if (curscore > 0)
 	    break; 
-	  }
 	}
 	
 	bucketList[tmp.pID] = CacheItem(cid, spResult);
