@@ -44,145 +44,146 @@
 
 
 class TestObject {
-public:
-	TestObject(TestSetting settings);
+  public:
+    TestObject(TestSetting settings);
 	
-	~TestObject() {
-		delete test;
-	};
-	
-	void runStaticTest();
-	void printResults();
+    ~TestObject() {
+      delete test;
+    };
+	  
+    void runStaticTest();
+    void printResults();
 
-	AbstractCache *test;
+    AbstractCache *test;
 
-private:
-	TestSetting ts;
-	clock_t start,end;
+  private:
+    TestSetting ts;
+    clock_t start,end;
 };
 
 
 TestObject::TestObject(TestSetting settings) {	
-	ts = settings;
-	
-	cout << "TestObject:: constructor: " << MatchEnumString(ALGO_ENUM,ts.testAlgo) << " test choosen" <<endl;
-	
-	switch( ts.testAlgo ){
-		case ALGO_NONE:
-			ts.cacheSize = 0;	// a special case with 0 cacheSize
-			test = new LRU(ts);
-			break;
-		case ALGO_LRU:
-			test = new LRU(ts);
-			break;
-		case ALGO_SCACHE:
-			test = new Scache(ts);
-			break;
-		case ALGO_SPC:
-		case ALGO_SPCplus:
-		case ALGO_SPCstar:
-			test = new Probcache(ts);
-			break;
-		case ALGO_HQF:
-			test = new HQF(ts);
-			break;
-		case ALGO_HQFLRU:
-			test = new HybridHQFLRU(ts);
-			break;
-		case ALGO_ORACLE:
-			test = new Oracle(ts);
-			break;
-	}
+  ts = settings;
+	  
+  cout << "TestObject:: constructor: " << MatchEnumString(ALGO_ENUM,ts.testAlgo) << " test choosen" <<endl;
+	  
+  switch( ts.testAlgo ){
+    case ALGO_NONE:
+      ts.cacheSize = 0;// a special case with 0 cacheSize
+      test = new LRU(ts);
+      break;
+    case ALGO_LRU:
+      test = new LRU(ts);
+      break;
+    case ALGO_SCACHE:
+      test = new Scache(ts);
+      break;
+    case ALGO_SPC:
+    case ALGO_SPCplus:
+    case ALGO_SPCstar:
+      test = new Probcache(ts);
+      break;
+    case ALGO_HQF:
+      test = new HQF(ts);
+      break;
+    case ALGO_HQFLRU:
+      test = new HybridHQFLRU(ts);
+      break;
+    case ALGO_ORACLE:
+      test = new Oracle(ts);
+      break;
+  }
 }
 
 void TestObject::runStaticTest() {
-	srand(0);	srand48(0);	// fix the random seed
-	
-	if (debug) cout << "TestObject::runStaticTest: static test started" <<endl;
+  srand(0);srand48(0);// fix the random seed
 
-	test->buildCache();
-	if (debug) cout << "TestObject::runStaticTest: queries read" <<endl;
+  if (debug) cout << "TestObject::runStaticTest: static test started" <<endl;
 
-	start = clock();
-	test->runQueryList();
-	end = clock();
+  test->buildCache();
+  if (debug) cout << "TestObject::runStaticTest: queries read" <<endl;
 
-	if (debug) cout << "TestObject::runStaticTest: static test ended" <<endl;
-	printResults();
+  start = clock();
+  test->runQueryList();
+  end = clock();
 
-	RoadGraph::mapObject(ts)->resetRoadGraph();
+  if (debug) cout << "TestObject::runStaticTest: static test ended" <<endl;
+  printResults();
+
+  RoadGraph::mapObject(ts)->resetRoadGraph();
 }
 
 void TestObject::printResults() {
-	///Console output
+  ///Console output
 
-	ts = test->ts;
+  ts = test->ts;
 
-	unsigned long numNodeVisits = RoadGraph::mapObject(ts)->numNodeVisits;
-	int ssspCalls = RoadGraph::mapObject(ts)->ssspCalls;
-	
-	cout << "\n\n--------------------------" << endl;
-	cout << "QueryTime:\t" << (double(end-start))/CLOCKS_PER_SEC << " sec" << endl;
-	cout << "CacheHits:\t" << test->getCacheHits() << "(" << test->getTotalDijkstraCalls() << ")" << endl;
-	cout << "SPcalls:\t" << ssspCalls << endl;
-	cout << "NodesVisited:\t" << numNodeVisits << endl;
+  unsigned long numNodeVisits = RoadGraph::mapObject(ts)->numNodeVisits;
+  int ssspCalls = RoadGraph::mapObject(ts)->ssspCalls;
 
-	//cout << "Class:\t" << typeid(*test).name() <<  endl;
-	cout << "Algorithm:\t" << ts.testAlgo << " " << MatchEnumString(ALGO_ENUM,ts.testAlgo) << endl;
-	cout << "Storage:\t" << ts.testStorage << " " << MatchEnumString(STORAGE_ENUM,ts.testStorage) << endl;
-	cout << "Scenario:\t" << ts.testScenario << " " << MatchEnumString(ARCH_ENUM,ts.testScenario) << endl;	
-	
-	cout << "CacheSize:\t" << ts.cacheSize << endl;
-	cout << "CacheItems:\t" << ts.getItemsInCache() << endl;
+  cout << "\n\n--------------------------" << endl;
+  cout << "QueryTime:\t" << (double(end-start))/CLOCKS_PER_SEC << " sec" << endl;
+  cout << "CacheHits:\t" << test->getCacheHits() << "(" << test->getTotalDijkstraCalls() << ")" << endl;
+  cout << "SPcalls:\t" << ssspCalls << endl;
+  cout << "NodesVisited:\t" << numNodeVisits << endl;
 
-	cout << "Splits:\t" << ts.getSplits() << endl;
-	cout << "QueryFile:\t" << ts.queryFileName << endl;
+  //cout << "Class:\t" << typeid(*test).name() <<  endl;
+  cout << "Algorithm:\t" << ts.testAlgo << " " << MatchEnumString(ALGO_ENUM,ts.testAlgo) << endl;
+  cout << "Storage:\t" << ts.testStorage << " " << MatchEnumString(STORAGE_ENUM,ts.testStorage) << endl;
+  cout << "Scenario:\t" << ts.testScenario << " " << MatchEnumString(ARCH_ENUM,ts.testScenario) << endl;
 
-	cout << "NonEmptyRegions:\t" << ts.getNonEmptyRegionPairs() << endl;
-	cout << "CalcStatTime:\t" << ts.getBuildStatisticsTime() << " sec" <<endl;
-	cout << "FillCacheTime:\t" << ts.getFillCacheTime() << " sec" << endl;
-	cout << "--------------------------\n\n" << endl;
-	
+  cout << "CacheSize:\t" << ts.cacheSize << endl;
+  cout << "CacheItems:\t" << ts.getItemsInCache() << endl;
+  cout << "Avg. ItemLength:\t" << ts.getAvgItemLength() << endl;
 
-	bool fileExist = false;
-	ifstream fin((ts.getTestName()).c_str());
-	if (fin)
-		fileExist = true;// check to see if file exists
-	fin.close();
+  cout << "Splits:\t" << ts.getSplits() << endl;
+  cout << "QueryFile:\t" << ts.queryFileName << endl;
 
-	///file output
-	ofstream resultfile;
-	resultfile.open((ts.getTestName()).c_str(), ios::out | ios::ate | ios::app);
-	if(!fileExist){
-		resultfile << "QueryTime\tCacheHits\tDijkstraCalls\tSPcalls\tNodesVisited\t"
-				<< "Algorithm\tScenario\t"
-				<< "CacheSize\tCacheItems\tSplits\tQueryFile\t"
-				<< "NonEmptyRegions\tCalcStatTime\tFillCacheTime\tuseConcisepath\tmeasureConcisepathdegrees" << endl;
-	}
-	
-	// note: "typeid(*test).name()" no longer used
-	resultfile << (double(end-start))/CLOCKS_PER_SEC << "\t" 
-			<< test->getCacheHits() << "\t" 
-			<< test->getTotalDijkstraCalls() << "\t" 
-			<< ssspCalls << "\t" 
-			<< numNodeVisits << "\t" 
-			
-			<< MatchEnumString(ALGO_ENUM,ts.testAlgo)  << "\t" 
-			<< MatchEnumString(ARCH_ENUM,ts.testScenario) << "\t" 
-			
-			<< ts.cacheSize << "\t" 
-			<< ts.getItemsInCache() << "\t"
-			<< ts.getSplits() << "\t" 
-			<< ts.queryFileName << "\t"
-			
-			<< ts.getNonEmptyRegionPairs() << "\t" 
-			<< ts.getBuildStatisticsTime() << "\t"
-			<< ts.getFillCacheTime() << "\t"
-			
-			<< ts.useConcisepath << "\t"
-			<< ts.measureConcisepathdegrees << endl;
+  cout << "NonEmptyRegions:\t" << ts.getNonEmptyRegionPairs() << endl;
+  cout << "CalcStatTime:\t" << ts.getBuildStatisticsTime() << " sec" <<endl;
+  cout << "FillCacheTime:\t" << ts.getFillCacheTime() << " sec" << endl;
+  cout << "--------------------------\n\n" << endl;
 
-	resultfile.close();
+
+  bool fileExist = false;
+  ifstream fin((ts.getTestName()).c_str());
+  if (fin)
+    fileExist = true;// check to see if file exists
+  fin.close();
+
+  ///file output
+  ofstream resultfile;
+  resultfile.open((ts.getTestName()).c_str(), ios::out | ios::ate | ios::app);
+  if(!fileExist){
+    resultfile << "QueryTime\tCacheHits\tDijkstraCalls\tSPcalls\tNodesVisited\t"
+    << "Algorithm\tScenario\tCacheSize\tCacheItems\tAvg.ItemLength\tSplits\tQueryFile\t"
+    << "NonEmptyRegions\tCalcStatTime\tFillCacheTime\tuseConcisepath\tmeasureConcisepathdegrees" << endl;
+  }
+
+  // note: "typeid(*test).name()" no longer used
+  resultfile << (double(end-start))/CLOCKS_PER_SEC << "\t" 
+  << test->getCacheHits() << "\t" 
+  << test->getTotalDijkstraCalls() << "\t" 
+  << ssspCalls << "\t" 
+  << numNodeVisits << "\t" 
+
+  << MatchEnumString(ALGO_ENUM,ts.testAlgo)  << "\t" 
+  << MatchEnumString(ARCH_ENUM,ts.testScenario) << "\t" 
+
+  << ts.cacheSize << "\t" 
+  << ts.getItemsInCache() << "\t"
+  << ts.getAvgItemLength() << "\t"
+  << ts.getSplits() << "\t" 
+  << ts.queryFileName << "\t"
+
+  << ts.getNonEmptyRegionPairs() << "\t" 
+  << ts.getBuildStatisticsTime() << "\t"
+  << ts.getFillCacheTime() << "\t"
+
+  << ts.useConcisepath << "\t"
+  << ts.measureConcisepathdegrees << endl;
+
+  resultfile.close();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

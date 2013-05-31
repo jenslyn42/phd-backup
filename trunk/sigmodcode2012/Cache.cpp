@@ -330,76 +330,71 @@ bool CacheStorage::hasEnoughSpace(CacheItem ci)
 }
 
 bool CacheStorage::hasEnoughSpace(intVector& sp) {
-    if(testStorage == STORE_GRAPH) {
-		
-		int newNodes = 0; //nodes in ci which is not already in graph
-		BOOST_FOREACH(int v, sp) {
-			if (nodeIdsInCache.find(v) == nodeIdsInCache.end())
-				newNodes++;
-		}
+  if(testStorage == STORE_GRAPH) {
 
-		if ( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize ) 
-			return true;
-			
-	} else if(testStorage == STORE_LIST) {
-	
-		if ( cacheUsed + sp.size()*NODE_BITS < cacheSize ) 
-			return true;
-			
-	} else if(testStorage == STORE_COMPRESS) {
-		if ( cacheUsed < cacheSize )
-			return true;
-	}
-	return false;
+  int newNodes = 0; //nodes in ci which is not already in graph
+  BOOST_FOREACH(int v, sp) {
+    if (nodeIdsInCache.find(v) == nodeIdsInCache.end())
+      newNodes++;
+  }
+
+  if ( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize ) 
+    return true;
+  } else if(testStorage == STORE_LIST) {
+    if ( cacheUsed + sp.size()*NODE_BITS < cacheSize ) 
+      return true;
+  } else if(testStorage == STORE_COMPRESS) {
+    if ( cacheUsed < cacheSize )
+      return true;
+  }
+  return false;
 }
 
 //assumes cache item ci has already been added to vector<CacheItem> cache
 void CacheStorage::updateCacheUsed(CacheItem ci) {
 
-	if (testStorage == STORE_GRAPH) {
-	
-		// add a bitset for each new node
-		intVector& sp = ci.item;
-		
-		BOOST_FOREACH(int v, sp) {
-			if (nodeIdsInCache.find(v) == nodeIdsInCache.end()) {
-				 //set all bits to zero in the bitmap for the first cache.size()-1 bits
-				nodeIdsInCache[v] = boost::dynamic_bitset<>(cache.size()-1);;
-			}
-		}
+  if (testStorage == STORE_GRAPH) {
 
-		BOOST_FOREACH(intDBitset::value_type nb, nodeIdsInCache) {
-			int nid = nb.first;
-			if (find(sp.begin(), sp.end(), nid) != sp.end())
-				nodeIdsInCache[nid].push_back(1);
-			else
-				nodeIdsInCache[nid].push_back(0);
-		}
+    // add a bitset for each new node
+    intVector& sp = ci.item;
 
-		cacheUsed =  nodeIdsInCache.size() * (NODE_BITS + BIT*cache.size()) ;
-		numberOfNodes = nodeIdsInCache.size();
-		
-	} else if (testStorage == STORE_LIST) {
-	
-		cacheUsed = cacheUsed + ci.size*NODE_BITS;
-		numberOfNodes = numberOfNodes + ci.size;
-		
-	} else if (testStorage == STORE_COMPRESS) {
-	
-	    pidSets.insertPath(ci.item);
+    BOOST_FOREACH(int v, sp) {
+      if (nodeIdsInCache.find(v) == nodeIdsInCache.end()) {
+	//set all bits to zero in the bitmap for the first cache.size()-1 bits
+	nodeIdsInCache[v] = boost::dynamic_bitset<>(cache.size()-1);;
+      }
+    }
 
-        int num_paths = cache.size();
-        int num_tokens = pidSets.GetNumTokens();
+    BOOST_FOREACH(intDBitset::value_type nb, nodeIdsInCache) {
+      int nid = nb.first;
+      if (find(sp.begin(), sp.end(), nid) != sp.end())
+	nodeIdsInCache[nid].push_back(1);
+      else
+	nodeIdsInCache[nid].push_back(0);
+    }
+    cout << "cacheused: (" << cacheUsed <<") " << nodeIdsInCache.size() << " " << NODE_BITS  << " " << BIT << " " << cache.size() << " || ";
+    cacheUsed =  nodeIdsInCache.size() * (NODE_BITS + BIT*cache.size()) ;
+    cout << cacheUsed << " (" << cacheSize - cacheUsed << ")" << endl;
+    numberOfNodes = nodeIdsInCache.size();
+  } else if (testStorage == STORE_LIST) {
+    cout << "cacheused: (" << cacheUsed <<") " << cacheUsed << "+" << ci.size << "*" << NODE_BITS << " = ";
+    cacheUsed = cacheUsed + ci.size*NODE_BITS;
+    cout << cacheUsed << " (" << cacheSize - cacheUsed << ")" << endl;
+    numberOfNodes = numberOfNodes + ci.size;
+  } else if (testStorage == STORE_COMPRESS) {
+    pidSets.insertPath(ci.item);
 
-        int pid_bits = ceil( log( num_paths ) / log(2) );
-        int token_bits = ceil( log(  num_tokens ) / log(2) );
+    int num_paths = cache.size();
+    int num_tokens = pidSets.GetNumTokens();
 
-        cacheUsed =  	pidSets.getNumNodes() * ( NODE_BITS + token_bits ) + 
-						pidSets.GetTotalNumItems()  * ( pid_bits + 1 )  +  num_tokens * token_bits * 2 ;
-		numberOfNodes = pidSets.getNumNodes();
-		
-	}
+    int pid_bits = ceil( log( num_paths ) / log(2) );
+    int token_bits = ceil( log(  num_tokens ) / log(2) );
 
+    cout << "cacheused: (" << cacheUsed << ") " << pidSets.getNumNodes() << "* (" << NODE_BITS << "+" << token_bits <<") +" <<  pidSets.GetTotalNumItems() <<"* (" << pid_bits << "+ 1 ) +" <<  num_tokens << "*" << token_bits << "*2 = ";
+    cacheUsed =  pidSets.getNumNodes() * ( NODE_BITS + token_bits ) + pidSets.GetTotalNumItems()  * ( pid_bits + 1 )  +  num_tokens * token_bits * 2;
+    cout << cacheUsed << " (" << cacheSize - cacheUsed << ")" << endl;
+    numberOfNodes = pidSets.getNumNodes();
+  }
 }
 
 void CacheStorage::printNodesTokensPaths()

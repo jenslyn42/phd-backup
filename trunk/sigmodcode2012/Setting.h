@@ -81,8 +81,8 @@ enum ARCH_CHOICE { ARCH_SERVER, ARCH_PROXY };
 
 
 // Important: 	for each "ENUM" type, there is a corresponding "LookupList" in "Setting.cpp"
-//				they follow a naming convention.
-// 				make sure that "InitEnumMappings" is updated according to ENUM above
+//		they follow a naming convention.
+// 		make sure that "InitEnumMappings" is updated according to ENUM above
 extern LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM;
 
 void InitEnumMappings(); // initialize the above "LookupList"
@@ -119,25 +119,25 @@ typedef boost::unordered_map<string,string> ConfigType;
 
 
 struct Region {
-    int id;
-    double xmin,xmax,ymin,ymax;
-	PointVector points;
+  int id;
+  double xmin,xmax,ymin,ymax;
+  PointVector points;
 
-    Region(){ }
+  Region(){ }
 
-    Region(int rid, double _xmin, double _xmax, double _ymin, double _ymax) {
-        id = rid;
-        xmin = _xmin;
-		xmax = _xmax;
-		ymin = _ymin;
-		ymax = _ymax;
-		points.clear();
-    }
+  Region(int rid, double _xmin, double _xmax, double _ymin, double _ymax) {
+    id = rid;
+    xmin = _xmin;
+    xmax = _xmax;
+    ymin = _ymin;
+    ymax = _ymax;
+    points.clear();
+  }
 };
 
 
 class TestSetting {	
-    double fillCacheTime, buildStatisticsTime;
+	double fillCacheTime, buildStatisticsTime, nodesInCache;
 	
 	void printConfigError(string key,bool required);
 	void trimSpace(char* str);
@@ -155,6 +155,8 @@ public:
 	
 	bool useConcisepath;
 	bool measureConcisepathdegrees;
+	
+	
 	
 	ALGO_CHOICE testAlgo;
 	STORAGE_CHOICE testStorage;
@@ -183,7 +185,11 @@ public:
 
 	double getItemsInCache(){return itemsInCache;}
 	void setItemsInCache(double iic){itemsInCache = iic;}
-
+	
+	double getAvgItemLength(){return (double)nodesInCache / (double) itemsInCache;}
+	
+	void setNodesInCache(int numNodes){nodesInCache = numNodes;}
+	
 	double getBuildStatisticsTime(){return buildStatisticsTime;}
 	void setBuildStatisticsTime(double st){buildStatisticsTime = st;}
 
