@@ -157,7 +157,7 @@ void TestObject::printResults() {
   if(!fileExist){
     resultfile << "QueryTime\tCacheHits\tDijkstraCalls\tSPcalls\tNodesVisited\t"
     << "Algorithm\tScenario\tCacheSize\tCacheItems\tAvg.ItemLength\tSplits\tQueryFile\t"
-    << "NonEmptyRegions\tCalcStatTime\tFillCacheTime\tuseConcisepath\tmeasureConcisepathdegrees" << endl;
+    << "NonEmptyRegions\tCalcStatTime\tFillCacheTime\tuseConcisepath\tmeasureConcisepathdegrees\tbitsInCache" << endl;
   }
 
   // note: "typeid(*test).name()" no longer used
@@ -181,7 +181,8 @@ void TestObject::printResults() {
   << ts.getFillCacheTime() << "\t"
 
   << ts.useConcisepath << "\t"
-  << ts.measureConcisepathdegrees << endl;
+  << ts.measureConcisepathdegrees << "\t"
+  << ts.getUnusedCacheBits() << endl;
 
   resultfile.close();
 }

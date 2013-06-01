@@ -384,7 +384,7 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 	cout << "3.3 spResult.size: " << spResult.size() << endl;
 
       //optimal path
-      spResult = optiPath(stPair, vSeen, false);
+      //spResult = optiPath(stPair, vSeen, false);
       
       //make new cache item
       bucketList[rp] = CacheItem(cid, spResult);
@@ -472,9 +472,10 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 
   ts.setNodesInCache(cache.numberOfNodesInCache());
   ts.setItemsInCache(cache.numberOfItemsInCache());
-  plotCachePoints(cache.cache);
+  ts.setUnusedCacheBits(cache.getCachespaceleftBits());
 
   // only uncomment these lines when we need to plot
+  //plotCachePoints(cache.cache);
   //plotShortestPaths(QLOG_TRAIN);
   //plotShortestPaths(QLOG_TEST);
 
