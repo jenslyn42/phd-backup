@@ -161,7 +161,7 @@ public:
 	ALGO_CHOICE testAlgo;
 	STORAGE_CHOICE testStorage;
 	ARCH_CHOICE testScenario;
-	unsigned long cacheSize;
+	unsigned long cacheSize, unusedCacheBits;
 	
 
 	TestSetting();
@@ -189,6 +189,9 @@ public:
 	double getAvgItemLength(){return (double)nodesInCache / (double) itemsInCache;}
 	
 	void setNodesInCache(int numNodes){nodesInCache = numNodes;}
+	
+	long getUnusedCacheBits(){return unusedCacheBits;}
+	void setUnusedCacheBits(int numBits){unusedCacheBits = numBits;}
 	
 	double getBuildStatisticsTime(){return buildStatisticsTime;}
 	void setBuildStatisticsTime(double st){buildStatisticsTime = st;}
