@@ -37,10 +37,9 @@
 #include "ProtoStudy.h"
 #include "Probcache.h"
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define debug true
+#define debug false
 
 
 class TestObject {
@@ -131,6 +130,7 @@ void TestObject::printResults() {
   cout << "Algorithm:\t" << ts.testAlgo << " " << MatchEnumString(ALGO_ENUM,ts.testAlgo) << endl;
   cout << "Storage:\t" << ts.testStorage << " " << MatchEnumString(STORAGE_ENUM,ts.testStorage) << endl;
   cout << "Scenario:\t" << ts.testScenario << " " << MatchEnumString(ARCH_ENUM,ts.testScenario) << endl;
+  cout << "SP calc:\t" << ts.testSPtype << " " << MatchEnumString(SPTYPE_ENUM, ts.testSPtype) << endl;
 
   cout << "CacheSize:\t" << ts.cacheSize << endl;
   cout << "CacheItems:\t" << ts.getItemsInCache() << endl;
@@ -157,7 +157,7 @@ void TestObject::printResults() {
   if(!fileExist){
     resultfile << "QueryTime\tCacheHits\tDijkstraCalls\tSPcalls\tNodesVisited\t"
     << "Algorithm\tScenario\tCacheSize\tCacheItems\tAvg.ItemLength\tSplits\tQueryFile\t"
-    << "NonEmptyRegions\tCalcStatTime\tFillCacheTime\tuseConcisepath\tmeasureConcisepathdegrees\tbitsInCache" << endl;
+    << "NonEmptyRegions\tCalcStatTime\tFillCacheTime\tuseConcisepath\tmeasureConcisepathdegrees\tbitsInCache\tSPcalc\texecTrainWL" << endl;
   }
 
   // note: "typeid(*test).name()" no longer used
@@ -182,13 +182,14 @@ void TestObject::printResults() {
 
   << ts.useConcisepath << "\t"
   << ts.measureConcisepathdegrees << "\t"
-  << ts.getUnusedCacheBits() << endl;
+  << ts.getUnusedCacheBits() << "\t"
+  << MatchEnumString(SPTYPE_ENUM, ts.testSPtype) << "\t"
+  << ts.executeTrainingWorkload << endl;
 
   resultfile.close();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
 int calcAVGpathlengthInCache(std::string fn) {
@@ -218,11 +219,12 @@ void extractTestParameters(TestSetting& ts) {
 	ts.inputFileType = ts.getConfigInt("inputFileType");
 	ts.splits = ts.getConfigInt("splits");	// for Probcache (SPC)
 	ts.scacheQueryType = ts.getConfigInt("scacheQueryType");	// for SCACHE
+	ts.executeTrainingWorkload = ts.getConfigBool("executeTrainingWorkload");
 	
 	ts.cacheSize = ts.getConfigLong("cachesize");	// as number of bits
 	ts.testAlgo = (ALGO_CHOICE) ts.getEnumCode(ALGO_ENUM,"testAlgo");
 	ts.testScenario = (ARCH_CHOICE) ts.getEnumCode(ARCH_ENUM,"testScenario");
-	
+	ts.testSPtype = (SPTYPE_CHOICE) ts.getEnumCode(SPTYPE_ENUM,"testSPtype");
 	
 	// default storage method: the LIST cache 
 	ts.testStorage = STORE_LIST;
@@ -231,7 +233,6 @@ void extractTestParameters(TestSetting& ts) {
 	else if ( ts.testAlgo == ALGO_SPCstar )
 		ts.testStorage = STORE_COMPRESS;
 	
-		
 	if (ts.getConfigBool("useConcisepath")==true) {
 		ts.useConcisepath = true;
 		ts.measureConcisepathdegrees = ts.getConfigBool("measureConcisepathdegrees");
