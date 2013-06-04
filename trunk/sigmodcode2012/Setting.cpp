@@ -32,7 +32,7 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM;
+LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM, SPTYPE_ENUM;
 
 
 void InsertEnum(LookupList& list,int type,string name) {
@@ -61,6 +61,11 @@ void InitEnumMappings() {
 	ARCH_ENUM.clear();
 	InsertEnum(ARCH_ENUM,	ARCH_SERVER,	"SERVER");
 	InsertEnum(ARCH_ENUM,	ARCH_PROXY,	"PROXY");
+	
+	SPTYPE_ENUM.clear();
+	InsertEnum(SPTYPE_ENUM,	FULL,	"FULL");
+	InsertEnum(SPTYPE_ENUM,	CONCISE,	"CONCISE");
+	InsertEnum(SPTYPE_ENUM,	OPTIMAL,	"OPTIMAL");	
 }
 
 

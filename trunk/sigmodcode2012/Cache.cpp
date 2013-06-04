@@ -288,39 +288,44 @@ bool CacheStorage::insertItemWithScore(CacheItem ci, double score) {
 }
 
 bool CacheStorage::checkCache(intPair query) {
-	vector<int> cItem;
+  vector<int> cItem;
 
-	int s = query.first;
-	int t = query.second;
-	assert(s>=0&&s<mapSize);
-	assert(t>=0&&t<mapSize);
-	
-	
-	if (testStorage==STORE_LIST) {
-		BOOST_FOREACH(CacheItem& ci, cache ) {
-			cItem = ci.item;
-			if(find(cItem.begin(),cItem.end(), s) != cItem.end() && find(cItem.begin(),cItem.end(), t) != cItem.end())
-				return true;
-		}	
-	} else {
-		intVector& vecA=invertedLists[s];
-		intVector& vecB=invertedLists[t];
-		if (vecA.size()==0 || vecB.size()==0)
-			return false;
-		
-		// *** merge algorithm (for sorted arrays)
-		int posA=0,posB=0;
-		while (posA<vecA.size() && posB<vecB.size()) {
-			if (vecA[posA]<vecB[posB])
-				posA++;
-			else if (vecA[posA]>vecB[posB]) 
-				posB++;
-			else {// equal path_id
-				return true;
-			}
-		}
-	}
-	return false;
+  int s = query.first;
+  int t = query.second;
+  assert(s>=0&&s<mapSize);
+  assert(t>=0&&t<mapSize);
+
+
+  if (testStorage==STORE_LIST) {
+    BOOST_FOREACH(CacheItem& ci, cache ) {
+      cItem = ci.item;
+      if(find(cItem.begin(),cItem.end(), s) != cItem.end() && find(cItem.begin(),cItem.end(), t) != cItem.end()){
+	if(utilityStats.find(ci.id) == utilityStats.end())
+	  utilityStats[ci.id] = 1;
+	else
+	  utilityStats[ci.id] ++;
+	return true;
+      }
+    }
+  } else {
+    intVector& vecA=invertedLists[s];
+    intVector& vecB=invertedLists[t];
+    if (vecA.size()==0 || vecB.size()==0)
+      return false;
+
+    // *** merge algorithm (for sorted arrays)
+    int posA=0,posB=0;
+    while (posA<vecA.size() && posB<vecB.size()) {
+      if (vecA[posA]<vecB[posB])
+	posA++;
+      else if (vecA[posA]>vecB[posB]) 
+	posB++;
+      else {// equal path_id
+	return true;
+      }
+    }
+  }
+  return false;
 }
 
 //assumes cache item ci has NOT been added to vector<CacheItem> cache
@@ -372,14 +377,14 @@ void CacheStorage::updateCacheUsed(CacheItem ci) {
       else
 	nodeIdsInCache[nid].push_back(0);
     }
-    cout << "cacheused: (" << cacheUsed <<") " << nodeIdsInCache.size() << " " << NODE_BITS  << " " << BIT << " " << cache.size() << " || ";
+    if(debug) cout << "cacheused: (" << cacheUsed <<") " << nodeIdsInCache.size() << " " << NODE_BITS  << " " << BIT << " " << cache.size() << " || ";
     cacheUsed =  nodeIdsInCache.size() * (NODE_BITS + BIT*cache.size()) ;
-    cout << cacheUsed << " (" << cacheSize - cacheUsed << ")" << endl;
+    if(debug) cout << cacheUsed << " (" << cacheSize - cacheUsed << ")" << endl;
     numberOfNodes = nodeIdsInCache.size();
   } else if (testStorage == STORE_LIST) {
-    cout << "cacheused: (" << cacheUsed <<") " << cacheUsed << "+" << ci.size << "*" << NODE_BITS << " = ";
+    if(debug) cout << "cacheused: (" << cacheUsed <<") " << cacheUsed << "+" << ci.size << "*" << NODE_BITS << " = ";
     cacheUsed = cacheUsed + ci.size*NODE_BITS;
-    cout << cacheUsed << " (" << cacheSize - cacheUsed << ")" << endl;
+    if(debug) cout << cacheUsed << " (" << cacheSize - cacheUsed << ")" << endl;
     numberOfNodes = numberOfNodes + ci.size;
   } else if (testStorage == STORE_COMPRESS) {
     pidSets.insertPath(ci.item);
@@ -390,9 +395,9 @@ void CacheStorage::updateCacheUsed(CacheItem ci) {
     int pid_bits = ceil( log( num_paths ) / log(2) );
     int token_bits = ceil( log(  num_tokens ) / log(2) );
 
-    cout << "cacheused: (" << cacheUsed << ") " << pidSets.getNumNodes() << "* (" << NODE_BITS << "+" << token_bits <<") +" <<  pidSets.GetTotalNumItems() <<"* (" << pid_bits << "+ 1 ) +" <<  num_tokens << "*" << token_bits << "*2 = ";
+    if(debug) cout << "cacheused: (" << cacheUsed << ") " << pidSets.getNumNodes() << "* (" << NODE_BITS << "+" << token_bits <<") +" <<  pidSets.GetTotalNumItems() <<"* (" << pid_bits << "+ 1 ) +" <<  num_tokens << "*" << token_bits << "*2 = ";
     cacheUsed =  pidSets.getNumNodes() * ( NODE_BITS + token_bits ) + pidSets.GetTotalNumItems()  * ( pid_bits + 1 )  +  num_tokens * token_bits * 2;
-    cout << cacheUsed << " (" << cacheSize - cacheUsed << ")" << endl;
+    if(debug) cout << cacheUsed << " (" << cacheSize - cacheUsed << ")" << endl;
     numberOfNodes = pidSets.getNumNodes();
   }
 }

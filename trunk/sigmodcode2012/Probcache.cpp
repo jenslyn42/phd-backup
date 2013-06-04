@@ -473,6 +473,11 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
   ts.setNodesInCache(cache.numberOfNodesInCache());
   ts.setItemsInCache(cache.numberOfItemsInCache());
   ts.setUnusedCacheBits(cache.getCachespaceleftBits());
+  
+  BOOST_FOREACH(intPair path, cache.utilityStats)
+  {
+    cout << "PathID - Hits: " << path.first << " - "  << path.second << endl;
+  }
 
   // only uncomment these lines when we need to plot
   //plotCachePoints(cache.cache);
