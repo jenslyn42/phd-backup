@@ -72,7 +72,7 @@ void Probcache::runQueryList() {
 		} else {
 			if(debug) cout << "three, Probcache::checkCache!" << endl;
 			existingNodesvisited = RoadGraph::mapObject(ts)->numNodeVisits; //*1* nodes visited before call
-			spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);
+			if(ts.executeTrainingWorkload) spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);
 			numDijkstraCalls++;		  
 		}
 		
