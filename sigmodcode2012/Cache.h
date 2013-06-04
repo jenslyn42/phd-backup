@@ -163,6 +163,8 @@ public:
 	
 	vector<CacheItem> cache;
 	
+	boost::unordered_map<int, int> utilityStats; //<pathid, cacheHits>
+	
 private:
 	intVector* invertedLists;	// to support fast query processing
 	int mapSize;
@@ -178,7 +180,6 @@ private:
 	CompressedPidTokens pidSets;
 
 	void updateCacheUsed(CacheItem ci);
-
 };
 
 #endif

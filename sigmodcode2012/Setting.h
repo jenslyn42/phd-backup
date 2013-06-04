@@ -79,11 +79,14 @@ enum STORAGE_CHOICE { STORE_LIST, STORE_GRAPH, STORE_COMPRESS };
 // architecture choice
 enum ARCH_CHOICE { ARCH_SERVER, ARCH_PROXY };
 
+// SP calculation choice
+enum SPTYPE_CHOICE {FULL, CONCISE, OPTIMAL };
+
 
 // Important: 	for each "ENUM" type, there is a corresponding "LookupList" in "Setting.cpp"
 //		they follow a naming convention.
 // 		make sure that "InitEnumMappings" is updated according to ENUM above
-extern LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM;
+extern LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM, SPTYPE_ENUM;
 
 void InitEnumMappings(); // initialize the above "LookupList"
 int MatchEnumCode(LookupList& list,string str);		// lookup an enum value by a string
@@ -155,12 +158,13 @@ public:
 	
 	bool useConcisepath;
 	bool measureConcisepathdegrees;
-	
+	bool executeTrainingWorkload;
 	
 	
 	ALGO_CHOICE testAlgo;
 	STORAGE_CHOICE testStorage;
 	ARCH_CHOICE testScenario;
+	SPTYPE_CHOICE testSPtype;
 	unsigned long cacheSize, unusedCacheBits;
 	
 
