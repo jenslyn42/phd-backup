@@ -407,7 +407,7 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
   // fill cache
   int num_cache_paths=0,num_zero_paths=0;
   while(!mhCache.empty()) {
-    cout << "mhCache size:" << mhCache.size() << endl;
+    //cout << "mhCache size:" << mhCache.size() << endl;
     HeapEntry tmp = mhCache.top();
     mhCache.pop();
 
@@ -419,9 +419,9 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 
     // "tmp.pID" must be found in "bucketList" for the following lines
     CacheItem& tmpItem = bucketList.at(tmp.pID);
-    cout << "hasEnoughSpace / item size: ";
-    (cache.hasEnoughSpace(tmpItem))? cout << "true / " : cout << "false / ";
-    cout << tmpItem.item.size();
+   // cout << "hasEnoughSpace / item size: ";
+   // (cache.hasEnoughSpace(tmpItem))? cout << "true / " : cout << "false / ";
+   // cout << tmpItem.item.size();
     
     if (cache.hasEnoughSpace(tmpItem)) {
       double curscore = calcScore(tmpItem.item, vSeen);
@@ -431,7 +431,7 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 	  if (cache.insertItemWithScore(tmpItem, curscore)) {
 	    num_cache_paths++;
  
-	    cout << " ADDED! Numpaths: " << num_cache_paths;
+	    //cout << " ADDED! Numpaths: " << num_cache_paths;
 	    BOOST_FOREACH(int v1, tmpItem.item) {
 	      BOOST_FOREACH(int v2, tmpItem.item) {
 		if (v1 < v2)
@@ -456,7 +456,7 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 	cid++;
       }
       
-      cout << " replacement bucket score: " << curscore << endl;
+      //cout << " replacement bucket score: " << curscore << endl;
 
       // update the new entry in mhCache
       if (curscore>0) {
