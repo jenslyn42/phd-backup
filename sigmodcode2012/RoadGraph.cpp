@@ -42,46 +42,44 @@ boost::unordered_map<int, int*> RoadGraph::spTrace;
 
 RoadGraph* RoadGraph::mapInstance = NULL;
 
-RoadGraph* RoadGraph::mapObject(TestSetting& ts)
-{
-	// obtain parameter values
-	std::string testFile=ts.getTestFile();
-	int pt=ts.inputFileType;
-	
-	if (mapInstance==NULL){
-		mapInstance = new RoadGraph();
-		mapInstance->useConcisepath = ts.useConcisepath;
-		mapInstance->measureConcisepathdegrees = ts.measureConcisepathdegrees;
-		mapInstance->parseFileType = pt;
-		mapInstance->ssspCalls = 0;
-		mapInstance->numNodeVisits = 0;
-		mapInstance->readSPTreeFileBinary(ts);
-		mapInstance->countSuccess=0;
-		mapInstance->countFail=0;
-printf("*** RoadGraph::read\n");
+RoadGraph* RoadGraph::mapObject(TestSetting& ts){
+  // obtain parameter values
+  std::string testFile=ts.getTestFile();
+  int pt=ts.inputFileType;
 
-		switch( (mapInstance->parseFileType) ){
-			case 1:
-				cout << "mapObject[case1], parseFileType: " << mapInstance->parseFileType << " " << testFile << endl;
-				mapInstance->readRoadNetworkFile(testFile);
-				break;
-			case 2:
-				cout << "mapObject[case2], parseFileType: " << mapInstance->parseFileType << " " << testFile << endl;
-				mapInstance->readPPINetworkFile(testFile);
-				break;
-			case 3:
-				cout << "mapObject[case3], parseFileType: " << mapInstance->parseFileType << " " << testFile;
-				mapInstance->readCedgeNetworkFile(testFile);
-				cout << " ... done" << endl;
-				break;
-		}
-	} else if((mapInstance->parseFileType) != pt)
-	{
-		delete mapInstance;
-		mapInstance = NULL; //if type of file to be parsed changes, delete mapInstance
-	}
-	
-	return mapInstance;
+  if (mapInstance==NULL){
+    mapInstance = new RoadGraph();
+    mapInstance->useConcisepath = ts.useConcisepath;
+    mapInstance->measureConcisepathdegrees = ts.measureConcisepathdegrees;
+    mapInstance->parseFileType = pt;
+    mapInstance->ssspCalls = 0;
+    mapInstance->numNodeVisits = 0;
+    mapInstance->readSPTreeFileBinary(ts);
+    mapInstance->countSuccess=0;
+    mapInstance->countFail=0;
+    printf("*** RoadGraph::read\n");
+
+    switch( (mapInstance->parseFileType) ){
+      case 1:
+	cout << "mapObject[case1], parseFileType: " << mapInstance->parseFileType << " " << testFile << endl;
+	mapInstance->readRoadNetworkFile(testFile);
+	break;
+      case 2:
+	cout << "mapObject[case2], parseFileType: " << mapInstance->parseFileType << " " << testFile << endl;
+	mapInstance->readPPINetworkFile(testFile);
+	break;
+      case 3:
+	cout << "mapObject[case3], parseFileType: " << mapInstance->parseFileType << " " << testFile;
+	mapInstance->readCedgeNetworkFile(testFile);
+	cout << " ... done" << endl;
+	break;
+    }
+  }else if((mapInstance->parseFileType) != pt){
+    delete mapInstance;
+    mapInstance = NULL; //if type of file to be parsed changes, delete mapInstance
+  }
+
+  return mapInstance;
 }
 
 vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {

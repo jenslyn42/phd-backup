@@ -232,13 +232,22 @@ void extractTestParameters(TestSetting& ts) {
 		ts.testStorage = STORE_GRAPH;
 	else if ( ts.testAlgo == ALGO_SPCstar )
 		ts.testStorage = STORE_COMPRESS;
-	
-	if (ts.getConfigBool("useConcisepath")==true) {
-		ts.useConcisepath = true;
-		ts.measureConcisepathdegrees = ts.getConfigBool("measureConcisepathdegrees");
-	}else ts.useConcisepath = false;
-	
-	
+
+	switch(ts.testSPtype){
+	  case FULL:
+	    ts.useConcisepath = false;
+	    ts.measureConcisepathdegrees = false;
+	    break;
+	  case CONCISE:
+	    ts.useConcisepath = true;
+	    ts.measureConcisepathdegrees = true;
+	    break;
+	  case OPTIMAL:
+	    ts.useConcisepath = false;
+	    ts.measureConcisepathdegrees = false;
+	    break;
+	}
+
 	// format: "experiment"_"testAlgo"_"testFile (3 letters)".test
 	// 		   "experiment" to be added later
 	if (ts.getConfigBool("autoTestName")==true) {
