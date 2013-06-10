@@ -80,7 +80,7 @@ enum STORAGE_CHOICE { STORE_LIST, STORE_GRAPH, STORE_COMPRESS };
 enum ARCH_CHOICE { ARCH_SERVER, ARCH_PROXY };
 
 // SP calculation choice
-enum SPTYPE_CHOICE {FULL, CONCISE, OPTIMAL };
+enum SPTYPE_CHOICE {SPTYPE_FULL, SPTYPE_CONCISE, SPTYPE_OPTIMAL };
 
 
 // Important: 	for each "ENUM" type, there is a corresponding "LookupList" in "Setting.cpp"
@@ -105,6 +105,7 @@ typedef std::pair<intPair,intPair> intPairPairs;
 typedef boost::unordered_set<intPair> intPairSet;
 typedef boost::unordered_map<int, intPair > intPairMap;
 typedef boost::unordered_map<intPair, int> intPairIntMap;
+typedef boost::unordered_map<int, pair<clock_t, int> > intTimeIntPairMap;
 
 typedef boost::unordered_map<int, int> intMap;
 typedef boost::unordered_map<int, double> intDoubleMap;
