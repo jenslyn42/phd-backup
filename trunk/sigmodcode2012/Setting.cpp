@@ -63,9 +63,9 @@ void InitEnumMappings() {
 	InsertEnum(ARCH_ENUM,	ARCH_PROXY,	"PROXY");
 	
 	SPTYPE_ENUM.clear();
-	InsertEnum(SPTYPE_ENUM,	FULL,	"FULL");
-	InsertEnum(SPTYPE_ENUM,	CONCISE,	"CONCISE");
-	InsertEnum(SPTYPE_ENUM,	OPTIMAL,	"OPTIMAL");	
+	InsertEnum(SPTYPE_ENUM,	SPTYPE_FULL,	"FULL");
+	InsertEnum(SPTYPE_ENUM,	SPTYPE_CONCISE,	"CONCISE");
+	InsertEnum(SPTYPE_ENUM,	SPTYPE_OPTIMAL,	"OPTIMAL");	
 }
 
 

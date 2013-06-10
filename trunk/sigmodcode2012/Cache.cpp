@@ -284,6 +284,7 @@ bool CacheStorage::insertItem(CacheItem ci) {
 
 bool CacheStorage::insertItemWithScore(CacheItem ci, double score) {
 	ci.setScore(score);
+	ci.insertTime = clock();
 	return insertItem(ci);
 }
 
@@ -301,9 +302,9 @@ bool CacheStorage::checkCache(intPair query) {
       cItem = ci.item;
       if(find(cItem.begin(),cItem.end(), s) != cItem.end() && find(cItem.begin(),cItem.end(), t) != cItem.end()){
 	if(utilityStats.find(ci.id) == utilityStats.end())
-	  utilityStats[ci.id] = 1;
+	  utilityStats[ci.id] = make_pair<clock_t,int>(ci.insertTime, 1);
 	else
-	  utilityStats[ci.id] ++;
+	  utilityStats[ci.id].second++;
 	return true;
       }
     }

@@ -234,15 +234,15 @@ void extractTestParameters(TestSetting& ts) {
 		ts.testStorage = STORE_COMPRESS;
 
 	switch(ts.testSPtype){
-	  case FULL:
+	  case SPTYPE_FULL:
 	    ts.useConcisepath = false;
 	    ts.measureConcisepathdegrees = false;
 	    break;
-	  case CONCISE:
+	  case SPTYPE_CONCISE:
 	    ts.useConcisepath = true;
 	    ts.measureConcisepathdegrees = true;
 	    break;
-	  case OPTIMAL:
+	  case SPTYPE_OPTIMAL:
 	    ts.useConcisepath = false;
 	    ts.measureConcisepathdegrees = false;
 	    break;

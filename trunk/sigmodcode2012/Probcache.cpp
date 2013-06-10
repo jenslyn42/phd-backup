@@ -55,29 +55,34 @@ Probcache::~Probcache() { }
 
 //does not use argument, but does instead get its info from a .train file.
 void Probcache::runQueryList() {
-	cout << "Probcache::runQueryList()" << endl;
-	intVector spResult;
-	unsigned long existingNodesvisited; //*1* used for keeping track of number of nodes visited by a SP call.
-	
-	RoadGraph::mapObject(ts)->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
-	
-	BOOST_FOREACH(intPair q, testSTPointPairs) { 
-		
-		numTotalQueries++;	// track usage info
+  cout << "Probcache::runQueryList()" << endl;
+  intVector spResult;
+  unsigned long existingNodesvisited; //*1* used for keeping track of number of nodes visited by a SP call.
 
-		if (debug) cout << "one, Probcache::checkCache! :cacheSize:" << (int) cache.size() <<"::"<< endl;
-			
-		if (cache.checkCache(q)) { // cacheHit
-			numCacheHits++;
-		} else {
-			if(debug) cout << "three, Probcache::checkCache!" << endl;
-			existingNodesvisited = RoadGraph::mapObject(ts)->numNodeVisits; //*1* nodes visited before call
-			if(ts.executeTrainingWorkload) spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);
-			numDijkstraCalls++;		  
-		}
-		
-		if(debug) cout << "four, Probcache::checkCache!" << endl;
-	}
+  RoadGraph::mapObject(ts)->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
+
+  BOOST_FOREACH(intPair q, testSTPointPairs) { 
+
+    numTotalQueries++;// track usage info
+
+    if (debug) cout << "one, Probcache::checkCache! :cacheSize:" << (int) cache.size() <<"::"<< endl;
+
+    if (cache.checkCache(q)) { // cacheHit
+      numCacheHits++;
+    } else {
+      if(debug) cout << "three, Probcache::checkCache!" << endl;
+      existingNodesvisited = RoadGraph::mapObject(ts)->numNodeVisits; //*1* nodes visited before call
+      if(ts.executeTrainingWorkload) spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);
+      numDijkstraCalls++;  
+    }
+
+    if(debug) cout << "four, Probcache::checkCache!" << endl;
+  }
+
+  BOOST_FOREACH(intTimeIntPairMap::value_type path, cache.utilityStats){
+    cout << "Time, PathID - Hits: " << path.second.first << ", " << path.first << " - "  << path.second.second << endl;
+  }
+  cout << "---------\nPaths usefull: " << cache.utilityStats.size() << "\n--------- " << endl;
 }
 
 
@@ -384,7 +389,7 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 	cout << "3.3 spResult.size: " << spResult.size() << endl;
 
       //optimal path
-      //spResult = optiPath(stPair, vSeen, false);
+      if(ts.testSPtype == SPTYPE_OPTIMAL) spResult = optiPath(stPair, vSeen, false);
       
       //make new cache item
       bucketList[rp] = CacheItem(cid, spResult);
@@ -473,11 +478,6 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
   ts.setNodesInCache(cache.numberOfNodesInCache());
   ts.setItemsInCache(cache.numberOfItemsInCache());
   ts.setUnusedCacheBits(cache.getCachespaceleftBits());
-  
-  BOOST_FOREACH(intPair path, cache.utilityStats)
-  {
-    cout << "PathID - Hits: " << path.first << " - "  << path.second << endl;
-  }
 
   // only uncomment these lines when we need to plot
   //plotCachePoints(cache.cache);

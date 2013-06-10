@@ -41,6 +41,7 @@ class CacheItem {
 public:
 	int id, s, t, size;
 	intVector item;
+	clock_t insertTime;
 
 	CacheItem();
 	CacheItem(int key, intVector& item);
@@ -124,7 +125,7 @@ public:
 	int GetNumTokens() { return _num_token;}
 
 private:
-	boost::unordered_map<int,int> NodeTokens;						// the token of each node
+	boost::unordered_map<int,int> NodeTokens;			// the token of each node
 	boost::unordered_map<int,CompressPidType*> TokenCompressPids;	// the compressed path of each token
 
 	int _num_token;
@@ -163,7 +164,7 @@ public:
 	
 	vector<CacheItem> cache;
 	
-	boost::unordered_map<int, int> utilityStats; //<pathid, cacheHits>
+	boost::unordered_map<int, std::pair<clock_t,int> > utilityStats; //<pathid, cacheHits>
 	
 private:
 	intVector* invertedLists;	// to support fast query processing

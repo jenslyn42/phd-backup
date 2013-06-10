@@ -5,20 +5,23 @@
 testAlgo = SPC
 // choices: NONE, SPC, SPCPLUS, SPCSTAR, LRU, HQF, SCACHE, HQFLRU, ORACLE
 // Since '+','*' is not allowed in filename; we use SPCPLUS, SPCSTAR instead
-
 // note: no need to specify the "cache storage" type; it is decided by "testAlgo" directly
 
 testScenario = PROXY
 // choices: SERVER, PROXY
 
-testSPtype = OPTIMAL
+
+testSPtype = full
 // choices: FULL, CONCISE, OPTIMAL
 
+
 testName = cachesize_SPC_AAL.test
+
 
 autoTestName = true
 // choices: true, false
 // if true, override the testName automatically  "experiment"_"testAlgo"_"testFile (3 letters)"
+
 
 testFile = aalborgNEW.cedge
 // choices: aalborgNEW.cedge, beijingNEW.cedge
