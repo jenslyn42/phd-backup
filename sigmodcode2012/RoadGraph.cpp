@@ -516,7 +516,7 @@ void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
     double refTime = clock();
 // 	string prefixFn = ts.queryFileName;
 // 	prefixFn.replace ((prefixFn.size())-6, 6, "");
-	string prefixFn = "VERIFYSecondRANDaalborgNEWGP10R1600";
+	string prefixFn = "VERIFYSecondRANDaalborgNEWGP10R3200";
 	
     int token1,token2,token3;
 	int curPoiNodeId=-1;
