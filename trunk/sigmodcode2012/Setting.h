@@ -59,6 +59,34 @@
 #include <boost/dynamic_bitset.hpp>
 using namespace std;
 
+////////CHcodes///////////////////////////////////////
+#include <sstream>
+#include <iomanip>
+
+#include "CHcodes/config.h"
+#include "CHcodes/stats/counter.h"
+#include "CHcodes/stats/utils.h"
+
+/* Linux Lib */
+#include <unistd.h>
+
+/* Headers */ 
+#include "CHcodes/Command.h"
+
+//These two must be placed first as they include necessary typedef statementm like NodeID, EdgeID etc.
+#include "CHcodes/io/createGraph.h"
+#include "CHcodes/io/output.h"
+
+#include "CHcodes/datastr/graph/UpdateableGraph.h"
+#include "CHcodes/datastr/graph/SearchGraph.h"
+#include "CHcodes/processing/DijkstraCH.h"
+#include "CHcodes/processing/ConstructCH.h"
+
+typedef datastr::graph::UpdateableGraph UpdateableGraph;
+typedef processing::ConstructCH<UpdateableGraph> ProcessingConstruct;
+typedef processing::DijkstraCH<UpdateableGraph, NormalPQueue, 2, false> Dijkstra;
+//////////////////////////////////////////////////////
+
 
 //Used in acache and when defining tests
 #define NODE_BITS (32)

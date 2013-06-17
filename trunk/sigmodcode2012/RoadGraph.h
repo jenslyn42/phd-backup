@@ -33,9 +33,8 @@
 
 #include "Setting.h"
 
-
-typedef std::pair<int,double> Edge;
-typedef std::vector<Edge> EdgeList;
+typedef std::pair<int,double> JEdge;
+typedef std::vector<JEdge> EdgeList;
 
 
 class RoadGraph

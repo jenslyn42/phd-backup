@@ -31,6 +31,7 @@
 #define ROADGRAPH_CPP
 
 #include "RoadGraph.h"
+
 #define debug false
 //specifically for the dijkstraSSSP() method
 #define spDebug false
@@ -157,7 +158,7 @@ printf("*** RoadGraph::init array\n");
 		numNodeVisits++;	// usage info
 		
 		EdgeList& CurAdjList=map[curnode];
-		BOOST_FOREACH (Edge neighbour, CurAdjList)
+		BOOST_FOREACH (JEdge neighbour, CurAdjList)
 		{
 			int NextNodeID = neighbour.first; //id
 			double NextWeight = neighbour.second; 
@@ -317,11 +318,11 @@ void RoadGraph::addEdge(int v1, int v2, double w) {
 	EdgeList& eList2=map[v2];
 	
 	bool isFound=false;
-	BOOST_FOREACH (Edge e, eList1) {
+	BOOST_FOREACH (JEdge e, eList1) {
 		if (e.first==v2)
 			isFound=true;
 	}
-	BOOST_FOREACH (Edge e, eList2) {
+	BOOST_FOREACH (JEdge e, eList2) {
 		if (e.first==v1)
 			isFound=true;
 	}
@@ -648,7 +649,7 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
 	angleToNextNode=0.0;
 	minAngle=std::numeric_limits<double>::max();
 	if(conciseDebug) cout << "prevNode: " << prevNode << endl;
-	BOOST_FOREACH(Edge edge, edges){
+	BOOST_FOREACH(JEdge edge, edges){
 	  if(edge.first != prevNode){
 	    tmp=getAngle(prev, curr, nid2Point[edge.first]);
 	    if(conciseDebug) (tmp < minAngle)? (cout << "true: " << tmp <<"," << minAngle << endl) : (cout << "false: " << tmp <<"," << minAngle << endl);
@@ -788,7 +789,7 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
 	    }
 	  }else{  
 	    if(conciseDebug) cout << "(" << prevNode << "," << curNode << ") @";
-	    BOOST_FOREACH(Edge edge, edges){
+	    BOOST_FOREACH(JEdge edge, edges){
 	      if(edge.first != prevNode){
 		tmp=getAngle(nid2Point[prevNode], nid2Point[curNode], nid2Point[edge.first]);
 		if(conciseDebug) (tmp < minAngle)? (cout << "true: " << tmp <<"," << minAngle << endl) : (cout << "false: " << tmp <<"," << minAngle << endl);
