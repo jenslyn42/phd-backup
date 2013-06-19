@@ -302,7 +302,7 @@ bool CacheStorage::checkCache(intPair query) {
       cItem = ci.item;
       if(find(cItem.begin(),cItem.end(), s) != cItem.end() && find(cItem.begin(),cItem.end(), t) != cItem.end()){
 	if(utilityStats.find(ci.id) == utilityStats.end())
-	  utilityStats[ci.id] = make_pair<clock_t,int>(ci.insertTime, 1);
+	  utilityStats[ci.id] = std::make_pair<clock_t,int>(ci.insertTime, 1);
 	else
 	  utilityStats[ci.id].second++;
 	return true;

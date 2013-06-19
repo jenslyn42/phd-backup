@@ -82,9 +82,10 @@ using namespace std;
 #include "CHcodes/processing/DijkstraCH.h"
 #include "CHcodes/processing/ConstructCH.h"
 
-typedef datastr::graph::UpdateableGraph UpdateableGraph;
-typedef processing::ConstructCH<UpdateableGraph> ProcessingConstruct;
-typedef processing::DijkstraCH<UpdateableGraph, NormalPQueue, 2, false> Dijkstra;
+// typedef datastr::graph::UpdateableGraph UpdateableGraph;
+// typedef processing::ConstructCH<UpdateableGraph> ProcessingConstruct;
+// typedef processing::DijkstraCH<UpdateableGraph, NormalPQueue, 2, false> Dijkstra;
+
 //////////////////////////////////////////////////////
 
 
