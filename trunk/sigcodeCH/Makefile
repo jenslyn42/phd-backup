@@ -1,0 +1,59 @@
+CXX = g++ #-3.4.3#-4.0.2
+DEBUG = #-pg #-g #-ggdb
+WARNING = -Wall -W -Wno-unused-parameter -Wno-deprecated #-w
+OPTIMIZER = -O6 #-finline-limit=1000
+
+CXXFLAGS = $(DEBUG) $(WARNING) $(OPTIMIZER)
+# LIBS = /lib/libboost_regex-mt.dll.a /lib/libboost_iostreams-mt.dll.a
+LIBS = /usr/lib64/libboost_regex-mt.a /usr/lib64/libboost_iostreams-mt.a
+LINK = -lboost_regex-mt -lboost_iostreams-mt
+
+#CCOPTS   = -c -O
+#
+#SRC = main.cpp
+#DEP = $(SRC:%.cpp=%.d) 
+#main: main.o
+#	$(CXX) $(LINK) -o $@ $^ $(LIBS)
+#include $(DEP)
+#
+#.o:
+#	g++ $(CCOPTS) $<
+#	
+#Setting: 
+#	g++ -c -O Setting.cpp
+
+
+clean:
+	rm -f main *.o *.exe
+
+
+build_jeppe: jeppemain.cpp 
+	g++ -Wno-deprecated $(LINK) jeppemain.cpp -o jeppemain $(LIBS)	
+	
+
+#%.d: %.cpp
+#	$(SHELL) -ec '$(CXX) -MM $(CXXFLAGS) $< \
+#                      | sed '\''s/\($*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
+#                      [ -s $@ ] || rm -f $@'
+
+
+# Compile IndexingCH.cpp
+build_index: IndexingCH.cpp
+	g++ -Wno-deprecated $(LINK) IndexingCH.cpp -o buildCHindex $(LIBS)
+
+# Compile QueryingCH.cpp -- example SP file
+build_query: QueryingCH.cpp
+	g++ -Wno-deprecated $(LINK) QueryingCH.cpp -o QueryingCH $(LIBS)
+
+# Create node ordering file for NY
+# 
+# -x 190 -y 1 -e 600 -p 1000 -k 1,3.3,2,10,3,10,5
+# The above arguments specify the parameters of one of the CH heuristics which is called "EOS1235"
+# "EOS1235" has the minimum contraction and node ordering time
+# Example command for IndexingCH -- THIS WONT WORK ANYMORE, since it now reads .cedge files, not .ddsg files
+build_hcn_NY:
+	./IndexingCH -s -p -f data/NY_t_0.ddsg -o hcn/NY_t_0-EOS1235.hcn -l hcn/NY_t_0-EOS1235.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
+	
+# Example command for QueryingCH
+run_query:
+	./QueryingCH -f data/NY_t_0.ddsg -h hcn/NY_t_0-EOS1235.hcn -k 1,3.3,2,10,3,10,5
