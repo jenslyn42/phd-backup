@@ -91,19 +91,31 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts){
 vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {
 	std::vector<int> trace;
 	std::vector<unsigned int> temp;
+	
 	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 1 " << endl;
 
 	spDist = sp->bidirSearch(source, dest); //distance
-	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 2 " << endl;
+// 	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 2 " << endl;
 	sp->pathTo(path, dest, -1, true, true); //shortest path
-	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 3 " << endl;
-	sp->clear();
-	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 4 " << endl;
+// 	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 3 " << endl;
+// 	sp->clear();
+// 	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 4 " << endl;
 	temp = path.getNodeVector();
-	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 5 " << endl;
+// 	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 5 " << endl;
 	for (int i=0;i<temp.size();i++)
 	  trace.push_back((int)(temp[i]));
 	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 6 " << endl;
+	
+	/////////////////
+	cout << "(" << source << "," << dest << ") [" << trace.size() << " - " << spDist << "] ";
+	BOOST_FOREACH(int node, trace){ cout << node << ",";}
+	cout << " *1*" << endl;
+	BOOST_FOREACH(unsigned int node, trace){ cout << node << ",";}
+	cout << " *2*" << endl;
+	sp->clear();
+	//////////////////
+	
+	
 	return trace;
 }
 
@@ -926,10 +938,6 @@ void  RoadGraph::testCH(){
 	VERBOSE( cout << "Contracting graph ..." << endl;)
 	construct->constructHierarchy(contractParams);
 	
-	/* 
-		Run Some Sample SP Query
-		You may change the source and target ID 
-	*/
 	Dijkstra sp(updGraph);
 	Path p;
 	EdgeWeight spDist;
