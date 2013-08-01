@@ -400,7 +400,7 @@ cout << "******************************************" << endl;
 	vector<int> spPath;
 	
 	std::pair<double, double> firstPair, secondPair;
-	int firstPnt, secondPnt, temp;
+	int firstPnt, secondPnt, temp, i=0;
 	string str;
 	std::vector<string> tokens;
 	ifstream qlogFile (fn.c_str(), ios::in);
@@ -419,8 +419,11 @@ cout << "******************************************" << endl;
 	}
 	qlogFile.close();
 
-	BOOST_FOREACH(intPair q, testSTPointPairs) { 
+	cout << "three, stPointPairs size: " << stPointPairs.size() << endl;
+	BOOST_FOREACH(intPair q, stPointPairs) { 
 	  RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);
+	  i++;
+	  if(i==50) break;
 	}
 /////////////////////////////////////////	
 	
