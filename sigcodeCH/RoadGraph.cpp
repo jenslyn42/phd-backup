@@ -89,29 +89,25 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts){
 // 	Path path;
 // 	EdgeWeight spDist;
 vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {
-	std::vector<int> trace;
-	std::vector<unsigned int> temp;
+	std::vector<int> trace, trace2;
+	std::vector<unsigned int> temp, temp2;
+	Path path2;
 	
 	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 1 " << endl;
 
 	spDist = sp->bidirSearch(source, dest); //distance
-// 	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 2 " << endl;
-	sp->pathTo(path, dest, -1, true, true); //shortest path
-// 	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 3 " << endl;
-// 	sp->clear();
-// 	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 4 " << endl;
+	path2 = sp->pathTo(path, dest, -1, false, true); //shortest path
 	temp = path.getNodeVector();
-// 	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 5 " << endl;
+
 	for (int i=0;i<temp.size();i++)
 	  trace.push_back((int)(temp[i]));
-	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 6 " << endl;
 	
-	/////////////////
-	cout << "(" << source << "," << dest << ") [" << trace.size() << " - " << spDist << "] ";
-	BOOST_FOREACH(int node, trace){ cout << node << ",";}
-	cout << " *1*" << endl;
-	BOOST_FOREACH(unsigned int node, trace){ cout << node << ",";}
-	cout << " *2*" << endl;
+	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 6 " << endl;
+
+	///////////////////
+// 	cout << "(" << source << "," << dest << ") [" << trace.size() << " - " << spDist << " / " << path.length() << "] " << endl;;
+// 	BOOST_FOREACH(int node, trace){ cout << node << ",";}
+// 	cout << " *1.1*" << endl;
 	sp->clear();
 	//////////////////
 	
@@ -119,113 +115,121 @@ vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {
 	return trace;
 }
 
-// vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {
-//   std::vector<int> trace;
-//   if(spDebug)cout << "dijkstraSSSP: " << source << "," << dest << " : " <<  useConcisepath << endl;
-//   ssspCalls++;
-// 
-//   trace = getSPfromSPTree(source, dest);
-//   if(spDebug) cout << "RoadGraph::dijkstraSSSP 2 " << trace.empty() << " " << trace.size() << endl; 
-//   if(!trace.empty()){
-//     if(useConcisepath){
-//       if(spDebug) cout << "RoadGraph::dijkstraSSSP 3 " << endl;
-//       return calcConsisePath(trace);
-//     }else 
-//       return trace;
-//   }
-// 
-// 
-//   if (spDebug) 
-//     cout << "one, dijkstraSSSP! map:" << mapSize <<" s,t:" << source <<"," <<dest << endl;
-// 
-//   if ( source<0 || dest<0 || source>=mapSize || dest>=mapSize ) {
-//     cout << "Invalid src/dest nodes, map\n";
-//     return trace;
-//   }
-// 
-//   if (source==dest) {
-//     trace.push_back(source);
-//     return trace;
-//   }
-// 
-//   if(spDebug) cout << "four, dijkstraSSSP! " << endl;
-// 
-// 
-//   static bool isInit=false;
-//   static int _mapsize=0;
-//   static int* backtrace=NULL;
-//   static bool* isVisited=NULL;
-// 
-//   if (isInit==false) {
-//     isInit=true;// be careful with this line!
-//     _mapsize=getMapsize();
-//     backtrace=new int[_mapsize];
-//     isVisited=new bool[_mapsize];
-//     printf("*** RoadGraph::init array\n");
-//   } else
-//     assert(_mapsize==getMapsize());
-// 
-//   // init
-//   fill( backtrace, backtrace+_mapsize, -1);
-//   fill( isVisited, isVisited+_mapsize, false);
-// 
-//   //insert source node
-//   Heap hp;
-//   {
-//     HeapEntry root_he;
-//     root_he.id=source;
-//     root_he.dist=0.0;    // dist. so far
-//     root_he.prev_id=-1;
-//     hp.push(root_he);
-//   }
-// 
-//   if(spDebug) cout << "six, dijkstraSSSP! " << endl;
-// 
-//   while (hp.size()>0) {
-//     HeapEntry he=hp.top();
-//     hp.pop();
-// 
-//     int curnode=he.id;
-//     if (isVisited[curnode])
-//       continue;
-// 
-//     isVisited[curnode]=true;
-//     backtrace[curnode]=he.prev_id;// prev node
-//     numNodeVisits++;// usage info
-// 
-//     EdgeList& CurAdjList=map[curnode];
-//     BOOST_FOREACH (JEdge neighbour, CurAdjList){
-//       int NextNodeID = neighbour.first; //id
-//       double NextWeight = neighbour.second; 
-//       if (isVisited[NextNodeID]==false) {
-// 	HeapEntry new_he=he;    // copy ...
-// 	new_he.id=NextNodeID;
-// 	new_he.dist=he.dist+NextWeight; //weight
-// 	new_he.prev_id=curnode;
-// 	hp.push(new_he);    // propagation
-//       }
-//     }
-// 
-//     if(curnode==dest) {
-//       int prevNode = dest;
-//       trace.push_back(prevNode);
-//       while (prevNode!=source) {
-// 	assert(prevNode!=-1);
-// 
-// 	prevNode = backtrace[prevNode];
-// 	trace.push_back(prevNode);
-//       }
-//       if(useConcisepath)
-// 	return calcConsisePath(trace);
-//       else 
-// 	return trace;
-//       }
-//   }
-//   if(useConcisepath)
-//     return calcConsisePath(trace);
-//   else 
-//     return trace;
-// }
+vector<int> RoadGraph::dijkstraSSSP2(int source, int dest) {
+  std::vector<int> trace;
+  if(spDebug)cout << "dijkstraSSSP: " << source << "," << dest << " : " <<  useConcisepath << endl;
+  ssspCalls++;
+
+  trace = getSPfromSPTree(source, dest);
+  if(spDebug) cout << "RoadGraph::dijkstraSSSP 2 " << trace.empty() << " " << trace.size() << endl; 
+  if(!trace.empty()){
+    if(useConcisepath){
+      if(spDebug) cout << "RoadGraph::dijkstraSSSP 3 " << endl;
+      return calcConsisePath(trace);
+    }else 
+      return trace;
+  }
+
+
+  if (spDebug) 
+    cout << "one, dijkstraSSSP! map:" << mapSize <<" s,t:" << source <<"," <<dest << endl;
+
+  if ( source<0 || dest<0 || source>=mapSize || dest>=mapSize ) {
+    cout << "Invalid src/dest nodes, map\n";
+    return trace;
+  }
+
+  if (source==dest) {
+    trace.push_back(source);
+    return trace;
+  }
+
+  if(spDebug) cout << "four, dijkstraSSSP! " << endl;
+
+
+  static bool isInit=false;
+  static int _mapsize=0;
+  static int* backtrace=NULL;
+  static bool* isVisited=NULL;
+
+  if (isInit==false) {
+    isInit=true;// be careful with this line!
+    _mapsize=getMapsize();
+    backtrace=new int[_mapsize];
+    isVisited=new bool[_mapsize];
+    printf("*** RoadGraph::init array\n");
+  } else
+    assert(_mapsize==getMapsize());
+
+  // init
+  fill( backtrace, backtrace+_mapsize, -1);
+  fill( isVisited, isVisited+_mapsize, false);
+
+  //insert source node
+  Heap hp;
+  {
+    HeapEntry root_he;
+    root_he.id=source;
+    root_he.dist=0.0;    // dist. so far
+    root_he.prev_id=-1;
+    hp.push(root_he);
+  }
+
+  if(spDebug) cout << "six, dijkstraSSSP! " << endl;
+
+  while (hp.size()>0) {
+    HeapEntry he=hp.top();
+    hp.pop();
+
+    int curnode=he.id;
+    if (isVisited[curnode])
+      continue;
+
+    isVisited[curnode]=true;
+    backtrace[curnode]=he.prev_id;// prev node
+    numNodeVisits++;// usage info
+
+    EdgeList& CurAdjList=map[curnode];
+    BOOST_FOREACH (JEdge neighbour, CurAdjList){
+      int NextNodeID = neighbour.first; //id
+      double NextWeight = neighbour.second; 
+      if (isVisited[NextNodeID]==false) {
+	HeapEntry new_he=he;    // copy ...
+	new_he.id=NextNodeID;
+	new_he.dist=he.dist+NextWeight; //weight
+	new_he.prev_id=curnode;
+	hp.push(new_he);    // propagation
+      }
+    }
+
+    if(curnode==dest) {
+      int prevNode = dest;
+      trace.push_back(prevNode);
+      while (prevNode!=source) {
+	assert(prevNode!=-1);
+
+	prevNode = backtrace[prevNode];
+	trace.push_back(prevNode);
+      }
+      
+      
+      	/////////////////
+	cout << "(" << source << "," << dest << ") [" << trace.size() << " - " << spDist << "] *!*" << endl;
+// 	BOOST_FOREACH(int node, trace){ cout << node << ",";}
+// 	cout << " *2.1*" << endl;
+	//////////////////
+      
+      if(useConcisepath)
+	return calcConsisePath(trace);
+      else 
+	return trace;
+      }
+  }
+  if(useConcisepath)
+    return calcConsisePath(trace);
+  else 
+    return trace;
+}
 
 int RoadGraph::getMapsize()
 {
@@ -596,7 +600,7 @@ intVector RoadGraph::getSPfromSPTree(int source, int target){
     int* backtrace=spTrace[target];
     if(backtrace == NULL) {
 	countFail++;
-        cout << "*!SPTree s/t (" << countFail <<"/" << countSuccess <<"): "<< source <<"/" << target << "\t";
+//         cout << "*!SPTree s/t (" << countFail <<"/" << countSuccess <<"): "<< source <<"/" << target << "\t";
 //        trace.push_back(target);
         return trace;
     }
