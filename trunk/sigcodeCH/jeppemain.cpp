@@ -392,47 +392,48 @@ cout << "******************************************" << endl;
 	cout << "HERE THE EXPERIMENTS SHOULD START!!\n" << endl;
 	
 ////////////////////////////////////////	
-
-
-	string fn=ts.queryFileName;
-	string app="";
-	intPairVector stPointPairs;
-	vector<int> spPath;
-	
-	std::pair<double, double> firstPair, secondPair;
-	int firstPnt, secondPnt, temp, i=0;
-	string str;
-	std::vector<string> tokens;
-	ifstream qlogFile (fn.c_str(), ios::in);
-	  
-	cout << "readQueryLogData start: " << fn << endl;
-	
-	//find all pairs of nodeids in the training set to have SP done for them. map nodeids to Points.
-	if (qlogFile.is_open()) {
-	  if (debugCache) 
-	    cout << "two, readQueryLogData opened! " << endl;
-	  
-	  while(getline(qlogFile, str)) {
-	    boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-	    stPointPairs.push_back(std::make_pair(atoi(tokens[1].c_str()),atoi(tokens[2].c_str())));
-	  }
-	}
-	qlogFile.close();
-
-	cout << "three, stPointPairs size: " << stPointPairs.size() << endl;
-	BOOST_FOREACH(intPair q, stPointPairs) { 
-	  RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);
-	  i++;
-	  if(i==50) break;
-	}
+// 
+// 	string fn=ts.queryFileName;
+// 	string app="";
+// 	intPairVector stPointPairs;
+// 	vector<int> spPath;
+// 	
+// 	std::pair<double, double> firstPair, secondPair;
+// 	int firstPnt, secondPnt, temp, i=0;
+// 	string str;
+// 	std::vector<string> tokens;
+// 	ifstream qlogFile (fn.c_str(), ios::in);
+// 	  
+// 	cout << "readQueryLogData start: " << fn << endl;
+// 	
+// 	find all pairs of nodeids in the training set to have SP done for them. map nodeids to Points.
+// 	if (qlogFile.is_open()) {
+// 	  if (debugCache) 
+// 	    cout << "two, readQueryLogData opened! " << endl;
+// 	  
+// 	  while(getline(qlogFile, str)) {
+// 	    boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+// 	    stPointPairs.push_back(std::make_pair(atoi(tokens[1].c_str()),atoi(tokens[2].c_str())));
+// 	  }
+// 	}
+// 	qlogFile.close();
+// 
+// 	cout << "three, stPointPairs size: " << stPointPairs.size() << endl;
+// 	BOOST_FOREACH(intPair q, stPointPairs) { 
+// 	  RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);
+// 	  RoadGraph::mapObject(ts)->dijkstraSSSP2(q.first, q.second);
+// 	  cout << endl;
+// 	  i++;
+// 	  if(i==50) break;
+// 	}
 /////////////////////////////////////////	
 	
-// 	if (experiment.compare("SINGLE")==0)
-// 		ExperimentSingle(ts);
-// 	else if (experiment.compare("SPLIT")==0)
-// 		ExperimentVarySplit(ts);
-// 	else if (experiment.compare("CACHESIZE")==0)
-// 		ExperimentVaryCacheSize(ts);
+	if (experiment.compare("SINGLE")==0)
+		ExperimentSingle(ts);
+	else if (experiment.compare("SPLIT")==0)
+		ExperimentVarySplit(ts);
+	else if (experiment.compare("CACHESIZE")==0)
+		ExperimentVaryCacheSize(ts);
 
 	return EXIT_SUCCESS;
 };

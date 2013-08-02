@@ -159,7 +159,7 @@ NodeID readGraphFromStream(istream &in, const bool addIsolatedNode, vector<Compl
 	double _weight;
         
         in >> source >> target >> _weight;
-	weight = _weight*1000000; //hack to make the double fit in int
+	weight = _weight*1000; //hack to make the double fit in int
 
         CompleteEdge edge1(source, target, weight, false, forward, backward);
         CompleteEdge edge2(target, source, weight, false, backward, forward);

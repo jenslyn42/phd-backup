@@ -691,7 +691,6 @@ public:
         }
     }
     
-    
 
     /**
     * Returns true iff s is the parent of u.
