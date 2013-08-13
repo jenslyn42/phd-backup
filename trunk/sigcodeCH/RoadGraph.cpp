@@ -980,10 +980,11 @@ void RoadGraph::setupCH(string& fn){
   ifstream in; // input file object
   cout <<  "setupCH 1" << endl;
    //f parameter
-  string cedgefile = fn; //has .cedge at ending
+  string ddsgfile = fn; //has .cedge at ending
+  ddsgfile.replace ((ddsgfile.size())-5, 5, "ddsg"); // extension .ddsg
   cout <<  "setupCH 2" << endl;   
   //h parameter
-  string hcnFile = cedgefile;
+  string hcnFile = ddsgfile;
   hcnFile.replace ((hcnFile.size())-5, 5, "hcn"); // extension .hcn
   cout <<  "setupCH 3" << endl;
   //k parameter:
@@ -991,9 +992,9 @@ void RoadGraph::setupCH(string& fn){
   Command::createVector("1,3.3,2,10,3,10,5",contractParams.maxHops,(double)0);
   cout <<  "setupCH 4" << endl;
   /* Read graph */
-  in.open(cedgefile.c_str());
+  in.open(ddsgfile.c_str());
   if (!in.is_open()) {
-    cerr << ".cedge - CH Cannot open " << cedgefile << endl; exit(1);
+    cerr << ".cedge - CH Cannot open " << ddsgfile << endl; exit(1);
   }
   VERBOSE( cout << "Reading graph ..." << endl;)
   updGraph = importGraphListOfEdgesUpdateable(in, false, false, "");

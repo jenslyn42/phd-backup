@@ -24,7 +24,6 @@
 
 
 #include <cmath>
-#include <map>
 
 #include "graph.h"
 #include "UpdateableGraph.h"
@@ -141,39 +140,139 @@ void removeDuplicates(vector<CompleteEdge>& input, vector<CompleteEdge>& output)
              << " one-way edge(s) merged with an opposite edge of the same length." << endl );
 }
 
+
+
+
+
 /**
  * Reads a list of edges from the given stream and adds them to the given vector.
  * @return the number of nodes
  */
-NodeID readGraphFromStream(istream &in, const bool addIsolatedNode, vector<CompleteEdge>& edgeList) {
+NodeID readGraphFromStream(istream &in, const bool adaptWeight, const bool addIsolatedNode,
+                           vector<CompleteEdge>& edgeList) {
+    NodeID n; // number of nodes
+    EdgeID m; // number of edges
     NodeID source, target;
-    EdgeWeight weight;
-    int dir = 0; // direction (0 = open, 1 = forward, 2 = backward, 3 = closed) [adopted from PTV]
-    unsigned int fline;
-    bool forward = true;
-    bool backward = true;
-    int i=0;
-    std::map<int,int> nodeCount; //hack to count #node ids
+    int dir; // direction (0 = open, 1 = forward, 2 = backward, 3 = closed) [adopted from PTV]
+    char dummy;
     
-    while (in >> fline){
-	double _weight;
+    // directed ?
+    bool directed = false;
+    if (in.peek() == 'd') {
+        directed = true;
+        in >> dummy;
+    }
+
+    in >> n >> m;
+
+    VERBOSE( cout << "Import Graph: n = " << n << ", m = " << m << endl );
+    
+    if (adaptWeight) {
+        // read the edge list a first time 
+        // in order to determine the maximum weight in the input
         
-        in >> source >> target >> _weight;
-	weight = _weight*1000; //hack to make the double fit in int
+        double weight; // the current weight read from the input
+        double maxWeight = 0; // the maximum weight
+        double weightSum = 0; // the sum of all weights
+        
+        // if false, no overflow (w.r.t. the maximum integer) occured 
+        //           when computing the sum of all weights
+        // if true, there might be an overflow
+        bool overflow = false;
+                               
+
+        for (EdgeID i=0; i<m; i++) { // scan the edge list
+            in >> source >> target >> weight;
+            if (directed) in >> dir;
+            if (weight > maxWeight) maxWeight = weight; // update the maximum weight
+            
+            if ((weightSum > Weight::MAX_INTEGER / 2) || 
+                 (weight > Weight::MAX_INTEGER / 2)) overflow = true; 
+            weightSum += weight; // update the sum of weights
+        }
+        
+        in.seekg(0); // re-read the input
+        if (directed) in >> dummy;
+        in >> n >> m;
+        
+        // the allowed weight per edge;
+        // this upper bound is based on the fact that a shortest path always consists
+        // of less than n edges
+        double allowedWeight = trunc(Weight::MAX_INTEGER / n);
+        
+        // if multiplied by this factor, all edge weights (incl. the maximum one)
+        // are less than or equal to the allowed weight
+        weightFactor = allowedWeight / maxWeight;
+
+        VERBOSE( cout << setprecision(20) << "  adapt weight: allowed weight = " << allowedWeight
+                 << ", max weight in input = " << maxWeight << ", factor = " << weightFactor <<  endl );
+
+        if (! overflow) {
+            // if there was no overflow, we can try to use the sum of weights
+            // in order to find a less restrict bound for the edge weights
+            
+            // if the edge weights are multiplied by this factor,
+            // the sum of all edge weights does not exceed the maximum integer;
+            // note that a shortest path does not contain any edge twice
+            double weightFactor2 = Weight::MAX_INTEGER / weightSum;
+            
+            // if the second factor is better than the first one, use the second one;
+            // "better" means that we exhaust the given range more carefully so that
+            // the loss of precision by this initial rounding is less serious
+            if (weightFactor2 > weightFactor) {
+                weightFactor = weightFactor2;
+
+                VERBOSE( cout << "                sum of weights = " << weightSum 
+                              << ", factor = " << weightFactor2 << endl );
+            }
+        }       
+    }
+    
+    VERBOSE( EdgeID onewayStreets = 0 );
+    edgeList.reserve(2*m); // each edge will be added twice (once for each direction)
+        
+    for (EdgeID i=0; i<m; i++) {
+        EdgeWeight weight;
+        
+        in >> source >> target;
+
+        if (adaptWeight) {
+            double tmp;
+            in >> tmp;
+            weight = static_cast<EdgeWeight>( round(tmp * weightFactor) );
+        }
+        else {
+            in >> weight;
+        }
+        
+        dir = 0;
+        if (directed) in >> dir;
+        bool forward = true;
+        bool backward = true;
+        if (dir == 1) backward = false;
+        if (dir == 2) forward = false;
+        VERBOSE( if ((dir == 1) || (dir == 2)) onewayStreets++ );
+        // note: all CLOSED roads (dir = 3) are considered as OPEN !
 
         CompleteEdge edge1(source, target, weight, false, forward, backward);
         CompleteEdge edge2(target, source, weight, false, backward, forward);
         edgeList.push_back(edge1);
         edgeList.push_back(edge2);
-	i++;
-	nodeCount[source] = 1;
-	nodeCount[target] = 1;
-//   	VERBOSE( cout << source << " " << target << " " << weight << endl);
-    }
-    VERBOSE( cout << "iterations = " << i << endl );
-    VERBOSE( cout << "nodes = " << nodeCount.size() << endl );
+        
+        // Check wheter end of line is reached
+        if ( in.peek() !=  '\n' && in.peek() != '\r' )
+        {
+          cerr << "After edge number " << i << " is no newline." << endl;
+          cerr << "Input format error, aborting." << endl;
+          exit(1);
+        }
 
-    return nodeCount.size();
+    }
+    
+    VERBOSE( cout << onewayStreets << " oneway street(s)." << endl );
+
+    if (addIsolatedNode) n++;
+    return n;
 }
     
 /**
@@ -184,9 +283,10 @@ NodeID readGraphFromStream(istream &in, const bool addIsolatedNode, vector<Compl
  *       initially all nodes must have level n in the graph. The node order is specified
  *       separately.
  */
-datastr::graph::UpdateableGraph* importGraphListOfEdgesUpdateable(istream &inGraph, const bool adaptWeight, const bool addIsolatedNode, const string filenameHwyNodes) {
+datastr::graph::UpdateableGraph* importGraphListOfEdgesUpdateable(istream &inGraph, const bool adaptWeight,
+                                        const bool addIsolatedNode, const string filenameHwyNodes) {
     vector<CompleteEdge> edgeList;
-    const NodeID n = readGraphFromStream(inGraph, addIsolatedNode, edgeList);
+    const NodeID n = readGraphFromStream(inGraph, adaptWeight, addIsolatedNode, edgeList);
     vector<CompleteEdge> edgeListWithoutDuplicates;
     removeDuplicates(edgeList, edgeListWithoutDuplicates);
     
