@@ -339,7 +339,8 @@ namespace command {
                 datastr::graph::UpdateableGraph* graph = importGraphListOfEdgesUpdateable(in, false, false, "");
                 in.close();
 
-                
+                VERBOSE( std::cout << "graph->noOfExistingEdges(): " << graph->noOfExistingEdges() << "..." << std::endl; )
+		
                 // Read betwenness centrality if specified.
                 vector<BetweennessValue>* betweenness = NULL;
                 if (betweennessFile != "")

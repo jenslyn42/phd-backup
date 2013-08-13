@@ -51,9 +51,20 @@ build_query: QueryingCH.cpp
 # The above arguments specify the parameters of one of the CH heuristics which is called "EOS1235"
 # "EOS1235" has the minimum contraction and node ordering time
 # Example command for IndexingCH -- THIS WONT WORK ANYMORE, since it now reads .cedge files, not .ddsg files
+#./buildCHindex -s -p -f data/NY_t_0.ddsg -o hcn/NY_t_0-EOS1235.hcn -l hcn/NY_t_0-EOS1235.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
+
 build_hcn_NY:
-	./IndexingCH -s -p -f data/NY_t_0.ddsg -o hcn/NY_t_0-EOS1235.hcn -l hcn/NY_t_0-EOS1235.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
+	./buildCHindex -s -p -f USA-road-d.NY.ddsg -o USA-road-d.NY.hcn -l USA-road-d.NY.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
+	./buildCHindex -s -p -f USA-road-t.NY.ddsg -o USA-road-t.NY.hcn -l USA-road-d.NY.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
+
+build_hcn_COL:
+	./buildCHindex -s -p -f USA-road-d.COL.ddsg -o USA-road-d.COL.hcn -l USA-road-d.COL.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
+	./buildCHindex -s -p -f USA-road-t.COL.ddsg -o USA-road-t.COL.hcn -l USA-road-d.COL.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
 	
 # Example command for QueryingCH
-run_query:
-	./QueryingCH -f data/NY_t_0.ddsg -h hcn/NY_t_0-EOS1235.hcn -k 1,3.3,2,10,3,10,5
+
+run_query_NY:
+	./QueryingCH -f USA-road-d.NY.ddsg -h USA-road-d.NY.hcn -k 1,3.3,2,10,3,10,5
+
+run_query_COL:
+	./QueryingCH -f USA-road-d.COL.ddsg -h USA-road-d.COL.hcn -k 1,3.3,2,10,3,10,5
