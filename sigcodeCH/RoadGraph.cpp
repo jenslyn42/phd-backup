@@ -32,7 +32,7 @@
 
 #include "RoadGraph.h"
 
-#define rgDebug true
+#define rgDebug false
 //specifically for the dijkstraSSSP() method
 #define spDebug false
 
@@ -62,11 +62,6 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts){
     
     printf("*** RoadGraph::read\n");
     
-    cout << "FUN!! " << endl;
-    cout << mapInstance->parseFileType << endl; 
-    cout << testFile << endl;
-    cout << "FUN2! " << endl;
-
     switch( (mapInstance->parseFileType) ){
       case 1:
 	cout << "mapObject[case1], parseFileType: " << mapInstance->parseFileType << " " << testFile << endl;

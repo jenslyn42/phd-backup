@@ -106,7 +106,9 @@ public:
         }
 
         /** Returns the index of the last edge leaving this node + 1. */
-        EdgeID lastEdge() const { return _firstEdge + _lastEdgeOffset; }
+        EdgeID lastEdge() const { 
+// /**/	cout << "4.1.17.3.8.1-5.1a****** " << _firstEdge <<" + " << _lastEdgeOffset << " = " << _firstEdge + _lastEdgeOffset << endl;
+	  return _firstEdge + _lastEdgeOffset; }
         /** Sets the index of the last edge leaving this node + 1. */
         void setLastEdge(const EdgeID lE) {
             assert( lE >= _firstEdge + _firstLevelEdgeOffset );
@@ -216,6 +218,7 @@ public:
 
     /** Returns the index+1 of the last edge of u. */
     EdgeID lastEdge(const NodeID u) const {
+//         /**/	cout << "4.1.17.3.8.1-5.1a**** " << u <<" - " << node(u).lastEdge() << endl;
         return node(u).lastEdge();
     }
     
@@ -224,6 +227,7 @@ public:
     * irrespective of the direction.
     */
     EdgeID degree(const NodeID u) const {
+//   /**/	cout << "4.1.17.3.8.1-5.1a** " << u <<": " << lastEdge(u) << ", " << firstEdge(u) << " - " << lastEdge(u)-firstEdge(u) << endl;  
         return lastEdge(u)-firstEdge(u);
     }
 
@@ -451,18 +455,23 @@ public:
     *   been performed.
     */
     EdgeID addEdge(const NodeID u, const Edge& edge ) {
+//   /**/	cout << "4.1.17.3.8.1-5.1: " << degree(u) << endl; 
         const EdgeID size = degree(u);
+// 	 /**/	cout << "4.1.17.3.8.1-5.1a " << size << endl; 
         EdgeID capacity = edgeCapacity(u, size);
+// 	 /**/	cout << "4.1.17.3.8.1-5.1b " << capacity << endl; 
         const EdgeID oldFirstEdge = node(u).firstEdge();
+// 	 /**/	cout << "4.1.17.3.8.1-5.1c " << oldFirstEdge << endl; 
         EdgeID newFirstEdge = oldFirstEdge;
         assert( size <= capacity );
-        
+//  /**/	cout << "4.1.17.3.8.1-5.1e" << endl;       
         // ensure that there is room for the new edge
         if (size == capacity) {
-            // Case 1: edge group is full!
+//  /**/	cout << "4.1.17.3.8.1-5.2" << endl;    
+	  // Case 1: edge group is full!
             // -> move group to the end of the array, double the capacity
             assert( ! node(u).increasedCapacity() );
-            
+           
             // try to reuse edge space
             capacity <<= 1;
 
@@ -474,6 +483,7 @@ public:
             node(u).setFirstEdge(newFirstEdge);
         }
         else {
+//  /**/	cout << "4.1.17.3.8.1-5.3" << endl;    
             // Case 2: there is still room for more edges!
             if (node(u).increasedCapacity()) {
                 assert( size <= (capacity >> 1) );
@@ -484,7 +494,7 @@ public:
                 if (size == (capacity >> 1)) node(u).unsetIncreasedCapacity();
             }
         }
-
+ 
         // add the new edge
         assert( size < capacity );
         EdgeID e = newFirstEdge + size;
@@ -493,7 +503,7 @@ public:
         node(u).setLastEdge(e+1);
         assert( firstEdge(u) <= e && e < lastEdge(u) );
         changeEdgeLevel(u, e); // ...and move it to the right level
-
+  
         return (newFirstEdge - oldFirstEdge);
     }
 
@@ -606,14 +616,14 @@ public:
         // to these edges to perform makeOneWay().
         EdgeID changedEdgeID = SPECIAL_NODEID;
         EdgeID changedReverseEdgeID = SPECIAL_NODEID;
-            
+  
         // Only allow shortcut edges between nodes in the same level
         assert( node(u).level() == node(newEdge.target()).level() );
         EdgeID edgeID = firstLevelEdge(u);
         EdgeID lastEdge = this->lastEdge(u);
-        
+// /**/	cout << "4.1.17.3.2" << endl;         
         int result = 0;
-        
+         
         // Scan through the adjacency array of 
         for ( ; edgeID < lastEdge && (forward || backward) && state < TWO_EDGES; edgeID++)
         {
@@ -621,6 +631,7 @@ public:
             assert( !edge.isClosed() );
             if (edge.target() == newEdge.target())
             {
+//   /**/	cout << "4.1.17.3.3" << endl;  
                 // Found a matching edge.
                 state++;
                 if (edge.isBidirected()) state++;
@@ -632,9 +643,10 @@ public:
                     forward = forward && !edge.isDirected(0);
                     backward = backward && !edge.isDirected(1);          
                 }
-                
+             
                 // new edge has smaller weight
                 else {
+//   /**/	cout << "4.1.17.3.4" << endl;  
                     if (edge.isBidirected())
                     {
                         EdgeID reverseEdgeID = reverseLevelEdge(u, edgeID);
@@ -684,6 +696,7 @@ public:
                     // old edge unidirectional
                     else
                     {
+//     /**/	cout << "4.1.17.3.5" << endl; 
                         if ((edge.isDirected(0) && forward)
                             || (edge.isDirected(1) && backward))
                         {
@@ -732,11 +745,12 @@ public:
                 }
             }
         }
-        
+//      /**/	cout << "4.1.17.3.6" << endl;       
         // If a unidirectional edge was replaced by a bidirectional one
         // check for unidirectional edge in other direction.
         if ( state == LOOK_FOR_SECOND_EDGE_FORWARD || state == LOOK_FOR_SECOND_EDGE_BACKWARD )
         {
+// /**/	cout << "4.1.17.3.7" << endl;  
             for ( ; edgeID < lastEdge; edgeID++)
             {
                 Edge& edge = this->edge(edgeID);
@@ -782,22 +796,27 @@ public:
                 }
             }
         }
+//   /**/	cout << "4.1.17.3.8" << endl;  
 
         // A new edge is necessary because there were no usable existing edges with 
         // same source and target.
         if (forward || backward)
         {
+//  /**/	cout << "4.1.17.3.8.1" << endl;
             if ( !simulateOnly )
             {
+//  /**/	cout << "4.1.17.3.8.2" << endl;
                 const Edge edgeFw(newEdge.target(), newEdge.weight(), newEdge.type(), forward, backward
                     ,newEdge.shortcutMiddle(), newEdge.shortcutEdge1(), newEdge.shortcutEdge2(),
                     newEdge.shortcutOriginalEdgeCount() );
+//  /**/	cout << "4.1.17.3.8.3: addEdge(" << u <<", " << edgeFw << ");" << endl;
                 addEdge( u, edgeFw );
+// /**/	cout << "4.1.17.3.8.4: addEdge(" << newEdge.target() <<", Edge(" << u <<", " << edgeFw << "));" << endl;
                 addEdge( newEdge.target(), Edge(u, edgeFw) );
             }
             result += 2;
         }
-        
+//           /**/	cout << "4.1.17.3.9" << endl;  
         return result;
     }
     
@@ -1014,7 +1033,13 @@ private:
     */
     EdgeID edgeCapacity(const EdgeID size) const {
         EdgeID capacity = 1;
-        while (capacity < size) capacity <<= 1;
+// /**/	cout << "4.1.17.3.8.1-5.1a.1.1: " << capacity <<","<<size << endl;
+        while (capacity < size){
+// /**/	  cout << "4.1.17.3.8.1-5.1a.1.1a:" << capacity <<","<<size << endl;
+	  capacity <<= 1;
+// /**/	  cout << "4.1.17.3.8.1-5.1a.1.1b:" << capacity <<","<<size << endl;
+	}
+// /**/	cout << "4.1.17.3.8.1-5.1a.1.2" << endl;
         return capacity;
     }
 
@@ -1025,8 +1050,11 @@ private:
     * the node u has an 'increased capacity'.
     */
     EdgeID edgeCapacity(const NodeID u, const EdgeID size) const {
+//       /**/	cout << "4.1.17.3.8.1-5.1a.1: " << size << endl; 
         EdgeID capacity = edgeCapacity(size);
+// 	/**/	cout << "4.1.17.3.8.1-5.1a.2: " << capacity << endl; 
         if (node(u).increasedCapacity()) capacity <<= 1;
+//         /**/	cout << "4.1.17.3.8.1-5.1a.3: " << capacity << endl; 
         return capacity;
     }
     
