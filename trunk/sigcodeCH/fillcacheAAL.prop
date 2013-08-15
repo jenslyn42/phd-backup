@@ -11,7 +11,7 @@ testScenario = PROXY
 // choices: SERVER, PROXY
 
 
-testSPtype = concise
+testSPtype = optimal
 // choices: FULL, CONCISE, OPTIMAL
 
 
