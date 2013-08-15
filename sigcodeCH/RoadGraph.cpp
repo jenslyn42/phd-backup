@@ -32,7 +32,7 @@
 
 #include "RoadGraph.h"
 
-#define debug false
+#define rgDebug true
 //specifically for the dijkstraSSSP() method
 #define spDebug false
 
@@ -61,6 +61,11 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts){
     mapInstance->setupCH(testFile); //initialize CH
     
     printf("*** RoadGraph::read\n");
+    
+    cout << "FUN!! " << endl;
+    cout << mapInstance->parseFileType << endl; 
+    cout << testFile << endl;
+    cout << "FUN2! " << endl;
 
     switch( (mapInstance->parseFileType) ){
       case 1:
@@ -254,7 +259,7 @@ void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
 
 	//load in all vertex ids with their Point
 	ifstream nodeData (nodeFile.c_str(), ios::in);
-	if(debug) cout << "s1, transformTrainOrTestFile!"<< endl;
+	if(rgDebug) cout << "s1, transformTrainOrTestFile!"<< endl;
 	if(nodeData.is_open())
 	{
 		while(getline(nodeData, str))
@@ -267,7 +272,7 @@ void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
 
 	//load in all start/end vertex ids from training file
 	ifstream trainData (trainname.c_str(), ios::in);
-	if(debug) cout << "s1, transformTrainOrTestFile!"<< endl;
+	if(rgDebug) cout << "s1, transformTrainOrTestFile!"<< endl;
 	if(trainData.is_open())
 	{
 		while(getline(trainData, str))
@@ -280,7 +285,7 @@ void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
 
 	//load in all start/end vertex ids from test file
 	ifstream testData (testname.c_str(), ios::in);
-	if(debug) cout << "s1, transformTrainOrTestFile!"<< endl;
+	if(rgDebug) cout << "s1, transformTrainOrTestFile!"<< endl;
 	if(testData.is_open())
 	{
 		while(getline(testData, str))
@@ -333,6 +338,9 @@ void RoadGraph::writeoutEdgedegree()
   }
 }
 
+/*
+ * Counts the number of nodes which has edge degree 1-5 and writes them to std output
+ */
 void RoadGraph::findNode2degree()
 {
   int degree5=0, degree4=0, degree3=0, degree2=0, degree1=0;
@@ -349,100 +357,108 @@ void RoadGraph::findNode2degree()
 }
 
 void RoadGraph::addEdge(int v1, int v2, double w) {
-	assert( v1>=0 && v1<mapSize );
-	assert( v2>=0 && v2<mapSize );
-	
-	EdgeList& eList1=map[v1];
-	EdgeList& eList2=map[v2];
-	
-	bool isFound=false;
-	BOOST_FOREACH (JEdge e, eList1) {
-		if (e.first==v2)
-			isFound=true;
-	}
-	BOOST_FOREACH (JEdge e, eList2) {
-		if (e.first==v1)
-			isFound=true;
-	}
-		
-	if (!isFound) {	// edge not inserted before
-		eList1.push_back(make_pair(v2,w));
-		eList2.push_back(make_pair(v1,w));
-	}
+  assert( v1>=0 && v1<mapSize );
+  assert( v2>=0 && v2<mapSize );
+
+  if(rgDebug) cout << "RoadGraph::addEdge " << v1 << ", " << v2 << ", " << w << ", " << mapSize << endl;  
+  EdgeList& eList1=map[v1];
+  EdgeList& eList2=map[v2];
+  
+  if(rgDebug) cout << eList1.size() << " / " << eList2.size() << endl;
+  bool isFound=false;
+  BOOST_FOREACH (JEdge e, eList1) {
+    if(rgDebug) cout << "(" << e.first << "," << e.second << "); " << endl;
+    if (e.first==v2)
+      isFound=true;
+    if(rgDebug) cout << "(" << e.first << "," << e.second << "); " << "if1: " << isFound << endl;
+  }
+  
+  BOOST_FOREACH (JEdge e, eList2) {
+    if(rgDebug) cout << "(" << e.first << "," << e.second << "); " << endl;
+    if (e.first==v1)
+      isFound=true;
+    if(rgDebug) cout << "(" << e.first << "," << e.second << "); " << "if2: " << isFound << endl;
+  }
+  
+  if(rgDebug) cout << "isFound: " << isFound << endl;
+  if (!isFound) {  // edge not inserted before
+    eList1.push_back(make_pair(v2,w));
+    eList2.push_back(make_pair(v1,w));
+  }
 }
 
 void RoadGraph::readRoadNetworkFile(string fn)
 {
-	filename = fn;
-	string str;
-	std::vector<string> tokens;
-	ifstream in_data (fn.c_str(), ios::in);
-	if(in_data.is_open())
-	{
-		if(debug) cout << "zero, readNetworkFile!" << endl;
-		getline(in_data, str);
-		mapSize = atoi(str.c_str());
-		
-		map=new EdgeList[mapSize];
-		if(debug) cout << "one, readNetworkFile! map: " << mapSize << endl;
-		
-		getline(in_data, str);
-		edges = atoi(str.c_str());
+  filename = fn;
+  string str;
+  std::vector<string> tokens;
+  ifstream in_data (fn.c_str(), ios::in);
+  if(in_data.is_open())
+  {
+    if(rgDebug) cout << "zero, readNetworkFile!" << endl;
+    getline(in_data, str);
+    mapSize = atoi(str.c_str());
+    
+    map=new EdgeList[mapSize];
+    if(rgDebug) cout << "one, readNetworkFile! map: " << mapSize << endl;
+    
+    getline(in_data, str);
+    edges = atoi(str.c_str());
 
-		while( tokens.size() < 3 )
-		{
-			getline(in_data, str);
-			if(debug) cout << "three, readNetworkFile! getline:" << str << endl;
+    while( tokens.size() < 3 )
+    {
+      getline(in_data, str);
+      if(rgDebug) cout << "three, readNetworkFile! getline:" << str << endl;
 
-			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-		}
+      boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+    }
 
-		if(debug) cout << "four, readNetworkFile! tokens ([0],[1],[2]): (" << atoi(tokens[0].c_str()) << "," << atoi(tokens[1].c_str()) << "," << atof(tokens[2].c_str()) << ")" << endl;
+    if(rgDebug) cout << "four, readNetworkFile! tokens ([0],[1],[2]): (" << atoi(tokens[0].c_str()) << "," << atoi(tokens[1].c_str()) << "," << atof(tokens[2].c_str()) << ")" << endl;
 
-		addEdge(atoi(tokens[0].c_str()),atoi(tokens[1].c_str()),atof(tokens[2].c_str()));
+    addEdge(atoi(tokens[0].c_str()),atoi(tokens[1].c_str()),atof(tokens[2].c_str()));
 
-		int check = 0;
-		while(getline(in_data, str))
-		{
-			if(debug) cout << "five, readNetworkFile! getline:" << str  << " check: " << check++ << endl;
-			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-			if(debug) cout << "five1, readNetworkFile! getline:" << str  << " check: "  << check << endl;
-			addEdge(atoi(tokens[0].c_str()),atoi(tokens[1].c_str()),atof(tokens[2].c_str()));
-			if(debug) cout << "five2, readNetworkFile! getline:" << str  << " check: "  << check << endl;
-		}
-		if(debug) cout << "six, readNetworkFile!" << endl;
-		in_data.close();
-	}
+    int check = 0;
+    while(getline(in_data, str))
+    {
+      if(rgDebug) cout << "five, readNetworkFile! getline:" << str  << " check: " << check++ << endl;
+      boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+      if(rgDebug) cout << "five1, readNetworkFile! getline:" << str  << " check: "  << check << endl;
+      addEdge(atoi(tokens[0].c_str()),atoi(tokens[1].c_str()),atof(tokens[2].c_str()));
+      if(rgDebug) cout << "five2, readNetworkFile! getline:" << str  << " check: "  << check << endl;
+    }
+    if(rgDebug) cout << "six, readNetworkFile!" << endl;
+    in_data.close();
+  }
 }
 
 void RoadGraph::readPPINetworkFile(string fn)
 {
-	filename = fn;
-	string str;
-	int woffset;
-	std::vector<string> tokens;
-	ifstream in_data (fn.c_str(), ios::in);
-	if(in_data.is_open())
-	{
-		if(debug) cout << "zero, readPPINetworkFile!" << endl;
-		getline(in_data, str); //read first line comment
-		getline(in_data, str);
-		boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //read the size of the two node sets
-		mapSize = atoi(tokens[0].c_str()) + atoi(tokens[1].c_str());
-		woffset = atoi(tokens[0].c_str());	
-		
-		map=new EdgeList[mapSize];
-		if(debug) cout << "one, readPPINetworkFile! map: " << mapSize << endl;
-		
-		while(getline(in_data, str))
-		{
-			boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-			for(uint i = 1; i< tokens.size(); i++)
-				addEdge(atoi(tokens[0].c_str()),atoi(tokens[i].c_str())+woffset,1.0); //default weight of 1 since data does not provide any edge weights
-		}
-		if(debug) cout << "six, readPPINetworkFile!" << endl;
-		in_data.close();
-	}
+  filename = fn;
+  string str;
+  int woffset;
+  std::vector<string> tokens;
+  ifstream in_data (fn.c_str(), ios::in);
+  if(in_data.is_open())
+  {
+    if(rgDebug) cout << "zero, readPPINetworkFile!" << endl;
+    getline(in_data, str); //read first line comment
+    getline(in_data, str);
+    boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //read the size of the two node sets
+    mapSize = atoi(tokens[0].c_str()) + atoi(tokens[1].c_str());
+    woffset = atoi(tokens[0].c_str());  
+    
+    map=new EdgeList[mapSize];
+    if(rgDebug) cout << "one, readPPINetworkFile! map: " << mapSize << endl;
+    
+    while(getline(in_data, str))
+    {
+      boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+      for(uint i = 1; i< tokens.size(); i++)
+        addEdge(atoi(tokens[0].c_str()),atoi(tokens[i].c_str())+woffset,1.0); //default weight of 1 since data does not provide any edge weights
+    }
+    if(rgDebug) cout << "six, readPPINetworkFile!" << endl;
+    in_data.close();
+  }
 }
 
 /// fileformat .cedge: linenum nid1 nid2 distance
@@ -457,35 +473,35 @@ void RoadGraph::readCedgeNetworkFile(string fn)
   std::vector<string> tokens;
 	  
   ifstream in_data (fn.c_str(), ios::in);
-  if(debug) cout << "s1, readCedgeNetworkFile! nodeFN: " <<nodeFN << endl;
+  if(rgDebug) cout << "s1, readCedgeNetworkFile! nodeFN: " <<nodeFN << endl;
   if(in_data.is_open())
   {
-    if(debug) cout << "zero, readCedgeNetworkFile! int maxsize: " << INT_MAX << endl;
+    if(rgDebug) cout << "zero, readCedgeNetworkFile! int maxsize: " << INT_MAX << endl;
     mapSize = getFilelines(nodeFN.c_str()); //find number of lines in file
 
-    map=new EdgeList[mapSize];
-    if(debug) cout << "three, readCedgeNetworkFile! map: " << mapSize << endl;
+    map=new EdgeList[mapSize+1]; //map can accomodate mapSize+1 nodes, with ids upto mapSize.
+    if(rgDebug) cout << "three, readCedgeNetworkFile! map: " << mapSize << endl;
 
     while(getline(in_data, str))
     {
       boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-      if(debug) cout << "five1, readCedgeNetworkFile! getline:" << str << endl;
+      if(rgDebug) cout << "five1, readCedgeNetworkFile! getline:" << str << endl;
       addEdge(atoi(tokens[1].c_str()),atoi(tokens[2].c_str()),atof(tokens[3].c_str()));
-      if(debug) cout << "five2, readCedgeNetworkFile! getline:" << str << endl;
+      if(rgDebug) cout << "five2, readCedgeNetworkFile! getline:" << str << endl;
     }
-    if(debug) cout << "six, readCedgeNetworkFile!" << endl;
+    if(rgDebug) cout << "six, readCedgeNetworkFile!" << endl;
     in_data.close();
   }
 
   if(useConcisepath){
-    if(debug) cout << "seven, readCedgeNetworkFile!" << endl;
+    if(rgDebug) cout << "seven, readCedgeNetworkFile!" << endl;
     ifstream in_nodedist (nodeFN.c_str(), ios::in);
     if(in_nodedist.is_open())
     {
       while(getline(in_nodedist, str))
       {
 	boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-	if(debug) cout << "nine, readCedgeNetworkFile! getline:" << str << endl;
+	if(rgDebug) cout << "nine, readCedgeNetworkFile! getline:" << str << endl;
 	nid2Point[atoi(tokens[0].c_str())] = make_pair<double,double>(atoi(tokens[1].c_str()),atof(tokens[2].c_str()));
       }
       in_nodedist.close();
@@ -496,7 +512,7 @@ void RoadGraph::readCedgeNetworkFile(string fn)
 
 int RoadGraph::getFilelines(const char *filename)
 {
-  if(debug) cout << "one, getFilelines! filename: "<<filename << endl;
+  if(rgDebug) cout << "one, getFilelines! filename: "<<filename << endl;
   if (!filename || !*filename) // if no file to work on, return false
   return false;
 
@@ -520,78 +536,78 @@ int RoadGraph::getFilelines(const char *filename)
 
 bool RoadGraph::getLastLine(const char *filename, string &lastLine)
 {
-	#define _LL_BUFFSIZE_ 2048
-	if(debug) cout << "one, getLastLine! filename: "<<filename << endl;
-	lastLine.clear(); // regardless, zero out our return string
-	if (!filename || !*filename) // if no file to work on, return false
-		return false;
+  #define _LL_BUFFSIZE_ 2048
+  if(rgDebug) cout << "one, getLastLine! filename: "<<filename << endl;
+  lastLine.clear(); // regardless, zero out our return string
+  if (!filename || !*filename) // if no file to work on, return false
+    return false;
 
-	char buff[_LL_BUFFSIZE_]; // our temporary input buffer
+  char buff[_LL_BUFFSIZE_]; // our temporary input buffer
 
-	ifstream is;
-	is.open(filename);
+  ifstream is;
+  is.open(filename);
 
-	if (!is) // return false if couldn't open file
-		return false;
+  if (!is) // return false if couldn't open file
+    return false;
 
-	is.seekg (0, ios::end); // go to end of file
-	int length = is.tellg(); // find out how large it is
-	is.seekg(length-min(length,_LL_BUFFSIZE_),ios::beg); // seek back from end a short ways
+  is.seekg (0, ios::end); // go to end of file
+  int length = is.tellg(); // find out how large it is
+  is.seekg(length-min(length,_LL_BUFFSIZE_),ios::beg); // seek back from end a short ways
 
-	// read in each line of the file until we're done
-	buff[0]=0;
-	do {
-		if (!isspace(buff[0]) && buff[0] != 0)
-			lastLine = buff;
+  // read in each line of the file until we're done
+  buff[0]=0;
+  do {
+    if (!isspace(buff[0]) && buff[0] != 0)
+      lastLine = buff;
 
-	} while (is.getline(buff, _LL_BUFFSIZE_));
+  } while (is.getline(buff, _LL_BUFFSIZE_));
 
-	is.close();
+  is.close();
 
-	return true;
+  return true;
 }
 
 void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
     double refTime = clock();
-// 	string prefixFn = ts.queryFileName;
-// 	prefixFn.replace ((prefixFn.size())-6, 6, "");
-	string prefixFn = "VERIFYSecondRANDaalborgNEWGP10R3200";
-	
+//   string prefixFn = ts.queryFileName;
+//   prefixFn.replace ((prefixFn.size())-6, 6, "");
+  string prefixFn = "VERIFYSecondRANDaalborgNEWGP10R3200";
+  
     int token1,token2,token3;
-	int curPoiNodeId=-1;
+  int curPoiNodeId=-1;
 
-	string fn = ts.testFile;
-	fn.replace ((fn.size())-4, 4, "node"); // extension .cnode
-	cout << fn << endl;
-	int mapsize = getFilelines(fn.c_str());
+  string fn = ts.testFile;
+  fn.replace ((fn.size())-4, 4, "node"); // extension .cnode
+  cout << fn << endl;
+  int mapsize = getFilelines(fn.c_str());
 
-	prefixFn.append(".sptree"); // extension .sptree
-	ifstream sptFile (prefixFn.c_str(), ios::in|ios::binary);
+  prefixFn.append(".sptree"); // extension .sptree
+  ifstream sptFile (prefixFn.c_str(), ios::in|ios::binary);
 
-//	if (debug)
+//  if (rgDebug)
         cout << "zero, readSPTreeFile! prefixFn: " << prefixFn << endl;
 
-	if (sptFile.is_open()) {
-//		if(debug)
+  if (sptFile.is_open()) {
+//    if(rgDebug)
             cout << "one, readSPTreeFile! ";
         cout<< "@TIME1: " << ts.getElapsedTime(refTime)<< endl;
 
-		while(!sptFile.eof()) {
-		  sptFile.read((char*)&token1, sizeof(int));
-		  sptFile.read((char*)&token2, sizeof(int));
-		  sptFile.read((char*)&token3, sizeof(int));
-		  if(token3 == -1337){
-		    curPoiNodeId = token1;
-		    spTrace[curPoiNodeId] = new int[token2];
-// 		    trackdist[curPoiNodeId] = new int[mapsize];
-		  }
-		  spTrace[curPoiNodeId][token1] = token3;
-// 		  trackdist[curPoiNodeId][token1] = token2;
-		}
-		if(debug) cout << "four, readSPTreeFile! ";
-		sptFile.close();
-	}
-	if(debug) cout << "five, readSPTreeFile END!";
+    while(!sptFile.eof()) {
+      sptFile.read((char*)&token1, sizeof(int));
+      sptFile.read((char*)&token2, sizeof(int));
+      sptFile.read((char*)&token3, sizeof(int));
+      if(token3 == -1337){
+        curPoiNodeId = token1;
+        spTrace[curPoiNodeId] = new int[token2];
+//         trackdist[curPoiNodeId] = new int[mapsize];
+      }
+      spTrace[curPoiNodeId][token1] = token3;
+//       trackdist[curPoiNodeId][token1] = token2;
+    }
+    if(rgDebug) cout << "four, readSPTreeFile! ";
+    sptFile.close();
+  }
+  if(rgDebug) cout << "five, readSPTreeFile END!";
         cout<< "@TIME2: " << ts.getElapsedTime(refTime)<< endl;
 }
 
@@ -599,7 +615,7 @@ intVector RoadGraph::getSPfromSPTree(int source, int target){
     intVector trace;
     int* backtrace=spTrace[target];
     if(backtrace == NULL) {
-	countFail++;
+    countFail++;
 //         cout << "*!SPTree s/t (" << countFail <<"/" << countSuccess <<"): "<< source <<"/" << target << "\t";
 //        trace.push_back(target);
         return trace;
@@ -893,82 +909,82 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
 void  RoadGraph::testCH(){ 
   // if you want to know path from 234 to 100, you may use "sp.pathTo(path, 100, -1, true, true);"
 
-	ProcessingConstruct::ContractParameters contractParams;
+  ProcessingConstruct::ContractParameters contractParams;
 
-	ProcessingConstruct* construct = NULL;
-	UpdateableGraph* updGraph = NULL;
+  ProcessingConstruct* construct = NULL;
+  UpdateableGraph* updGraph = NULL;
 
-	ifstream in; // input file object
+  ifstream in; // input file object
 
-	
-		////////////////////////////////////////////
-	//Assign input, should be coming from config file or hardcoded.
-	
-	string ddsgFile = "data/NY_t_0.ddsg";	// input graph file
-	string hcnFile = "hcn/NY_t_0-EOS1235.hcn";// input level file
+  
+    ////////////////////////////////////////////
+  //Assign input, should be coming from config file or hardcoded.
+  
+  string ddsgFile = "data/NY_t_0.ddsg";  // input graph file
+  string hcnFile = "hcn/NY_t_0-EOS1235.hcn";// input level file
 
-	// hop-/degree-limits specified as comma-separated list,
-	// e.g. "1,3.3,2,10,3,10,5" means hop-limit 1 until degree 3.3,
-	//                          then hop-limit 2 until degree 10,
-	//                          then hop-limit 3 until degree 10,
-	// 	
-	string kParam = "1,3.3,2,10,3,10,5"; //degree limits (the k parameter for CH)
-	contractParams.maxHops.clear();
-	Command::createVector(string(kParam),contractParams.maxHops,(double)0);
-	////////////////////////////////////////////				
+  // hop-/degree-limits specified as comma-separated list,
+  // e.g. "1,3.3,2,10,3,10,5" means hop-limit 1 until degree 3.3,
+  //                          then hop-limit 2 until degree 10,
+  //                          then hop-limit 3 until degree 10,
+  //   
+  string kParam = "1,3.3,2,10,3,10,5"; //degree limits (the k parameter for CH)
+  contractParams.maxHops.clear();
+  Command::createVector(string(kParam),contractParams.maxHops,(double)0);
+  ////////////////////////////////////////////        
 
-	
-	/* Read graph */
-	in.open(ddsgFile.c_str());
-	if (!in.is_open()) {
-		cerr << "ddsgFile - Cannot open " << ddsgFile << endl; exit(1);
-	}
-	VERBOSE( cout << "Reading graph ..." << endl;)
-	updGraph = importGraphListOfEdgesUpdateable(in, false, false, "");
-	in.close(); in.clear();
+  
+  /* Read graph */
+  in.open(ddsgFile.c_str());
+  if (!in.is_open()) {
+    cerr << "ddsgFile - Cannot open " << ddsgFile << endl; exit(1);
+  }
+  VERBOSE( cout << "Reading graph ..." << endl;)
+  updGraph = importGraphListOfEdgesUpdateable(in, false, false, "");
+  in.close(); in.clear();
 
-	/* Read node levels */
-	in.open(hcnFile.c_str());
-	if (!in.is_open()) {
-		cerr << "hcnFile - Cannot open " << hcnFile << endl; exit(1);
-	}
-	construct = new ProcessingConstruct(updGraph);
-	VERBOSE( cout << "Reading node levels ..." << endl;)
-	construct->readLevels(in);
-	in.close(); in.clear();
+  /* Read node levels */
+  in.open(hcnFile.c_str());
+  if (!in.is_open()) {
+    cerr << "hcnFile - Cannot open " << hcnFile << endl; exit(1);
+  }
+  construct = new ProcessingConstruct(updGraph);
+  VERBOSE( cout << "Reading node levels ..." << endl;)
+  construct->readLevels(in);
+  in.close(); in.clear();
 
 
-	/* Build Contraction Hierarchy  */
-	VERBOSE( cout << "Contracting graph ..." << endl;)
-	construct->constructHierarchy(contractParams);
-	
-	Dijkstra sp(updGraph);
-	Path p;
-	EdgeWeight spDist;
-	
-	/*EdgeWeight spDist = sp.bidirSearch(0, 3);
-	VERBOSE( cout << "SP Dist from " << 0 << " to " << 3 << " is " << spDist << endl; )
-	sp.clear();*/
-	
-	
-	srand(0);
-	
-	for (int i=0;i<100000;i++) {
-		int s=rand()%230000;
-		int t=rand()%230000;
-		spDist = sp.bidirSearch(s, t);
-		sp.pathTo(p, t, -1, true, true);
-		//VERBOSE( cout << "SP Dist from " << s << " to " << t << " is " << spDist << endl; )
-		if(i%1000==0) VERBOSE( cout << i << "@" << s << "," << t << " :" << spDist << endl; );
-		
-		//p
-		
-		sp.clear();
-	}
-	
-	/*spDist = sp.bidirSearch(1, 1009);
-	VERBOSE( cout << "SP Dist from " << 1 << " to " << 1009 << " is " << spDist << endl; )
-	sp.clear();*/
+  /* Build Contraction Hierarchy  */
+  VERBOSE( cout << "Contracting graph ..." << endl;)
+  construct->constructHierarchy(contractParams);
+  
+  Dijkstra sp(updGraph);
+  Path p;
+  EdgeWeight spDist;
+  
+  /*EdgeWeight spDist = sp.bidirSearch(0, 3);
+  VERBOSE( cout << "SP Dist from " << 0 << " to " << 3 << " is " << spDist << endl; )
+  sp.clear();*/
+  
+  
+  srand(0);
+  
+  for (int i=0;i<100000;i++) {
+    int s=rand()%230000;
+    int t=rand()%230000;
+    spDist = sp.bidirSearch(s, t);
+    sp.pathTo(p, t, -1, true, true);
+    //VERBOSE( cout << "SP Dist from " << s << " to " << t << " is " << spDist << endl; )
+    if(i%1000==0) VERBOSE( cout << i << "@" << s << "," << t << " :" << spDist << endl; );
+    
+    //p
+    
+    sp.clear();
+  }
+  
+  /*spDist = sp.bidirSearch(1, 1009);
+  VERBOSE( cout << "SP Dist from " << 1 << " to " << 1009 << " is " << spDist << endl; )
+  sp.clear();*/
 }
 
 void RoadGraph::setupCH(string& fn){
@@ -985,7 +1001,7 @@ void RoadGraph::setupCH(string& fn){
   cout <<  "setupCH 2" << endl;   
   //h parameter
   string hcnFile = ddsgfile;
-  hcnFile.replace ((hcnFile.size())-5, 5, "hcn"); // extension .hcn
+  hcnFile.replace ((hcnFile.size())-4, 4, "hcn"); // extension .hcn
   cout <<  "setupCH 3" << endl;
   //k parameter:
   contractParams.maxHops.clear();
@@ -1013,7 +1029,8 @@ void RoadGraph::setupCH(string& fn){
   /* Build Contraction Hierarchy  */
   VERBOSE( cout << "Contracting graph ..." << endl;)
   construct->constructHierarchy(contractParams); 
-  
+
+  VERBOSE( cout << "new Dijkstra(updGraph) ..." << endl;)  
   sp = new Dijkstra(updGraph);
 }
 

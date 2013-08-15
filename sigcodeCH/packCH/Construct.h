@@ -340,7 +340,7 @@ namespace command {
                     time = timestamp();
                     construct.constructHierarchy(contractParams);
                     time = timestamp() - time;
-                    
+
                     construct.clear();
                 }
     
