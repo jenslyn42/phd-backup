@@ -217,6 +217,7 @@ namespace processing {
             _contractParams = contractParams;
             _localReduceEdges = contractParams.localReduceEdges;
             constructByLevel();
+	    VERBOSE( cout << "constructHierarchy() " << endl; )
         }
         
         /**

@@ -23,7 +23,7 @@ autoTestName = true
 // if true, override the testName automatically  "experiment"_"testAlgo"_"testFile (3 letters)"
 
 
-testFile = aalborgNEW.cedge
+testFile = USA-road-d.COL.cedge
 // choices: aalborgNEW.cedge, beijingNEW.cedge
 
 
