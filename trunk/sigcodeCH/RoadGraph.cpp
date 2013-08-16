@@ -89,30 +89,32 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts){
 // 	Path path;
 // 	EdgeWeight spDist;
 vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {
-	std::vector<int> trace, trace2;
-	std::vector<unsigned int> temp, temp2;
-	Path path2;
-	
-	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 1 " << endl;
+  std::vector<int> trace, trace2;
+  std::vector<unsigned int> temp, temp2;
+  Path path2;
+  
+  if (spDebug)    cout << "RoadGraph::dijkstraSSSP 1 " << endl;
 
-	spDist = sp->bidirSearch(source, dest); //distance
-	path2 = sp->pathTo(path, dest, -1, false, true); //shortest path
-	temp = path.getNodeVector();
+  spDist = sp->bidirSearch(source, dest); //distance
+  path2 = sp->pathTo(path, dest, -1, false, true); //shortest path
+  temp = path.getNodeVector();
 
-	for (int i=0;i<temp.size();i++)
-	  trace.push_back((int)(temp[i]));
-	
-	if (spDebug)    cout << "RoadGraph::dijkstraSSSP 6 " << endl;
+  for (int i=0;i<temp.size();i++)
+    trace.push_back((int)(temp[i]));
+  
+  if (spDebug)    cout << "RoadGraph::dijkstraSSSP 6 " << endl;
 
-	///////////////////
-// 	cout << "(" << source << "," << dest << ") [" << trace.size() << " - " << spDist << " / " << path.length() << "] " << endl;;
-// 	BOOST_FOREACH(int node, trace){ cout << node << ",";}
-// 	cout << " *1.1*" << endl;
-	sp->clear();
-	//////////////////
-	
-	
-	return trace;
+  ///////////////////
+//   cout << "(" << source << "," << dest << ") [" << trace.size() << " - " << spDist << " / " << path.length() << "] " << endl;;
+//   BOOST_FOREACH(int node, trace){ cout << node << ",";}
+//   cout << " *1.1*" << endl;
+  sp->clear();
+  //////////////////
+        
+  if(useConcisepath)
+    return calcConsisePath(trace);
+  else 
+    return trace;
 }
 
 vector<int> RoadGraph::dijkstraSSSP2(int source, int dest) {
@@ -214,7 +216,7 @@ vector<int> RoadGraph::dijkstraSSSP2(int source, int dest) {
       
       
       	/////////////////
-	cout << "(" << source << "," << dest << ") [" << trace.size() << " - " << spDist << "] *!*" << endl;
+// 	cout << "(" << source << "," << dest << ") [" << trace.size() << " - " << spDist << "] *!*" << endl;
 // 	BOOST_FOREACH(int node, trace){ cout << node << ",";}
 // 	cout << " *2.1*" << endl;
 	//////////////////
@@ -241,84 +243,84 @@ int RoadGraph::getMapsize()
 //assumes the full name of the cnode file "fn.cnode" but only assumes the name of the training/test file. "fn"
 void RoadGraph::transformTrainOrTestFile(string cnodeFn, string trainTestFn)
 {
-	string nodeFile = cnodeFn;
-	string testname = trainTestFn;
-	string trainname = trainTestFn;
-	string str;
-	std::vector<string> tokens;
-	boost::unordered_map<int, Point> vertexId2Point;
-	std::vector<intPair> trainVector;
-	std::vector<intPair> testVector;
-	testname.replace ((testname.size()), 5, ".test");
-	trainname.replace ((trainname.size()), 6, ".train");
+  string nodeFile = cnodeFn;
+  string testname = trainTestFn;
+  string trainname = trainTestFn;
+  string str;
+  std::vector<string> tokens;
+  boost::unordered_map<int, Point> vertexId2Point;
+  std::vector<intPair> trainVector;
+  std::vector<intPair> testVector;
+  testname.replace ((testname.size()), 5, ".test");
+  trainname.replace ((trainname.size()), 6, ".train");
 
-	//load in all vertex ids with their Point
-	ifstream nodeData (nodeFile.c_str(), ios::in);
-	if(rgDebug) cout << "s1, transformTrainOrTestFile!"<< endl;
-	if(nodeData.is_open())
-	{
-		while(getline(nodeData, str))
-		{
-			boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //split last line of *.cnode file
-			  vertexId2Point[boost::lexical_cast<int>(tokens[0])] = std::make_pair(boost::lexical_cast<double>(tokens[1]),boost::lexical_cast<double>(tokens[2]));
-		}
-		nodeData.close();
-	}
+  //load in all vertex ids with their Point
+  ifstream nodeData (nodeFile.c_str(), ios::in);
+  if(rgDebug) cout << "s1, transformTrainOrTestFile!"<< endl;
+  if(nodeData.is_open())
+  {
+    while(getline(nodeData, str))
+    {
+      boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //split last line of *.cnode file
+        vertexId2Point[boost::lexical_cast<int>(tokens[0])] = std::make_pair(boost::lexical_cast<double>(tokens[1]),boost::lexical_cast<double>(tokens[2]));
+    }
+    nodeData.close();
+  }
 
-	//load in all start/end vertex ids from training file
-	ifstream trainData (trainname.c_str(), ios::in);
-	if(rgDebug) cout << "s1, transformTrainOrTestFile!"<< endl;
-	if(trainData.is_open())
-	{
-		while(getline(trainData, str))
-		{
-			boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //split last line of *.cnode file
-			trainVector.push_back(std::make_pair(boost::lexical_cast<int>(tokens[0]),boost::lexical_cast<int>(tokens[1])));
-		}
-		trainData.close();
-	}
+  //load in all start/end vertex ids from training file
+  ifstream trainData (trainname.c_str(), ios::in);
+  if(rgDebug) cout << "s1, transformTrainOrTestFile!"<< endl;
+  if(trainData.is_open())
+  {
+    while(getline(trainData, str))
+    {
+      boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //split last line of *.cnode file
+      trainVector.push_back(std::make_pair(boost::lexical_cast<int>(tokens[0]),boost::lexical_cast<int>(tokens[1])));
+    }
+    trainData.close();
+  }
 
-	//load in all start/end vertex ids from test file
-	ifstream testData (testname.c_str(), ios::in);
-	if(rgDebug) cout << "s1, transformTrainOrTestFile!"<< endl;
-	if(testData.is_open())
-	{
-		while(getline(testData, str))
-		{
-			boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //split last line of *.cnode file
-			testVector.push_back(std::make_pair(boost::lexical_cast<int>(tokens[0]),boost::lexical_cast<int>(tokens[1])));
-		}
-		testData.close();
-	}
+  //load in all start/end vertex ids from test file
+  ifstream testData (testname.c_str(), ios::in);
+  if(rgDebug) cout << "s1, transformTrainOrTestFile!"<< endl;
+  if(testData.is_open())
+  {
+    while(getline(testData, str))
+    {
+      boost::algorithm::split(tokens, str, boost::algorithm::is_space()); //split last line of *.cnode file
+      testVector.push_back(std::make_pair(boost::lexical_cast<int>(tokens[0]),boost::lexical_cast<int>(tokens[1])));
+    }
+    testData.close();
+  }
 
-	testname.replace ((testname.size()-5), 7, "CV.test");
-	trainname.replace ((trainname.size()-6), 8, "CV.train");
-	int i = 0;
+  testname.replace ((testname.size()-5), 7, "CV.test");
+  trainname.replace ((trainname.size()-6), 8, "CV.train");
+  int i = 0;
 
-	//write out training file
-	ofstream trainfile;
-	trainfile.open(trainname.c_str(), ios::out | ios::ate | ios::app);
+  //write out training file
+  ofstream trainfile;
+  trainfile.open(trainname.c_str(), ios::out | ios::ate | ios::app);
 
-	BOOST_FOREACH (intPair coord, trainVector)
-	{
-		trainfile << i << " " << vertexId2Point.at(coord.first).first << " " << vertexId2Point.at(coord.first).second << " ";
-		trainfile << vertexId2Point.at(coord.second).first << " " << vertexId2Point.at(coord.second).second << endl;
-		i++;
-	}
-	trainfile.close();
+  BOOST_FOREACH (intPair coord, trainVector)
+  {
+    trainfile << i << " " << vertexId2Point.at(coord.first).first << " " << vertexId2Point.at(coord.first).second << " ";
+    trainfile << vertexId2Point.at(coord.second).first << " " << vertexId2Point.at(coord.second).second << endl;
+    i++;
+  }
+  trainfile.close();
 
-	//write out test file
-	ofstream testfile;
-	testfile.open(testname.c_str(), ios::out | ios::ate | ios::app);
-	i = 0;
+  //write out test file
+  ofstream testfile;
+  testfile.open(testname.c_str(), ios::out | ios::ate | ios::app);
+  i = 0;
 
-	BOOST_FOREACH (intPair coord, testVector)
-	{
-		testfile << i << " " << vertexId2Point.at(coord.first).first << " " << vertexId2Point.at(coord.first).second << " ";
-		testfile << vertexId2Point.at(coord.second).first << " " << vertexId2Point.at(coord.second).second << endl;
-		i++;
-	}
-	testfile.close();
+  BOOST_FOREACH (intPair coord, testVector)
+  {
+    testfile << i << " " << vertexId2Point.at(coord.first).first << " " << vertexId2Point.at(coord.first).second << " ";
+    testfile << vertexId2Point.at(coord.second).first << " " << vertexId2Point.at(coord.second).second << endl;
+    i++;
+  }
+  testfile.close();
 }
 
 void RoadGraph::writeoutEdgedegree()
