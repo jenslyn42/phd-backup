@@ -1,3 +1,14 @@
+/*
+ * Takes as input a .co file 
+ * outputs a .cnode file
+ * 
+ * It adds an extra empty line at the bottom of the output file!
+ * 
+ * execute as:
+ * ./convertGr <filename>.co
+ * 
+ */
+
 #include <string>
 #include <vector>
 #include <iostream>
@@ -7,8 +18,11 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/unordered_map.hpp>
+#include <boost/foreach.hpp>
 
 using namespace std;
+typedef boost::unordered_map<int, pair<int,int> > intPairMap;
 
 /*
  * fileformat 
@@ -28,7 +42,7 @@ int main(int argc, char *argv[]) {
   string fn = argv[1];
   string str;
   std::vector<string> tokens;
-  std::vector<std::pair<int, std::pair<int,int> > > entry;
+  boost::unordered_map<int, pair<int,int> > entry;
   
   ifstream in_data (fn.c_str(), ios::in);
   cout << "FN: " <<fn << endl;
@@ -37,7 +51,7 @@ int main(int argc, char *argv[]) {
     {
       boost::algorithm::split(tokens, str, boost::algorithm::is_space());
       if (tokens[0].compare("v") == 0)
-	entry.push_back(std::make_pair<int, pair<int,int> > (atoi(tokens[1].c_str()),  std::make_pair<int,int>(atoi(tokens[2].c_str()),atoi(tokens[3].c_str()))));
+	entry[atoi(tokens[1].c_str())] =  std::make_pair<int,int>(atoi(tokens[2].c_str()), atoi(tokens[3].c_str()));
 //       else if(tokens[0].compare("c") == 0)
 	//handle comments
 //       else if(tokens[0].compare("p") == 0)
@@ -53,11 +67,11 @@ int main(int argc, char *argv[]) {
   ofstream resultfile;
   resultfile.open(fn.c_str(), ios::out);
   
-  for(std::vector<std::pair<int, std::pair<int,int> > >::iterator it = entry.begin(); it != entry.end(); ++it) {
-    resultfile << (*it).first << " " << (*it).second.first << " " << (*it).second.second << endl;
-    i++;
+  BOOST_FOREACH(intPairMap::value_type it, entry){
+    resultfile << it.first << " " << it.second.first << " " << it.second.second << endl;
+      i++;
   }
-  cout << fn << " written" << endl;
+  cout << fn << " written.\n" << i << " lines" << endl;
   resultfile.close();
 
 }
