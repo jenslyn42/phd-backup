@@ -1,11 +1,11 @@
 /*
- * Takes as input a .gr file 
- * outputs a .cedge and a .ddsg file
+ * Takes as input a .cedge file 
+ * outputs a .ddsg file
  * 
  * It adds an extra empty line at the bottom of the output file!
  * 
  * execute as:
- * ./convertGr <filename>.gr
+ * ./convertGr <filename>.cedge
  * 
  */
 
@@ -28,11 +28,6 @@ typedef boost::unordered_map<int, pair<pair<int,int>, int> > intIntPairIntMap;
 /*
  * fileformat 
  * 
- * .gr: 
- * (first non-comment line) p sp [num nodes] [num edges]
- * c [comment]
- * a [nid1 nid2 distance]
- * 
  * .cedge: 
  * linenum nid1 nid2 distance
  * e.g.: 0 0 1 1.182663
@@ -48,7 +43,7 @@ typedef boost::unordered_map<int, pair<pair<int,int>, int> > intIntPairIntMap;
 */
 int main(int argc, char *argv[]) {
   if(argc !=2){
-    cout << "need to give a .gr file as input: " << argv[0] << " filename.gr" << endl; 
+    cout << "need to give a .cedge file as input: " << argv[0] << " filename.cedge" << endl; 
     return -1;
   }
   
@@ -56,47 +51,31 @@ int main(int argc, char *argv[]) {
   string str;
   std::vector<string> tokens;
   boost::unordered_map<int, std::pair<std::pair<int,int>, int > > entry;
+  boost::unordered_map<int, int> nodes; //To identify the number of unique node ids.
   int i=0, numNodes=0, numEdges=0;
   
   ifstream in_data (fn.c_str(), ios::in);
   cout << "FN: " <<fn << endl;
   if(in_data.is_open()){
-    while(getline(in_data, str))
-    {
+    while(getline(in_data, str)) {
       boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-      if (tokens[0].compare("a") == 0){
-	entry[i] = make_pair<pair<int,int>, int>(make_pair<int,int>(atoi(tokens[1].c_str()), atoi(tokens[2].c_str())), atoi(tokens[3].c_str()));
-	i++;
-      }
-//       else if(tokens[0].compare("c") == 0)
-	//handle comments
-      else if(tokens[0].compare("p") == 0){
-	numNodes = atoi(tokens[2].c_str());
-	numEdges = atoi(tokens[3].c_str());
-      }
-	//use info about number of nodes and edges
+      entry[i] = make_pair<pair<int,int>, int>(make_pair<int,int>(atoi(tokens[1].c_str()), atoi(tokens[2].c_str())), atoi(tokens[3].c_str()));
+      nodes[atoi(tokens[1].c_str())] = 1;
+      nodes[atoi(tokens[2].c_str())] = 1;
+      i++;
     }
     cout << "Reading file Done!" << endl;
     in_data.close();
   }
   
-  ///file output .cedge
-  i=0;
-  fn.replace ((fn.size()-2), 5, "cedge"); //change file extention from .gr to .cedge
-  ofstream resultfile;
-  resultfile.open(fn.c_str(), ios::out);
-  
-  BOOST_FOREACH(intIntPairIntMap::value_type it, entry){
-    resultfile <<it.first << " " <<  it.second.first.first << " " << it.second.first.second << " " << it.second.second << endl;
-    i++;
-  }
-  cout << fn << " written.\n" << i << " lines" << endl;
-  resultfile.close();
+  numEdges = i;
+  numNodes = nodes.size();
   
   
   ///file output .ddsg
   i=0;
   fn.replace ((fn.size()-5), 5, "ddsg"); //change file extention from .cedge to .ddsg
+  ofstream resultfile;
   resultfile.open(fn.c_str(), ios::out);
   
   resultfile << "d " << numNodes << " " << numEdges << endl; 
