@@ -22,8 +22,8 @@ show xlabel
 show ylabel
 #set label "Yield Point" at 0.003,260
 #set arrow from 0.0028,250 to 0.003,280
-#set xr [550000:570000]
-#set yr [6315000:6335000]
+set xr [-74100000:-73900000]
+set yr [40500000:40700000]
 set pointsize 0.5
 set size ratio -1
 
