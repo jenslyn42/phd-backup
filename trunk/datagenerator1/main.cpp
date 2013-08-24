@@ -1,16 +1,17 @@
 #include "Setting.h"
 #include "RoadGraph.h"
 
-#define WRITE_POI true // if true writes out all vertices of all regions 
+// if true: write out all vertices of all regions in .poi file
+#define WRITE_POI true 
 
 //arg 1: input filename, no type (cedge/cnode assumed)
-//arg 2: queries to generate in, half in *.qtest, other half in *.qtrain
+//arg 2: queries to generate, half in *.qtest, other half in *.qtrain
 //arg 3: number of points to use as example regions to pick vertices from
 //arg 4: radius of regions
 
 
 int main(int argc, char *argv[]) {
-	srand(50);	srand48(50);
+	srand(0);	srand48(0);
 
 if(argc != 5){
   cout << "Wrong usage!\nUsage: " << argv[0] << "<mapname> <numQueries> <numPoints> <radius>" << endl;
@@ -24,7 +25,7 @@ bool constWeight = false;
 boost::unordered_map<int,vector<int> > regionVerticelists;
 
 cout << "******************************************" << endl;
-cout << "Map/Clusters/Radius: " << fn << "/" << numPoints << "/" << radius << endl;
+cout << "Map/Clusters/Radius: " << fn << "/" << numPoints << "/" << radius << " " << sizeof(int) << " " << sizeof(char) << " " << sizeof(char*)  <<endl;
 cout << "******************************************" << endl;
 
 
@@ -42,10 +43,11 @@ cout << "******************************************" << endl;
 // 24815 544502.937500 6335516.000000 (544500, 6335500)
 // 31652 567145.125000 6305505.500000 (550500, 6305500)
 // 33923 531641.562500 6295516.000000 (531600, 6295500)
-
+/*
 int random[10];
 int i=0; //just because i is used later on
 cout << RoadGraph::mapObject(fn)->getMapsize();
+
 
 random[0] = 17283;
 	regionVerticelists[random[0]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[0], -1, constWeight, radius);
@@ -78,11 +80,12 @@ random[9] = 33923;
 	regionVerticelists[random[9]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[9], -1, constWeight, radius);
 	cout << "Region " << 9 << " size: " << regionVerticelists[random[9]].size() << " " <<  endl;
 //---------------------------------------------------------
-/*
-
+*/
+//**********************************************************
 int random[numPoints];
 int i=0;
 
+cout << "Calc regions" << endl;
 while(i<numPoints)
 {
 	random[i] = rand()%RoadGraph::mapObject(fn)->getMapsize();
@@ -90,7 +93,7 @@ while(i<numPoints)
 	cout << "Region " << i << " size: " << regionVerticelists[random[i]].size() << " S:(" << random[i] << ")" <<  endl;
 	i++;
 }
-*/
+//**********************************************************
 cout << "regionVerticelists initialized" << endl;
 
 
