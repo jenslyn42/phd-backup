@@ -43,56 +43,71 @@ cout << "******************************************" << endl;
 // 24815 544502.937500 6335516.000000 (544500, 6335500)
 // 31652 567145.125000 6305505.500000 (550500, 6305500)
 // 33923 531641.562500 6295516.000000 (531600, 6295500)
-/*
-int random[10];
+
+// NY data
+// 78999 -74455311 40309206
+// 61225 -74480997 40482404
+// 90187 -74134986 40449407
+// 82099 -74047383 40352009
+// 59037 -74460597 40570703
+// 
+// 63116 -74415595 40506804
+// 218834 -74137434 40616743
+// 129872 -74250990 40641203
+// 217498 -74070038 40613283
+// 207549 -73807057 40689526
+// 
+// 157525 -73555071 40680001
+// 95371 -74480099 40871299
+// 48468 -74183589 40738901
+// 139309 -73810603 40818779
+// 190669 -74005091 40712174
+// 
+// 152661 -73610972 40710301
+// 111669 -74169088 40912198
+// 22560 -74000583 40925298
+// 253154 -73788277 40911499
+// 235397 -74027525 41117092
+
+//-------------------------------------------------
+//-------------------------------------------------
+//NY data
+int centers [] = {190669, 218834, 207549, 48468, 22560, 111669, 217498, 253154, 152661, 157525, 129872, 63116, 139309, 90187, 59037, 78999, 61255, 82099, 95371, 235397};
+int numCenters = numPoints;
+if(numCenters > 20) numCenters = 20; //limit, we only have 20 points to work with
+//-------------------------------------------------
+
+//-------------------------------------------------
+///Aalborg data
+//int centers [] = {17283, 9970, 18596, 17347, 127966, 94186, 119685, 24815, 31652, 33923};
+//int numCenters = 10;
+//-------------------------------------------------
+
 int i=0; //just because i is used later on
 cout << RoadGraph::mapObject(fn)->getMapsize();
 
-
-random[0] = 17283;
-	regionVerticelists[random[0]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[0], -1, constWeight, radius);
-	cout << "Region " << 0 << " size: " << regionVerticelists[random[0]].size() << " " <<  endl;
-random[1] = 9970;
-	regionVerticelists[random[1]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[1], -1, constWeight, radius);
-	cout << "Region " << 1 << " size: " << regionVerticelists[random[1]].size() << " " <<  endl;
-random[2] = 18596;
-	regionVerticelists[random[2]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[2], -1, constWeight, radius);
-	cout << "Region " << 2 << " size: " << regionVerticelists[random[2]].size() << " " <<  endl;
-random[3] = 17347;
-	regionVerticelists[random[3]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[3], -1, constWeight, radius);
-	cout << "Region " << 3 << " size: " << regionVerticelists[random[3]].size() << " " <<  endl;
-random[4] = 127966;
-	regionVerticelists[random[4]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[4], -1, constWeight, radius);
-	cout << "Region " << 4 << " size: " << regionVerticelists[random[4]].size() << " " <<  endl;
-random[5] = 94186;
-	regionVerticelists[random[5]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[5], -1, constWeight, radius);
-	cout << "Region " << 5 << " size: " << regionVerticelists[random[5]].size() << " " <<  endl;
-random[6] = 119685;
-	regionVerticelists[random[6]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[6], -1, constWeight, radius);
-	cout << "Region " << 6 << " size: " << regionVerticelists[random[6]].size() << " " <<  endl;
-random[7] = 24815;
-	regionVerticelists[random[7]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[7], -1, constWeight, radius);
-	cout << "Region " << 7 << " size: " << regionVerticelists[random[7]].size() << " " <<  endl;
-random[8] = 31652;
-	regionVerticelists[random[8]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[8], -1, constWeight, radius);
-	cout << "Region " << 8 << " size: " << regionVerticelists[random[8]].size() << " " <<  endl;
-random[9] = 33923;
-	regionVerticelists[random[9]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[9], -1, constWeight, radius);
-	cout << "Region " << 9 << " size: " << regionVerticelists[random[9]].size() << " " <<  endl;
-//---------------------------------------------------------
-*/
-//**********************************************************
-int random[numPoints];
-int i=0;
-
-cout << "Calc regions" << endl;
-while(i<numPoints)
-{
-	random[i] = rand()%RoadGraph::mapObject(fn)->getMapsize();
-	regionVerticelists[random[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(random[i], -1, constWeight, radius);
-	cout << "Region " << i << " size: " << regionVerticelists[random[i]].size() << " S:(" << random[i] << ")" <<  endl;
+while(i<numCenters){ 
+	regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
+	cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
 	i++;
 }
+//-------------------------------------------------
+//-------------------------------------------------
+
+
+//**********************************************************
+// int centers[numPoints];
+// int i=0;
+// long mapsize = RoadGraph::mapObject(fn)->getMapsize();
+// 
+// cout << "Calc regions" << endl;
+// while(i<numPoints)
+// {
+// 	centers[i] = rand()% mapsize; 
+// 	regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
+// 	cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
+// 	i++;
+// }
 //**********************************************************
 cout << "regionVerticelists initialized" << endl;
 
@@ -124,12 +139,12 @@ cout << "file writing started [" << filename << "]" << endl;
 for(;i<queriesToGenerate/2;i++)
 {
 	tmpPick1 =rand()%numPoints;
-	tempList1 =regionVerticelists.at(random[tmpPick1]);
+	tempList1 =regionVerticelists.at(centers[tmpPick1]);
 
 	do{
 	tmpPick2=rand()%numPoints;
 	}while(tmpPick1 == tmpPick2);
-	tempList2 =regionVerticelists.at(random[tmpPick2]);
+	tempList2 =regionVerticelists.at(centers[tmpPick2]);
 
 	sid = tempList1[rand()%tempList1.size()];
 	tid = tempList2[rand()%tempList2.size()];
@@ -157,13 +172,13 @@ cout << "file writing started [" << filename << "]" << endl;
 for(;i<queriesToGenerate;i++)
 {
 	tmpPick1 =rand()%numPoints;
-	tempList1 =regionVerticelists.at(random[tmpPick1]);
+	tempList1 =regionVerticelists.at(centers[tmpPick1]);
 
 	do{
 	tmpPick2=rand()%numPoints;
 	}while(tmpPick1 == tmpPick2);
 
-	tempList2 =regionVerticelists.at(random[tmpPick2]);
+	tempList2 =regionVerticelists.at(centers[tmpPick2]);
 
 	sid = tempList1[rand()%tempList1.size()];
 	tid = tempList2[rand()%tempList2.size()];
