@@ -896,9 +896,6 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
 }
 
 
-
-
-
 /*
  * To test contraction hiracies 
  * 

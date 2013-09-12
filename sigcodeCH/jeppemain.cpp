@@ -392,7 +392,8 @@ cout << "******************************************" << endl;
 	cout << "HERE THE EXPERIMENTS SHOULD START!!\n" << endl;
 	
 ////////////////////////////////////////	
-// 
+// Testing SP functionality, no experiment execution 
+/////////////////////////////////////////
 // 	string fn=ts.queryFileName;
 // 	string app="";
 // 	intPairVector stPointPairs;
