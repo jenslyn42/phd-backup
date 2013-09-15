@@ -23,12 +23,11 @@ autoTestName = true
 // if true, override the testName automatically  "experiment"_"testAlgo"_"testFile (3 letters)"
 
 
-testFile = USA-road-d.COL.cedge
-// choices: aalborgNEW.cedge, beijingNEW.cedge
+testFile = beijingNEW.cedge
+// choices: aalborgNEW.cedge, beijingNEW.cedge, USA-road-d.COL.cedge, USA-road-d.NY.cedge
 
 
 queryFileName = aalborgNEWGP10R1600.qtest
-
 
 inputFileType = 3
 // 1:graph_large, 2: ppi.dat, 3:*.cedge

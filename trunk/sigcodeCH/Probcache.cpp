@@ -79,7 +79,7 @@ void Probcache::runQueryList() {
 	RoadGraph::mapObject(ts)->setConcisePathUse(true);
 	spResultShort = RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);
 	
-	cout << "full/concise - ratio: " << spResultLong.size() << " / " << spResultShort.size() << " - " << spResultLong.size() / spResultShort.size() << endl;
+	cout << "full/concise - ratio: " << spResultLong.size() << " / " << spResultShort.size() << " - " << (double)spResultLong.size() / (double)spResultShort.size() << endl;
 	if(numDijkstraCalls > 100) break;
       //////////////////////////////////
     }
@@ -87,10 +87,10 @@ void Probcache::runQueryList() {
     if(debugProbc) cout << "four, Probcache::checkCache!" << endl;
   }
 
-  BOOST_FOREACH(intTimeIntPairMap::value_type path, cache.utilityStats){
-    cout << "Time, PathID - Hits: " << path.second.first << ", " << path.first << " - "  << path.second.second << endl;
-  }
-  cout << "---------\nPaths usefull: " << cache.utilityStats.size() << "\n--------- " << endl;
+//   BOOST_FOREACH(intTimeIntPairMap::value_type path, cache.utilityStats){
+//     cout << "Time, PathID - Hits: " << path.second.first << ", " << path.first << " - "  << path.second.second << endl;
+//   }
+//   cout << "---------\nPaths usefull: " << cache.utilityStats.size() << "\n--------- " << endl;
 }
 
 void Probcache::buildCache(){
