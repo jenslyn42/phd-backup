@@ -656,6 +656,12 @@ double RoadGraph::getAngle(Point prevNode, Point source, Point target){
     return 180-angle;
 }
 
+// std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
+//   
+//   
+// }  
+
+
 std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
   int outdegree, prevNode;
   bool addnext = true, doadd = false;
@@ -719,6 +725,7 @@ std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
 	  //cout << "3.10: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
 	}else if(doadd){
 	  concisepath.push_back(trace[i]);
+	  doadd = false;
 	  //cout << "3.20: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
 	}
       }else{ //add node to path if outdegree larger than 2
