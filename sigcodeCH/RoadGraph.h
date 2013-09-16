@@ -91,6 +91,8 @@ private:
 	intVector getSPfromSPTree(int source, int target);
 	double getAngle(Point prevNode, Point source, Point target);
 	std::vector<int> calcConsisePath(std::vector<int>& trace);
+	std::vector<int> calcConsisePathA(std::vector<int>& trace);
+	std::vector<int> calcConsisePathB(std::vector<int>& trace);
 	std::vector<int> recoverPath(std::vector<int>& conciseTrace);
 	void writeoutEdgedegree();
 	void findNode2degree();
