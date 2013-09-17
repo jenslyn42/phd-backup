@@ -657,11 +657,13 @@ double RoadGraph::getAngle(Point prevNode, Point source, Point target){
 }
 
 std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
-  calcConsisePathB(trace);  
+  return calcConsisePathB(trace);  
 }  
 
 
 std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
+  
+  
   int outdegree, prevNode;
   bool addnext = true, doadd = false;
   vector<int> concisepath;
@@ -742,34 +744,34 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
   if(outdegree < 3){ degree2++; degree2Added++;}
   
   
-    int originalDegree2 = 0; //++
-    if(concisepath.empty()) cout << "EMPTY CONCISE PATH!!" << endl;
-    vector<int> reverseTrace;
-    for(std::vector<int>::size_type k = trace.size()-1; k < trace.size(); k--){
-	reverseTrace.push_back(trace[k]);
-	if(node2degree[trace[k]] < 3) originalDegree2++; //++
-    }
+  int originalDegree2 = 0; //++
+  if(concisepath.empty()) cout << "EMPTY CONCISE PATH!!" << endl;
+  vector<int> reverseTrace;
+  for(std::vector<int>::size_type k = trace.size()-1; k < trace.size(); k--){
+    reverseTrace.push_back(trace[k]);
+    if(node2degree[trace[k]] < 3) originalDegree2++; //++
+  }
  
-    vector<int> tmpRecpath;
-    if(conciseDebug) {
-      if((tmpRecpath=recoverPath(concisepath)) == reverseTrace)
-	cout << "EQ " << concisepath.size() << " / " << reverseTrace.size() << " D2: (" << degree2Added <<") " << degree2 << endl;
-      else
-	cout << "NEQ! " << concisepath.size() << endl;
+  vector<int> tmpRecpath;
+  if(conciseDebug) {
+    if((tmpRecpath=recoverPath(concisepath)) == reverseTrace)
+      cout << "EQ " << concisepath.size() << " / " << reverseTrace.size() << " D2: (" << degree2Added <<") " << degree2 << endl;
+    else
+      cout << "NEQ! " << concisepath.size() << endl;
       
-      for(std::vector<int>::size_type i = 0; i != concisepath.size(); i++){
-	cout << concisepath[i] << " ";
-      }
+    for(std::vector<int>::size_type i = 0; i != concisepath.size(); i++){
+      cout << concisepath[i] << " ";
+    }
 
-      cout << "\nORI: " << trace.size() << endl;
-      for(std::vector<int>::size_type k = trace.size()-1; k < trace.size(); k--){
-	cout << trace[k] << " ";
-      }   
+    cout << "\nORI: " << trace.size() << endl;
+    for(std::vector<int>::size_type k = trace.size()-1; k < trace.size(); k--){
+      cout << trace[k] << " ";
+    }   
   
-      cout << "\nREC: " << tmpRecpath.size() << endl;
-      for(std::vector<int>::size_type j = 0; j != tmpRecpath.size(); j++){
-	cout << tmpRecpath[j] << " ";
-      }
+    cout << "\nREC: " << tmpRecpath.size() << endl;
+    for(std::vector<int>::size_type j = 0; j != tmpRecpath.size(); j++){
+      cout << tmpRecpath[j] << " ";
+    }
   
 //    cout << "\nREVTRACE: " << reverseTrace.size() << endl;
 //    for(std::vector<int>::size_type z = 0; z != reverseTrace.size(); z++){
