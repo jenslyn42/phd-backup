@@ -649,7 +649,7 @@ double RoadGraph::getAngle(Point prevNode, Point source, Point target){
     
     diffx = source.first - target.first;
     diffy = source.second - target.second;
-    csquare = (diffx*diffx) + (diffy*diffy);    
+    csquare = (diffx*diffx) + (diffy*diffy);
     
     angle = acos((bsquare + csquare - asquare)/(2*sqrt(bsquare*csquare)));
     
@@ -657,8 +657,8 @@ double RoadGraph::getAngle(Point prevNode, Point source, Point target){
 }
 
 std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
-  return calcConsisePathB(trace);  
-}  
+  return calcConsisePathB(trace);
+}
 
 
 std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
