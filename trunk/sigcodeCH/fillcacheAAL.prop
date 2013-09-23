@@ -11,7 +11,7 @@ testScenario = PROXY
 // choices: SERVER, PROXY
 
 
-testSPtype = full
+testSPtype = CONCISE
 // choices: FULL, CONCISE, OPTIMAL
 
 
@@ -36,8 +36,8 @@ inputFileType = 3
 splits = 14	
 
 
-cachesize = 419430400
-// 5120000
+cachesize = 0
+//cachesize = 419430400
 // note: the cache size is expressed as the number of "bits"
 
 

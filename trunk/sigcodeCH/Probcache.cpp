@@ -54,7 +54,7 @@ Probcache::~Probcache() { }
 void Probcache::runQueryList() {
   cout << "Probcache::runQueryList()" << endl;
   intVector spResult;
-  unsigned long existingNodesvisited; //*1* used for keeping track of number of nodes visited by a SP call.
+  unsigned long existingNodesvisited; // *1* used for keeping track of number of nodes visited by a SP call.
   RoadGraph::mapObject(ts)->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
   BOOST_FOREACH(intPair q, testSTPointPairs) { 
 
@@ -65,12 +65,13 @@ void Probcache::runQueryList() {
       numCacheHits++;
     } else {
       if(debugProbc) cout << "three, Probcache::checkCache!" << endl;
-      existingNodesvisited = RoadGraph::mapObject(ts)->numNodeVisits; //*1* nodes visited before call
+      existingNodesvisited = RoadGraph::mapObject(ts)->numNodeVisits; // *1* nodes visited before call
       
       if(ts.executeTrainingWorkload) spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);
       numDijkstraCalls++;
+
       //////////////////////////////////
-      intVector spResultLong, spResultShort;
+     /* intVector spResultLong, spResultShort;
       RoadGraph::mapObject(ts)->setConcisePathUse(false);
       spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);   
 
@@ -78,8 +79,8 @@ void Probcache::runQueryList() {
       spResultShort = RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);
 	
       cout << "full/concise - ratio: " << spResultLong.size() << " / " << spResultShort.size() << " - " << (double)spResultLong.size() / (double)spResultShort.size() << endl;
-      if(numDijkstraCalls > 100) break;
-      //////////////////////////////////
+      if(numDijkstraCalls > 200) break;
+      */ ////////////////////////////////
     }
 
     if(debugProbc) cout << "four, Probcache::checkCache!" << endl;
