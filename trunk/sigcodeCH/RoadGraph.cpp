@@ -824,7 +824,6 @@ std::vector<int>  RoadGraph::calcConsisePathB(std::vector<int>& trace){
       if(measureConcisepathdegrees){ //(testsetting) add nid to path based on the angle deviation from previous heading
 	EdgeList& edges = map[trace[i]];
 	prevNode = trace[i+1];
-	prev = nid2Point[prevNode];
 	curr = nid2Point[trace[i]];
 	angleToNextNode=0.0;
 	minAngle=std::numeric_limits<double>::max();

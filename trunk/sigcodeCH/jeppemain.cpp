@@ -287,7 +287,7 @@ void extractTestParameters(TestSetting& ts) {
 	    break;
 	  case SPTYPE_OPTIMAL:
 	    ts.useConcisepath = false;
-	    ts.measureConcisepathdegrees = false;
+	    ts.measureConcisepathdegrees = true;
 	    break;
 	}
 
