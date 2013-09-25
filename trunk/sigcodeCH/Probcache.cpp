@@ -363,7 +363,9 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
   //rank queries based on statistics
   BOOST_FOREACH(intPairIntMap::value_type rpint, trainingQueriesPerRegionPair) {
     intPair rp = rpint.first;
-	
+    /////////////////////////
+    if(cid > 100) break;
+    /////////////////////////
     if (debugProbc)
       cout << "3.1. rp: (" << rp.first << "," << rp.second << ") " << endl;
 
@@ -415,7 +417,6 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
     HeapEntry tmp = mhCache.top();
     mhCache.pop();
 
-    // print score, cid, key
     if (bucketList.find(tmp.pID)==bucketList.end()) {
       cout << "BLARG!! error occurred" << endl;
       exit(0);
@@ -449,7 +450,9 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 	// pickSTpair is randomized; we try it several times in case it picks a pair with empty spResult
 	for (int num_trials=0; num_trials<20; num_trials++ ) {	// num_trials: a threshold
 	  stPair = pickSTpair(tmp.pID);
-	  spResult = graph->dijkstraSSSP(stPair.first, stPair.second);
+	  //if(ts.testSPtype == SPTYPE_OPTIMAL) spResult = optiPath(stPair, vSeen, false);
+	  //else 
+	    spResult = graph->dijkstraSSSP(stPair.first, stPair.second);
 	  curscore = calcScore(spResult, vSeen); // update score  
 
 	  if (curscore > 0)
@@ -573,6 +576,7 @@ intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random){
   
   spResultIntermediate = spResultShort;
 
+	
   //find the set difference between concise and full path. This set is the candidate set for insertion when calculating optimalPath
   std::set_symmetric_difference(tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), std::back_inserter(spDiff));
   
@@ -638,6 +642,9 @@ intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random){
 	choicePosIt = find(spDiff.begin(), spDiff.end(), curBestOption);
 	spDiff.erase(choicePosIt);
       }else{
+	///////////////////7
+	cout << "long/concise/optimal: " << spResultLong.size() << " / " << spResultShort.size() << " / " << spResultIntermediate.size() << endl;
+	///////////////////
 	return spResultIntermediate;
       }      
       //cout << "Q6_2.: " << endl;
@@ -646,6 +653,9 @@ intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random){
 	
       currentScore=currentBasescore;
     }
+	///////////////////7
+	cout << "long/concise/optimal: " << spResultLong.size() << " / " << spResultShort.size() << " / " << spResultIntermediate.size() << endl;
+	///////////////////
     return spResultIntermediate;
   }
 }
