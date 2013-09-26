@@ -364,7 +364,7 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
   BOOST_FOREACH(intPairIntMap::value_type rpint, trainingQueriesPerRegionPair) {
     intPair rp = rpint.first;
     /////////////////////////
-    if(cid > 100) break;
+    if(cid > 1000) break;
     /////////////////////////
     if (debugProbc)
       cout << "3.1. rp: (" << rp.first << "," << rp.second << ") " << endl;
