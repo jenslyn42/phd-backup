@@ -657,7 +657,7 @@ double RoadGraph::getAngle(Point prevNode, Point source, Point target){
 }
 
 std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
-  return calcConsisePathB(trace);
+  return calcConsisePathA(trace);
 }
 
 
