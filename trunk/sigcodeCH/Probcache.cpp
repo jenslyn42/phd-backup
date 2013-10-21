@@ -365,9 +365,9 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
   //rank queries based on statistics
   BOOST_FOREACH(intPairIntMap::value_type rpint, trainingQueriesPerRegionPair) {
     intPair rp = rpint.first;
-    /////////////////////////
-    if(cid > 10) exit(1); //break;
-    /////////////////////////
+//     /////////////////////////
+//     if(cid > 10) exit(1); //break;
+//     /////////////////////////
     if (debugProbc)
       cout << "3.1. rp: (" << rp.first << "," << rp.second << ") " << endl;
 
@@ -564,15 +564,12 @@ intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random){
   cout << "Probcache::optiPath Q_01:(" << endl;
   //Order is important! call setConcisePathUse false last!
   RoadGraph::mapObject(ts)->setConcisePathUse(true);
-    cout << "Probcache::optiPath Q_01.1:(" << endl;
   spResultShort = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
-    cout << "Probcache::optiPath Q_01.2:(" << endl;
   conciseScore = calcScore(spResultShort, vSeen);  
-  cout << "Probcache::optiPath Q_02:(" << endl;
   RoadGraph::mapObject(ts)->setConcisePathUse(false);
   spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
   longScore = calcScore(spResultLong, vSeen);    
-  cout << "Probcache::optiPath Q_03:(" << endl;
+//   cout << "Probcache::optiPath Q_03:(" << endl;
  
   intVector tempLong, tempConsise;
   tempLong = spResultLong;
@@ -581,7 +578,6 @@ intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random){
   std::sort (tempConsise.begin(),tempConsise.end());
   
   spResultIntermediate = spResultShort;
-cout << "Probcache::optiPath Q_04:(" << endl;
 	
   //find the set difference between concise and full path. This set is the candidate set for insertion when calculating optimalPath
   std::set_symmetric_difference(tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), std::back_inserter(spDiff));
@@ -633,7 +629,7 @@ cout << "Probcache::optiPath Q_04:(" << endl;
 	  curBestOption = option;
 	}
       }
-      cout << "Probcache::optiPath Q4_2:" << endl;
+//       cout << "Probcache::optiPath Q4_2:" << endl;
       originalIt = find(spResultLong.begin(), spResultLong.end(), curBestOption);
 
       while(find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt) == spResultIntermediate.end()){
@@ -641,7 +637,7 @@ cout << "Probcache::optiPath Q_04:(" << endl;
       }
       conciseIt = find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt);
       currentBasescore = ((currentBasescore*(double)(spResultIntermediate.size())) + tmpBestScore)/(double)(spResultIntermediate.size()+1);
-      cout << "Probcache::optiPath Q5_2:" << endl;
+//       cout << "Probcache::optiPath Q5_2:" << endl;
       if(currentBasescore > currentScore) {     
 	spResultIntermediate.insert(conciseIt+1, curBestOption);
 
