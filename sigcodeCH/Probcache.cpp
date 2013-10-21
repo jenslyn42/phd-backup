@@ -34,7 +34,9 @@
 Probcache::Probcache(TestSetting ts)
 {
   this->ts = ts;
-
+  
+  RoadGraph::mapObject(ts)->setConcisePathUse(false); //is initially set true to initialize RoadGraph correctly, but the fillCache method here needs the full path 
+  
   cache.init(ts);
 
   cacheSize = cache.size();
@@ -364,7 +366,7 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
   BOOST_FOREACH(intPairIntMap::value_type rpint, trainingQueriesPerRegionPair) {
     intPair rp = rpint.first;
     /////////////////////////
-    if(cid > 1000) break;
+    if(cid > 10) exit(1); //break;
     /////////////////////////
     if (debugProbc)
       cout << "3.1. rp: (" << rp.first << "," << rp.second << ") " << endl;
@@ -554,20 +556,24 @@ void Probcache::buildRegionpair2NodepairVector() {
 }
 
 intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random){
-//   cout << "Probcache::optiPath((" << stPair.first <<","<<stPair.second << "), " << random << ")" << endl;
+  cout << "Probcache::optiPath((" << stPair.first <<","<<stPair.second << "), " << random << ")" << endl;
   intVector spResultShort, spResultLong, spResultIntermediate, spDiff, returnResult;
   double longScore=0.0, conciseScore=0.0, intermediateScore=0.0;
   int choice;
   std::vector<int>::iterator originalIt, conciseIt, choicePosIt;
-
+  cout << "Probcache::optiPath Q_01:(" << endl;
+  //Order is important! call setConcisePathUse false last!
+  RoadGraph::mapObject(ts)->setConcisePathUse(true);
+    cout << "Probcache::optiPath Q_01.1:(" << endl;
+  spResultShort = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
+    cout << "Probcache::optiPath Q_01.2:(" << endl;
+  conciseScore = calcScore(spResultShort, vSeen);  
+  cout << "Probcache::optiPath Q_02:(" << endl;
   RoadGraph::mapObject(ts)->setConcisePathUse(false);
   spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
   longScore = calcScore(spResultLong, vSeen);    
-  
-  RoadGraph::mapObject(ts)->setConcisePathUse(true);
-  spResultShort = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
-  conciseScore = calcScore(spResultShort, vSeen);
-  
+  cout << "Probcache::optiPath Q_03:(" << endl;
+ 
   intVector tempLong, tempConsise;
   tempLong = spResultLong;
   tempConsise = spResultShort;
@@ -575,12 +581,12 @@ intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random){
   std::sort (tempConsise.begin(),tempConsise.end());
   
   spResultIntermediate = spResultShort;
-
+cout << "Probcache::optiPath Q_04:(" << endl;
 	
   //find the set difference between concise and full path. This set is the candidate set for insertion when calculating optimalPath
   std::set_symmetric_difference(tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), std::back_inserter(spDiff));
   
-  //cout << "Q:(" << stPair.first << "," << stPair.second << ") " << conciseScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << " (" << tempConsise.size() << "," << tempLong.size() << "," << spDiff.size() << ")" << endl;
+  cout << "Probcache::optiPath Q_05:(" << stPair.first << "," << stPair.second << ") " << conciseScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << " (" << tempConsise.size() << "," << tempLong.size() << "," << spDiff.size() << ")" << endl;
 
   //pick which node to insert randomly, used to show that random pick is sub optimal to score based version. 
   if(random){
@@ -627,7 +633,7 @@ intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random){
 	  curBestOption = option;
 	}
       }
-      //cout << "Q4_2:" << endl;
+      cout << "Probcache::optiPath Q4_2:" << endl;
       originalIt = find(spResultLong.begin(), spResultLong.end(), curBestOption);
 
       while(find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt) == spResultIntermediate.end()){
@@ -635,7 +641,7 @@ intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random){
       }
       conciseIt = find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt);
       currentBasescore = ((currentBasescore*(double)(spResultIntermediate.size())) + tmpBestScore)/(double)(spResultIntermediate.size()+1);
-      //cout << "Q5_2:" << endl;
+      cout << "Probcache::optiPath Q5_2:" << endl;
       if(currentBasescore > currentScore) {     
 	spResultIntermediate.insert(conciseIt+1, curBestOption);
 
