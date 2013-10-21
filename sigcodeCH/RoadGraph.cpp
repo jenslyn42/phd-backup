@@ -34,9 +34,10 @@
 
 #define rgDebug false
 //specifically for the dijkstraSSSP() method
-#define spDebug true
+#define spDebug false
 
-#define conciseDebug true
+#define conciseDebug false
+#define recoverConciseDebug false
 
 boost::unordered_map<int, int*> RoadGraph::spTrace;
 // boost::unordered_map<int, int*> RoadGraph::trackdist;
@@ -683,23 +684,23 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
   // write out each node of full path, its nighbours and angle to each. 
   // add ** to indicate next node in path.
   ////////////////////////////////////////////
-  int nid;
-  double weight = 0.0;
-  Point tmpNode;
-  for(std::vector<int>::size_type i = trace.size()-2; i != 0; i--){
-    nid = trace[i];
-    curr = nid2Point[nid];
-    outdegree = map[nid].size();
-    cout << "NID: " << nid << ", " << outdegree << " ";
-    BOOST_FOREACH(JEdge edge, map[nid]){
-      tmpNode = nid2Point[edge.first];
-      tmp=getAngle((prev=nid2Point[trace[i+1]]), curr, tmpNode); 
-      if(edge.first == trace[i-1]) cout << "**"; //identify next node in trace
-      cout << "[" << edge.first << ", " << tmp << "](" << tmpNode.first << "," << tmpNode.second << ") ";
-    }
-    cout << endl;
-    
-  }
+//   int nid;
+//   double weight = 0.0;
+//   Point tmpNode;
+//   for(std::vector<int>::size_type i = trace.size()-2; i != 0; i--){
+//     nid = trace[i];
+//     curr = nid2Point[nid];
+//     outdegree = map[nid].size();
+//     cout << "NID: " << nid << ", " << outdegree << " ";
+//     BOOST_FOREACH(JEdge edge, map[nid]){
+//       tmpNode = nid2Point[edge.first];
+//       tmp=getAngle((prev=nid2Point[trace[i+1]]), curr, tmpNode); 
+//       if(edge.first == trace[i-1]) cout << "**"; //identify next node in trace
+//       cout << "[" << edge.first << ", " << tmp << "](" << tmpNode.first << "," << tmpNode.second << ") ";
+//     }
+//     cout << endl;
+//     
+//   }
   ////////////////////////////////////////////////////
 
   
@@ -717,7 +718,7 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
     if(addnext || trace[i] == trace[0]){ //if only one node left add it to concisepath
 //       outdegree= map[trace[i]].size();
       if(outdegree > 2){ //used in the following code to ensure current node is added to the concise path
-	cout << " *//* ";
+	if(conciseDebug) cout << " *//* ";
 	doadd = true;
       }else{
 	concisepath.push_back(trace[i]);
@@ -788,16 +789,16 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
    cout << "6..0: [" << originalDegree2 << ", " << reverseTrace.size() << "] " << endl;
     vector<int> tmpRecpath;
     ////////////////////////////////////
-//     if((tmpRecpath=recoverPath(concisepath)) != reverseTrace)
-//       cout << "NEQ! "<< concisepath.size() << " / " << tmpRecpath.size() << " - " << reverseTrace.size() << " D2:: (" << degree2Added <<") " << degree2 << endl;
-//     else
-//       cout << "EQ " << concisepath.size() << " / " << reverseTrace.size() << " D2.: (" << degree2Added <<") " << degree2 << endl;
+    if((tmpRecpath=recoverPath(concisepath)) != reverseTrace)
+      cout << "NEQ! "<< concisepath.size() << " / " << tmpRecpath.size() << " - " << reverseTrace.size() << " D2:: (" << degree2Added <<") " << degree2 << endl;
+    else
+      cout << "EQ " << concisepath.size() << " / " << reverseTrace.size() << " D2.:  (" << degree2Added <<") " << degree2 << endl;
     
-    for(std::vector<int>::size_type i = concisepath.size()-1; i != 0; i--){cout << concisepath[i] << " "; }
-    cout << endl;
+//     for(std::vector<int>::size_type i = concisepath.size()-1; i != 0; i--){cout << concisepath[i] << " "; }
+//     cout << endl;
     //////////////////////////////////////
    cout << "7..0: [" << originalDegree2 << ", " << reverseTrace.size() << "] " << endl;
-  if(!conciseDebug) {
+  if(conciseDebug) {
     if((tmpRecpath=recoverPath(concisepath)) != reverseTrace)
       cout << "NEQ! " << concisepath.size() << " / " << reverseTrace.size() << " D2: (" << degree2Added <<") " << degree2 << endl;
     else
@@ -807,31 +808,28 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
       cout << concisepath[i] << " ";
     }
 
-    cout << "\nORI: " << trace.size() << endl;
-    for(std::vector<int>::size_type k = trace.size()-1; k < trace.size(); k--){
-      cout << trace[k] << " ";
-    }   
-  
+   cout << "\nORI: " << trace.size() << endl;
+   for(std::vector<int>::size_type k = trace.size()-1; k < trace.size(); k--){
+     cout << trace[k] << " ";
+   }   
+ 
     cout << "\nREC: " << tmpRecpath.size() << endl;
     for(std::vector<int>::size_type j = 0; j != tmpRecpath.size(); j++){
-      cout << tmpRecpath[j] << " ";
-    }
-  
-//    cout << "\nREVTRACE: " << reverseTrace.size() << endl;
-//    for(std::vector<int>::size_type z = 0; z != reverseTrace.size(); z++){
-//      cout << reverseTrace[z] << " ";
-//    }
-//    std::cin.ignore();
+     cout << tmpRecpath[j] << " ";
+   }
+ 
+   cout << "\nREVTRACE: " << reverseTrace.size() << endl;
+   for(std::vector<int>::size_type z = 0; z != reverseTrace.size(); z++){
+     cout << reverseTrace[z] << " ";
+   }
+   std::cin.ignore();
   }
   if(conciseDebug) cout << "calcConsisePath E " << concisepath.size() << endl;
   return concisepath;
 }
 
 
-
 std::vector<int>  RoadGraph::calcConsisePathB(std::vector<int>& trace){
-
-  
   int outdegree, prevNode, targetNode = trace[0];
   bool addnext = true, doadd = false;
   vector<int> concisepath;
@@ -964,9 +962,9 @@ std::vector<int>  RoadGraph::calcConsisePathB(std::vector<int>& trace){
  */
 std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
   
-//   if(conciseDebug) 
-    cout << " RoadGraph::recoverPath S " << conciseTrace.size() << endl; 
-  if(conciseDebug){
+//   if(recoverConciseDebug) 
+    cout << " RoadGraph::recoverPath S " << conciseTrace.size(); 
+  if(recoverConciseDebug){
     cout << "CONCISE: ";
     for(std::vector<int>::size_type i = 0; i != conciseTrace.size(); i++){
       cout << conciseTrace[i] << " ";
@@ -981,77 +979,77 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
     }
   }
   
-  cout << " RoadGraph::recoverPath R.01 " << conciseTrace.size() << endl; 
+  cout << " R.01 " << endl; 
   std::vector<int> rcPath;
   rcPath.push_back(conciseTrace[0]);
-  if(conciseDebug) cout << "TR: " << conciseTrace[0] << "=" << endl;
+  if(recoverConciseDebug) cout << "TR: " << conciseTrace[0] << "=" << endl;
   bool added;
   double minAngle, tmp=-1.0, minAngleEdgeID;
   int prevNode, curNode;
   
   for(std::vector<int>::size_type i = 1; i != conciseTrace.size(); i++){
-    if(conciseDebug) cout << "§" << endl;
+    if(recoverConciseDebug) cout << "§" << endl;
     added=false;
     EdgeList& elist=map[conciseTrace[i]];
     //Check if the i'th node in conciseTrace is also a neighbor node in the original path
     for(std::vector<int>::size_type k = 0; k != elist.size(); k++){
       if(elist[k].first == rcPath.back()){
 	rcPath.push_back(conciseTrace[i]);
-	if(conciseDebug) cout << "1.0=" << rcPath.size() << "=" << conciseTrace[i] << endl;;
+	if(recoverConciseDebug) cout << "1.0=" << rcPath.size() << "=" << conciseTrace[i] << endl;;
 	added=true;
 	break;
       }
     }
     
-    cout << " RoadGraph::recoverPath R.02 " << conciseTrace.size() << " " << i << endl; 
+    if(recoverConciseDebug) cout << " RoadGraph::recoverPath R.02 " << conciseTrace.size() << " " << i << endl; 
     //Find and add the nodes missing from the full path
     if(!added){
-      if(conciseDebug) cout <<"£*1 ";
+      if(recoverConciseDebug) cout <<"£*1 ";
       while(!added){
-	if(conciseDebug) cout << "£*2" << endl; //if(rcPath.size() > 700) break;
+	if(recoverConciseDebug) cout << "£*2" << endl; //if(rcPath.size() > 700) break;
 	if(measureConcisepathdegrees){
-	  if(conciseDebug) cout <<"£*3.1" << endl; 
+	  if(recoverConciseDebug) cout <<"£*3.1" << endl; 
 	  prevNode = rcPath[rcPath.size()-2];
 	  curNode = rcPath.back();
 	  EdgeList& edges = map[rcPath.back()];
 	  minAngleEdgeID =-1;
 	  minAngle = std::numeric_limits<double>::max();
-	  if(conciseDebug) cout << "third: " << endl;
+	  if(recoverConciseDebug) cout << "third: " << endl;
 	  
-// 	  if(conciseDebug) 
+ 	  if(recoverConciseDebug) 
 	    cout << "R02.1 edge size/prevNode/curNode: " << edges.size() << " / " << prevNode << " / " << curNode << endl;
 	  if(edges.size() == 2){
 	    if(edges[0].first == rcPath[rcPath.size()-2]){
-// 	      if(conciseDebug) 
+	      if(recoverConciseDebug) 
 		cout << "R02.2.1=" << rcPath.size() << "=" << "(" << rcPath.back() << "," << rcPath[rcPath.size()-2] << "),(" << edges[0].first << "," << edges[1].first << ") " << edges[1].first << endl;
 	      rcPath.push_back(edges[1].first);
 	    }else{
-// 	      if(conciseDebug) 
+	      if(recoverConciseDebug) 
 		cout << "R02.2.2=" << rcPath.size() << "=" << "(" << rcPath.back() << "," << rcPath[rcPath.size()-2] << "),(" << edges[0].first << "," << edges[1].first << ") " << edges[0].first << endl;
 	      rcPath.push_back(edges[0].first);
 	    }
 	  }else{  
-	    if(conciseDebug) cout << "(" << prevNode << "," << curNode << ") @";
+	    if(recoverConciseDebug) cout << "(" << prevNode << "," << curNode << ") @";
 	    BOOST_FOREACH(JEdge edge, edges){
 	      if(edge.first != prevNode){
 		tmp=getAngle(nid2Point[prevNode], nid2Point[curNode], nid2Point[edge.first]);
-		if(conciseDebug) (tmp < minAngle)? (cout << "true: " << tmp <<"," << minAngle << endl) : (cout << "false: " << tmp <<"," << minAngle << endl);
+		if(recoverConciseDebug) (tmp < minAngle)? (cout << "true: " << tmp <<"," << minAngle << endl) : (cout << "false: " << tmp <<"," << minAngle << endl);
 		if(tmp < minAngle){
 		  minAngleEdgeID = edge.first;
 		  minAngle = tmp;
 		}
-// 		if(conciseDebug) 
+		if(recoverConciseDebug) 
 		  cout << "R02.3 (" << edge.first << "," << tmp << ")[" << minAngleEdgeID << "," << minAngle << "]" << endl;
 	      }
 	    }   
-	    if(conciseDebug) cout << "fourth: " << endl;
+	    if(recoverConciseDebug) cout << "fourth: " << endl;
 	    rcPath.push_back(minAngleEdgeID);
-	    if(conciseDebug) cout << "3.0=" << rcPath.size() << "=" << minAngleEdgeID << endl;
+	    if(recoverConciseDebug) cout << "3.0=" << rcPath.size() << "=" << minAngleEdgeID << endl;
 	  }
 	}else{//if measureConcisepathdegrees is false then nodes not in concise path only has outdegree of 2
-	  if(conciseDebug) cout <<"£*3.2" << endl; 
+	  if(recoverConciseDebug) cout <<"£*3.2" << endl; 
 	  EdgeList& edges = map[rcPath.back()];
-	  if(conciseDebug) cout <<"£*4.2" << endl; 
+	  if(recoverConciseDebug) cout <<"£*4.2" << endl; 
 	  if(edges.size() > 2){ 
 	    cout << "RoadGraph::recoverPath: ERROR, node should only have outdegree 2!! " << edges.size() << endl;
 	    exit(1);
@@ -1059,31 +1057,31 @@ std::vector<int>  RoadGraph::recoverPath(std::vector<int>& conciseTrace){
 	  
 	 if(edges.size() == 2){
 	    if(edges[0].first == rcPath[rcPath.size()-2]){
-	      if(conciseDebug) cout << "2.1=" << rcPath.size() << "=" << "(" << rcPath.back() << "," << rcPath[rcPath.size()-2] << "),(" << edges[0].first << "," << edges[1].first << ") " << edges[1].first << endl;
+	      if(recoverConciseDebug) cout << "2.1=" << rcPath.size() << "=" << "(" << rcPath.back() << "," << rcPath[rcPath.size()-2] << "),(" << edges[0].first << "," << edges[1].first << ") " << edges[1].first << endl;
 	      rcPath.push_back(edges[1].first);
 	    }else{
-	      if(conciseDebug) cout << "2.2=" << rcPath.size() << "=" << "(" << rcPath.back() << "," << rcPath[rcPath.size()-2] << "),(" << edges[0].first << "," << edges[1].first << ") " << edges[0].first << endl;
+	      if(recoverConciseDebug) cout << "2.2=" << rcPath.size() << "=" << "(" << rcPath.back() << "," << rcPath[rcPath.size()-2] << "),(" << edges[0].first << "," << edges[1].first << ") " << edges[0].first << endl;
 	      rcPath.push_back(edges[0].first);
 	    }
 	  }
 	}
-// 	if(conciseDebug) 
+ 	if(recoverConciseDebug) 
 	  cout << "sixth elist size/rcPath.size/rcPath.back/conciseTrace[i]: " << elist.size() << " " << rcPath.size() << " " << rcPath.back() << "," << conciseTrace[i] << endl;
 	//check if the current node from concise path now can be added to the reconstructed rcPath
 	for(std::vector<int>::size_type j = 0; j != elist.size(); j++){
-	  cout << "R02.6 (" << elist[j].first << ")\t";
+	  if(recoverConciseDebug) cout << "R02.6 (" << elist[j].first << ")\t";
 	  if(elist[j].first == rcPath.back()){
 	    rcPath.push_back(conciseTrace[i]);
-	    if(conciseDebug) cout << "R02.7=" << rcPath.size() << "=" << conciseTrace[i] << endl;
+	    if(recoverConciseDebug) cout << "R02.7=" << rcPath.size() << "=" << conciseTrace[i] << endl;
 	    added=true;
 	    break;
 	  }
-	} cout << endl;
+	}if(recoverConciseDebug)  cout << endl;
       }
     }
   }
-  if(conciseDebug) cout << "@" << rcPath.size() << "@" << endl;
-  if(conciseDebug) cout << "recoverPath E " << conciseTrace.size() << endl; 
+  if(recoverConciseDebug) cout << "@" << rcPath.size() << "@" << endl;
+  if(recoverConciseDebug) cout << "recoverPath E " << conciseTrace.size() << endl; 
   return rcPath;
 }
 
