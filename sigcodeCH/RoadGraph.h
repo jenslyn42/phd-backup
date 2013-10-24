@@ -50,7 +50,7 @@ public:
 		numNodeVisits=0;
 	}
 	void transformTrainOrTestFile(string cnodeFn, string trainTestFn);
-	void setConcisePathUse(bool use){useConcisepath = use;}
+	void setConcisePathUse(bool use){useConcisepath = use; cout << "***/" << useConcisepath << "/***" << endl; }
 	void testCH();
 	
 private:

@@ -35,7 +35,7 @@ Probcache::Probcache(TestSetting ts)
 {
   this->ts = ts;
   
-  RoadGraph::mapObject(ts)->setConcisePathUse(false); //is initially set true to initialize RoadGraph correctly, but the fillCache method here needs the full path 
+ //RoadGraph::mapObject(ts)->setConcisePathUse(false); //is initially set true to initialize RoadGraph correctly, but the fillCache method here needs the full path 
   
   cache.init(ts);
 

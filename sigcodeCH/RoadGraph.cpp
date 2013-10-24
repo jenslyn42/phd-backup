@@ -103,7 +103,7 @@ vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {
   for (int i=0;i<temp.size();i++)
     trace.push_back((int)(temp[i]));
   
-  if (spDebug)    cout << "RoadGraph::dijkstraSSSP 6 " << useConcisepath << " " << trace.size() << endl;
+  if (spDebug)    cout << "RoadGraph::dijkstraSSSP 6 " << useConcisepath << " " << trace.size() << " " << useConcisepath << endl;
 
   ///////////////////
 //   cout << "(" << source << "," << dest << ") [" << trace.size() << " - " << spDist << " / " << path.length() << "] " << endl;;
