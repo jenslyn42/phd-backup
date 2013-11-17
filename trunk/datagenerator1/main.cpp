@@ -72,9 +72,9 @@ cout << "******************************************" << endl;
 //-------------------------------------------------
 //-------------------------------------------------
 //NY data
-int centers [] = {190669, 218834, 207549, 48468, 22560, 111669, 217498, 253154, 152661, 157525, 129872, 63116, 139309, 90187, 59037, 78999, 61255, 82099, 95371, 235397};
-int numCenters = numPoints;
-if(numCenters > 20) numCenters = 20; //limit, we only have 20 points to work with
+//int centers [] = {190669, 218834, 207549, 48468, 22560, 111669, 217498, 253154, 152661, 157525, 129872, 63116, 139309, 90187, 59037, 78999, 61255, 82099, 95371, 235397};
+//int numCenters = numPoints;
+//if(numCenters > 20) numCenters = 20; //limit, we only have 20 points to work with
 //-------------------------------------------------
 
 //-------------------------------------------------
@@ -82,32 +82,32 @@ if(numCenters > 20) numCenters = 20; //limit, we only have 20 points to work wit
 //int centers [] = {17283, 9970, 18596, 17347, 127966, 94186, 119685, 24815, 31652, 33923};
 //int numCenters = 10;
 //-------------------------------------------------
-
-int i=0; //just because i is used later on
-cout << RoadGraph::mapObject(fn)->getMapsize();
-
-while(i<numCenters){ 
-	regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
-	cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
-	i++;
-}
+//
+//int i=0; //just because i is used later on
+//cout << RoadGraph::mapObject(fn)->getMapsize();
+//
+//while(i<numCenters){ 
+//	regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
+//	cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
+//	i++;
+//}
 //-------------------------------------------------
 //-------------------------------------------------
 
 
 //**********************************************************
-// int centers[numPoints];
-// int i=0;
-// long mapsize = RoadGraph::mapObject(fn)->getMapsize();
-// 
-// cout << "Calc regions" << endl;
-// while(i<numPoints)
-// {
-// 	centers[i] = rand()% mapsize; 
-// 	regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
-// 	cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
-// 	i++;
-// }
+ int centers[numPoints];
+ int i=0;
+ long mapsize = RoadGraph::mapObject(fn)->getMapsize();
+ 
+ cout << "Calc regions" << endl;
+ while(i<numPoints)
+ {
+ 	centers[i] = rand()% mapsize; 
+ 	regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
+ 	cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
+ 	i++;
+ }
 //**********************************************************
 cout << "regionVerticelists initialized" << endl;
 

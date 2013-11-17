@@ -718,7 +718,7 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
     if(addnext || trace[i] == trace[0]){ //if only one node left add it to concisepath
 //       outdegree= map[trace[i]].size();
       if(outdegree > 2){ //used in the following code to ensure current node is added to the concise path
-	if(conciseDebug) cout << " *//* ";
+	if(conciseDebug) cout << " *// * ";
 	doadd = true;
       }else{
 	concisepath.push_back(trace[i]);
