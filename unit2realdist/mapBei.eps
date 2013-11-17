@@ -1,7 +1,7 @@
 %!PS-Adobe-2.0 EPSF-2.0
 %%Title: mapBei.eps
-%%Creator: gnuplot 4.4 patchlevel 0
-%%CreationDate: Wed Aug 21 17:57:46 2013
+%%Creator: gnuplot 4.6 patchlevel 1
+%%CreationDate: Thu Sep  5 05:01:48 2013
 %%DocumentFonts: (atend)
 %%BoundingBox: 50 50 770 554
 %%EndComments
@@ -20,10 +20,12 @@ gnudict begin
 /Level1 false def
 /Rounded true def
 /ClipToBoundingBox false def
+/SuppressPDFMark false def
 /TransparentPatterns false def
 /gnulinewidth 5.000 def
 /userlinewidth gnulinewidth def
 /Gamma 1.0 def
+/BackgroundColor {-1.000 -1.000 -1.000} def
 %
 /vshift -46 def
 /dl1 {
@@ -38,22 +40,6 @@ gnudict begin
 /vpt_ 31.5 def
 /hpt hpt_ def
 /vpt vpt_ def
-Level1 {} {
-/SDict 10 dict def
-systemdict /pdfmark known not {
-  userdict /pdfmark systemdict /cleartomark get put
-} if
-SDict begin [
-  /Title (mapBei.eps)
-  /Subject (gnuplot plot)
-  /Creator (gnuplot 4.4 patchlevel 0)
-  /Author (jenslyn)
-%  /Producer (gnuplot)
-%  /Keywords ()
-  /CreationDate (Wed Aug 21 17:57:46 2013)
-  /DOCINFO pdfmark
-end
-} ifelse
 /doclip {
   ClipToBoundingBox {
     newpath 50 50 moveto 770 50 lineto 770 554 lineto 50 554 lineto closepath
@@ -61,7 +47,7 @@ end
   } if
 } def
 %
-% Gnuplot Prolog Version 4.4 (January 2010)
+% Gnuplot Prolog Version 4.6 (September 2012)
 %
 %/SuppressPDFMark true def
 %
@@ -73,6 +59,7 @@ end
 /Z {closepath} bind def
 /C {setrgbcolor} bind def
 /f {rlineto fill} bind def
+/g {setgray} bind def
 /Gshow {show} def   % May be redefined later in the file to support UTF-8
 /vpt2 vpt 2 mul def
 /hpt2 hpt 2 mul def
@@ -94,6 +81,7 @@ end
 	dup 1 lt {pop 1} if 10 mul /udl exch def} def
 /PL {stroke userlinewidth setlinewidth
 	Rounded {1 setlinejoin 1 setlinecap} if} def
+3.8 setmiterlimit
 % Default Line colors
 /LCw {1 1 1} def
 /LCb {0 0 0} def
@@ -326,7 +314,8 @@ end
 /PatternFill {gsave /PFa [ 9 2 roll ] def
   PFa 0 get PFa 2 get 2 div add PFa 1 get PFa 3 get 2 div add translate
   PFa 2 get -2 div PFa 3 get -2 div PFa 2 get PFa 3 get Rec
-  gsave 1 setgray fill grestore clip
+  TransparentPatterns {} {gsave 1 setgray fill grestore} ifelse
+  clip
   currentlinewidth 0.5 mul setlinewidth
   /PFs PFa 2 get dup mul PFa 3 get dup mul add sqrt def
   0 0 M PFa 5 get rotate PFs -2 div dup translate
@@ -459,8 +448,26 @@ currentdict end definefont pop
   Blacktext {gsave 0 setgray MFshow grestore} {MFshow} ifelse } bind def
 /XYsave    { [( ) 1 2 true false 3 ()] } bind def
 /XYrestore { [( ) 1 2 true false 4 ()] } bind def
+Level1 SuppressPDFMark or 
+{} {
+/SDict 10 dict def
+systemdict /pdfmark known not {
+  userdict /pdfmark systemdict /cleartomark get put
+} if
+SDict begin [
+  /Title (mapBei.eps)
+  /Subject (gnuplot plot)
+  /Creator (gnuplot 4.6 patchlevel 1)
+  /Author (jenslyn)
+%  /Producer (gnuplot)
+%  /Keywords ()
+  /CreationDate (Thu Sep  5 05:01:48 2013)
+  /DOCINFO pdfmark
+end
+} ifelse
 end
 %%EndProlog
+%%Page: 1 1
 gnudict begin
 gsave
 doclip
@@ -469,175 +476,176 @@ doclip
 0 setgray
 newpath
 (Helvetica) findfont 140 scalefont setfont
+BackgroundColor 0 lt 3 1 roll 0 lt exch 0 lt or or not {BackgroundColor C 1.000 0 0 14400.00 10080.00 BoxColFill} if
 1.000 UL
 LTb
 1.000 UL
 LTa
-1302 280 M
-12886 0 V
+1218 280 M
+12928 0 V
 stroke
 LTb
-1302 280 M
+1218 280 M
 63 0 V
-12823 0 R
+12865 0 R
 -63 0 V
 stroke
-1218 280 M
+1134 280 M
 [ [(Helvetica) 140.0 0.0 true true 0 ( 4.41775e+06)]
 ] -46.7 MRshow
 1.000 UL
 LTb
 1.000 UL
 LTa
-1302 2688 M
-12886 0 V
-stroke
-LTb
-1302 2688 M
-63 0 V
-12823 0 R
--63 0 V
-stroke
 1218 2688 M
+12928 0 V
+stroke
+LTb
+1218 2688 M
+63 0 V
+12865 0 R
+-63 0 V
+stroke
+1134 2688 M
 [ [(Helvetica) 140.0 0.0 true true 0 ( 4.41776e+06)]
 ] -46.7 MRshow
 1.000 UL
 LTb
 1.000 UL
 LTa
-1302 5095 M
-12886 0 V
-stroke
-LTb
-1302 5095 M
-63 0 V
-12823 0 R
--63 0 V
-stroke
 1218 5095 M
+12928 0 V
+stroke
+LTb
+1218 5095 M
+63 0 V
+12865 0 R
+-63 0 V
+stroke
+1134 5095 M
 [ [(Helvetica) 140.0 0.0 true true 0 ( 4.41776e+06)]
 ] -46.7 MRshow
 1.000 UL
 LTb
 1.000 UL
 LTa
-1302 7503 M
-12886 0 V
-stroke
-LTb
-1302 7503 M
-63 0 V
-12823 0 R
--63 0 V
-stroke
 1218 7503 M
+12928 0 V
+stroke
+LTb
+1218 7503 M
+63 0 V
+12865 0 R
+-63 0 V
+stroke
+1134 7503 M
 [ [(Helvetica) 140.0 0.0 true true 0 ( 4.41776e+06)]
 ] -46.7 MRshow
 1.000 UL
 LTb
 1.000 UL
 LTa
-1302 9910 M
-12886 0 V
+1218 9910 M
+12928 0 V
 stroke
 LTb
-1302 9910 M
+1218 9910 M
 63 0 V
-12823 0 R
+12865 0 R
 -63 0 V
 stroke
-1218 9910 M
+1134 9910 M
 [ [(Helvetica) 140.0 0.0 true true 0 ( 4.41777e+06)]
 ] -46.7 MRshow
 1.000 UL
 LTb
 1.000 UL
 LTa
-1302 280 M
+1218 280 M
 0 9630 V
 stroke
 LTb
-1302 280 M
+1218 280 M
 0 63 V
 0 9567 R
 0 -63 V
 stroke
-1302 140 M
+1218 140 M
 [ [(Helvetica) 140.0 0.0 true true 0 ( 460330)]
 ] -46.7 MCshow
 1.000 UL
 LTb
 1.000 UL
 LTa
-4524 280 M
+4450 280 M
 0 9630 V
 stroke
 LTb
-4524 280 M
+4450 280 M
 0 63 V
 0 9567 R
 0 -63 V
 stroke
-4524 140 M
+4450 140 M
 [ [(Helvetica) 140.0 0.0 true true 0 ( 460335)]
 ] -46.7 MCshow
 1.000 UL
 LTb
 1.000 UL
 LTa
-7745 280 M
+7682 280 M
 0 9630 V
 stroke
 LTb
-7745 280 M
+7682 280 M
 0 63 V
 0 9567 R
 0 -63 V
 stroke
-7745 140 M
+7682 140 M
 [ [(Helvetica) 140.0 0.0 true true 0 ( 460340)]
 ] -46.7 MCshow
 1.000 UL
 LTb
 1.000 UL
 LTa
-10967 280 M
+10914 280 M
 0 9630 V
 stroke
 LTb
-10967 280 M
+10914 280 M
 0 63 V
 0 9567 R
 0 -63 V
 stroke
-10967 140 M
+10914 140 M
 [ [(Helvetica) 140.0 0.0 true true 0 ( 460345)]
 ] -46.7 MCshow
 1.000 UL
 LTb
 1.000 UL
 LTa
-14188 280 M
+14146 280 M
 0 9630 V
 stroke
 LTb
-14188 280 M
+14146 280 M
 0 63 V
 0 9567 R
 0 -63 V
 stroke
-14188 140 M
+14146 140 M
 [ [(Helvetica) 140.0 0.0 true true 0 ( 460350)]
 ] -46.7 MCshow
 1.000 UL
 LTb
 1.000 UL
 LTb
-1302 9910 N
+1218 9910 N
 0 -9630 V
-12886 0 V
+12928 0 V
 0 9630 V
--12886 0 V
+-12928 0 V
 Z stroke
 0.500 UP
 1.000 UL
@@ -647,20 +655,20 @@ LTb
 1.000 UL
 LT0
 LCb setrgbcolor
-13569 9777 M
+13527 9777 M
 [ [(Helvetica) 140.0 0.0 true true 0 (bei)]
 ] -46.7 MRshow
 LT0
-11188 7503 CircleF
-13836 9777 CircleF
+11136 7503 CircleF
+13794 9777 CircleF
 % End plot #1
 1.000 UL
 LTb
-1302 9910 N
+1218 9910 N
 0 -9630 V
-12886 0 V
+12928 0 V
 0 9630 V
--12886 0 V
+-12928 0 V
 Z stroke
 0.500 UP
 1.000 UL
