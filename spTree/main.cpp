@@ -12,9 +12,8 @@ if(argc != 3){
 string fn = argv[1];
 string poifn = argv[2];
 
- //   spTreeRG::mapObject("aalborgNEW")->writeSPtree(spTreeRG::mapObject("aalborgNEW")->readPOIlist());
+//   spTreeRG::mapObject("aalborgNEW")->writeSPtree(spTreeRG::mapObject("aalborgNEW")->readPOIlist());
     spTreeRG::mapObject(fn)->writeSPtree(spTreeRG::mapObject(fn)->readPOIlist(poifn));
-
 
     return 0;
 }

@@ -34,19 +34,19 @@
 
 Probcache::Probcache(TestSetting ts)
 {
-	this->ts = ts;
+  this->ts = ts;
 
-	cache.init(ts);
+  cache.init(ts);
 
-	cacheSize = cache.size();
-	numTotalQueries = 0;
-	numCacheHits = 0;
-	numDijkstraCalls = 0;
-
-	readMapData();
-	
-	makePartitions(ts.getSplits());
-	calcScoreCounter=0;
+  cacheSize = cache.size();
+  numTotalQueries = 0;
+  numCacheHits = 0;
+  numDijkstraCalls = 0;
+  
+  readMapData();
+  
+  makePartitions(ts.getSplits());
+  calcScoreCounter=0;
 }
 
 Probcache::~Probcache() { }
@@ -88,153 +88,153 @@ void Probcache::runQueryList() {
 
 void Probcache::buildCache()
 {
-	cout<< "2.0 done" << endl;
-	double refTime = clock();
-	readQueryLogData(QLOG_TEST);
-	cout<< "2.1 done, " << getElapsedTime(refTime) << endl;
+  cout<< "2.0 done" << endl;
+  double refTime = clock();
+  readQueryLogData(QLOG_TEST);
+  cout<< "2.1 done, " << getElapsedTime(refTime) << endl;
 
-	readQueryLogData(QLOG_TRAIN);
-	cout<< "2.2 done, " << getElapsedTime(refTime) << endl;
+  readQueryLogData(QLOG_TRAIN);
+  cout<< "2.2 done, " << getElapsedTime(refTime) << endl;
 
-	extractStatistics();
-	double _build_stat_time=getElapsedTime(refTime);
-	ts.setBuildStatisticsTime(_build_stat_time);
-	calcScoreCounter=0;
-	cout<< "2.3 done, " << _build_stat_time << endl;
+  extractStatistics();
+  double _build_stat_time=getElapsedTime(refTime);
+  ts.setBuildStatisticsTime(_build_stat_time);
+  calcScoreCounter=0;
+  cout<< "2.3 done, " << _build_stat_time << endl;
 
-	fillCache();
-	double _fill_cache_time=getElapsedTime(refTime);
-	ts.setFillCacheTime(_fill_cache_time);
-	cout<< "2.4 done, " << _fill_cache_time << endl;
+  fillCache();
+  double _fill_cache_time=getElapsedTime(refTime);
+  ts.setFillCacheTime(_fill_cache_time);
+  cout<< "2.4 done, " << _fill_cache_time << endl;
 }
 
 
 void Probcache::extractStatistics() {
-	int temp, r1,r2,v1,v2;
-	int totalTrainingPairsSeen=0;
-	intPair p;
+  int temp, r1,r2,v1,v2;
+  int totalTrainingPairsSeen=0;
+  intPair p;
 
-	cout << "Probcache::populateProbStructures! calculating training stats" << endl;
-	BOOST_FOREACH(intPair c, trainingSTPointPairs) {
-		v1 = c.first;
-		v2 = c.second;
+  cout << "Probcache::populateProbStructures! calculating training stats" << endl;
+  BOOST_FOREACH(intPair c, trainingSTPointPairs) {
+    v1 = c.first;
+    v2 = c.second;
 
-		if (v1 > v2) {
-			temp = v1; v1 = v2 ; v2 = temp;
-		}
+    if (v1 > v2) {
+      temp = v1; v1 = v2 ; v2 = temp;
+    }
 
-		if (v1 != v2) {
-			r1 = mapNodeid2RegionId(v1);
-			r2 = mapNodeid2RegionId(v2);
-			if (r1 > r2) {
-				temp = r1; r1 = r2 ; r2 = temp;
-			}
-			p = make_pair(r1,r2);
-			if (trainingQueriesPerRegionPair.find(p) == trainingQueriesPerRegionPair.end())
-				trainingQueriesPerRegionPair[p] = 1;
-			else
-				trainingQueriesPerRegionPair[p] =+ 1;
-			totalTrainingPairsSeen++;
-		}
-	}
-	cout << totalTrainingPairsSeen << " pairs, ... Done" << endl;
+    if (v1 != v2) {
+      r1 = mapNodeid2RegionId(v1);
+      r2 = mapNodeid2RegionId(v2);
+      if (r1 > r2) {
+        temp = r1; r1 = r2 ; r2 = temp;
+      }
+      p = make_pair(r1,r2);
+      if (trainingQueriesPerRegionPair.find(p) == trainingQueriesPerRegionPair.end())
+        trainingQueriesPerRegionPair[p] = 1;
+      else
+        trainingQueriesPerRegionPair[p] =+ 1;
+      totalTrainingPairsSeen++;
+    }
+  }
+  cout << totalTrainingPairsSeen << " pairs, ... Done" << endl;
 }
 
 bool xxCompfunc(Point i,Point j) {return (i.first<j.first);} //sort based on x values
 bool yyCompfunc(Point i,Point j) {return (i.second<j.second);} //sort based on y values
 
 bool Probcache::makePartitions(int splits) {
-	int axis = 0;
-	cout << "Probcache::makePartitions start" << endl;
-	double mapXmin,mapXmax,mapYmin,mapYmax;
+  int axis = 0;
+  cout << "Probcache::makePartitions start" << endl;
+  double mapXmin,mapXmax,mapYmin,mapYmax;
 
-	vector<Region> regionsVector;
+  vector<Region> regionsVector;
 
-	sort(points.begin(), points.end(), xxCompfunc);
-	mapXmin = points.front().first;
-	mapXmax = points.back().first;
-	sort(points.begin(), points.end(), yyCompfunc);
-	mapYmin = points.front().second;
-	mapYmax = points.back().second;
+  sort(points.begin(), points.end(), xxCompfunc);
+  mapXmin = points.front().first;
+  mapXmax = points.back().first;
+  sort(points.begin(), points.end(), yyCompfunc);
+  mapYmin = points.front().second;
+  mapYmax = points.back().second;
 
-	Region reg(0,mapXmin,mapXmax,mapYmin,mapYmax);
-	reg.points=points;
+  Region reg(0,mapXmin,mapXmax,mapYmin,mapYmax);
+  reg.points=points;
 
-	regionsVector.push_back(reg);
-	cout << "two. Probcache::makePartitions splitting start: " << splits << " splits." << endl;
-	for(int i=0; i<splits; i++) {
-		split(regionsVector, axis);
-		axis++;
-	}
-	cout << "three, Probcache::makePartitions set id of each region" << endl;
+  regionsVector.push_back(reg);
+  cout << "two. Probcache::makePartitions splitting start: " << splits << " splits." << endl;
+  for(int i=0; i<splits; i++) {
+    split(regionsVector, axis);
+    axis++;
+  }
+  cout << "three, Probcache::makePartitions set id of each region" << endl;
 
-	int total_points=0;
-	// update the region_id of points here
-	for (uint region_id=0; region_id<regionsVector.size(); region_id++) {
-		Region& r = regionsVector[region_id];
-		r.id = region_id;
-		mapRegions[region_id] = r;
+  int total_points=0;
+  // update the region_id of points here
+  for (uint region_id=0; region_id<regionsVector.size(); region_id++) {
+    Region& r = regionsVector[region_id];
+    r.id = region_id;
+    mapRegions[region_id] = r;
 
-		BOOST_FOREACH(Point p, r.points) {
-			Point2regionidMap[p] = region_id;
-		}
+    BOOST_FOREACH(Point p, r.points) {
+      Point2regionidMap[p] = region_id;
+    }
 
-		total_points+=r.points.size();
-	}
-	cout << "total points: " << total_points << ", " << points.size() << endl;
+    total_points+=r.points.size();
+  }
+  cout << "total points: " << total_points << ", " << points.size() << endl;
 
-	cout << "mapRegions size: " << mapRegions.size() << endl;
+  cout << "mapRegions size: " << mapRegions.size() << endl;
 
-	// compute "nodeid2regionid", to be used for calcScore function
-	nodeid2regionid.clear();
-	for (int nid=0;nid<mapSize;nid++) {
-		int rid = mapNodeid2RegionId(nid);
-		nodeid2regionid.push_back( rid );
-	}
+  // compute "nodeid2regionid", to be used for calcScore function
+  nodeid2regionid.clear();
+  for (int nid=0;nid<mapSize;nid++) {
+    int rid = mapNodeid2RegionId(nid);
+    nodeid2regionid.push_back( rid );
+  }
 
 
-	if (!mapRegions.empty())
-		return true;
-	else
-		return false;
+  if (!mapRegions.empty())
+    return true;
+  else
+    return false;
 }
 
 void Probcache::split(std::vector<Region>& regions, int axis) {
-	std::vector<Region > tmpRegions;
+  std::vector<Region > tmpRegions;
 
-	BOOST_FOREACH (Region reg, regions) {
+  BOOST_FOREACH (Region reg, regions) {
         int size = reg.points.size();
-		if (size == 0)
-			continue;
+    if (size == 0)
+      continue;
 
-		if (axis%2==0)
-			sort(reg.points.begin(), reg.points.end(), xxCompfunc);
-		else
-			sort(reg.points.begin(), reg.points.end(), yyCompfunc);
+    if (axis%2==0)
+      sort(reg.points.begin(), reg.points.end(), xxCompfunc);
+    else
+      sort(reg.points.begin(), reg.points.end(), yyCompfunc);
 
-		Region leftReg(axis,reg.xmin,reg.xmax,reg.ymin,reg.ymax);
-		Region rightReg(axis,reg.xmin,reg.xmax,reg.ymin,reg.ymax);
+    Region leftReg(axis,reg.xmin,reg.xmax,reg.ymin,reg.ymax);
+    Region rightReg(axis,reg.xmin,reg.xmax,reg.ymin,reg.ymax);
 
-		int middle = size/2;
-		leftReg.points.assign( reg.points.begin(), reg.points.begin()+middle );
-		rightReg.points.assign( reg.points.begin()+middle, reg.points.end() );
+    int middle = size/2;
+    leftReg.points.assign( reg.points.begin(), reg.points.begin()+middle );
+    rightReg.points.assign( reg.points.begin()+middle, reg.points.end() );
 
-		if(axis%2==0) {
-			leftReg.xmax = leftReg.points.back().first;	// left part split
-			rightReg.xmin = rightReg.points.front().first; 	// right part split
-		} else {
-			leftReg.ymax = leftReg.points.back().second;		// left part split
-			rightReg.ymin = rightReg.points.front().second;	// right part split
-		}
+    if(axis%2==0) {
+      leftReg.xmax = leftReg.points.back().first;  // left part split
+      rightReg.xmin = rightReg.points.front().first;   // right part split
+    } else {
+      leftReg.ymax = leftReg.points.back().second;    // left part split
+      rightReg.ymin = rightReg.points.front().second;  // right part split
+    }
 
-		tmpRegions.push_back(leftReg);
-		tmpRegions.push_back(rightReg);
-	}
+    tmpRegions.push_back(leftReg);
+    tmpRegions.push_back(rightReg);
+  }
 
-	regions.clear();
-	regions=tmpRegions;
+  regions.clear();
+  regions=tmpRegions;
 
-	tmpRegions.clear();	// clear temporary storage
+  tmpRegions.clear();  // clear temporary storage
 }
 
 // Note: the following function is called heavily

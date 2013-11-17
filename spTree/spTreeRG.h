@@ -64,52 +64,51 @@ using namespace std;
 
 class spTreeRG
 {
-public:
-	static spTreeRG* mapObject(string filePrefix);
+  public:
+    static spTreeRG* mapObject(string filePrefix);
 
-	void setMapFile(string file);
-	EdgeList* getMap(){return map;}
+    void setMapFile(string file);
+    EdgeList* getMap(){return map;}
 
-	int getMapsize();
-	int ssspCalls;
-	unsigned long numNodeVisits, lastNodeVisits;
+    int getMapsize();
+    int ssspCalls;
+    unsigned long numNodeVisits, lastNodeVisits;
 
-	void resetRoadGraph(){
-		//mapInstance = NULL;
-		ssspCalls=0;
-		numNodeVisits=0;
-		lastNodeVisits=0;
-	}
+    void resetRoadGraph(){
+    //mapInstance = NULL;
+    ssspCalls=0;
+    numNodeVisits=0;
+    lastNodeVisits=0;
+    }
 
     void writeSPtree(std::pair<int*, int> poiArray);
     std::pair<int*, int> readPOIlist(string poifn);
 
-private:
-	spTreeRG(){ };
-	~spTreeRG(){delete mapInstance;}
-	spTreeRG(spTreeRG const&){}; //privatre copy constructor
-	spTreeRG& operator=(spTreeRG const&); //private assignment operator
-	static spTreeRG* mapInstance;
+  private:
+    spTreeRG(){ };
+    ~spTreeRG(){delete mapInstance;}
+    spTreeRG(spTreeRG const&){}; //privatre copy constructor
+    spTreeRG& operator=(spTreeRG const&); //private assignment operator
+    static spTreeRG* mapInstance;
 
+    Point* nodecoord;
+    EdgeList* map;
 
-	Point* nodecoord;
-	EdgeList* map;
+    int mapSize;
+    int edges;
+    int parseFileType;
+    static std::string filePrefix;
+    static int* backtrace; //backtract the SP route from a node to its original source.
+    static int* trackdist; //all the distances from any node to a source node
 
-	int mapSize;
-	int edges;
-	int parseFileType;
-	static std::string filePrefix;
-	static int* backtrace; //backtract the SP route from a node to its original source.
-	static int* trackdist; //all the distances from any node to a source node
+    void dijkstraSPTree(int s);
 
-	void dijkstraSPTree(int s);
-
-	void addEdge(int v1, int v2, double w);
-	void readRoadNetworkFile(string fn);
-	void readPPINetworkFile(string fn);
-	void readCedgeNetworkFile(string fn);
-	int getFilelines(const char *filename);
-	bool getLastLine(const char *filename, string &lastLine);
+    void addEdge(int v1, int v2, double w);
+    void readRoadNetworkFile(string fn);
+    void readPPINetworkFile(string fn);
+    void readCedgeNetworkFile(string fn);
+    int getFilelines(const char *filename);
+    bool getLastLine(const char *filename, string &lastLine);
     int* getSPtreeTrace(){return backtrace;}
     int* getSPtreeWeights(){return trackdist;}
 };
@@ -118,31 +117,31 @@ private:
 #include <queue>
 
 struct HeapEntry {
-	int id;
-	double dist;
-	double gdist,hdist;	// only used for A* search
+  int id;
+  double dist;
+  double gdist,hdist;// only used for A* search
 
-	int length;
-	int prev_id;
-	intPair pID;
+  int length;
+  int prev_id;
+  intPair pID;
 
-	HeapEntry(){};
-	HeapEntry(int id, int d){
-		this->id = id;
-		this->dist = d;
-	}
-	HeapEntry(int id, int d, int l){
-		this->id = id;
-		this->dist = d;
-		this->length = l;
-	}
+  HeapEntry(){};
+  HeapEntry(int id, int d){
+    this->id = id;
+    this->dist = d;
+  }
+  HeapEntry(int id, int d, int l){
+    this->id = id;
+    this->dist = d;
+    this->length = l;
+  }
 };
 
 struct HeapWorkloadEntry
 {
-    int pathId; //path id
-    int pathLength; //lenght of path
-    std::pair<int, std::vector<int> > answeredPaths; //number of paths 'path id' can answer, and a vector holding the id of each of these.
+  int pathId; //path id
+  int pathLength; //lenght of path
+  std::pair<int, std::vector<int> > answeredPaths; //number of paths 'path id' can answer, and a vector holding the id of each of these.
 };
 
 ///For minHeap

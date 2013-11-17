@@ -68,17 +68,17 @@ spTreeRG* spTreeRG::mapObject(string fnPrefix){
 //         trackdist=NULL;
 //     }
 
-	if (mapInstance==NULL){
-		filePrefix=fnPrefix;
-		mapInstance = new spTreeRG();
-        mapInstance->ssspCalls = 0;
-		mapInstance->numNodeVisits = 0;
-		cout << "[mapObject] filePrefix, parseFileType: " << filePrefix << "; " << mapInstance->parseFileType << endl;
+  if (mapInstance==NULL){
+    filePrefix=fnPrefix;
+    mapInstance = new spTreeRG();
+    mapInstance->ssspCalls = 0;
+    mapInstance->numNodeVisits = 0;
+    cout << "[mapObject] filePrefix, parseFileType: " << filePrefix << "; " << mapInstance->parseFileType << endl;
 
-        mapInstance->readCedgeNetworkFile(filePrefix);
-        cout << " ... done" << endl;
-    }
-	return mapInstance;
+    mapInstance->readCedgeNetworkFile(filePrefix);
+    cout << " ... done" << endl;
+  }
+  return mapInstance;
 }
 
 void spTreeRG::dijkstraSPTree(int source) {
@@ -362,10 +362,10 @@ void spTreeRG::writeSPtree(std::pair<int*, int> poiArray){
 
     int numPOI = poiArray.second;
     int source, devider=-1337;
- 	string fn = filePrefix;
+    string fn = filePrefix;
     bool fileExist = false;
 
-	fn.append(".sptree"); // extension .sptree
+    fn.append(".sptree"); // extension .sptree
 
     ifstream fin((fn).c_str());
     if (fin)
@@ -374,7 +374,7 @@ void spTreeRG::writeSPtree(std::pair<int*, int> poiArray){
 
     ///file output
     ofstream outFile;
-	outFile.open((fn).c_str(), ios::out | ios::binary);
+    outFile.open((fn).c_str(), ios::out | ios::binary);
 
     for(int i=0; i < numPOI; i++)
     {
