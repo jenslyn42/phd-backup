@@ -173,7 +173,7 @@ void TestObject::printResults() {
   cout << "Algorithm:\t" << ts.testAlgo << " " << MatchEnumString(ALGO_ENUM,ts.testAlgo) << endl;
   cout << "Storage:\t" << ts.testStorage << " " << MatchEnumString(STORAGE_ENUM,ts.testStorage) << endl;
   cout << "Scenario:\t" << ts.testScenario << " " << MatchEnumString(ARCH_ENUM,ts.testScenario) << endl;
-  cout << "SP calc:\t" << ts.testSPtype << " " << MatchEnumString(SPTYPE_ENUM, ts.testSPtype) << endl;
+  cout << "SP calc:\t" << ts.testSPtype << " " << MatchEnumString(SPTYPE_ENUM, ts.testSPtype) << " " << MatchEnumString(CONCISETYPE_ENUM, ts.testConcisetype) << endl;
 
   cout << "CacheSize:\t" << ts.cacheSize << endl;
   cout << "CacheItems:\t" << ts.getItemsInCache() << endl;
@@ -227,7 +227,9 @@ void TestObject::printResults() {
   << ts.measureConcisepathdegrees << "\t"
   << ts.getUnusedCacheBits() << "\t"
   << MatchEnumString(SPTYPE_ENUM, ts.testSPtype) << "\t"
-  << ts.executeTrainingWorkload << endl;
+  << ts.executeTrainingWorkload << "\t"
+  << MatchEnumString(ARCH_ENUM,ts.testConcisetype)  
+  << endl;
 
   resultfile.close();
 }
@@ -268,6 +270,7 @@ void extractTestParameters(TestSetting& ts) {
 	ts.testAlgo = (ALGO_CHOICE) ts.getEnumCode(ALGO_ENUM,"testAlgo");
 	ts.testScenario = (ARCH_CHOICE) ts.getEnumCode(ARCH_ENUM,"testScenario");
 	ts.testSPtype = (SPTYPE_CHOICE) ts.getEnumCode(SPTYPE_ENUM,"testSPtype");
+	ts.testConcisetype = (CONCISETYPE_CHOICE) 1;
 	
 	// default storage method: the LIST cache 
 	ts.testStorage = STORE_LIST;

@@ -73,6 +73,7 @@ private:
 	bool measureConcisepathdegrees;
 	intPointMap nid2Point;
 	intMap node2degree;
+	CONCISETYPE_CHOICE testconcisetype;
 	////////// CH /////////
 	ProcessingConstruct* construct;
 	UpdateableGraph* updGraph;
