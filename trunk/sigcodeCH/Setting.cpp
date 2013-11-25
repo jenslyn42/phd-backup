@@ -32,7 +32,7 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM, SPTYPE_ENUM;
+LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM, SPTYPE_ENUM, CONCISETYPE_ENUM;
 
 
 void InsertEnum(LookupList& list,int type,string name) {
@@ -54,9 +54,9 @@ void InitEnumMappings() {
 	InsertEnum(ALGO_ENUM,	ALGO_ORACLE,	"ORACLE");
 	
 	STORAGE_ENUM.clear();
-	InsertEnum(STORAGE_ENUM,	STORE_LIST,	"LIST");
-	InsertEnum(STORAGE_ENUM,	STORE_GRAPH,	"GRAPH");
-	InsertEnum(STORAGE_ENUM,	STORE_COMPRESS,	"COMPRESS");
+	InsertEnum(STORAGE_ENUM, STORE_LIST,	"LIST");
+	InsertEnum(STORAGE_ENUM, STORE_GRAPH,	"GRAPH");
+	InsertEnum(STORAGE_ENUM, STORE_COMPRESS,	"COMPRESS");
 	
 	ARCH_ENUM.clear();
 	InsertEnum(ARCH_ENUM,	ARCH_SERVER,	"SERVER");
@@ -66,6 +66,11 @@ void InitEnumMappings() {
 	InsertEnum(SPTYPE_ENUM,	SPTYPE_FULL,	"FULL");
 	InsertEnum(SPTYPE_ENUM,	SPTYPE_CONCISE,	"CONCISE");
 	InsertEnum(SPTYPE_ENUM,	SPTYPE_OPTIMAL,	"OPTIMAL");	
+
+  	CONCISETYPE_ENUM.clear();
+	InsertEnum(CONCISETYPE_ENUM, CONCISETYPE_A,	"A");
+	InsertEnum(CONCISETYPE_ENUM, CONCISETYPE_B,	"B");
+	
 }
 
 
@@ -136,6 +141,7 @@ void TestSetting::printSetting() {
 	cout << "testAlgo: " << testAlgo << " " << MatchEnumString(ALGO_ENUM,testAlgo) << endl;
 	cout << "testStorage: " << testStorage << " " << MatchEnumString(STORAGE_ENUM,testStorage) << endl;
 	cout << "testScenario: " << testScenario << " " << MatchEnumString(ARCH_ENUM,testScenario) << endl;
+	cout << "SP calc:\t" << MatchEnumString(SPTYPE_ENUM, testSPtype) << " " << MatchEnumString(CONCISETYPE_ENUM, testConcisetype) << endl;
 	
 	cout << "cacheSize: " <<  cacheSize << endl;
 	cout << "scacheQueryType: " <<  scacheQueryType << endl;

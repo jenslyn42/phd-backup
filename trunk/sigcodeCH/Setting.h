@@ -84,11 +84,13 @@ enum ARCH_CHOICE { ARCH_SERVER, ARCH_PROXY };
 // SP calculation choice
 enum SPTYPE_CHOICE {SPTYPE_FULL, SPTYPE_CONCISE, SPTYPE_OPTIMAL };
 
+// Concise calculation choice
+enum CONCISETYPE_CHOICE {CONCISETYPE_A, CONCISETYPE_B };
 
 // Important: 	for each "ENUM" type, there is a corresponding "LookupList" in "Setting.cpp"
 //		they follow a naming convention.
 // 		make sure that "InitEnumMappings" is updated according to ENUM above
-extern LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM, SPTYPE_ENUM;
+extern LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM, SPTYPE_ENUM, CONCISETYPE_ENUM;
 
 void InitEnumMappings(); // initialize the above "LookupList"
 int MatchEnumCode(LookupList& list,string str);		// lookup an enum value by a string
@@ -173,6 +175,7 @@ public:
 	STORAGE_CHOICE testStorage;
 	ARCH_CHOICE testScenario;
 	SPTYPE_CHOICE testSPtype;
+	CONCISETYPE_CHOICE testConcisetype;
 	unsigned long cacheSize, unusedCacheBits;
 	
 
