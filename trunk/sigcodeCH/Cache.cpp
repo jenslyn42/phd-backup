@@ -310,15 +310,13 @@ bool CacheStorage::hasEnoughSpace(CacheItem ci)
 
 bool CacheStorage::hasEnoughSpace(intVector& sp) {
   if(testStorage == STORE_GRAPH) {
+    int newNodes = 0; //nodes in ci which is not already in graph
+    BOOST_FOREACH(int v, sp) {
+      if (nodeIdsInCache.find(v) == nodeIdsInCache.end())  newNodes++;
+    }
 
-  int newNodes = 0; //nodes in ci which is not already in graph
-  BOOST_FOREACH(int v, sp) {
-    if (nodeIdsInCache.find(v) == nodeIdsInCache.end())
-      newNodes++;
-  }
-
-  if ( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize ) 
-    return true;
+    if ( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize ) 
+      return true;
   } else if(testStorage == STORE_LIST) {
     if ( cacheUsed + sp.size()*NODE_BITS < cacheSize ) 
       return true;
@@ -333,7 +331,6 @@ bool CacheStorage::hasEnoughSpace(intVector& sp) {
 void CacheStorage::updateCacheUsed(CacheItem ci) {
 
   if (testStorage == STORE_GRAPH) {
-
     // add a bitset for each new node
     intVector& sp = ci.item;
 
@@ -355,12 +352,12 @@ void CacheStorage::updateCacheUsed(CacheItem ci) {
     cacheUsed =  nodeIdsInCache.size() * (NODE_BITS + BIT*cache.size()) ;
     if(debugCache) cout << cacheUsed << " (" << cacheSize - cacheUsed << ")" << endl;
     numberOfNodes = nodeIdsInCache.size();
-  } else if (testStorage == STORE_LIST) {
+  }else if (testStorage == STORE_LIST) {
     if(debugCache) cout << "cacheused: (" << cacheUsed <<") " << cacheUsed << "+" << ci.size << "*" << NODE_BITS << " = ";
     cacheUsed = cacheUsed + ci.size*NODE_BITS;
     if(debugCache) cout << cacheUsed << " (" << cacheSize - cacheUsed << ")" << endl;
     numberOfNodes = numberOfNodes + ci.size;
-  } else if (testStorage == STORE_COMPRESS) {
+  }else if (testStorage == STORE_COMPRESS) {
     pidSets.insertPath(ci.item);
 
     int num_paths = cache.size();
