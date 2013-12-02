@@ -337,7 +337,7 @@ void CacheStorage::updateCacheUsed(CacheItem ci) {
     BOOST_FOREACH(int v, sp) {
       if (nodeIdsInCache.find(v) == nodeIdsInCache.end()) {
 	//set all bits to zero in the bitmap for the first cache.size()-1 bits
-	nodeIdsInCache[v] = boost::dynamic_bitset<>(cache.size()-1);;
+	nodeIdsInCache[v] = boost::dynamic_bitset<>(cache.size()-1);
       }
     }
 
