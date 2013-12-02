@@ -270,7 +270,7 @@ void extractTestParameters(TestSetting& ts) {
 	ts.testAlgo = (ALGO_CHOICE) ts.getEnumCode(ALGO_ENUM,"testAlgo");
 	ts.testScenario = (ARCH_CHOICE) ts.getEnumCode(ARCH_ENUM,"testScenario");
 	ts.testSPtype = (SPTYPE_CHOICE) ts.getEnumCode(SPTYPE_ENUM,"testSPtype");
-	ts.testConcisetype = (CONCISETYPE_CHOICE) 1;
+	ts.testConcisetype = (CONCISETYPE_CHOICE) 0;
 	
 	// default storage method: the LIST cache 
 	ts.testStorage = STORE_LIST;

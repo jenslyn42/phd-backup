@@ -74,7 +74,7 @@ void Probcache::runQueryList() {
       numDijkstraCalls++;
       cout << numTotalQueries << " cache miss" << endl;
       //////////////////////////////////
-      if(numTotalQueries > 9) exit(1);
+//       if(numTotalQueries > 9) exit(1);
      /* intVector spResultLong, spResultShort;
       RoadGraph::mapObject(ts)->setConcisePathUse(false);
       spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);   
