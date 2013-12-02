@@ -665,7 +665,7 @@ double RoadGraph::getAngle(Point prevNode, Point source, Point target){
 
 std::vector<int>  RoadGraph::calcConsisePath(std::vector<int>& trace){
   if(testconcisetype == CONCISETYPE_A)
-    return calcConsisePathB(trace);
+    return calcConsisePathA(trace);
   else if(testconcisetype == CONCISETYPE_B)
     return calcConsisePathB(trace);
 }
