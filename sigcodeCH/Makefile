@@ -60,7 +60,21 @@ build_hcn_NY:
 build_hcn_COL:
 	./buildCHindex -s -p -f USA-road-d.COL.ddsg -o USA-road-d.COL.hcn -l USA-road-d.COL.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
 	./buildCHindex -s -p -f USA-road-t.COL.ddsg -o USA-road-t.COL.hcn -l USA-road-d.COL.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
+
+build_hcn_USA:
+	./buildCHindex -s -p -f USA-road-d.USA.ddsg -o USA-road-d.USA.hcn -l USA-road-d.USA.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
+	./buildCHindex -s -p -f USA-road-t.USA.ddsg -o USA-road-t.USA.hcn -l USA-road-d.USA.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
+
+build_hcn_CTR:
+	./buildCHindex -s -p -f USA-road-d.CTR.ddsg -o USA-road-d.CTR.hcn -l USA-road-d.CTR.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
+	./buildCHindex -s -p -f USA-road-t.CTR.ddsg -o USA-road-t.CTR.hcn -l USA-road-d.CTR.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
+
+build_hcn_W:
+	./buildCHindex -s -p -f USA-road-d.W.ddsg -o USA-road-d.W.hcn -l USA-road-d.W.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
+	./buildCHindex -s -p -f USA-road-t.W.ddsg -o USA-road-t.W.hcn -l USA-road-d.W.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
 	
+
+
 # Example command for QueryingCH
 
 run_query_NY:
