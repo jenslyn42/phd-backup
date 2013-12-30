@@ -2,7 +2,7 @@
 #include "RoadGraph.h"
 
 // if true: write out all vertices of all regions in .poi file
-#define WRITE_POI true 
+#define WRITE_POI true
 
 //arg 1: input filename, no type (cedge/cnode assumed)
 //arg 2: queries to generate, half in *.qtest, other half in *.qtrain
@@ -78,6 +78,13 @@ cout << "******************************************" << endl;
 //-------------------------------------------------
 
 //-------------------------------------------------
+//NY data - 2 point special set
+//int centers [] = {260952, 91408};
+//int numCenters = numPoints;
+//if(numCenters > 2) {cout << "INVALID points"; exit(1);} //limit, we only have 2 points to work with
+//-------------------------------------------------
+
+//-------------------------------------------------
 ///Aalborg data
 //int centers [] = {17283, 9970, 18596, 17347, 127966, 94186, 119685, 24815, 31652, 33923};
 //int numCenters = 10;
@@ -86,7 +93,7 @@ cout << "******************************************" << endl;
 //int i=0; //just because i is used later on
 //cout << RoadGraph::mapObject(fn)->getMapsize();
 //
-//while(i<numCenters){ 
+//while(i<numCenters){
 //	regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
 //	cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
 //	i++;
@@ -98,12 +105,13 @@ cout << "******************************************" << endl;
 //**********************************************************
  int centers[numPoints];
  int i=0;
+cout << "init stuff" << endl;
  long mapsize = RoadGraph::mapObject(fn)->getMapsize();
- 
+
  cout << "Calc regions" << endl;
  while(i<numPoints)
  {
- 	centers[i] = rand()% mapsize; 
+ 	centers[i] = rand()% mapsize;
  	regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
  	cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
  	i++;
@@ -148,13 +156,13 @@ for(;i<queriesToGenerate/2;i++)
 
 	sid = tempList1[rand()%tempList1.size()];
 	tid = tempList2[rand()%tempList2.size()];
-	
+
 	resultfile << i << " " << sid << " " << tid << " ";
 	tmpPair = nodelist[sid];
 	resultfile << tmpPair.first << " "<< tmpPair.second << " ";
 	tmpPair = nodelist[tid];
 	resultfile << tmpPair.first << " "<< tmpPair.second << " " << endl;
-	
+
 	int temp;
 	if(sid>tid){temp=sid; sid=tid; tid=temp;}
 	stats[make_pair<int,int>(sid,tid)] = stats[make_pair<int,int>(sid,tid)] + 1;
@@ -182,13 +190,13 @@ for(;i<queriesToGenerate;i++)
 
 	sid = tempList1[rand()%tempList1.size()];
 	tid = tempList2[rand()%tempList2.size()];
-	
+
 	resultfile << i << " " << sid << " " << tid << " ";
 	tmpPair = nodelist[sid];
 	resultfile << tmpPair.first << " " << tmpPair.second << " ";
 	tmpPair = nodelist[tid];
-	resultfile << tmpPair.first << " " << tmpPair.second << " " << endl;	
-	
+	resultfile << tmpPair.first << " " << tmpPair.second << " " << endl;
+
 	int temp;
 	if(sid>tid){temp=sid; sid=tid; tid=temp;}
 	stats[make_pair<int,int>(sid,tid)] = stats[make_pair<int,int>(sid,tid)] + 1;
