@@ -332,9 +332,16 @@ int getPhysValue(){ //Note: this value is in KB!
   return result;
 }
 
-void stats(){
-  cout << "virtual memory used by process: " << getVirtValue() / 1024 << " MB" << endl;
-  cout << "physical memory used by process: " << getVirtValue() / 1024 << " MB" << endl;
+void stats(string fn, string identifier){
+  
+  ///file output
+  ofstream resultfile;
+  resultfile.open(fn.c_str(), ios::out | ios::ate | ios::app);
+
+  resultfile <<  identifier << endl;
+  
+  resultfile << "virtual memory used by process: " << getVirtValue() / 1024 << " MB" << endl;
+  resultfile << "physical memory used by process: " << getVirtValue() / 1024 << " MB" << endl;
   
   //// Total physical memory and memory used (RAM) ////////////
   struct sysinfo memInfo;
@@ -355,7 +362,12 @@ void stats(){
   //Multiply in next statement to avoid int overflow on right hand side...
   physMemUsed *= memInfo.mem_unit;
   
-  cout << "Total physical memory (RAM): " << totalPhysMem/(1024*1024) << " MB"<< endl;
-  cout << "Total physical memory used: " << physMemUsed/(1024*1024) << " MB"<< endl;
+  resultfile << "Total physical memory (RAM): " << totalPhysMem/(1024*1024) << " MB"<< endl;
+  resultfile << "Total physical memory used: " << physMemUsed/(1024*1024) << " MB\n"<< endl;
+
+  resultfile.close();
+
+  
+  
 }
 ///////////////////////////////////////////////////////////
