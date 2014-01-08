@@ -82,8 +82,6 @@ Counter counter;
 #include "ProtoStudy.h"
 
 
-
-
 class TestObject {
   public:
     TestObject(TestSetting settings);
@@ -143,10 +141,13 @@ void TestObject::runStaticTest() {
   if (debug) cout << "TestObject::runStaticTest: static test started" <<endl;
   
   test->buildCache();
+    stats("mem.use", "buildCache done");
   if (debug) cout << "TestObject::runStaticTest: queries read" <<endl;
 
   start = clock();
   test->runQueryList();
+    stats("mem.use", "runQueryList done");
+  
   end = clock();
 
   if (debug) cout << "TestObject::runStaticTest: static test ended" <<endl;
@@ -394,14 +395,6 @@ cout << "******************************************" << endl;
 	boost::to_upper(experiment);	
 	
 	cout << "HERE THE EXPERIMENTS SHOULD START!!\n" << endl;
-
-	
-/////////////////////////////////////////////////////////////
-	stats();
-    
-    	int atemp;
-	cin >> atemp;
-    ////////////////////////////////////////////////////
 	
 ////////////////////////////////////////	
 // Testing SP functionality, no experiment execution 
