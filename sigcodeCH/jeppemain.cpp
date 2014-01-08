@@ -358,6 +358,7 @@ void ExperimentSingle(TestSetting ts) {
 	delete expTest;
 }
 
+
 int main(int argc, char *argv[]) {
 
 
@@ -393,6 +394,14 @@ cout << "******************************************" << endl;
 	boost::to_upper(experiment);	
 	
 	cout << "HERE THE EXPERIMENTS SHOULD START!!\n" << endl;
+
+	
+/////////////////////////////////////////////////////////////
+	stats();
+    
+    	int atemp;
+	cin >> atemp;
+    ////////////////////////////////////////////////////
 	
 ////////////////////////////////////////	
 // Testing SP functionality, no experiment execution 
