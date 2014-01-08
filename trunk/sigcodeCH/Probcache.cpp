@@ -93,23 +93,25 @@ void Probcache::runQueryList() {
 
 void Probcache::buildCache(){
   cout<< "2.0 done" << endl;
+  stats();
   double refTime = clock();
   readQueryLogData(QLOG_TEST);
   cout<< "2.1 done, " << getElapsedTime(refTime) << endl;
-
+stats();
   readQueryLogData(QLOG_TRAIN);
   cout<< "2.2 done, " << getElapsedTime(refTime) << endl;
-
+stats();
   extractStatistics();
   double _build_stat_time=getElapsedTime(refTime);
   ts.setBuildStatisticsTime(_build_stat_time);
   calcScoreCounter=0;
   cout<< "2.3 done, " << _build_stat_time << endl;
-
+stats();
   fillCache();
   double _fill_cache_time=getElapsedTime(refTime);
   ts.setFillCacheTime(_fill_cache_time);
   cout<< "2.4 done, " << _fill_cache_time << endl;
+stats();
 }
 
 void Probcache::extractStatistics() {
