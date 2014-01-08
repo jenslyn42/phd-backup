@@ -227,12 +227,15 @@ void CacheStorage::init(TestSetting ts)
   cacheUsed = 0;
   numberOfNodes = 0;
   totalEntriesInCompressedBitsets = 0;
+  stats("mem.use", "CacheStorage::init()  variable initialized");
   
   mapSize = RoadGraph::mapObject(ts)->getMapsize();
+  stats("mem.use", "CacheStorage::init()  mapsize set, and RoadGraph initialized");
   if (testStorage!=STORE_LIST)
     invertedLists=new intVector[mapSize];
   else
     invertedLists=NULL;
+  stats("mem.use", "CacheStorage::init()  inverted list initialized");
 }
 
 bool CacheStorage::insertItem(CacheItem ci) {

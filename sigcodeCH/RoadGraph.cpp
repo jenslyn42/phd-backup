@@ -57,9 +57,11 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts){
     mapInstance->ssspCalls = 0;
     mapInstance->numNodeVisits = 0;
     mapInstance->readSPTreeFileBinary(ts);
+    stats("mem.use", "RoadGraph::mapObject()  object set");
     mapInstance->countSuccess=0;
     mapInstance->countFail=0;
     mapInstance->setupCH(testFile); //initialize CH
+    stats("mem.use", "RoadGraph::mapObject()  setupCH done");
     mapInstance->testconcisetype = (CONCISETYPE_CHOICE) ts.testConcisetype;
     
     printf("*** RoadGraph::read\n");
@@ -83,7 +85,7 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts){
     delete mapInstance;
     mapInstance = NULL; //if type of file to be parsed changes, delete mapInstance
   }
-
+    stats("mem.use", "RoadGraph::mapObject()  map read into object");
   return mapInstance;
 }
 
