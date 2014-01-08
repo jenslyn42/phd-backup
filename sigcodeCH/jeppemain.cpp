@@ -104,8 +104,11 @@ class TestObject {
 
 TestObject::TestObject(TestSetting settings) {	
   ts = settings;
-	  
-  cout << "TestObject:: constructor: " << MatchEnumString(ALGO_ENUM,ts.testAlgo) << " test choosen" <<endl;
+  
+  string ss = std::string("TestObject:: constructor: ") + std::string(MatchEnumString(ALGO_ENUM,ts.testAlgo)) + std::string(" test choosen");
+  //+ std::string(MatchEnumString(ALGO_ENUM,ts.testAlgo)) + " test choosen";
+  cout << ss << endl;
+   stats("mem.use", ss);
 	  
   switch( ts.testAlgo ){
     case ALGO_NONE:
@@ -141,12 +144,12 @@ void TestObject::runStaticTest() {
   if (debug) cout << "TestObject::runStaticTest: static test started" <<endl;
   
   test->buildCache();
-    stats("mem.use", "buildCache done");
+  stats("mem.use", "buildCache done");
   if (debug) cout << "TestObject::runStaticTest: queries read" <<endl;
 
   start = clock();
   test->runQueryList();
-    stats("mem.use", "runQueryList done");
+  stats("mem.use", "runQueryList done");
   
   end = clock();
 
