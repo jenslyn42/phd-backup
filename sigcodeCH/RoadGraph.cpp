@@ -81,11 +81,12 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts){
 	cout << " ... done" << endl;
 	break;
     }
+    stats("mem.use", "RoadGraph::mapObject()  map read into object");
   }else if((mapInstance->parseFileType) != pt){
     delete mapInstance;
     mapInstance = NULL; //if type of file to be parsed changes, delete mapInstance
   }
-    stats("mem.use", "RoadGraph::mapObject()  map read into object");
+
   return mapInstance;
 }
 
