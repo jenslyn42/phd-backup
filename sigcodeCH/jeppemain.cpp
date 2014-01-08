@@ -88,6 +88,7 @@ class TestObject {
 	
     ~TestObject() {
       delete test;
+      delete this;
     };
 	  
    void runStaticTest();
@@ -105,9 +106,10 @@ class TestObject {
 TestObject::TestObject(TestSetting settings) {	
   ts = settings;
   
-  string ss = std::string("TestObject:: constructor: ") + std::string(MatchEnumString(ALGO_ENUM,ts.testAlgo)) + std::string(" test choosen");
+  string ss = std::string("TestObject::constructor: ") + std::string(MatchEnumString(ALGO_ENUM,ts.testAlgo));
   //+ std::string(MatchEnumString(ALGO_ENUM,ts.testAlgo)) + " test choosen";
-  cout << ss << endl;
+  cout << ss << " test choosen" << endl;
+  ss = ss + std::string(" ") + ts.cacheSize;
    stats("mem.use", ss);
 	  
   switch( ts.testAlgo ){
