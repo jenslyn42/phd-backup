@@ -45,7 +45,7 @@ Probcache::Probcache(TestSetting ts)
   numDijkstraCalls = 0;
 
   readMapData();
-  stats("mem.use", "Probcache::Probcache() after make partitions");
+  stats("mem.use", "Probcache::Probcache() after read data");
   
   makePartitions(ts.getSplits());
   stats("mem.use", "Probcache::Probcache() after make partitions");
