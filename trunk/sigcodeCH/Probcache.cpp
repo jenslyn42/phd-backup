@@ -38,15 +38,17 @@ Probcache::Probcache(TestSetting ts)
  //RoadGraph::mapObject(ts)->setConcisePathUse(false); //is initially set true to initialize RoadGraph correctly, but the fillCache method here needs the full path 
   
   cache.init(ts);
-
+  stats("mem.use", "Probcache::Probcache() after cache.init()");
   cacheSize = cache.size();
   numTotalQueries = 0;
   numCacheHits = 0;
   numDijkstraCalls = 0;
 
   readMapData();
+  stats("mem.use", "Probcache::Probcache() after make partitions");
   
   makePartitions(ts.getSplits());
+  stats("mem.use", "Probcache::Probcache() after make partitions");
   calcScoreCounter=0;
 }
 
