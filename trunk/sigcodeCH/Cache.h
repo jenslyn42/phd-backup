@@ -47,7 +47,7 @@ protected:
 
 public:
 	AbstractCache(){ };
-	~AbstractCache(){ };
+	virtual ~AbstractCache(){};
 
 	TestSetting ts;
 
@@ -115,7 +115,11 @@ public:
 
 	void init(TestSetting ts);
 
-	~CacheStorage(){ };
+	~CacheStorage(){ 
+	  cache.clear();
+	  utilityStats.clear();
+	  delete [] invertedLists;
+	};
 
 	bool insertItem(CacheItem ci);
 	bool insertItemWithScore(CacheItem ci, double score);
