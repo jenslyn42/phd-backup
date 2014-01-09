@@ -339,7 +339,6 @@ void stats(string fn, string identifier){
   resultfile.open(fn.c_str(), ios::out | ios::ate | ios::app);
 
   resultfile <<  identifier << endl;
-  
   resultfile << "virtual memory used by process: " << getVirtValue() / 1024 << " MB" << endl;
   resultfile << "physical memory used by process: " << getVirtValue() / 1024 << " MB" << endl;
   
@@ -366,8 +365,5 @@ void stats(string fn, string identifier){
   resultfile << "Total physical memory used: " << physMemUsed/(1024*1024) << " MB\n"<< endl;
 
   resultfile.close();
-
-  
-  
 }
 ///////////////////////////////////////////////////////////

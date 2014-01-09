@@ -17,6 +17,13 @@ LRU::LRU(TestSetting ts)
 
 LRU::~ LRU()
 {
+//   trainingSTPointPairs.clear();
+//   testSTPointPairs.clear();
+//   points.clear();
+//   Point2Nodeid.clear();
+//   nodeid2Point.clear();
+//   
+//   cache.clear();
 }
 
 
@@ -137,7 +144,17 @@ HQF::HQF(TestSetting ts)
 	calcScoreCounter=0;
 }
 
-HQF::~HQF() { }
+HQF::~HQF() { 
+//   trainingSTPointPairs.clear();
+//   testSTPointPairs.clear();
+//   points.clear();
+//   Point2Nodeid.clear();
+//   nodeid2Point.clear();
+//   
+//   cache.clear();
+//   calcScoreMap.clear();
+//   queries.clear();
+}
 
 
 void HQF::runQueryList() {

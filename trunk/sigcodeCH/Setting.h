@@ -3,29 +3,6 @@
  *   jenslyn42@gmail.com								*
  *											*
  *   All rights reserved.								*
- *											*
- *   Redistribution and use in source and binary forms, with or without 		*
- *   modification, are permitted provided that the following conditions are met:	*
- *   Redistributions of source code must retain the above copyright notice,		*
- *   this list of conditions and the following disclaimer. 				*
- *   Redistributions in binary form must reproduce the above copyright notice,		*
- *   this list of conditions and the following disclaimer in the documentation		*
- *   and/or other materials provided with the distribution. 				*
- *   Neither the name of the <ORGANIZATION> nor the names of its contributors 		*
- *   may be used to endorse or promote products derived from this software 		*
- *   without specific prior written permission						*
- *                                                                         		*
- *   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS   		*
- *   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT     		*
- *   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR 		*
- *   A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER		*
- *   OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 		*
- *   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,   		*
- *   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR    		*
- *   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 		*
- *   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING  		*
- *   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS    		*
- *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          		*
  ***************************************************************************************/
 #ifndef SETTING_H
 #define SETTING_H
@@ -149,82 +126,82 @@ struct Region {
 };
 
 
-class TestSetting {	
-	double fillCacheTime, buildStatisticsTime, nodesInCache;
-	
-	void printConfigError(string key,bool required);
-	void trimSpace(char* str);
-	ConfigType cr;
-	
+class TestSetting {
+  double fillCacheTime, buildStatisticsTime, nodesInCache;
+  
+  void printConfigError(string key,bool required);
+  void trimSpace(char* str);
+  ConfigType cr;
+  
 public:
-	// these attributes can be accessed directly
-	std::string testName;
-	std::string testFile;
-	std::string queryFileName;
+  // these attributes can be accessed directly
+  std::string testName;
+  std::string testFile;
+  std::string queryFileName;
 
-	int inputFileType;		// used for RoadGraph
-	int scacheQueryType;	// used for SCACHE only
-	int splits, itemsInCache, nonEmptyRegionPairs;
-	
-	bool useConcisepath;
-	bool measureConcisepathdegrees;
-	bool executeTrainingWorkload;
-	
-	
-	ALGO_CHOICE testAlgo;
-	STORAGE_CHOICE testStorage;
-	ARCH_CHOICE testScenario;
-	SPTYPE_CHOICE testSPtype;
-	CONCISETYPE_CHOICE testConcisetype;
-	unsigned long cacheSize, unusedCacheBits;
-	
+  int inputFileType;    // used for RoadGraph
+  int scacheQueryType;  // used for SCACHE only
+  int splits, itemsInCache, nonEmptyRegionPairs;
+  
+  bool useConcisepath;
+  bool measureConcisepathdegrees;
+  bool executeTrainingWorkload;
+  
+  
+  ALGO_CHOICE testAlgo;
+  STORAGE_CHOICE testStorage;
+  ARCH_CHOICE testScenario;
+  SPTYPE_CHOICE testSPtype;
+  CONCISETYPE_CHOICE testConcisetype;
+  unsigned long cacheSize, unusedCacheBits;
+  
 
-	TestSetting();
-	~TestSetting();	
-	
-	void addConfigFromFile(const char* filename);
-	void addConfigFromCmdLine(int argc,char** argv);
-	void listConfig();
+  TestSetting();
+  ~TestSetting();
+  
+  void addConfigFromFile(const char* filename);
+  void addConfigFromCmdLine(int argc,char** argv);
+  void listConfig();
 
-	float getConfigFloat(string key,bool required=true,float _default=0);
-	int getConfigInt(string key,bool required=true,int _default=0);
-	long getConfigLong(string key,bool required=true,long _default=0);
-	string getConfigString(string key,bool required=true,string _default="");
-	bool getConfigBool(string key,bool required=true,bool _default=false);
-	
-	
-	int getEnumCode(LookupList& list,string key);
-	
-	int getNonEmptyRegionPairs(){return nonEmptyRegionPairs;}
-	void setNonEmptyRegionPairs(int rp){nonEmptyRegionPairs = rp;}
+  float getConfigFloat(string key,bool required=true,float _default=0);
+  int getConfigInt(string key,bool required=true,int _default=0);
+  long getConfigLong(string key,bool required=true,long _default=0);
+  string getConfigString(string key,bool required=true,string _default="");
+  bool getConfigBool(string key,bool required=true,bool _default=false);
+  
+  
+  int getEnumCode(LookupList& list,string key);
+  
+  int getNonEmptyRegionPairs(){return nonEmptyRegionPairs;}
+  void setNonEmptyRegionPairs(int rp){nonEmptyRegionPairs = rp;}
 
-	double getItemsInCache(){return itemsInCache;}
-	void setItemsInCache(double iic){itemsInCache = iic;}
-	
-	double getAvgItemLength(){return (double)nodesInCache / (double) itemsInCache;}
-	
-	void setNodesInCache(int numNodes){nodesInCache = numNodes;}
-	
-	long getUnusedCacheBits(){return unusedCacheBits;}
-	void setUnusedCacheBits(int numBits){unusedCacheBits = numBits;}
-	
-	double getBuildStatisticsTime(){return buildStatisticsTime;}
-	void setBuildStatisticsTime(double st){buildStatisticsTime = st;}
+  double getItemsInCache(){return itemsInCache;}
+  void setItemsInCache(double iic){itemsInCache = iic;}
+  
+  double getAvgItemLength(){return (double)nodesInCache / (double) itemsInCache;}
+  
+  void setNodesInCache(int numNodes){nodesInCache = numNodes;}
+  
+  long getUnusedCacheBits(){return unusedCacheBits;}
+  void setUnusedCacheBits(int numBits){unusedCacheBits = numBits;}
+  
+  double getBuildStatisticsTime(){return buildStatisticsTime;}
+  void setBuildStatisticsTime(double st){buildStatisticsTime = st;}
 
-	double getFillCacheTime(){return fillCacheTime;}
-	void setFillCacheTime(double ct){fillCacheTime = ct;}
+  double getFillCacheTime(){return fillCacheTime;}
+  void setFillCacheTime(double ct){fillCacheTime = ct;}
 
-	std::string getTestName() const {return testName;}
+  std::string getTestName() const {return testName;}
 
-	std::string getTestFile() const{return testFile;}
-	
-	int getSplits() const {return splits;}
-	
-	void printSetting();
-	
-	double getElapsedTime(double& refTime){
-	  return (double(clock() -refTime))/CLOCKS_PER_SEC;
-	}
+  std::string getTestFile() const{return testFile;}
+  
+  int getSplits() const {return splits;}
+  
+  void printSetting();
+  
+  double getElapsedTime(double& refTime){
+    return (double(clock() -refTime))/CLOCKS_PER_SEC;
+  }
 };
 
 ////////////////////////////////////////////////
