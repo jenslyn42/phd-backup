@@ -81,14 +81,12 @@ void Probcache::runQueryList() {
 
     if (cache.checkCache(q)) { // cacheHit
       numCacheHits++;
-      cout << numTotalQueries << " cachehit" << endl;
     } else {
       if(debugProbc) cout << "three, Probcache::checkCache!" << endl;
       existingNodesvisited = RoadGraph::mapObject(ts)->numNodeVisits; // *1* nodes visited before call
       
       if(ts.executeTrainingWorkload) spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);
       numDijkstraCalls++;
-      cout << numTotalQueries << " cache miss" << endl;
       //////////////////////////////////
 //       if(numTotalQueries > 9) exit(1);
      /* intVector spResultLong, spResultShort;
