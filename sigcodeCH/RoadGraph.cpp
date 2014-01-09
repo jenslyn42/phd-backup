@@ -692,23 +692,23 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
   // write out each node of full path, its nighbours and angle to each. 
   // add ** to indicate next node in path.
   ////////////////////////////////////////////
-  int nid;
-  double weight = 0.0;
-  Point tmpNode;
-  for(std::vector<int>::size_type i = trace.size()-2; i != 0; i--){
-    nid = trace[i];
-    curr = nid2Point[nid];
-    outdegree = map[nid].size();
-    cout << "NID: " << nid << ", " << outdegree << " ";
-    BOOST_FOREACH(JEdge edge, map[nid]){
-      tmpNode = nid2Point[edge.first];
-      tmp=getAngle((prev=nid2Point[trace[i+1]]), curr, tmpNode); 
-      if(edge.first == trace[i-1]) cout << "**"; //identify next node in trace
-      cout << "[" << edge.first << ", " << tmp << "](" << tmpNode.first << "," << tmpNode.second << ") ";
-    }
-    cout << endl;
+//   int nid;
+//   double weight = 0.0;
+//   Point tmpNode;
+//   for(std::vector<int>::size_type i = trace.size()-2; i != 0; i--){
+//     nid = trace[i];
+//     curr = nid2Point[nid];
+//     outdegree = map[nid].size();
+//     cout << "NID: " << nid << ", " << outdegree << " ";
+//     BOOST_FOREACH(JEdge edge, map[nid]){
+//       tmpNode = nid2Point[edge.first];
+//       tmp=getAngle((prev=nid2Point[trace[i+1]]), curr, tmpNode); 
+//       if(edge.first == trace[i-1]) cout << "**"; //identify next node in trace
+//       cout << "[" << edge.first << ", " << tmp << "](" << tmpNode.first << "," << tmpNode.second << ") ";
+//     }
+//     cout << endl;
     
-  }
+//   }
   ////////////////////////////////////////////////////
 
   
@@ -857,24 +857,24 @@ std::vector<int>  RoadGraph::calcConsisePathB(std::vector<int>& trace){
   // write out each node of full path, its nighbours and angle to each. 
   // add ** to indicate next node in path.
   ////////////////////////////////////////////
-  int nid;
-  double weight = 0.0;
-  Point tmpNode;
-  for(std::vector<int>::size_type i = trace.size()-2; i != 0; i--){
-    nid = trace[i];
-    curr = nid2Point[nid];
-    outdegree = map[nid].size();
-    cout << "NID: " << nid << ", " << outdegree << " ";
-    BOOST_FOREACH(JEdge edge, map[nid]){
-      tmpNode = nid2Point[edge.first];
-//       tmp=getAngle(target, curr, tmpNode); 
-      tmp=getAngle(tmpNode, curr, target); 
-      if(edge.first == trace[i-1]) cout << "**"; //identify next node in trace
-      cout << "[" << edge.first << ", " << tmp << "](" << tmpNode.first << "," << tmpNode.second << ") ";
-    }
-    cout << endl;
-    
-  }
+//   int nid;
+//   double weight = 0.0;
+//   Point tmpNode;
+//   for(std::vector<int>::size_type i = trace.size()-2; i != 0; i--){
+//     nid = trace[i];
+//     curr = nid2Point[nid];
+//     outdegree = map[nid].size();
+//     cout << "NID: " << nid << ", " << outdegree << " ";
+//     BOOST_FOREACH(JEdge edge, map[nid]){
+//       tmpNode = nid2Point[edge.first];
+// //       tmp=getAngle(target, curr, tmpNode); 
+//       tmp=getAngle(tmpNode, curr, target); 
+//       if(edge.first == trace[i-1]) cout << "**"; //identify next node in trace
+//       cout << "[" << edge.first << ", " << tmp << "](" << tmpNode.first << "," << tmpNode.second << ") ";
+//     }
+//     cout << endl;
+//     
+//   }
   ////////////////////////////////////////////////////
   
   outdegree= map[trace.back()].size();
