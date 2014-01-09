@@ -52,7 +52,21 @@ Probcache::Probcache(TestSetting ts)
   calcScoreCounter=0;
 }
 
-Probcache::~Probcache() { }
+Probcache::~Probcache() 
+{ 
+  trainingSTPointPairs.clear();
+  testSTPointPairs.clear();
+  points.clear();
+  Point2Nodeid.clear();
+  nodeid2Point.clear();
+  queries.clear();
+  trainingQueriesPerRegionPair.clear();
+  nodeid2regionid.clear();
+  Point2regionidMap.clear();
+  regionid2nodeidVector.clear();
+  regionPair2nodePairVector.clear();
+  mapRegions.clear();
+}
 
 
 void Probcache::runQueryList() {
