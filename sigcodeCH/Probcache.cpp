@@ -429,7 +429,7 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
   }
 
   cout << " @@3 TIME: " << getElapsedTime(refTime) << endl;
-
+  stats("mem.use", "Probcache::fillcache() @@3 done");
   // fill cache
   int num_cache_paths=0,num_zero_paths=0;
   while(!mhCache.empty()) {

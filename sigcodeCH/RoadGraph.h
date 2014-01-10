@@ -56,11 +56,11 @@ public:
 private:
 	RoadGraph(){ };
 	~RoadGraph(){
-// 	  delete map;
-// 	  spTrace.clear();
-// 	  nid2Point.clear();
-// 	  node2degree.clear();
-// 	  delete mapInstance;
+	  delete map;
+	  spTrace.clear();
+	  nid2Point.clear();
+	  node2degree.clear();
+	  delete mapInstance;
 	}
 	RoadGraph(RoadGraph const&){}; //private copy constructor
 	RoadGraph& operator=(RoadGraph const&); //private assignment operator
