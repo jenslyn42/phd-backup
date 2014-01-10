@@ -17,13 +17,13 @@ LRU::LRU(TestSetting ts)
 
 LRU::~ LRU()
 {
-//   trainingSTPointPairs.clear();
-//   testSTPointPairs.clear();
-//   points.clear();
-//   Point2Nodeid.clear();
-//   nodeid2Point.clear();
-//   
-//   cache.clear();
+  trainingSTPointPairs.clear();
+  testSTPointPairs.clear();
+  points.clear();
+  Point2Nodeid.clear();
+  nodeid2Point.clear();
+  
+  cache.clear();
 }
 
 
@@ -145,15 +145,15 @@ HQF::HQF(TestSetting ts)
 }
 
 HQF::~HQF() { 
-//   trainingSTPointPairs.clear();
-//   testSTPointPairs.clear();
-//   points.clear();
-//   Point2Nodeid.clear();
-//   nodeid2Point.clear();
-//   
-//   cache.clear();
-//   calcScoreMap.clear();
-//   queries.clear();
+  trainingSTPointPairs.clear();
+  testSTPointPairs.clear();
+  points.clear();
+  Point2Nodeid.clear();
+  nodeid2Point.clear();
+  
+  cache.clear();
+  calcScoreMap.clear();
+  queries.clear();
 }
 
 
