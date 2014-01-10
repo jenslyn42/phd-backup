@@ -393,8 +393,8 @@ CompressedPidTokens::CompressedPidTokens()
 }
 
 CompressedPidTokens::~CompressedPidTokens(){  
-//   NodeTokens.clear(); 
-//   TokenCompressPids.clear();
+  NodeTokens.clear(); 
+  TokenCompressPids.clear();
 }
 
 // pre-condition: assume that "path_id" must be larger than any existing id in "vecpair"
