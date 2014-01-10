@@ -40,7 +40,9 @@ CacheItem::CacheItem(int key, intVector& item, int queryStartNode, int queryTarg
   this->score = -1;
 };
 
-
+CacheItem::~CacheItem(){
+ item.clear(); 
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
