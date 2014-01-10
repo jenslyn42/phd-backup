@@ -41,7 +41,7 @@ CacheItem::CacheItem(int key, intVector& item, int queryStartNode, int queryTarg
 };
 
 CacheItem::~CacheItem(){
- item.clear(); 
+ this->item.clear(); 
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
