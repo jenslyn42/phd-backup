@@ -151,7 +151,6 @@ HQF::~HQF() {
   Point2Nodeid.clear();
   nodeid2Point.clear();
   
-  cache.clear();
   calcScoreMap.clear();
   queries.clear();
 }

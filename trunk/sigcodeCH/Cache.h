@@ -13,6 +13,7 @@ public:
   CacheItem();
   CacheItem(int key, intVector& item);
   CacheItem(int key, intVector& item, int queryStartNode, int queryTargetNode);
+  ~CacheItem();
 
   void updateKey(int newKey) {accessKey = newKey;}
   int key() const {return accessKey;}
