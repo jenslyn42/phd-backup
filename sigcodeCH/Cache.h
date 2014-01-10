@@ -116,9 +116,9 @@ public:
   void init(TestSetting ts);
 
   ~CacheStorage(){ 
-//  cache.clear();
-//  utilityStats.clear();
-//  delete [] invertedLists;
+    cache.clear();
+    utilityStats.clear();
+    delete [] invertedLists;
   };
 
   bool insertItem(CacheItem ci);
