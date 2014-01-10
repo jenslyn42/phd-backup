@@ -87,7 +87,7 @@ class TestObject {
     TestObject(TestSetting settings);
 	
     ~TestObject() {
-       delete this;
+       delete test;
     };
 	  
    void runStaticTest();
