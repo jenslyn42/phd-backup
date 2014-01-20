@@ -3,7 +3,7 @@
 // while choices are case insensitive, the variables are NOT
 
 testAlgo = SPCPLUS
-// choices: NONE, SPC, SPCPLUS, SPCSTAR, LRU, HQF, SCACHE, HQFLRU, ORACLE
+// choices: NONE, SPC, SPCPLUS, SPCSTAR, LRUPLUS, HQF, SCACHE, HQFLRU, ORACLE
 // Since '+','*' is not allowed in filename; we use SPCPLUS, SPCSTAR instead
 // note: no need to specify the "cache storage" type; it is decided by "testAlgo" directly
 

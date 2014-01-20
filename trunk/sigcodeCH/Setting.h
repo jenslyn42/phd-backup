@@ -50,7 +50,7 @@ typedef std::pair<int,string> LookupPair;
 typedef vector<LookupPair> LookupList;
 
 // algorithmic choice
-enum ALGO_CHOICE { ALGO_NONE, ALGO_SPC, ALGO_SPCplus, ALGO_SPCstar, ALGO_LRU, ALGO_HQF, ALGO_SCACHE, ALGO_HQFLRU, ALGO_ORACLE };
+enum ALGO_CHOICE { ALGO_NONE, ALGO_SPC, ALGO_SPCplus, ALGO_SPCstar, ALGO_LRU, ALGO_LRUplus, ALGO_HQF, ALGO_SCACHE, ALGO_HQFLRU, ALGO_ORACLE };
 
 // cache storage choice
 enum STORAGE_CHOICE { STORE_LIST, STORE_GRAPH, STORE_COMPRESS };
@@ -92,6 +92,7 @@ typedef boost::unordered_map<int, int> intMap;
 typedef boost::unordered_map<int, double> intDoubleMap;
 typedef boost::unordered_map<int, Point> intPointMap;
 typedef boost::unordered_map<int, intVector > intVectorMap;
+typedef boost::unordered_map<int, boost::unordered_set<int> > intSetMap;
 
 typedef boost::unordered_map<int, std::pair<int, intVector > > intIntVectorMap;
 typedef boost::unordered_map<int, std::pair<intPair, intVector > > intIntPairVectorMap;

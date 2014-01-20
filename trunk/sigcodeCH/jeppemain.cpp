@@ -118,6 +118,9 @@ TestObject::TestObject(TestSetting settings) {
     case ALGO_LRU:
       test = new LRU(ts);
       break;
+    case ALGO_LRUplus:
+      test = new LRU(ts);
+      break;
     case ALGO_SCACHE:
       test = new Scache(ts);
       break;

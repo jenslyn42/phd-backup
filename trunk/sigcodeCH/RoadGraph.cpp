@@ -804,7 +804,7 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
 //     for(std::vector<int>::size_type i = concisepath.size()-1; i != 0; i--){cout << concisepath[i] << " "; }
 //     cout << endl;
     //////////////////////////////////////
-   cout << "7..0: [" << originalDegree2 << ", " << reverseTrace.size() << "] " << endl;
+//    cout << "7..0: [" << originalDegree2 << ", " << reverseTrace.size() << "] " << endl;
   if(conciseDebug) {
     if((tmpRecpath=recoverPath(concisepath)) != reverseTrace)
       cout << "NEQ! " << concisepath.size() << " / " << reverseTrace.size() << " D2: (" << degree2Added <<") " << degree2 << endl;
