@@ -48,6 +48,7 @@ void InitEnumMappings() {
 	InsertEnum(ALGO_ENUM,	ALGO_SPCplus,	"SPCPLUS");
 	InsertEnum(ALGO_ENUM,	ALGO_SPCstar,	"SPCSTAR");
 	InsertEnum(ALGO_ENUM,	ALGO_LRU,	"LRU");
+	InsertEnum(ALGO_ENUM,	ALGO_LRUplus,	"LRUPLUS");
 	InsertEnum(ALGO_ENUM,	ALGO_HQF,	"HQF");
 	InsertEnum(ALGO_ENUM,	ALGO_SCACHE,	"SCACHE");
 	InsertEnum(ALGO_ENUM,	ALGO_HQFLRU,	"HQFLRU");

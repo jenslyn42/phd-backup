@@ -589,6 +589,17 @@ intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random){
   longScore = calcScore(spResultLong, vSeen);    
 //   cout << "Probcache::optiPath Q_03:(" << endl;
  
+  cout << "\nRatio: " << spResultLong.size() / spResultShort.size() << endl;
+  cout << "S: " <<spResultShort.size() << endl;
+  BOOST_FOREACH(int nid, spResultShort) cout << nid << "\t" << nodeid2Point[nid].first << "\t" << nodeid2Point[nid].second << endl;
+  
+  cout << "\nL: " <<spResultLong.size() << endl;
+  BOOST_FOREACH(int nid, spResultLong) cout << nid  << "\t" << nodeid2Point[nid].first << "\t" << nodeid2Point[nid].second << endl;
+  
+  
+  
+  
+  
   intVector tempLong, tempConsise;
   tempLong = spResultLong;
   tempConsise = spResultShort;
