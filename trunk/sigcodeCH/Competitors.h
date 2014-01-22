@@ -41,8 +41,11 @@ public:
 
   void buildCache();
   void runQueryList();
+  void fillCache();
 
 private:
+  long nodesInCache; // keep track of total number of nodes in all cache items
+  
   void checkAndUpdateCache(intPair query);
   void insertItem(intVector& sp);
 };
