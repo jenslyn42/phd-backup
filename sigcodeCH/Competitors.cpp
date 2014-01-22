@@ -157,10 +157,26 @@ LRUPLUS::~ LRUPLUS()
 
 void LRUPLUS::buildCache()
 {
-  cout<< "2.0 done cachesize:" << cacheSize << endl;
+  cout<< "2.0 done" << endl;
   readQueryLogData(QLOG_TEST);
+  cout<< "2.1 done" << endl;
+  readQueryLogData(QLOG_TRAIN);
+  cout<< "2.2 done" << endl;
+  double refTime = clock();
+  fillCache();
+  ts.setFillCacheTime(getElapsedTime(refTime));
+  cout << "2.3 done, fillCache: " << ts.getFillCacheTime() << endl;
   
   cout << "test query pairs:" << testSTPointPairs.size() << endl;  
+}
+
+void LRUPLUS::fillCache(){  
+  BOOST_FOREACH(intPair q, testSTPointPairs ) { 
+    checkAndUpdateCache(q);
+    numTotalQueries++;
+    
+    numCacheHits=0;
+  }
 }
 
 void LRUPLUS::runQueryList()
@@ -174,8 +190,8 @@ void LRUPLUS::runQueryList()
     
   this->ts.setBuildStatisticsTime(0);
   ts.setNonEmptyRegionPairs(0);
-  this->ts.setFillCacheTime(0);
   this->ts.setItemsInCache(cache.size());
+  ts.setNodesInCache(nodesInCache);
 }
 
 void LRUPLUS::checkAndUpdateCache(intPair query)
@@ -191,7 +207,7 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
   int cachehit;
   boost::unordered_set<int>::const_iterator got;
 
-for (boost::unordered_set<int>::iterator itr = query1.begin(); itr != query1.end(); ++itr) {
+  for (boost::unordered_set<int>::iterator itr = query1.begin(); itr != query1.end(); ++itr) {
     if((got = query2.find(*itr)) != query2.end()){
       numCacheHits++;
       cacheHit = true;
@@ -199,6 +215,7 @@ for (boost::unordered_set<int>::iterator itr = query1.begin(); itr != query1.end
       ordering.erase(std::make_pair<int,int>(*itr, tmpItem.key() ) );
       ordering.insert(std::make_pair<int,int>(*itr, numTotalQueries));
       tmpItem.updateKey(numTotalQueries);
+      nodesInCache =+ tmpItem.size;
       break;
     }
   }
@@ -218,6 +235,7 @@ for (boost::unordered_set<int>::iterator itr = query1.begin(); itr != query1.end
       CacheItem cItem (numTotalQueries, spResult);
       cache[cItem.id] = cItem;
       ordering.insert(std::make_pair<int,int>(cItem.id, cItem.key()));
+      nodesInCache =+ cItem.size;
       //update inverted lists
       for (vector<int>::iterator itr = spResult.begin(); itr != spResult.end(); ++itr) {
 	if(invList.find(*itr) == invList.end()){
@@ -244,6 +262,7 @@ void LRUPLUS::insertItem(intVector& sp) {
         cout << "two1, LRUPLUS::insertItem cacheSize,cacheUsed " << cacheSize <<"," << cacheUsed <<endl;
       CacheItem cItem (numTotalQueries, sp);
       cache[cItem.id] = cItem;
+      nodesInCache =+ cItem.size;
       ordering.insert(std::make_pair<int,int>(cItem.id, cItem.key()));
       //update inverted list
       for (vector<int>::iterator itr = sp.begin(); itr != sp.end(); ++itr) {
@@ -269,6 +288,7 @@ void LRUPLUS::insertItem(intVector& sp) {
       int itemSize = cache[rPid].size;  // oldest item
       cache.erase(rPid);
       ordering.erase(ordering.begin());
+            nodesInCache =- itemSize;
       //update inverted list
       for (intSetMap::iterator itr = invList.begin(); itr != invList.end(); ++itr) {      
 	
