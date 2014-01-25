@@ -1,5 +1,5 @@
 
-#define debugCompet false
+#define debugCompet true
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -53,18 +53,18 @@ void LRU::runQueryList()
 void LRU::checkAndUpdateCache(intPair query)
 {
   bool cacheHit = false;
-  unsigned long existingNodesvisited; //*1* used for keeping track of number of nodes visited by a SP call.
-  
+/*  
   if(debugCompet) {
     cout << "cache size: " << cache.size() << " s,t: (" << query.first << "," << query.second << ")" << endl;
   }
+*/
 
   BOOST_FOREACH(CacheItem ci, cache ) {
     if (find(ci.item.begin(),ci.item.end(), query.first) != ci.item.end() && 
         find(ci.item.begin(),ci.item.end(), query.second) != ci.item.end())
     {
       if(debugCompet) 
-        cout << "LRU::checkAndUpdateCache BOTH TRUE" << endl;
+        cout << "LRU::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
       numCacheHits++;
       ci.updateKey(numTotalQueries);
       sort(cache.begin(), cache.end());
@@ -72,17 +72,14 @@ void LRU::checkAndUpdateCache(intPair query)
       break;
     }
   }
-  if(debugCompet) cout << "LRU::checkAndUpdateCache " << endl;
+//   if(debugCompet) cout << "LRU::checkAndUpdateCache 0" << endl;
 
   if(!cacheHit)
   {
-    existingNodesvisited = RoadGraph::mapObject(ts)->numNodeVisits; //*1* nodes visited before call
     vector<int> spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
     numDijkstraCalls++;
     int querySize = spResult.size();
     
-    //cout << "LRU:queryID: " << numTotalQueries << ": " << RoadGraph::mapObject(ts)->numNodeVisits - existingNodesvisited << endl;
-  
     if(cache.size() != 0){
       if(debugCompet) cout << "LRU::checkAndUpdateCache 1, querySize: "<< querySize << endl;
       insertItem(spResult);
@@ -91,7 +88,7 @@ void LRU::checkAndUpdateCache(intPair query)
       CacheItem e (numTotalQueries, spResult);
       cache.push_back(e);
     }
-    if(debugCompet) cout << "LRU::checkAndUpdateCache 3" << endl;
+//     if(debugCompet) cout << "LRU::checkAndUpdateCache 3" << endl;
   }
 }
 
@@ -100,34 +97,45 @@ void LRU::insertItem(intVector& sp) {
 
   int spSize = sp.size();
   bool notEnoughSpace = true;
-  if(debugCompet) cout << "one, LRU::insertItem(" << spSize <<"," <<sp.size() << ")" << endl;
+  if(debugCompet){ 
+    cout << "one, LRU::insertItem(" << spSize << ")" << endl;
+        BOOST_FOREACH(CacheItem ci, cache ) {
+      cout << ci.id << " ";
+    }
+    cout << endl;
+  }
   //insert query into cache, will repeatedly remove items until there is enough space for the new item.
   do{
-    if((cacheSize - cacheUsed) > spSize*NODE_BITS) {
+    if((cacheSize - cacheUsed) >= spSize*NODE_BITS) {
       if(debugCompet) 
-        cout << "two1, LRU::insertItem cacheSize,cacheUsed " << cacheSize <<"," << cacheUsed <<endl;
+        cout << "two1, LRU::insertItem INSERT (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed;
       CacheItem cItem (numTotalQueries, sp);
       cache.push_back(cItem);
       cacheUsed = cacheUsed + cItem.size*NODE_BITS;
       notEnoughSpace = false;
       if (debugCompet) 
-        cout << "two2, LRU::insertItem cacheSize,cacheUsed " << cacheSize <<"," << cacheUsed <<endl;
+	cout << " TWO:(" << cacheSize <<"," << cacheUsed << ")"<<endl;
     
     } else if ( spSize*NODE_BITS < cacheSize) {
       if (debugCompet) 
-        cout << "three1, LRU::insertItem" << cache.size() <<"," << cache[0].size <<endl;
+        cout << "three1, LRU::insertItem REMOVE (node,size): " << cache[0].id << ", " << cache[0].size <<endl;
       int itemSize = cache[0].size;  // Ken: Is this the oldest item?
       cache.erase(cache.begin());
       cacheUsed = cacheUsed - itemSize*NODE_BITS;
-      if (debugCompet) 
-        cout << "three2, LRU::insertItem" <<endl;
+//       if (debugCompet) 
+//         cout << "three2, LRU::insertItem" <<endl;
         
     } else
       break;
   } while(notEnoughSpace);
   
-  if(debugCompet) 
-    cout << "four, LRU::insertItem" <<endl;
+  if(debugCompet) {    
+    cout << "*C* ";
+    BOOST_FOREACH(CacheItem ci, cache ) {
+      cout << ci.id << " ";
+    }
+    cout << endl;
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,24 +167,24 @@ void LRUPLUS::buildCache()
 {
   cout<< "2.0 done" << endl;
   readQueryLogData(QLOG_TEST);
-  cout<< "2.1 done" << endl;
-  readQueryLogData(QLOG_TRAIN);
-  cout<< "2.2 done" << endl;
+//   cout<< "2.1 done" << endl;
+//   readQueryLogData(QLOG_TRAIN);
+//   cout<< "2.2 done" << endl;
   double refTime = clock();
   fillCache();
   ts.setFillCacheTime(getElapsedTime(refTime));
-  cout << "2.3 done, fillCache: " << ts.getFillCacheTime() << endl;
+//   cout << "2.3 done, fillCache: " << ts.getFillCacheTime() << endl;
   
   cout << "test query pairs:" << testSTPointPairs.size() << endl;  
 }
 
 void LRUPLUS::fillCache(){  
-  BOOST_FOREACH(intPair q, testSTPointPairs ) { 
-    checkAndUpdateCache(q);
-    numTotalQueries++;
-    
-    numCacheHits=0;
-  }
+//   BOOST_FOREACH(intPair q, trainSTPointPairs ) { 
+//     checkAndUpdateCache(q);
+//     numTotalQueries++;
+//     
+//     numCacheHits=0;
+//   }
 }
 
 void LRUPLUS::runQueryList()
@@ -198,9 +206,10 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 {
   bool cacheHit = false;
   int tmpScore;
-  
+/*  
   if(debugCompet)
     cout << "cache size: " << cache.size() << " s,t: (" << query.first << "," << query.second << ")" << endl;
+*/
   
   boost::unordered_set<int>& query1 = invList[query.first];
   boost::unordered_set<int>& query2 = invList[query.second];
@@ -216,11 +225,13 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
       ordering.insert(std::make_pair<int,int>(*itr, numTotalQueries));
       tmpItem.updateKey(numTotalQueries);
       nodesInCache =+ tmpItem.size;
+//       if(debugCompet) cout << "LRUPLUS::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
+//       
+      if(debugCompet) cout << "LRU::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
       break;
     }
   }
-
-  if(debugCompet) cout << "LRUPLUS::checkAndUpdateCache " << endl;
+//   if(debugCompet) cout << "LRUPLUS::checkAndUpdateCache 0" << endl;
 
   if(!cacheHit) {
     vector<int> spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
@@ -228,25 +239,25 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
     int querySize = spResult.size();
   
     if(cache.size() != 0){
-      if(debugCompet) cout << "LRUPLUS::checkAndUpdateCache 1, querySize: "<< querySize << endl;
+//       if(debugCompet) cout << "LRUPLUS::checkAndUpdateCache 1, querySize: "<< querySize << endl;
+      if(debugCompet) cout << "LRU::checkAndUpdateCache 1, querySize: "<< querySize << endl;
       insertItem(spResult);
     }else{
-      if(debugCompet) cout << "LRUPLUS::checkAndUpdateCache 2, querySize: "<< querySize << endl;
+//       if(debugCompet) cout << "LRUPLUS::checkAndUpdateCache 2, querySize: "<< querySize << endl;
+      if(debugCompet) cout << "LRU::checkAndUpdateCache 2, querySize: "<< querySize << endl;
       CacheItem cItem (numTotalQueries, spResult);
       cache[cItem.id] = cItem;
       ordering.insert(std::make_pair<int,int>(cItem.id, cItem.key()));
       nodesInCache =+ cItem.size;
       //update inverted lists
       for (vector<int>::iterator itr = spResult.begin(); itr != spResult.end(); ++itr) {
-	if(invList.find(*itr) == invList.end()){
+	if(invList.find(*itr) == invList.end())
 	  invList[*itr] = boost::unordered_set<int>();
-	  invList[*itr].insert(cItem.id); 
-	}else{
-	  invList[*itr].insert(cItem.id);
-	}
+	
+	invList[*itr].insert(cItem.id); 
       }
     }
-    if(debugCompet) cout << "LRUPLUS::checkAndUpdateCache 3" << endl;
+//     if(debugCompet) cout << "LRUPLUS::checkAndUpdateCache 3" << endl;
   }
 }
 
@@ -254,12 +265,23 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 void LRUPLUS::insertItem(intVector& sp) {
   int spSize = sp.size();
   bool notEnoughSpace = true;
-  if(debugCompet) cout << "one, LRUPLUS::insertItem(" << spSize <<"," <<sp.size() << ")" << endl;
+//   if(debugCompet){
+//     cout << "one, LRUPLUS::insertItem(" << spSize << ")" << endl;
+  if(debugCompet){  
+    cout << "one, LRU::insertItem(" << spSize << ")" << endl;
+    
+    BOOST_FOREACH(intCacheitemMap::value_type ca, cache){
+      cout << ca.first << " ";
+    }
+    cout << endl;
+  }
   //insert query into cache, will repeatedly remove items until there is enough space for the new item.
   do{
-    if((cacheSize - cacheUsed) > spSize*NODE_BITS) {
+    if((cacheSize - cacheUsed) >= spSize*NODE_BITS) {
+//       if(debugCompet) 
+//         cout << "two1, LRUPLUS::insertItem INSERT (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed;
       if(debugCompet) 
-        cout << "two1, LRUPLUS::insertItem cacheSize,cacheUsed " << cacheSize <<"," << cacheUsed <<endl;
+        cout << "two1, LRU::insertItem INSERT (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed;
       CacheItem cItem (numTotalQueries, sp);
       cache[cItem.id] = cItem;
       nodesInCache =+ cItem.size;
@@ -275,35 +297,46 @@ void LRUPLUS::insertItem(intVector& sp) {
       }
       
       cacheUsed = cacheUsed + cItem.size*NODE_BITS;
+      if(spSize != cItem.size) cout << "LRUPLUS::insertItem ERROR ERROR ERROR :: spSize != cItem.size" << endl;
+      
       notEnoughSpace = false;
       if (debugCompet) 
-        cout << "two2, LRUPLUS::insertItem cacheSize,cacheUsed " << cacheSize <<"," << cacheUsed <<endl;
+        cout << " TWO:(" << cacheSize <<"," << cacheUsed << ")"<<endl;
 
     }else if ( spSize*NODE_BITS < cacheSize) {
+//       if (debugCompet) 
+//         cout << "three1, LRUPLUS::insertItem REMOVE (node,size): " << (*(ordering.begin())).first << ", " << cache[(*(ordering.begin())).first].size <<endl;
       if (debugCompet) 
-        cout << "three1, LRUPLUS::insertItem" ;//<< cache.size() <<"," << cache[0].size <<endl;
+        cout << "three1, LRU::insertItem REMOVE (node,size): " << (*(ordering.begin())).first << ", " << cache[(*(ordering.begin())).first].size <<endl;
       intPair rID = *(ordering.begin()); // path to remove
-      int rPid =1;
-
+      int rPid = rID.first;
+      vector<int>& rItem = cache[rPid].item;
+      
+      //update inverted list
+      for(vector<int>::iterator itr = rItem.begin(); itr != rItem.end(); ++itr){
+	invList.erase(*itr);
+      }      
+            
       int itemSize = cache[rPid].size;  // oldest item
       cache.erase(rPid);
       ordering.erase(ordering.begin());
-            nodesInCache =- itemSize;
-      //update inverted list
-      for (intSetMap::iterator itr = invList.begin(); itr != invList.end(); ++itr) {      
-	
-      }
+      nodesInCache =- itemSize;
       
       cacheUsed = cacheUsed - itemSize*NODE_BITS;
-      if (debugCompet) 
-        cout << "three2, LRUPLUS::insertItem" <<endl;
+//       if (debugCompet) 
+//         cout << "three2, LRUPLUS::insertItem" <<endl;
 
     } else
       break;
   } while(notEnoughSpace);
   
-  if(debugCompet) 
-    cout << "four, LRUPLUS::insertItem" <<endl;
+  if(debugCompet){
+    cout << "*C* ";
+    BOOST_FOREACH(intCacheitemMap::value_type ca, cache){
+      cout << ca.first << " ";
+    }
+    cout << endl;
+  } 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
