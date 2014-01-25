@@ -99,8 +99,8 @@ void LRU::insertItem(intVector& sp) {
   bool notEnoughSpace = true;
   if(debugCompet){ 
     cout << "one, LRU::insertItem(" << spSize << ")" << endl;
-        BOOST_FOREACH(CacheItem ci, cache ) {
-      cout << ci.id << " ";
+    for (vector<CacheItem>::iterator itr = cache.begin(); itr != cache.end(); ++itr) {
+      cout << (*itr).id << " ";
     }
     cout << endl;
   }
@@ -131,8 +131,8 @@ void LRU::insertItem(intVector& sp) {
   
   if(debugCompet) {    
     cout << "*C* ";
-    BOOST_FOREACH(CacheItem ci, cache ) {
-      cout << ci.id << " ";
+    for (vector<CacheItem>::iterator itr = cache.begin(); itr != cache.end(); ++itr) {
+      cout << (*itr).id << " ";
     }
     cout << endl;
   }
@@ -274,6 +274,8 @@ void LRUPLUS::insertItem(intVector& sp) {
       cout << ca.first << " ";
     }
     cout << endl;
+    
+
   }
   //insert query into cache, will repeatedly remove items until there is enough space for the new item.
   do{
@@ -314,7 +316,7 @@ void LRUPLUS::insertItem(intVector& sp) {
       
       //update inverted list
       for(vector<int>::iterator itr = rItem.begin(); itr != rItem.end(); ++itr){
-	invList.erase(*itr);
+	invList[*itr].erase(rPid);
       }      
             
       int itemSize = cache[rPid].size;  // oldest item
