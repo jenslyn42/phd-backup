@@ -72,6 +72,13 @@ build_hcn_CTR:
 build_hcn_W:
 	./buildCHindex -s -p -f USA-road-d.W.ddsg -o USA-road-d.W.hcn -l USA-road-d.W.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
 	./buildCHindex -s -p -f USA-road-t.W.ddsg -o USA-road-t.W.hcn -l USA-road-d.W.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
+
+build_hcn_AAL:
+	./buildCHindex -s -p -f aalborgNEW.ddsg -o aalborgNEW.hcn -l aalborgNEW.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
+
+build_hcn_BEI:
+	./buildCHindex -s -p -f beijingNEW.ddsg -o beijingNEW.hcn -l beijingNEW.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
+
 	
 
 

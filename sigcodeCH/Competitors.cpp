@@ -1,5 +1,5 @@
 
-#define debugCompet true
+#define debugCompet false
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -115,7 +115,7 @@ void LRU::insertItem(intVector& sp) {
       notEnoughSpace = false;
       if (debugCompet) 
 	cout << " TWO:(" << cacheSize <<"," << cacheUsed << ")"<<endl;
-    
+
     } else if ( spSize*NODE_BITS < cacheSize) {
       if (debugCompet) 
         cout << "three1, LRU::insertItem REMOVE (node,size): " << cache[0].id << ", " << cache[0].size <<endl;
@@ -124,12 +124,12 @@ void LRU::insertItem(intVector& sp) {
       cacheUsed = cacheUsed - itemSize*NODE_BITS;
 //       if (debugCompet) 
 //         cout << "three2, LRU::insertItem" <<endl;
-        
+
     } else
       break;
   } while(notEnoughSpace);
-  
-  if(debugCompet) {    
+
+  if(debugCompet) {
     cout << "*C* ";
     for (vector<CacheItem>::iterator itr = cache.begin(); itr != cache.end(); ++itr) {
       cout << (*itr).id << " ";
@@ -158,7 +158,7 @@ LRUPLUS::~ LRUPLUS()
   points.clear();
   Point2Nodeid.clear();
   nodeid2Point.clear();
-  
+
   cache.clear();
 }
 
@@ -174,15 +174,15 @@ void LRUPLUS::buildCache()
   fillCache();
   ts.setFillCacheTime(getElapsedTime(refTime));
 //   cout << "2.3 done, fillCache: " << ts.getFillCacheTime() << endl;
-  
-  cout << "test query pairs:" << testSTPointPairs.size() << endl;  
+
+  cout << "test query pairs:" << testSTPointPairs.size() << endl;
 }
 
-void LRUPLUS::fillCache(){  
-//   BOOST_FOREACH(intPair q, trainSTPointPairs ) { 
+void LRUPLUS::fillCache(){
+//   BOOST_FOREACH(intPair q, trainSTPointPairs ) {
 //     checkAndUpdateCache(q);
 //     numTotalQueries++;
-//     
+//
 //     numCacheHits=0;
 //   }
 }
@@ -190,12 +190,12 @@ void LRUPLUS::fillCache(){
 void LRUPLUS::runQueryList()
 {
   RoadGraph::mapObject(ts)->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
-    
-  BOOST_FOREACH(intPair q, testSTPointPairs ) { 
+
+  BOOST_FOREACH(intPair q, testSTPointPairs ) {
     checkAndUpdateCache(q);
     numTotalQueries++;
   }
-    
+
   this->ts.setBuildStatisticsTime(0);
   ts.setNonEmptyRegionPairs(0);
   this->ts.setItemsInCache(cache.size());
@@ -206,11 +206,11 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 {
   bool cacheHit = false;
   int tmpScore;
-/*  
+/*
   if(debugCompet)
     cout << "cache size: " << cache.size() << " s,t: (" << query.first << "," << query.second << ")" << endl;
 */
-  
+
   boost::unordered_set<int>& query1 = invList[query.first];
   boost::unordered_set<int>& query2 = invList[query.second];
   int cachehit;
@@ -226,7 +226,7 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
       tmpItem.updateKey(numTotalQueries);
       nodesInCache =+ tmpItem.size;
 //       if(debugCompet) cout << "LRUPLUS::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
-//       
+//
       if(debugCompet) cout << "LRU::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
       break;
     }
@@ -237,7 +237,7 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
     vector<int> spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
     numDijkstraCalls++;
     int querySize = spResult.size();
-  
+
     if(cache.size() != 0){
 //       if(debugCompet) cout << "LRUPLUS::checkAndUpdateCache 1, querySize: "<< querySize << endl;
       if(debugCompet) cout << "LRU::checkAndUpdateCache 1, querySize: "<< querySize << endl;
@@ -253,8 +253,8 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
       for (vector<int>::iterator itr = spResult.begin(); itr != spResult.end(); ++itr) {
 	if(invList.find(*itr) == invList.end())
 	  invList[*itr] = boost::unordered_set<int>();
-	
-	invList[*itr].insert(cItem.id); 
+
+	invList[*itr].insert(cItem.id);
       }
     }
 //     if(debugCompet) cout << "LRUPLUS::checkAndUpdateCache 3" << endl;
@@ -267,22 +267,22 @@ void LRUPLUS::insertItem(intVector& sp) {
   bool notEnoughSpace = true;
 //   if(debugCompet){
 //     cout << "one, LRUPLUS::insertItem(" << spSize << ")" << endl;
-  if(debugCompet){  
+  if(debugCompet){
     cout << "one, LRU::insertItem(" << spSize << ")" << endl;
-    
+
     BOOST_FOREACH(intCacheitemMap::value_type ca, cache){
       cout << ca.first << " ";
     }
     cout << endl;
-    
+
 
   }
   //insert query into cache, will repeatedly remove items until there is enough space for the new item.
   do{
     if((cacheSize - cacheUsed) >= spSize*NODE_BITS) {
-//       if(debugCompet) 
+//       if(debugCompet)
 //         cout << "two1, LRUPLUS::insertItem INSERT (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed;
-      if(debugCompet) 
+      if(debugCompet)
         cout << "two1, LRU::insertItem INSERT (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed;
       CacheItem cItem (numTotalQueries, sp);
       cache[cItem.id] = cItem;
@@ -292,53 +292,53 @@ void LRUPLUS::insertItem(intVector& sp) {
       for (vector<int>::iterator itr = sp.begin(); itr != sp.end(); ++itr) {
 	if(invList.find(*itr) == invList.end()){
 	  invList[*itr] = boost::unordered_set<int>();
-	  invList[*itr].insert(cItem.id); 
+	  invList[*itr].insert(cItem.id);
 	}else{
 	  invList[*itr].insert(cItem.id);
 	}
       }
-      
+
       cacheUsed = cacheUsed + cItem.size*NODE_BITS;
       if(spSize != cItem.size) cout << "LRUPLUS::insertItem ERROR ERROR ERROR :: spSize != cItem.size" << endl;
-      
+
       notEnoughSpace = false;
-      if (debugCompet) 
+      if (debugCompet)
         cout << " TWO:(" << cacheSize <<"," << cacheUsed << ")"<<endl;
 
     }else if ( spSize*NODE_BITS < cacheSize) {
-//       if (debugCompet) 
+//       if (debugCompet)
 //         cout << "three1, LRUPLUS::insertItem REMOVE (node,size): " << (*(ordering.begin())).first << ", " << cache[(*(ordering.begin())).first].size <<endl;
-      if (debugCompet) 
+      if (debugCompet)
         cout << "three1, LRU::insertItem REMOVE (node,size): " << (*(ordering.begin())).first << ", " << cache[(*(ordering.begin())).first].size <<endl;
       intPair rID = *(ordering.begin()); // path to remove
       int rPid = rID.first;
       vector<int>& rItem = cache[rPid].item;
-      
+
       //update inverted list
       for(vector<int>::iterator itr = rItem.begin(); itr != rItem.end(); ++itr){
 	invList[*itr].erase(rPid);
-      }      
-            
+      }
+
       int itemSize = cache[rPid].size;  // oldest item
       cache.erase(rPid);
       ordering.erase(ordering.begin());
       nodesInCache =- itemSize;
-      
+
       cacheUsed = cacheUsed - itemSize*NODE_BITS;
-//       if (debugCompet) 
+//       if (debugCompet)
 //         cout << "three2, LRUPLUS::insertItem" <<endl;
 
     } else
       break;
   } while(notEnoughSpace);
-  
+
   if(debugCompet){
     cout << "*C* ";
     BOOST_FOREACH(intCacheitemMap::value_type ca, cache){
       cout << ca.first << " ";
     }
     cout << endl;
-  } 
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -355,13 +355,13 @@ HQF::HQF(TestSetting ts)
   calcScoreCounter=0;
 }
 
-HQF::~HQF() { 
+HQF::~HQF() {
   trainingSTPointPairs.clear();
   testSTPointPairs.clear();
   points.clear();
   Point2Nodeid.clear();
   nodeid2Point.clear();
-  
+
   calcScoreMap.clear();
   queries.clear();
 }
@@ -369,7 +369,7 @@ HQF::~HQF() {
 
 void HQF::runQueryList() {
   RoadGraph::mapObject(ts)->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
-  BOOST_FOREACH(intPair q, testSTPointPairs ) { 
+  BOOST_FOREACH(intPair q, testSTPointPairs ) {
     checkCache(q);
     numTotalQueries++;
   }
