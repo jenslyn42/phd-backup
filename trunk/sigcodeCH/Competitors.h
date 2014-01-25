@@ -27,7 +27,6 @@ public:
   LRUPLUS(TestSetting ts);
   ~LRUPLUS();
 
-  
   struct priorityCompfunc {
     bool operator() (pair<int,int> i, pair<int,int> j) const{
         return i.second < j.second;
@@ -38,7 +37,6 @@ public:
   std::set<intPair, priorityCompfunc> ordering; // pid, 'score'
   intSetMap invList; //inveterted list. map int -> unordered_set. or simply: nid -> {pathID}
   
-
   void buildCache();
   void runQueryList();
   void fillCache();
