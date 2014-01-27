@@ -1,5 +1,4 @@
-
-#define debugCompet false
+#define debugCompet true
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -97,10 +96,16 @@ void LRU::insertItem(intVector& sp) {
 
   int spSize = sp.size();
   bool notEnoughSpace = true;
-  if(debugCompet){ 
-    cout << "one, LRU::insertItem(" << spSize << ")" << endl;
+  if(debugCompet){
+    cout << "one, LRU::insertItem(" << spSize << ") - " << numTotalQueries << ", " << numCacheHits << endl;
+    std::priority_queue<int> cacheQueue;    
     for (vector<CacheItem>::iterator itr = cache.begin(); itr != cache.end(); ++itr) {
-      cout << (*itr).id << " ";
+      cacheQueue.push((*itr).key());
+    }
+    cout << "*B* ";
+    while(!cacheQueue.empty()){
+      cout << cacheQueue.top() << " ";
+      cacheQueue.pop();
     }
     cout << endl;
   }
@@ -130,9 +135,14 @@ void LRU::insertItem(intVector& sp) {
   } while(notEnoughSpace);
 
   if(debugCompet) {
-    cout << "*C* ";
+    std::priority_queue<int> cacheQueue;    
     for (vector<CacheItem>::iterator itr = cache.begin(); itr != cache.end(); ++itr) {
-      cout << (*itr).id << " ";
+      cacheQueue.push((*itr).key());
+    }
+    cout << "*C* ";
+    while(!cacheQueue.empty()){
+      cout << cacheQueue.top() << " ";
+      cacheQueue.pop();
     }
     cout << endl;
   }
@@ -165,7 +175,7 @@ LRUPLUS::~ LRUPLUS()
 
 void LRUPLUS::buildCache()
 {
-  cout<< "2.0 done" << endl;
+  cout<< "2.0 done cachesize:" << cacheSize << endl;
   readQueryLogData(QLOG_TEST);
 //   cout<< "2.1 done" << endl;
 //   readQueryLogData(QLOG_TRAIN);
@@ -268,14 +278,15 @@ void LRUPLUS::insertItem(intVector& sp) {
 //   if(debugCompet){
 //     cout << "one, LRUPLUS::insertItem(" << spSize << ")" << endl;
   if(debugCompet){
-    cout << "one, LRU::insertItem(" << spSize << ")" << endl;
-
-    BOOST_FOREACH(intCacheitemMap::value_type ca, cache){
-      cout << ca.first << " ";
+    cout << "one, LRU::insertItem(" << spSize << ") - " << numTotalQueries << ", " << numCacheHits << endl;
+    std::priority_queue<int> cacheQueue;
+    BOOST_FOREACH(intCacheitemMap::value_type ca, cache){cacheQueue.push(ca.second.key());}
+    cout << "*B* ";
+    while(!cacheQueue.empty()){
+      cout << cacheQueue.top() << " ";
+      cacheQueue.pop();
     }
     cout << endl;
-
-
   }
   //insert query into cache, will repeatedly remove items until there is enough space for the new item.
   do{
@@ -331,11 +342,14 @@ void LRUPLUS::insertItem(intVector& sp) {
     } else
       break;
   } while(notEnoughSpace);
-
+  
   if(debugCompet){
+    std::priority_queue<int> cacheQueue;
+    BOOST_FOREACH(intCacheitemMap::value_type ca, cache){cacheQueue.push(ca.second.key());}
     cout << "*C* ";
-    BOOST_FOREACH(intCacheitemMap::value_type ca, cache){
-      cout << ca.first << " ";
+    while(!cacheQueue.empty()){
+      cout << cacheQueue.top() << " ";
+      cacheQueue.pop();
     }
     cout << endl;
   }
