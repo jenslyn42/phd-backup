@@ -58,21 +58,33 @@ void LRU::checkAndUpdateCache(intPair query)
   }
 */
 
-  BOOST_FOREACH(CacheItem ci, cache ) {
-    if (find(ci.item.begin(),ci.item.end(), query.first) != ci.item.end() && 
-        find(ci.item.begin(),ci.item.end(), query.second) != ci.item.end())
+  for (vector<CacheItem>::iterator itr = cache.begin(); itr != cache.end(); ++itr) {
+    if (find((*itr).item.begin(),(*itr).item.end(), query.first) != (*itr).item.end() && 
+        find((*itr).item.begin(),(*itr).item.end(), query.second) != (*itr).item.end())
     {
       if(debugCompet) 
         cout << "LRU::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
       numCacheHits++;
-      ci.updateKey(numTotalQueries);
+      (*itr).updateKey(numTotalQueries);
       sort(cache.begin(), cache.end());
       cacheHit = true;
       break;
     }
   }
-//   if(debugCompet) cout << "LRU::checkAndUpdateCache 0" << endl;
-
+   if(debugCompet){
+    std::priority_queue<int> cacheQueue;    
+    for (vector<CacheItem>::iterator itr = cache.begin(); itr != cache.end(); ++itr) {
+      cacheQueue.push((*itr).key());
+    }
+    cout << "*H* ";
+    while(!cacheQueue.empty()){
+      cout << cacheQueue.top() << " ";
+      cacheQueue.pop();
+    }
+    cout << endl;
+     
+   }
+     
   if(!cacheHit)
   {
     vector<int> spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
@@ -241,7 +253,17 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
       break;
     }
   }
-//   if(debugCompet) cout << "LRUPLUS::checkAndUpdateCache 0" << endl;
+
+  if(debugCompet){
+    std::priority_queue<int> cacheQueue;
+    BOOST_FOREACH(intCacheitemMap::value_type ca, cache){cacheQueue.push(ca.second.key());}
+    cout << "*H* ";
+    while(!cacheQueue.empty()){
+      cout << cacheQueue.top() << " ";
+      cacheQueue.pop();
+    }
+    cout << endl;
+  }
 
   if(!cacheHit) {
     vector<int> spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
