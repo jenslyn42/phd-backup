@@ -71,6 +71,7 @@ private:
 	void buildRegionId2NodeidVector();
 	void buildRegionpair2NodepairVector();
 	intVector optiPath(intPair stPair, intPairSet& vSeen, bool rand);
+	intVector kskip(intPair stPair, int pct);
 	double calcAdditionalScore(intVector& path, int nid, intPairSet& vSeen);
 };
 
