@@ -32,7 +32,7 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM, SPTYPE_ENUM, CONCISETYPE_ENUM;
+LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM, SPTYPE_ENUM, CONCISETYPE_ENUM, OPTIMALTYPE_ENUM;
 
 
 void InsertEnum(LookupList& list,int type,string name) {
@@ -72,6 +72,10 @@ void InitEnumMappings() {
 	InsertEnum(CONCISETYPE_ENUM, CONCISETYPE_A,	"A");
 	InsertEnum(CONCISETYPE_ENUM, CONCISETYPE_B,	"B");
 	
+	OPTIMALTYPE_ENUM.clear();
+	InsertEnum(OPTIMALTYPE_ENUM, OPTIMALTYPE_ORG,	"ORIGINAL");
+	InsertEnum(OPTIMALTYPE_ENUM, OPTIMALTYPE_KSKIP,	"KSKIP");
+	InsertEnum(OPTIMALTYPE_ENUM, OPTIMALTYPE_RAND,	"RAND");
 }
 
 
@@ -142,8 +146,11 @@ void TestSetting::printSetting() {
   cout << "testAlgo: " << testAlgo << " " << MatchEnumString(ALGO_ENUM,testAlgo) << endl;
   cout << "testStorage: " << testStorage << " " << MatchEnumString(STORAGE_ENUM,testStorage) << endl;
   cout << "testScenario: " << testScenario << " " << MatchEnumString(ARCH_ENUM,testScenario) << endl;
-  cout << "SP calc:\t" << MatchEnumString(SPTYPE_ENUM, testSPtype) << " " << MatchEnumString(CONCISETYPE_ENUM, testConcisetype) << endl;
-  
+  cout << "SP calc:\t" << MatchEnumString(SPTYPE_ENUM, testSPtype) << " ";
+  if(testSPtype == SPTYPE_OPTIMAL || testSPtype == SPTYPE_CONCISE) 
+    cout << MatchEnumString(CONCISETYPE_ENUM, testConcisetype);
+  cout << " (" << MatchEnumString(OPTIMALTYPE_ENUM, testOptimaltype) << ")" << endl;
+
   cout << "cacheSize: " <<  cacheSize << endl;
   cout << "scacheQueryType: " <<  scacheQueryType << endl;
   cout << "splits, itemsInCache, nonEmptyRegionPairs: " <<  splits << " " << itemsInCache << " " << nonEmptyRegionPairs << endl;

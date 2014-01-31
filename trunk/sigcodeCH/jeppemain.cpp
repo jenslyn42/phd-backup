@@ -235,9 +235,9 @@ void TestObject::printResults() {
   << ts.useConcisepath << "\t"
   << ts.measureConcisepathdegrees << "\t"
   << ts.getUnusedCacheBits() << "\t"
-  << MatchEnumString(SPTYPE_ENUM, ts.testSPtype) << "\t"
+  << MatchEnumString(SPTYPE_ENUM, ts.testSPtype) << "(" << MatchEnumString(OPTIMALTYPE_ENUM, ts.testOptimaltype) <<  ")\t"
   << ts.executeTrainingWorkload << "\t"
-  << MatchEnumString(ARCH_ENUM,ts.testConcisetype)  
+  << MatchEnumString(CONCISETYPE_ENUM,ts.testConcisetype)  
   << endl;
 
   resultfile.close();
@@ -274,12 +274,13 @@ void extractTestParameters(TestSetting& ts) {
 	ts.splits = ts.getConfigInt("splits");	// for Probcache (SPC)
 	ts.scacheQueryType = ts.getConfigInt("scacheQueryType");	// for SCACHE
 	ts.executeTrainingWorkload = ts.getConfigBool("executeTrainingWorkload");
-	
+	ts.optiNum = ts.getConfigInt("optiNum");	
 	ts.cacheSize = ts.getConfigLong("cachesize");	// as number of bits
 	ts.testAlgo = (ALGO_CHOICE) ts.getEnumCode(ALGO_ENUM,"testAlgo");
 	ts.testScenario = (ARCH_CHOICE) ts.getEnumCode(ARCH_ENUM,"testScenario");
 	ts.testSPtype = (SPTYPE_CHOICE) ts.getEnumCode(SPTYPE_ENUM,"testSPtype");
 	ts.testConcisetype = (CONCISETYPE_CHOICE) 0;
+	ts.testOptimaltype = (OPTIMALTYPE_CHOICE) ts.getEnumCode(OPTIMALTYPE_ENUM, "testOptimaltype");
 	
 	// default storage method: the LIST cache 
 	ts.testStorage = STORE_LIST;

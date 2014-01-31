@@ -408,7 +408,7 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 	cout << "3.3 spResult.size: " << spResult.size() << endl;
 
       //optimal path
-      if(ts.testSPtype == SPTYPE_OPTIMAL) spResult = optiPath(stPair, vSeen, false);
+      if(ts.testSPtype == SPTYPE_OPTIMAL) spResult = optiPath(stPair, vSeen, false, ts.optiNum);
       
       //make new cache item
       bucketList[rp] = CacheItem(cid, spResult);
@@ -571,7 +571,16 @@ void Probcache::buildRegionpair2NodepairVector() {
   }
 }
 
-intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random){
+intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random, int num){
+  if(ts.testOptimaltype == OPTIMALTYPE_ORG)
+    return optimalPath(stPair, vSeen, random);
+  else if(ts.testOptimaltype == OPTIMALTYPE_KSKIP)
+    return kskip(stPair, num);
+//   else ifts.testOptimaltype == OPTIMALTYPE_RAND)
+//     random(stPair, num);
+}
+  
+intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random){
   cout << "Probcache::optiPath((" << stPair.first <<","<<stPair.second << "), " << random << ")" << endl;
   intVector spResultShort, spResultLong, spResultIntermediate, spDiff, returnResult;
   double longScore=0.0, conciseScore=0.0, intermediateScore=0.0;
@@ -697,7 +706,8 @@ intVector Probcache::kskip(intPair stPair, int pct){
   RoadGraph::mapObject(ts)->setConcisePathUse(false);
   spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);  
 
-  int nodesInOptimal = spResultLong.size()*(pct/100); //calc number of nodes in optimal k-skip path
+  cout << "Probcache::kskip Q_02:(" << endl;
+  int nodesInOptimal = (double)spResultLong.size()*(double)((double)pct/(double)100.0); //calc number of nodes in optimal k-skip path
   int diffSize = spResultLong.size() - spResultShort.size();
   int kskip;
   //if the optimal k-skip length is shorter than CONCISE, just return concise
@@ -706,7 +716,9 @@ intVector Probcache::kskip(intPair stPair, int pct){
   else
      kskip = diffSize / (nodesInOptimal-spResultShort.size()); //calc k skip
   
+  if(kskip < 1) return spResultShort;
   
+    cout << "Probcache::kskip Q_03:( " << nodesInOptimal << ", " << diffSize << ", " << kskip << ", " << pct << ", " << spResultLong.size() << "/" << spResultShort.size() << endl;
   intVector tempLong, tempConsise;
   tempLong = spResultLong;
   tempConsise = spResultShort;
@@ -714,23 +726,24 @@ intVector Probcache::kskip(intPair stPair, int pct){
   std::sort (tempConsise.begin(),tempConsise.end());
   
   spResultIntermediate = spResultShort;
-	
+  
+ 
   //find the set difference between concise and full path. This set is the candidate set for insertion when calculating optimalPath
   std::set_symmetric_difference(tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), std::back_inserter(spDiff));
-  
+    cout << "Probcache::kskip Q_04:( " << spDiff.size() << ", " << spDiff[spDiff.size()-1] << ", "<< spDiff[spDiff.size()-2]<< ", " << spDiff[spDiff.size()-3]<< ", " << spDiff[spDiff.size()-4] << ", "<< spDiff[spDiff.size()-5] << ", " << spResultIntermediate.size() <<endl;
 
-  for (vector<int>::iterator itr = spDiff.begin(); itr != spDiff.end(); itr += kskip) {
+  for(int i=0; i < spDiff.size(); i +=kskip){
+    cout << "Z: " << i << ", " << spDiff[i] << " ";
+    originalIt = find(spResultLong.begin(), spResultLong.end(), spDiff[i]);
     
-    originalIt = find(spResultLong.begin(), spResultLong.end(), *itr);
-
     while(find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt) == spResultIntermediate.end()){
       originalIt--;
     }
     conciseIt = find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt);
    
-    spResultIntermediate.insert(conciseIt+1, *itr);
+    spResultIntermediate.insert(conciseIt+1, spDiff[i]);
   }
-
+  cout << "Probcache::kskip Q_05:( " << spResultIntermediate.size() << endl;
   return spResultIntermediate;
 }
 
