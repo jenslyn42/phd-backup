@@ -65,10 +65,13 @@ enum SPTYPE_CHOICE {SPTYPE_FULL, SPTYPE_CONCISE, SPTYPE_OPTIMAL };
 // Concise calculation choice
 enum CONCISETYPE_CHOICE {CONCISETYPE_A, CONCISETYPE_B };
 
+// Optimal calculation choice
+enum OPTIMALTYPE_CHOICE {OPTIMALTYPE_ORG, OPTIMALTYPE_KSKIP, OPTIMALTYPE_RAND };
+
 // Important: 	for each "ENUM" type, there is a corresponding "LookupList" in "Setting.cpp"
 //		they follow a naming convention.
 // 		make sure that "InitEnumMappings" is updated according to ENUM above
-extern LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM, SPTYPE_ENUM, CONCISETYPE_ENUM;
+extern LookupList ALGO_ENUM, STORAGE_ENUM, ARCH_ENUM, SPTYPE_ENUM, CONCISETYPE_ENUM, OPTIMALTYPE_ENUM;
 
 void InitEnumMappings(); // initialize the above "LookupList"
 int MatchEnumCode(LookupList& list,string str);		// lookup an enum value by a string
@@ -143,7 +146,7 @@ public:
 
   int inputFileType;    // used for RoadGraph
   int scacheQueryType;  // used for SCACHE only
-  int splits, itemsInCache, nonEmptyRegionPairs;
+  int splits, itemsInCache, nonEmptyRegionPairs, optiNum;
   
   bool useConcisepath;
   bool measureConcisepathdegrees;
@@ -155,6 +158,7 @@ public:
   ARCH_CHOICE testScenario;
   SPTYPE_CHOICE testSPtype;
   CONCISETYPE_CHOICE testConcisetype;
+  OPTIMALTYPE_CHOICE testOptimaltype;
   unsigned long cacheSize, unusedCacheBits;
   
 

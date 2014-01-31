@@ -51,6 +51,12 @@ useConcisepath = false
 measureConcisepathdegrees = false
 
 
+testOptimaltype = original
+//choices: original, kskip, rand
+optiNum = 40
+//pct of full path before stopping. 
+
+
 executeTrainingWorkload = false
 
 

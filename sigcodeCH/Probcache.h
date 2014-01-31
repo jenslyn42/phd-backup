@@ -51,6 +51,7 @@ private:
 	boost::unordered_map<intPair, int > trainingQueriesPerRegionPair;
 
 	intVector nodeid2regionid;
+	OPTIMALTYPE_CHOICE testoptimaltype;
 
 	boost::unordered_map<Point, int> Point2regionidMap;
 	boost::unordered_map<int, intVector > regionid2nodeidVector;
@@ -70,7 +71,8 @@ private:
 	intPair pickSTpair(intPair regionPair);
 	void buildRegionId2NodeidVector();
 	void buildRegionpair2NodepairVector();
-	intVector optiPath(intPair stPair, intPairSet& vSeen, bool rand);
+	intVector optiPath(intPair stPair, intPairSet& vSeen, bool rand, int num);
+	intVector optimalPath(intPair stPair, intPairSet& vSeen, bool rand);
 	intVector kskip(intPair stPair, int pct);
 	double calcAdditionalScore(intVector& path, int nid, intPairSet& vSeen);
 };
