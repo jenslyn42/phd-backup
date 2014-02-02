@@ -11,7 +11,7 @@ testScenario = PROXY
 // choices: SERVER, PROXY
 
 
-testSPtype = full
+testSPtype = optimal
 // choices: FULL, CONCISE, OPTIMAL
 
 
@@ -44,7 +44,7 @@ cachesize = 2097152
 scacheQueryType = 3
 
 
-experiment = single
+experiment = optimalpct
 // choices: single, split, cachesize, optimalpct
 
 
