@@ -29,6 +29,8 @@
  ***************************************************************************************/
 
 #define debugProbc false
+#define debugRand false
+#define debugkskip false
 
 
 Probcache::Probcache(TestSetting ts)
@@ -581,7 +583,6 @@ intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random, in
 }
   
 intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random){
-  random = true;
   cout << "Probcache::optiPath((" << stPair.first <<","<<stPair.second << "), " << random << ")" << endl;
   intVector spResultShort, spResultLong, spResultIntermediate, spDiff, returnResult;
   double longScore=0.0, conciseScore=0.0, intermediateScore=0.0;
@@ -724,11 +725,9 @@ intVector Probcache::kskip(intPair stPair, int pct){
   std::sort (tempConsise.begin(),tempConsise.end());
   
   spResultIntermediate = spResultShort;
-  
  
   //find the set difference between concise and full path. This set is the candidate set for insertion when calculating optimalPath
   std::set_symmetric_difference(tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), std::back_inserter(spDiff));
-
 
   for(int i=0; i < spDiff.size(); i +=kskip){
     originalIt = find(spResultLong.begin(), spResultLong.end(), spDiff[i]);
@@ -746,24 +745,25 @@ intVector Probcache::kskip(intPair stPair, int pct){
 
 
 intVector Probcache::random(intPair stPair, int pct){
-  cout << "Probcache::random((" << stPair.first <<","<<stPair.second << "), " << pct << ")" << endl;
+  if(debugRand) cout << "Probcache::random((" << stPair.first <<","<<stPair.second << "), " << pct << ")" << endl;
   intVector spResultShort, spResultLong, spResultIntermediate, spDiff;
   int choice;
   std::vector<int>::iterator originalIt, conciseIt, choicePosIt;
-  cout << "Probcache::random Q_01:(" << endl;
+  if(debugRand) cout << "Probcache::random Q_01:(" << endl;
   //Order is important! call setConcisePathUse false last!
   RoadGraph::mapObject(ts)->setConcisePathUse(true);
   spResultShort = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second); 
   RoadGraph::mapObject(ts)->setConcisePathUse(false);
   spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);  
 
-  cout << "Probcache::random Q_02:(" << endl;
+  if(debugRand) cout << "Probcache::random Q_02:(" << endl;
+  if(pct == 100) return spResultLong;
   int nodesInOptimal = (double)spResultLong.size()*(double)((double)pct/(double)100.0); //calc number of nodes in optimal random path
+  
   //if the optimal random length is shorter than CONCISE, just return concise
-
   if(spResultShort.size() >= nodesInOptimal) return spResultShort;
   
-    cout << "Probcache::random Q_03:( " << nodesInOptimal << ", " << pct << ", " << spResultLong.size() << "/" << spResultShort.size() << endl;
+  if(debugRand) cout << "Probcache::random Q_03:( " << nodesInOptimal << ", " << pct << ", " << spResultLong.size() << "/" << spResultShort.size() << endl;
   intVector tempLong, tempConsise;
   tempLong = spResultLong;
   tempConsise = spResultShort;
@@ -775,7 +775,7 @@ intVector Probcache::random(intPair stPair, int pct){
   //find the set difference between concise and full path. This set is the candidate set for insertion when calculating optimalPath
   std::set_symmetric_difference(tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), std::back_inserter(spDiff));
 
-  while(spResultIntermediate.size() < nodesInOptimal && !spDiff.empty()){
+  while(spResultIntermediate.size() <= nodesInOptimal && !spDiff.empty()){
     choice = spDiff[(int)rand()%spDiff.size()];    
     choicePosIt = find(spDiff.begin(), spDiff.end(), choice);
     originalIt = find(spResultLong.begin(), spResultLong.end(), choice);
@@ -786,7 +786,7 @@ intVector Probcache::random(intPair stPair, int pct){
     spResultIntermediate.insert(conciseIt+1, choice);
     spDiff.erase(choicePosIt);
   }
-  cout << "Probcache::random Q_05:( " << spResultIntermediate.size() << endl;
+  if(debugRand) cout << "Probcache::random Q_05:( " << spResultIntermediate.size() << endl;
   return spResultIntermediate;
 }
 
