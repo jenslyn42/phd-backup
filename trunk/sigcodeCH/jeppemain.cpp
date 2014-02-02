@@ -182,13 +182,14 @@ void TestObject::printResults() {
   cout << "Algorithm:\t" << ts.testAlgo << " " << MatchEnumString(ALGO_ENUM,ts.testAlgo) << endl;
   cout << "Storage:\t" << ts.testStorage << " " << MatchEnumString(STORAGE_ENUM,ts.testStorage) << endl;
   cout << "Scenario:\t" << ts.testScenario << " " << MatchEnumString(ARCH_ENUM,ts.testScenario) << endl;
-  cout << "SP calc:\t" << ts.testSPtype << " " << MatchEnumString(SPTYPE_ENUM, ts.testSPtype) << " " << MatchEnumString(CONCISETYPE_ENUM, ts.testConcisetype) << endl;
+  cout << "SP calc:\t" << ts.testSPtype << " " << MatchEnumString(SPTYPE_ENUM, ts.testSPtype) << " " << MatchEnumString(CONCISETYPE_ENUM, ts.testConcisetype) << "(" << MatchEnumString(OPTIMALTYPE_ENUM, ts.testOptimaltype) <<  ")" << endl;
 
   cout << "CacheSize:\t" << ts.cacheSize << endl;
   cout << "CacheItems:\t" << ts.getItemsInCache() << endl;
   cout << "Avg. ItemLength:\t" << ts.getAvgItemLength() << endl;
 
   cout << "Splits:\t" << ts.getSplits() << endl;
+  cout << "Optimal Pct:\t" << ts.optiNum << endl;
   cout << "QueryFile:\t" << ts.queryFileName << endl;
 
   cout << "NonEmptyRegions:\t" << ts.getNonEmptyRegionPairs() << endl;
@@ -209,7 +210,7 @@ void TestObject::printResults() {
   if(!fileExist){
     resultfile << "QueryTime\tCacheHits\tDijkstraCalls\tSPcalls\tNodesVisited\t"
     << "Algorithm\tScenario\tCacheSize\tCacheItems\tAvg.ItemLength\tSplits\tQueryFile\t"
-    << "NonEmptyRegions\tCalcStatTime\tFillCacheTime\tuseConcisepath\tmeasureConcisepathdegrees\tbitsInCache\tSPcalc\texecTrainWL" << endl;
+    << "NonEmptyRegions\tCalcStatTime\tFillCacheTime\tuseConcisepath\tmeasureConcisepathdegrees\tbitsInCache\tSPcalc\texecTrainWL\tConciseType\tOptimalType\tOptimalPct" << endl;
   }
 
   // note: "typeid(*test).name()" no longer used
@@ -235,9 +236,11 @@ void TestObject::printResults() {
   << ts.useConcisepath << "\t"
   << ts.measureConcisepathdegrees << "\t"
   << ts.getUnusedCacheBits() << "\t"
-  << MatchEnumString(SPTYPE_ENUM, ts.testSPtype) << "(" << MatchEnumString(OPTIMALTYPE_ENUM, ts.testOptimaltype) <<  ")\t"
+  << MatchEnumString(SPTYPE_ENUM, ts.testSPtype) << "\t"
   << ts.executeTrainingWorkload << "\t"
-  << MatchEnumString(CONCISETYPE_ENUM,ts.testConcisetype)  
+  << MatchEnumString(CONCISETYPE_ENUM,ts.testConcisetype) << "\t"
+  << MatchEnumString(OPTIMALTYPE_ENUM, ts.testOptimaltype) << "\t"
+  << ts.optiNum
   << endl;
 
   resultfile.close();
@@ -314,6 +317,26 @@ void extractTestParameters(TestSetting& ts) {
 		tname.append( ts.testFile, 0, 3);	// first 3 latters of testFile
 		tname.append(".test");
 	}	
+}
+
+
+void ExperimentVaryOptimalLengthPct(TestSetting ts) {
+	if (ts.getConfigBool("autoTestName")==true) {
+		ts.testName.insert(0,"v_optimalpct_");
+		cout << "(auto) testName: " << ts.testName << endl;
+	}
+	
+	unsigned long lowPct = ts.getConfigLong("lowPct");
+	unsigned long highPct = ts.getConfigLong("highPct");
+	
+	for (unsigned long psize = lowPct; psize <= highPct ; psize+=5) {
+		ts.optiNum = psize;
+		cout << "*** Now using ts.optiNum = " << ts.optiNum << endl;
+		
+		TestObject *expTest = new TestObject(ts);
+		expTest->runStaticTest();
+		delete expTest;
+	}
 }
 
 
@@ -405,44 +428,6 @@ cout << "******************************************" << endl;
 	
 	cout << "HERE THE EXPERIMENTS SHOULD START!!\n" << endl;
 	
-////////////////////////////////////////	
-// Testing SP functionality, no experiment execution 
-/////////////////////////////////////////
-// 	string fn=ts.queryFileName;
-// 	string app="";
-// 	intPairVector stPointPairs;
-// 	vector<int> spPath;
-// 	
-// 	std::pair<double, double> firstPair, secondPair;
-// 	int firstPnt, secondPnt, temp, i=0;
-// 	string str;
-// 	std::vector<string> tokens;
-// 	ifstream qlogFile (fn.c_str(), ios::in);
-// 	  
-// 	cout << "readQueryLogData start: " << fn << endl;
-// 	
-// 	//find all pairs of nodeids in the training set to have SP done for them. map nodeids to Points.
-// 	if (qlogFile.is_open()) {
-// 	  if (debugCache) 
-// 	    cout << "two, readQueryLogData opened! " << endl;
-// 	  
-// 	  while(getline(qlogFile, str)) {
-// 	    boost::algorithm::split(tokens, str, boost::algorithm::is_space());
-// 	    stPointPairs.push_back(std::make_pair(atoi(tokens[1].c_str()),atoi(tokens[2].c_str())));
-// 	  }
-// 	}
-// 	qlogFile.close();
-// 
-// 	cout << "three, stPointPairs size: " << stPointPairs.size() << endl;
-// 	BOOST_FOREACH(intPair q, stPointPairs) { 
-// 	  RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);
-// 	  RoadGraph::mapObject(ts)->dijkstraSSSP2(q.first, q.second);
-// 	  cout << endl;
-// 	  i++;
-// 	  if(i==50) break;
-// 	}
-// 	return EXIT_SUCCESS;
-//////////////////////////////////////////	
 	
 	if (experiment.compare("SINGLE")==0)
 		ExperimentSingle(ts);
@@ -450,6 +435,8 @@ cout << "******************************************" << endl;
 		ExperimentVarySplit(ts);
 	else if (experiment.compare("CACHESIZE")==0)
 		ExperimentVaryCacheSize(ts);
+	else if (experiment.compare("OPTIMALPCT")==0)
+		ExperimentVaryOptimalLengthPct(ts);
 
 	return EXIT_SUCCESS;
 };

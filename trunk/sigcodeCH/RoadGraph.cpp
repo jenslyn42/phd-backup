@@ -218,14 +218,7 @@ vector<int> RoadGraph::dijkstraSSSP2(int source, int dest) {
 	prevNode = backtrace[prevNode];
 	trace.push_back(prevNode);
       }
-      
-      
-      	/////////////////
-// 	cout << "(" << source << "," << dest << ") [" << trace.size() << " - " << spDist << "] *!*" << endl;
-// 	BOOST_FOREACH(int node, trace){ cout << node << ",";}
-// 	cout << " *2.1*" << endl;
-	//////////////////
-      
+
       if(useConcisepath)
 	return calcConsisePath(trace);
       else 
@@ -680,7 +673,7 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
   vector<int> concisepath;
   concisepath.push_back(trace.back());
 //   if(conciseDebug) 
-    cout << "calcConsisePathA S: " << trace.size() << endl;
+    cout << "calcConsisePathA S: " << trace.size() << " (" << trace.front() << "," << trace.back() << ")"<< endl;
   double angleToNextNode=0.0, minAngle=0.0, tmp;
   Point prev, curr;
   if(trace.empty()) cout << "EMPTY TRACE!!" << endl;
