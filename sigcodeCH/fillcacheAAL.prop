@@ -11,7 +11,7 @@ testScenario = PROXY
 // choices: SERVER, PROXY
 
 
-testSPtype = optimal
+testSPtype = full
 // choices: FULL, CONCISE, OPTIMAL
 
 
@@ -36,23 +36,25 @@ inputFileType = 3
 splits = 14	
 
 
-cachesize = 419430400
+//cachesize = 419430400
+cachesize = 2097152
 // note: the cache size is expressed as the number of "bits"
 
 
 scacheQueryType = 3
 
 
-experiment = cachesize
-// choices: single, split, cachesize
+experiment = single
+// choices: single, split, cachesize, optimalpct
 
 
 useConcisepath = false
 measureConcisepathdegrees = false
 
 
-testOptimaltype = original
+testOptimaltype = rand
 //choices: original, kskip, rand
+
 optiNum = 40
 //pct of full path before stopping. 
 
@@ -67,3 +69,6 @@ highCacheSize = 419430400
 lowSplit = 10
 highSplit = 20
 // used for the varying split experiment
+
+lowPct = 0
+highPct = 100

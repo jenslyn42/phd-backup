@@ -105,7 +105,6 @@ void LRU::checkAndUpdateCache(intPair query)
 
 
 void LRU::insertItem(intVector& sp) {
-
   int spSize = sp.size();
   bool notEnoughSpace = true;
   if(debugCompet){

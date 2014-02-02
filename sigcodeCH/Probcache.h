@@ -74,6 +74,7 @@ private:
 	intVector optiPath(intPair stPair, intPairSet& vSeen, bool rand, int num);
 	intVector optimalPath(intPair stPair, intPairSet& vSeen, bool rand);
 	intVector kskip(intPair stPair, int pct);
+	intVector random(intPair stPair, int pct);
 	double calcAdditionalScore(intVector& path, int nid, intPairSet& vSeen);
 };
 
