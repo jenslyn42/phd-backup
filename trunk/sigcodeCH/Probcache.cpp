@@ -688,11 +688,17 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
     }
 	///////////////////7
 	cout << "long/concise/optimal: " << spResultLong.size() << " / " << spResultShort.size() << " / " << spResultIntermediate.size() << endl;
+	ts.optiLength += spResultIntermediate.size();
+	ts.numOpti++;
+	ts.longLength+= spResultLong.size();
+	ts.numLong++;
 	///////////////////
     return spResultIntermediate;
   }
 }
-
+  unsigned long optiLength, longLength;
+  int numOpti, numLong;
+  
 
 intVector Probcache::kskip(intPair stPair, int pct){
   cout << "Probcache::kskip((" << stPair.first <<","<< stPair.second << "), " << pct << ")" << endl;
