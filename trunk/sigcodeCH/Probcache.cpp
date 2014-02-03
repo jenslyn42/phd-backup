@@ -470,13 +470,20 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 	// pickSTpair is randomized; we try it several times in case it picks a pair with empty spResult
 	for (int num_trials=0; num_trials<20; num_trials++ ) {	// num_trials: a threshold
 	  stPair = pickSTpair(tmp.pID);
+
+	  if (stPair == make_pair<int,int>(-1,-1)){ //REMOVE, FOR TESTING ONLY
+	    spResult.clear(); //REMOVE, FOR TESTING ONLY
+	    curscore = 0;     //REMOVE, FOR TESTING ONLY
+	    break;            //REMOVE, FOR TESTING ONLY
+	  }
+
 	  if(ts.testSPtype == SPTYPE_OPTIMAL) spResult = optiPath(stPair, vSeen, false, ts.optiNum);
 	  else 
 	    spResult = graph->dijkstraSSSP(stPair.first, stPair.second);
 	  curscore = calcScore(spResult, vSeen); // update score  
 
 	  if (curscore > 0)
-	    break; 
+	    break;	    
 	}
 	
 	bucketList[tmp.pID] = CacheItem(cid, spResult);
@@ -519,18 +526,20 @@ intPair Probcache::pickSTpair(intPair regionPair) {
 
   vector<intPair>& nodePairVector = regionPair2nodePairVector[regionPair];
   if (debugProbc)
-    if (debugProbc)    cout << "Probcache::pickSTpair 1 nodepairVector size: " << nodePairVector.size() << endl;
+    cout << "Probcache::pickSTpair 1 nodepairVector size: " << nodePairVector.size() << endl;
 	
   if (nodePairVector.size()>0) { // pick path WITHOUT REPLACEMENT
     ///random choice
     int slot=(int)rand()%nodePairVector.size();
     ansPair=nodePairVector[slot];
-    if (debugProbc)    cout << "Probcache::pickSTpair 2 nodepairVector size: " << nodePairVector.size() << endl;
+    if (debugProbc) cout << "Probcache::pickSTpair 2 nodepairVector size: " << nodePairVector.size() << ", " << regionPair2nodePairVector[regionPair].size() << endl;
     nodePairVector[slot]=nodePairVector.back();// WITHOUT REPLACEMENT
-    if (debugProbc)    cout << "Probcache::pickSTpair 2.5 nodepairVector size: " << nodePairVector.size() << endl;
+    if (debugProbc) cout << "Probcache::pickSTpair 2.5 nodepairVector size: " << nodePairVector.size() << ", " << regionPair2nodePairVector[regionPair].size() << endl;
     nodePairVector.pop_back();
-    if (debugProbc)    cout << "Probcache::pickSTpair 2.6 nodepairVector size: " << nodePairVector.size() << endl;
-  } else {// random choice
+    if (debugProbc) cout << "Probcache::pickSTpair 2.6 nodepairVector size: " << nodePairVector.size() << ", " << regionPair2nodePairVector[regionPair].size() << endl;
+  } else if(nodePairVector.size() == 0){//REMOVE!!!! ONLY FOR SPECIAL TESTING
+    ansPair=make_pair<int,int>(-1,-1); //REMOVE!!!! ONLY FOR SPECIAL TESTING
+  }else {// random choice
     intVector& nodeVectorRegion1 = regionid2nodeidVector[regionPair.first];
     intVector& nodeVectorRegion2 = regionid2nodeidVector[regionPair.second];
     if (debugProbc)    cout << "Probcache::pickSTpair 3 nodepairVector size: " << nodePairVector.size() << endl;
