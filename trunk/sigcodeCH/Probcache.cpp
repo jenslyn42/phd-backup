@@ -583,12 +583,12 @@ intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random, in
 }
   
 intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random){
-  cout << "Probcache::optiPath((" << stPair.first <<","<<stPair.second << "), " << random << ")" << endl;
+  cout << "Probcache::optimalPath((" << stPair.first <<","<<stPair.second << "), " << random << ")" << endl;
   intVector spResultShort, spResultLong, spResultIntermediate, spDiff, returnResult;
   double longScore=0.0, conciseScore=0.0, intermediateScore=0.0;
   int choice;
   std::vector<int>::iterator originalIt, conciseIt, choicePosIt;
-  cout << "Probcache::optiPath Q_01:(" << endl;
+  cout << "Probcache::optimalPath Q_01:(" << endl;
   //Order is important! call setConcisePathUse false last!
   RoadGraph::mapObject(ts)->setConcisePathUse(true);
   spResultShort = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
@@ -618,7 +618,7 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
   //find the set difference between concise and full path. This set is the candidate set for insertion when calculating optimalPath
   std::set_symmetric_difference(tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), std::back_inserter(spDiff));
   
-  cout << "Probcache::optiPath Q_02:(" << stPair.first << "," << stPair.second << ") " << conciseScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << " (" << tempConsise.size() << "," << tempLong.size() << "," << spDiff.size() << ")" << endl;
+  cout << "Probcache::optimalPath Q_02:(" << stPair.first << "," << stPair.second << ") " << conciseScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << " (" << tempConsise.size() << "," << tempLong.size() << "," << spDiff.size() << ")" << endl;
 
   //pick which node to insert randomly, used to show that random pick is sub optimal to score based version. 
   if(random){
@@ -680,6 +680,11 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
       }else{
 	///////////////////7
 	cout << "long/concise/optimal: " << spResultLong.size() << " / " << spResultShort.size() << " / " << spResultIntermediate.size() << endl;
+	ts.optiLength += spResultIntermediate.size();
+	ts.numOpti++;
+	ts.longLength+= spResultLong.size();
+	ts.numLong++;
+      cout << "Probcache::optimalPath Q_041:(" << ts.optiLength << ", " <<ts.numOpti << ") (" << ts.longLength << ", " << ts.numLong << ")" << endl;
 	///////////////////
 	return spResultIntermediate;
       }      
@@ -692,6 +697,7 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
 	ts.numOpti++;
 	ts.longLength+= spResultLong.size();
 	ts.numLong++;
+      cout << "Probcache::optimalPath Q_042:(" << ts.optiLength << ", " <<ts.numOpti << ") (" << ts.longLength << ", " << ts.numLong << ")" << endl;
 	///////////////////
     return spResultIntermediate;
   }
