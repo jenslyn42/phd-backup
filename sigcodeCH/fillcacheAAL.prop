@@ -42,7 +42,7 @@ cachesize = 2097152
 
 
 scacheQueryType = 3
-
+executeTrainingWorkload = false
 
 experiment = cachesize
 // choices: single, split, cachesize, optimalpct
@@ -57,9 +57,6 @@ testOptimaltype = original
 
 optiNum = 40
 //pct of full path before stopping. 
-
-
-executeTrainingWorkload = false
 
 
 lowCacheSize = 1024
