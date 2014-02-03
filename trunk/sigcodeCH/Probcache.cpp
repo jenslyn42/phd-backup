@@ -696,9 +696,7 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
     return spResultIntermediate;
   }
 }
-  unsigned long optiLength, longLength;
-  int numOpti, numLong;
-  
+
 
 intVector Probcache::kskip(intPair stPair, int pct){
   cout << "Probcache::kskip((" << stPair.first <<","<< stPair.second << "), " << pct << ")" << endl;
