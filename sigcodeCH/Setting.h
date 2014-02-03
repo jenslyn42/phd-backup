@@ -152,6 +152,8 @@ public:
   bool measureConcisepathdegrees;
   bool executeTrainingWorkload;
   
+  unsigned long optiLength, longLength;
+  int numOpti, numLong;
   
   ALGO_CHOICE testAlgo;
   STORAGE_CHOICE testStorage;
