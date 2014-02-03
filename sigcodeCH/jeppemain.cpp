@@ -195,9 +195,11 @@ void TestObject::printResults() {
   cout << "NonEmptyRegions:\t" << ts.getNonEmptyRegionPairs() << endl;
   cout << "CalcStatTime:\t" << ts.getBuildStatisticsTime() << " sec" <<endl;
   cout << "FillCacheTime:\t" << ts.getFillCacheTime() << " sec" << endl;
+  cout << "Avg length opti/long: ";
+  (ts.numOpti > 0) ? cout << ts.optiLength / ts.numOpti << " / " : cout << 0 << " / ";
+  (ts.numLong > 0) ? cout << ts.longLength / ts.numLong << endl : cout << 0 << endl;
   cout << "--------------------------\n\n" << endl;
-
-
+  
   bool fileExist = false;
   ifstream fin((ts.getTestName()).c_str());
   if (fin)

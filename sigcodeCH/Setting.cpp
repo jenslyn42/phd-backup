@@ -126,6 +126,9 @@ TestSetting::TestSetting() {
   nonEmptyRegionPairs = -1;
   
   fillCacheTime = buildStatisticsTime = 0;
+  
+  optiLength=longLength=0;
+  numOpti=numLong=0;
 }
 
 
