@@ -44,7 +44,7 @@ cachesize = 2097152
 scacheQueryType = 3
 
 
-experiment = optimalpct
+experiment = cachesize
 // choices: single, split, cachesize, optimalpct
 
 
@@ -52,7 +52,7 @@ useConcisepath = false
 measureConcisepathdegrees = false
 
 
-testOptimaltype = rand
+testOptimaltype = original
 //choices: original, kskip, rand
 
 optiNum = 40
@@ -64,6 +64,8 @@ executeTrainingWorkload = false
 
 lowCacheSize = 1024
 highCacheSize = 419430400
+//lowCacheSize = 419430400
+//highCacheSize = 274877906944
 // used for the varying cachesize experiment
 
 lowSplit = 10
