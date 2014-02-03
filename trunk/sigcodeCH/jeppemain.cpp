@@ -197,7 +197,8 @@ void TestObject::printResults() {
   cout << "FillCacheTime:\t" << ts.getFillCacheTime() << " sec" << endl;
   cout << "Avg length opti/long: ";
   (ts.numOpti > 0) ? cout << ts.optiLength / ts.numOpti << " / " : cout << 0 << " / ";
-  (ts.numLong > 0) ? cout << ts.longLength / ts.numLong << endl : cout << 0 << endl;
+  (ts.numLong > 0) ? cout << ts.longLength / ts.numLong : cout << 0;
+  cout << " (" << ts.optiLength << ", " <<ts.numOpti << ") (" << ts.longLength << ", " << ts.numLong << ")" << endl;
   cout << "--------------------------\n\n" << endl;
   
   bool fileExist = false;
