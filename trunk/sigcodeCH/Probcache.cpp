@@ -544,12 +544,12 @@ intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random, in
 }
   
 intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random){
-  cout << "Probcache::optimalPath((" << stPair.first <<","<<stPair.second << "), " << random << ")" << endl;
+  if(debugProbc) cout << "Probcache::optimalPath((" << stPair.first <<","<<stPair.second << "), " << random << ")" << endl;
   intVector spResultShort, spResultLong, spResultIntermediate, spDiff, returnResult;
   double longScore=0.0, conciseScore=0.0, intermediateScore=0.0;
   int choice;
   std::vector<int>::iterator originalIt, conciseIt, choicePosIt;
-  cout << "Probcache::optimalPath Q_01:(" << endl;
+  if(debugProbc) cout << "Probcache::optimalPath Q_01:(" << endl;
   //Order is important! call setConcisePathUse false last!
   RoadGraph::mapObject(ts)->setConcisePathUse(true);
   spResultShort = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
@@ -557,17 +557,7 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
   RoadGraph::mapObject(ts)->setConcisePathUse(false);
   spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
   longScore = calcScore(spResultLong, vSeen);    
-//   cout << "Probcache::optiPath Q_03:(" << endl;
- /*
-  cout << "\nRatio: " << spResultLong.size() / spResultShort.size() << endl;
-  cout << "S: " <<spResultShort.size() << endl;
-  BOOST_FOREACH(int nid, spResultShort) cout << nid << "\t" << nodeid2Point[nid].first << "\t" << nodeid2Point[nid].second << endl;
-  
-  cout << "\nL: " <<spResultLong.size() << endl;
-  BOOST_FOREACH(int nid, spResultLong) cout << nid  << "\t" << nodeid2Point[nid].first << "\t" << nodeid2Point[nid].second << endl;
-  
-  */  
-  
+
   intVector tempLong, tempConsise;
   tempLong = spResultLong;
   tempConsise = spResultShort;
@@ -579,7 +569,7 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
   //find the set difference between concise and full path. This set is the candidate set for insertion when calculating optimalPath
   std::set_symmetric_difference(tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), std::back_inserter(spDiff));
   
-  cout << "Probcache::optimalPath Q_02:(" << stPair.first << "," << stPair.second << ") " << conciseScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << " (" << tempConsise.size() << "," << tempLong.size() << "," << spDiff.size() << ")" << endl;
+  if(debugProbc) cout << "Probcache::optimalPath Q_02:(" << stPair.first << "," << stPair.second << ") " << conciseScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << " (" << tempConsise.size() << "," << tempLong.size() << "," << spDiff.size() << ")" << endl;
 
   //pick which node to insert randomly, used to show that random pick is sub optimal to score based version. 
   if(random){
@@ -641,7 +631,7 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
 	spDiff.erase(choicePosIt);
       }else{
 	///////////////////7
-	cout << "long/concise/optimal: " << spResultLong.size() << " / " << spResultShort.size() << " / " << spResultIntermediate.size() << endl;
+	if(debugProbc) cout << "long/concise/optimal: " << spResultLong.size() << " / " << spResultShort.size() << " / " << spResultIntermediate.size() << endl;
 	ts.optiLength += spResultIntermediate.size();
 	ts.numOpti++;
 	ts.longLength+= spResultLong.size();
@@ -654,7 +644,7 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
       currentScore=currentBasescore;
     }
 	///////////////////7
-	cout << "long/concise/optimal: " << spResultLong.size() << " / " << spResultShort.size() << " / " << spResultIntermediate.size() << endl;
+	if(debugProbc) cout << "long/concise/optimal: " << spResultLong.size() << " / " << spResultShort.size() << " / " << spResultIntermediate.size() << endl;
 	ts.optiLength += spResultIntermediate.size();
 	ts.numOpti++;
 	ts.longLength+= spResultLong.size();
@@ -667,17 +657,17 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
 
 
 intVector Probcache::kskip(intPair stPair, int pct){
-  cout << "Probcache::kskip((" << stPair.first <<","<< stPair.second << "), " << pct << ")" << endl;
+  if(debugProbc) cout << "Probcache::kskip((" << stPair.first <<","<< stPair.second << "), " << pct << ")" << endl;
   intVector spResultShort, spResultLong, spResultIntermediate, spDiff;
   std::vector<int>::iterator originalIt, conciseIt;
-  cout << "Probcache::kskip Q_01:(" << endl;
+  if(debugProbc) cout << "Probcache::kskip Q_01:(" << endl;
   //Order is important! call setConcisePathUse false last!
   RoadGraph::mapObject(ts)->setConcisePathUse(true);
   spResultShort = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second); 
   RoadGraph::mapObject(ts)->setConcisePathUse(false);
   spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);  
 
-  cout << "Probcache::kskip Q_02:(" << endl;
+  if(debugProbc) cout << "Probcache::kskip Q_02:(" << endl;
   int nodesInOptimal = (double)spResultLong.size()*(double)((double)pct/(double)100.0); //calc number of nodes in optimal k-skip path
   int diffSize = spResultLong.size() - spResultShort.size();
   int kskip;
@@ -689,7 +679,7 @@ intVector Probcache::kskip(intPair stPair, int pct){
   
   if(kskip < 1) return spResultShort;
   
-    cout << "Probcache::kskip Q_03:( " << nodesInOptimal << ", " << diffSize << ", " << kskip << ", " << pct << ", " << spResultLong.size() << "/" << spResultShort.size() << endl;
+  if(debugProbc) cout << "Probcache::kskip Q_03:( " << nodesInOptimal << ", " << diffSize << ", " << kskip << ", " << pct << ", " << spResultLong.size() << "/" << spResultShort.size() << endl;
   intVector tempLong, tempConsise;
   tempLong = spResultLong;
   tempConsise = spResultShort;
@@ -711,7 +701,7 @@ intVector Probcache::kskip(intPair stPair, int pct){
    
     spResultIntermediate.insert(conciseIt+1, spDiff[i]);
   }
-  cout << "Probcache::kskip Q_05:( " << spResultIntermediate.size() << endl;
+  if(debugProbc) cout << "Probcache::kskip Q_05:( " << spResultIntermediate.size() << endl;
   return spResultIntermediate;
 }
 
