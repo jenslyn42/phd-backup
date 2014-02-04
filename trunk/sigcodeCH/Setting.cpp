@@ -57,7 +57,7 @@ void InitEnumMappings() {
 	STORAGE_ENUM.clear();
 	InsertEnum(STORAGE_ENUM, STORE_LIST,	"LIST");
 	InsertEnum(STORAGE_ENUM, STORE_GRAPH,	"GRAPH");
-	InsertEnum(STORAGE_ENUM, STORE_COMPRESS,	"COMPRESS");
+	InsertEnum(STORAGE_ENUM, STORE_COMPRESS,"COMPRESS");
 	
 	ARCH_ENUM.clear();
 	InsertEnum(ARCH_ENUM,	ARCH_SERVER,	"SERVER");
@@ -69,8 +69,8 @@ void InitEnumMappings() {
 	InsertEnum(SPTYPE_ENUM,	SPTYPE_OPTIMAL,	"OPTIMAL");	
 
   	CONCISETYPE_ENUM.clear();
-	InsertEnum(CONCISETYPE_ENUM, CONCISETYPE_A,	"A");
-	InsertEnum(CONCISETYPE_ENUM, CONCISETYPE_B,	"B");
+	InsertEnum(CONCISETYPE_ENUM, CONCISETYPE_A, "A");
+	InsertEnum(CONCISETYPE_ENUM, CONCISETYPE_B, "B");
 	
 	OPTIMALTYPE_ENUM.clear();
 	InsertEnum(OPTIMALTYPE_ENUM, OPTIMALTYPE_ORG,	"ORIGINAL");
@@ -158,7 +158,7 @@ void TestSetting::printSetting() {
   cout << "scacheQueryType: " <<  scacheQueryType << endl;
   cout << "splits, itemsInCache, nonEmptyRegionPairs: " <<  splits << " " << itemsInCache << " " << nonEmptyRegionPairs << endl;
   cout << "fillCacheTime, buildStatisticsTime: " <<  fillCacheTime << " " << buildStatisticsTime << endl;
-  cout << "useConcisePath, measureConcisepathdegrees: " << useConcisepath << " " << measureConcisepathdegrees << endl;
+  cout << "useConcisePath, measureConcisepathdegrees, devideScoreByLength: " << useConcisepath << " " << measureConcisepathdegrees << " " << devideScoreByLength << endl;
   cout << "--------------------------\n\n" << endl;
 }
 
