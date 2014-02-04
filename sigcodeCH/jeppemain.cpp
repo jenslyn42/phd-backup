@@ -213,7 +213,8 @@ void TestObject::printResults() {
   if(!fileExist){
     resultfile << "QueryTime\tCacheHits\tDijkstraCalls\tSPcalls\tNodesVisited\t"
     << "Algorithm\tScenario\tCacheSize\tCacheItems\tAvg.ItemLength\tSplits\tQueryFile\t"
-    << "NonEmptyRegions\tCalcStatTime\tFillCacheTime\tuseConcisepath\tmeasureConcisepathdegrees\tbitsInCache\tSPcalc\texecTrainWL\tConciseType\tOptimalType\tOptimalPct" << endl;
+    << "NonEmptyRegions\tCalcStatTime\tFillCacheTime\tuseConcisepath\tmeasureConcisepathdegrees\t"
+    << "bitsInCache\tSPcalc\texecTrainWL\tConciseType\tOptimalType\tOptimalPct\tDevideScoreByLength" << endl;
   }
 
   // note: "typeid(*test).name()" no longer used
@@ -243,7 +244,8 @@ void TestObject::printResults() {
   << ts.executeTrainingWorkload << "\t"
   << MatchEnumString(CONCISETYPE_ENUM,ts.testConcisetype) << "\t"
   << MatchEnumString(OPTIMALTYPE_ENUM, ts.testOptimaltype) << "\t"
-  << ts.optiNum
+  << ts.optiNum << "\t"
+  << ts.devideScoreByLength
   << endl;
 
   resultfile.close();
@@ -280,6 +282,7 @@ void extractTestParameters(TestSetting& ts) {
 	ts.splits = ts.getConfigInt("splits");	// for Probcache (SPC)
 	ts.scacheQueryType = ts.getConfigInt("scacheQueryType");	// for SCACHE
 	ts.executeTrainingWorkload = ts.getConfigBool("executeTrainingWorkload");
+	ts.devideScoreByLength = ts.getConfigBool("devideScoreByLength");
 	ts.optiNum = ts.getConfigInt("optiNum");	
 	ts.cacheSize = ts.getConfigLong("cachesize");	// as number of bits
 	ts.testAlgo = (ALGO_CHOICE) ts.getEnumCode(ALGO_ENUM,"testAlgo");

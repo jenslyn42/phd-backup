@@ -2,30 +2,6 @@
  *   Copyright (C) 2011 by Jeppe Rishede 						*
  *   jenslyn42@gmail.com								*
  *											*
- *   All rights reserved.								*
- *											*
- *   Redistribution and use in source and binary forms, with or without 		*
- *   modification, are permitted provided that the following conditions are met:	*
- *   Redistributions of source code must retain the above copyright notice,		*
- *   this list of conditions and the following disclaimer. 				*
- *   Redistributions in binary form must reproduce the above copyright notice,		*
- *   this list of conditions and the following disclaimer in the documentation		*
- *   and/or other materials provided with the distribution. 				*
- *   Neither the name of the <ORGANIZATION> nor the names of its contributors 		*
- *   may be used to endorse or promote products derived from this software 		*
- *   without specific prior written permission						*
- *                                                                         		*
- *   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS   		*
- *   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT     		*
- *   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR 		*
- *   A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER		*
- *   OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 		*
- *   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,   		*
- *   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR    		*
- *   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 		*
- *   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING  		*
- *   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS    		*
- *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          		*
  ***************************************************************************************/
 
 #define debugProbc false
@@ -33,11 +9,8 @@
 #define debugkskip false
 
 
-Probcache::Probcache(TestSetting ts)
-{
+Probcache::Probcache(TestSetting ts) {
   this->ts = ts;
-  
- //RoadGraph::mapObject(ts)->setConcisePathUse(false); //is initially set true to initialize RoadGraph correctly, but the fillCache method here needs the full path 
   
   cache.init(ts);
   stats("mem.use", "Probcache::Probcache() after cache.init()");
@@ -54,8 +27,7 @@ Probcache::Probcache(TestSetting ts)
   calcScoreCounter=0;
 }
 
-Probcache::~Probcache() 
-{ 
+Probcache::~Probcache() { 
   trainingSTPointPairs.clear();
   testSTPointPairs.clear();
   points.clear();
@@ -107,7 +79,7 @@ void Probcache::runQueryList() {
   }
 }
 
-void Probcache::buildCache(){
+void Probcache::buildCache() {
   cout<< "2.0 done" << endl;
   stats("mem.use", "2.0 done");
   double refTime = clock();
@@ -168,7 +140,6 @@ bool Probcache::makePartitions(int splits) {
   int axis = 0;
   cout << "Probcache::makePartitions start" << endl;
   double mapXmin,mapXmax,mapYmin,mapYmax;
-
   vector<Region> regionsVector;
 
   sort(points.begin(), points.end(), xxCompfunc);
@@ -203,7 +174,6 @@ bool Probcache::makePartitions(int splits) {
     total_points+=r.points.size();
   }
   cout << "total points: " << total_points << ", " << points.size() << endl;
-
   cout << "mapRegions size: " << mapRegions.size() << endl;
 
   // compute "nodeid2regionid", to be used for calcScore function
@@ -242,7 +212,7 @@ void Probcache::split(std::vector<Region>& regions, int axis) {
     if(axis%2==0) {
       leftReg.xmax = leftReg.points.back().first;  // left part split
       rightReg.xmin = rightReg.points.front().first;   // right part split
-    } else {
+    }else {
       leftReg.ymax = leftReg.points.back().second;    // left part split
       rightReg.ymin = rightReg.points.front().second;  // right part split
     }
@@ -264,7 +234,7 @@ int Probcache::mapNodeid2RegionId(int nid) {
     return mapPoint2RegionId(nodeid2Point[nid]);
   else {
     cout << "node " << nid << " is not in nodeid2Point"  << endl;
-      return -1;
+    return -1;
   }
 }
 
@@ -293,9 +263,8 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen) {
     if (rid!=last_region) {
       last_region=rid;
       regionset.push_back(make_pair(rid,1));
-    } else {
+    }else
       regionset.back().second++;
-    }
   }
 
   // do not repeat the same path
@@ -344,7 +313,7 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen) {
   }
 
   // final update
-  if (spResult.size()>0) {
+  if (spResult.size()>0 && ts.devideScoreByLength) {
     if (ts.testScenario == ARCH_SERVER)
       score = score * pow(spResult.size(),2);
     else
@@ -384,9 +353,6 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
   //rank queries based on statistics
   BOOST_FOREACH(intPairIntMap::value_type rpint, trainingQueriesPerRegionPair) {
     intPair rp = rpint.first;
-//     /////////////////////////
-//     if(cid > 10) exit(1); //break;
-//     /////////////////////////
     if (debugProbc)
       cout << "3.1. rp: (" << rp.first << "," << rp.second << ") " << endl;
 
@@ -465,17 +431,10 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 	    }
 	  }
 	}
-	
 	//find a new SP for the current region pair
 	// pickSTpair is randomized; we try it several times in case it picks a pair with empty spResult
 	for (int num_trials=0; num_trials<20; num_trials++ ) {	// num_trials: a threshold
 	  stPair = pickSTpair(tmp.pID);
-
-	  if (stPair == make_pair<int,int>(-1,-1)){ //REMOVE, FOR TESTING ONLY
-	    spResult.clear(); //REMOVE, FOR TESTING ONLY
-	    curscore = 0;     //REMOVE, FOR TESTING ONLY
-	    break;            //REMOVE, FOR TESTING ONLY
-	  }
 
 	  if(ts.testSPtype == SPTYPE_OPTIMAL) spResult = optiPath(stPair, vSeen, false, ts.optiNum);
 	  else 
@@ -484,17 +443,12 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 
 	  if (curscore > 0)
 	    break;	    
-	}
-	
+	}	
 	bucketList[tmp.pID] = CacheItem(cid, spResult);
 	cid++;
       }
-      
-      //cout << " replacement bucket score: " << curscore << endl;
-
       // update the new entry in mhCache
       if (curscore>0) {
-	
 	tmp.dist = curscore;
 	mhCache.push(tmp);
       }
@@ -537,8 +491,6 @@ intPair Probcache::pickSTpair(intPair regionPair) {
     if (debugProbc) cout << "Probcache::pickSTpair 2.5 nodepairVector size: " << nodePairVector.size() << ", " << regionPair2nodePairVector[regionPair].size() << endl;
     nodePairVector.pop_back();
     if (debugProbc) cout << "Probcache::pickSTpair 2.6 nodepairVector size: " << nodePairVector.size() << ", " << regionPair2nodePairVector[regionPair].size() << endl;
-  } else if(nodePairVector.size() == 0){//REMOVE!!!! ONLY FOR SPECIAL TESTING
-    ansPair=make_pair<int,int>(-1,-1); //REMOVE!!!! ONLY FOR SPECIAL TESTING
   }else {// random choice
     intVector& nodeVectorRegion1 = regionid2nodeidVector[regionPair.first];
     intVector& nodeVectorRegion2 = regionid2nodeidVector[regionPair.second];
@@ -649,9 +601,6 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
 	bestScore=intermediateScore;
 	returnResult=spResultIntermediate;
       }
-//      cout << "Q.:(" << stPair.first << "," << stPair.second << ") " << intermediateScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size();
-//      (intermediateScore > currentScore)? (cout << " +++" << endl) : (cout << " ---" << endl);
-
       currentScore=intermediateScore;
       spDiff.erase(choicePosIt);     
     }
@@ -679,7 +628,11 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
 	originalIt--;
       }
       conciseIt = find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt);
-      currentBasescore = ((currentBasescore*(double)(spResultIntermediate.size())) + tmpBestScore)/(double)(spResultIntermediate.size()+1);
+      
+      if(ts.devideScoreByLength) 
+	currentBasescore = ((currentBasescore*(double)(spResultIntermediate.size())) + tmpBestScore)/(double)(spResultIntermediate.size()+1);
+      else
+	currentBasescore = (currentBasescore*(double)(spResultIntermediate.size())) + tmpBestScore;
 //       cout << "Probcache::optiPath Q5_2:" << endl;
       if(currentBasescore > currentScore) {     
 	spResultIntermediate.insert(conciseIt+1, curBestOption);
@@ -763,7 +716,7 @@ intVector Probcache::kskip(intPair stPair, int pct){
 }
 
 
-intVector Probcache::random(intPair stPair, int pct){
+intVector Probcache::random(intPair stPair, int pct) {
   if(debugRand) cout << "Probcache::random((" << stPair.first <<","<<stPair.second << "), " << pct << ")" << endl;
   intVector spResultShort, spResultLong, spResultIntermediate, spDiff;
   int choice;
@@ -810,7 +763,7 @@ intVector Probcache::random(intPair stPair, int pct){
 }
 
 
-double Probcache::calcAdditionalScore(intVector& path, int nid, intPairSet& vSeen){
+double Probcache::calcAdditionalScore(intVector& path, int nid, intPairSet& vSeen) {
   double temp_score, score = 0.0;
   int rid2, rid1 = nodeid2regionid[nid];
   intPair regionpair, nodepair;

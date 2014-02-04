@@ -43,6 +43,7 @@ cachesize = 2097152
 
 scacheQueryType = 3
 executeTrainingWorkload = false
+devideScoreByLength = false
 
 experiment = cachesize
 // choices: single, split, cachesize, optimalpct
