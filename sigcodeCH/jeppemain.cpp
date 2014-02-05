@@ -4,30 +4,7 @@
  *										*
  *   All rights reserved.							*
  *										*
- *   Redistribution and use in source and binary forms, with or without 	*
- *   modification, are permitted provided that the following conditions are met:*
- *   Redistributions of source code must retain the above copyright notice,	*
- *   this list of conditions and the following disclaimer. 			*
- *   Redistributions in binary form must reproduce the above copyright notice,	*
- *   this list of conditions and the following disclaimer in the documentation	*
- *   and/or other materials provided with the distribution. 			*
- *   Neither the name of the <ORGANIZATION> nor the names of its contributors 	*
- *   may be used to endorse or promote products derived from this software 	*
- *   without specific prior written permission					*
- *                                                                         	*
- *   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS   	*
- *   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT     	*
- *   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR 	*
- *   A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER	*
- *   OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 	*
- *   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,   	*
- *   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR    	*
- *   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 	*
- *   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING  	*
- *   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS    	*
- *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.          	*
  ********************************************************************************/
- 
  
  
 //////// CH codes and headers ///////////////////////////////////////
@@ -57,8 +34,8 @@ Counter counter;
 #include "packCH/Command.h"
 
 /* 
-	These two must be placed first as they include necessary typedef 
-	statementm like NodeID, EdgeID etc.
+* These two must be placed first as they include necessary typedef 
+* statementm like NodeID, EdgeID etc.
 */
 #include "packCH/graphIO.h"
 #include "packCH/UpdateableGraph.h"
@@ -255,146 +232,151 @@ void TestObject::printResults() {
 
 
 int calcAVGpathlengthInCache(std::string fn) {
-	int totallength=0, numpaths=0;
-	std::string str;
-	std::vector<std::string> tokens;
+  int totallength=0, numpaths=0;
+  std::string str;
+  std::vector<std::string> tokens;
 
-	std::ifstream cacheContent (fn.c_str(), std::ios::in);
-	if(cacheContent.is_open()) {
-		while(getline(cacheContent, str)) {
-		if(!str.empty())
-			totallength++;
-		else
-			numpaths++;
-		}
-		cacheContent.close();
-	}
-	return totallength/numpaths;
+  std::ifstream cacheContent (fn.c_str(), std::ios::in);
+  if(cacheContent.is_open()) {
+    while(getline(cacheContent, str)) {
+    if(!str.empty())
+      totallength++;
+    else
+      numpaths++;
+    }
+    cacheContent.close();
+  }
+  return totallength/numpaths;
 }
 
 void extractTestParameters(TestSetting& ts) {
-	ts.testFile = ts.getConfigString("testFile");
-	ts.testName = ts.getConfigString("testName");
-	ts.queryFileName = ts.getConfigString("queryFileName");
-	
-	//1:graph_large, 2: ppi.dat, 3:*.cedge
-	ts.inputFileType = ts.getConfigInt("inputFileType");
-	ts.splits = ts.getConfigInt("splits");	// for Probcache (SPC)
-	ts.scacheQueryType = ts.getConfigInt("scacheQueryType");	// for SCACHE
-	ts.executeTrainingWorkload = ts.getConfigBool("executeTrainingWorkload");
-	ts.devideScoreByLength = ts.getConfigBool("devideScoreByLength");
-	ts.optiNum = ts.getConfigInt("optiNum");	
-	ts.cacheSize = ts.getConfigLong("cachesize");	// as number of bits
-	ts.testAlgo = (ALGO_CHOICE) ts.getEnumCode(ALGO_ENUM,"testAlgo");
-	ts.testScenario = (ARCH_CHOICE) ts.getEnumCode(ARCH_ENUM,"testScenario");
-	ts.testSPtype = (SPTYPE_CHOICE) ts.getEnumCode(SPTYPE_ENUM,"testSPtype");
-	ts.testConcisetype = (CONCISETYPE_CHOICE) 0;
-	ts.testOptimaltype = (OPTIMALTYPE_CHOICE) ts.getEnumCode(OPTIMALTYPE_ENUM, "testOptimaltype");
-	
-	// default storage method: the LIST cache 
-	ts.testStorage = STORE_LIST;
-	if ( ts.testAlgo == ALGO_SPCplus )
-		ts.testStorage = STORE_GRAPH;
-	else if ( ts.testAlgo == ALGO_SPCstar )
-		ts.testStorage = STORE_COMPRESS;
+  ts.testFile = ts.getConfigString("testFile");
+  ts.testName = ts.getConfigString("testName");
+  ts.queryFileName = ts.getConfigString("queryFileName");
 
-	switch(ts.testSPtype){
-	  case SPTYPE_FULL:
-	    ts.useConcisepath = false;
-	    ts.measureConcisepathdegrees = false;
-	    break;
-	  case SPTYPE_CONCISE:
-	    ts.useConcisepath = true;
-	    ts.measureConcisepathdegrees = true;
-	    break;
-	  case SPTYPE_OPTIMAL:
-	    ts.useConcisepath = true;
-	    ts.measureConcisepathdegrees = true;
-	    break;
-	}
+  //1:graph_large, 2: ppi.dat, 3:*.cedge
+  ts.inputFileType = ts.getConfigInt("inputFileType");
+  ts.splits = ts.getConfigInt("splits");  // for Probcache (SPC)
+  ts.scacheQueryType = ts.getConfigInt("scacheQueryType");  // for SCACHE
+  ts.executeTrainingWorkload = ts.getConfigBool("executeTrainingWorkload");
+  ts.devideScoreByLength = ts.getConfigBool("devideScoreByLength");
+  ts.optiNum = ts.getConfigInt("optiNum");  
+  ts.cacheSize = ts.getConfigLong("cachesize");  // as number of bits
+  ts.testAlgo = (ALGO_CHOICE) ts.getEnumCode(ALGO_ENUM,"testAlgo");
+  ts.testScenario = (ARCH_CHOICE) ts.getEnumCode(ARCH_ENUM,"testScenario");
+  ts.testSPtype = (SPTYPE_CHOICE) ts.getEnumCode(SPTYPE_ENUM,"testSPtype");
+  ts.testConcisetype = (CONCISETYPE_CHOICE) 0;
+  ts.testOptimaltype = (OPTIMALTYPE_CHOICE) ts.getEnumCode(OPTIMALTYPE_ENUM, "testOptimaltype");
 
-	// format: "experiment"_"testAlgo"_"testFile (3 letters)".test
-	// 		   "experiment" to be added later
-	if (ts.getConfigBool("autoTestName")==true) {
-		string& tname = ts.testName;
-		tname="";
-		tname.append(MatchEnumString(ALGO_ENUM,ts.testAlgo));
-		tname.append("_");
-		tname.append( ts.testFile, 0, 3);	// first 3 latters of testFile
-		tname.append(".test");
-	}	
+  // default storage method: the LIST cache 
+  ts.testStorage = STORE_LIST;
+  if ( ts.testAlgo == ALGO_SPCplus )
+    ts.testStorage = STORE_GRAPH;
+  else if ( ts.testAlgo == ALGO_SPCstar )
+    ts.testStorage = STORE_COMPRESS;
+
+  switch(ts.testSPtype){
+    case SPTYPE_FULL:
+      ts.useConcisepath = false;
+      ts.measureConcisepathdegrees = false;
+      break;
+    case SPTYPE_CONCISE:
+      ts.useConcisepath = true;
+      ts.measureConcisepathdegrees = true;
+      break;
+    case SPTYPE_OPTIMAL:
+      ts.useConcisepath = true;
+      ts.measureConcisepathdegrees = true;
+      break;
+  }
+
+  // format: "experiment"_"testAlgo"_"testFile (3 letters)".test
+  //         "experiment" to be added later
+  if (ts.getConfigBool("autoTestName")==true) {
+    string& tname = ts.testName;
+    tname="_";
+    tname.append(MatchEnumString(ALGO_ENUM,ts.testAlgo));
+    tname.append("_");
+    tname.append( ts.testFile, 0, 3);  // first 3 latters of testFile
+    tname.append(".test");
+  }
 }
 
 
 void ExperimentVaryOptimalLengthPct(TestSetting ts) {
-	if (ts.getConfigBool("autoTestName")==true) {
-		ts.testName.insert(0,"v_optimalpct_");
-		cout << "(auto) testName: " << ts.testName << endl;
-	}
-	
-	unsigned long lowPct = ts.getConfigLong("lowPct");
-	unsigned long highPct = ts.getConfigLong("highPct");
-	
-	for (unsigned long psize = lowPct; psize <= highPct ; psize+=5) {
-		ts.optiNum = psize;
-		cout << "*** Now using ts.optiNum = " << ts.optiNum << endl;
-		
-		TestObject *expTest = new TestObject(ts);
-		expTest->runStaticTest();
-		delete expTest;
-	}
+  if (ts.getConfigBool("autoTestName")==true) {
+    ts.testName.insert(0,MatchEnumString(SPTYPE_ENUM, ts.testSPtype));
+    ts.testName.insert(0,"v_optimalpct_");
+    cout << "(auto) testName: " << ts.testName << endl;
+  }
+
+  unsigned long lowPct = ts.getConfigLong("lowPct");
+  unsigned long highPct = ts.getConfigLong("highPct");
+
+  for (unsigned long psize = lowPct; psize <= highPct ; psize+=5) {
+    ts.optiNum = psize;
+    cout << "*** Now using ts.optiNum = " << ts.optiNum << endl;
+
+    TestObject *expTest = new TestObject(ts);
+    expTest->runStaticTest();
+    delete expTest;
+  }
 }
 
 
 void ExperimentVaryCacheSize(TestSetting ts) {
-	if (ts.getConfigBool("autoTestName")==true) {
-		ts.testName.insert(0,"v_cachesize_");
-		cout << "(auto) testName: " << ts.testName << endl;
-	}
-	
-	unsigned long lowCacheSize = ts.getConfigLong("lowCacheSize");
-	unsigned long highCacheSize = ts.getConfigLong("highCacheSize");
-	
-	for (unsigned long csize = lowCacheSize; csize <= highCacheSize ; csize*=2) {
-		ts.cacheSize = csize;
-		cout << "*** Now using ts.cacheSize = " << ts.cacheSize << endl;
-		
-		TestObject *expTest = new TestObject(ts);
-		expTest->runStaticTest();
-		delete expTest;
-	}
+  if (ts.getConfigBool("autoTestName")==true) {
+    ts.testName.insert(0,MatchEnumString(SPTYPE_ENUM, ts.testSPtype));
+    ts.testName.insert(0,"v_cachesize_");
+
+  cout << "(auto) testName: " << ts.testName << endl;
+  }
+  
+  unsigned long lowCacheSize = ts.getConfigLong("lowCacheSize");
+  unsigned long highCacheSize = ts.getConfigLong("highCacheSize");
+
+  for (unsigned long csize = lowCacheSize; csize <= highCacheSize ; csize*=2) {
+    ts.cacheSize = csize;
+    cout << "*** Now using ts.cacheSize = " << ts.cacheSize << endl;
+
+    TestObject *expTest = new TestObject(ts);
+    expTest->runStaticTest();
+    delete expTest;
+  }
 }
 
 
 void ExperimentVarySplit(TestSetting ts) {
-	if (ts.getConfigBool("autoTestName")==true) {
-		ts.testName.insert(0,"v_split_");
-		cout << "(auto) testName: " << ts.testName << endl;
-	}
-	
-	int lowSplit = ts.getConfigInt("lowSplit");
-	int highSplit = ts.getConfigInt("highSplit");
-	
-	for (int splits = lowSplit; splits <= highSplit ; splits+=2) {	
-		ts.splits = splits;
-		cout << "*** Now using ts.splits = " << ts.splits << endl;
+  if (ts.getConfigBool("autoTestName")==true) {
+    ts.testName.insert(0,MatchEnumString(SPTYPE_ENUM, ts.testSPtype));
+    ts.testName.insert(0,"v_split_");
+    cout << "(auto) testName: " << ts.testName << endl;
+  }
 
-		TestObject *expTest = new TestObject(ts);
-		expTest->runStaticTest();
-		delete expTest;
-	}
+  int lowSplit = ts.getConfigInt("lowSplit");
+  int highSplit = ts.getConfigInt("highSplit");
+  
+  for (int splits = lowSplit; splits <= highSplit ; splits+=2) {  
+    ts.splits = splits;
+    cout << "*** Now using ts.splits = " << ts.splits << endl;
+
+    TestObject *expTest = new TestObject(ts);
+    expTest->runStaticTest();
+    delete expTest;
+  }
 }
 
 
 void ExperimentSingle(TestSetting ts) {
-	if (ts.getConfigBool("autoTestName")==true) {
-		ts.testName.insert(0,"v_single_");
-		cout << "(auto) testName: " << ts.testName << endl;
-	}
-	
-	TestObject *expTest = new TestObject(ts);
-	expTest->runStaticTest();
-	delete expTest;
+  if (ts.getConfigBool("autoTestName")==true) {
+    ts.testName.insert(0,MatchEnumString(SPTYPE_ENUM, ts.testSPtype));
+    ts.testName.insert(0,"v_single_");
+    cout << "(auto) testName: " << ts.testName << endl;
+  }
+
+  TestObject *expTest = new TestObject(ts);
+  expTest->runStaticTest();
+  delete expTest;
 }
 
 
