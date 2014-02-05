@@ -356,7 +356,7 @@ void CacheStorage::updateCacheUsed(CacheItem ci) {
     if(debugCache) cout << "cacheused: (" << cacheUsed <<") " << nodeIdsInCache.size() << " " << NODE_BITS  << " " << BIT << " " << cache.size() << " || ";
     cacheUsed =  nodeIdsInCache.size() * (NODE_BITS + BIT*cache.size()) ;
     if(debugCache) cout << cacheUsed << " (" << cacheSize - cacheUsed << ")" << endl;
-    numberOfNodes = nodeIdsInCache.size();
+    numberOfNodes += ci.size;
   }else if (testStorage == STORE_LIST) {
     if(debugCache) cout << "cacheused: (" << cacheUsed <<") " << cacheUsed << "+" << ci.size << "*" << NODE_BITS << " = ";
     cacheUsed = cacheUsed + ci.size*NODE_BITS;
