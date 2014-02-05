@@ -294,7 +294,7 @@ void extractTestParameters(TestSetting& ts) {
   //         "experiment" to be added later
   if (ts.getConfigBool("autoTestName")==true) {
     string& tname = ts.testName;
-    tname="_";
+    tname="";
     tname.append(MatchEnumString(ALGO_ENUM,ts.testAlgo));
     tname.append("_");
     tname.append( ts.testFile, 0, 3);  // first 3 latters of testFile
@@ -305,6 +305,7 @@ void extractTestParameters(TestSetting& ts) {
 
 void ExperimentVaryOptimalLengthPct(TestSetting ts) {
   if (ts.getConfigBool("autoTestName")==true) {
+    ts.testName.insert(0,"_");
     ts.testName.insert(0,MatchEnumString(SPTYPE_ENUM, ts.testSPtype));
     ts.testName.insert(0,"v_optimalpct_");
     cout << "(auto) testName: " << ts.testName << endl;
@@ -326,6 +327,7 @@ void ExperimentVaryOptimalLengthPct(TestSetting ts) {
 
 void ExperimentVaryCacheSize(TestSetting ts) {
   if (ts.getConfigBool("autoTestName")==true) {
+    ts.testName.insert(0,"_");
     ts.testName.insert(0,MatchEnumString(SPTYPE_ENUM, ts.testSPtype));
     ts.testName.insert(0,"v_cachesize_");
 
@@ -348,6 +350,7 @@ void ExperimentVaryCacheSize(TestSetting ts) {
 
 void ExperimentVarySplit(TestSetting ts) {
   if (ts.getConfigBool("autoTestName")==true) {
+    ts.testName.insert(0,"_");
     ts.testName.insert(0,MatchEnumString(SPTYPE_ENUM, ts.testSPtype));
     ts.testName.insert(0,"v_split_");
     cout << "(auto) testName: " << ts.testName << endl;
@@ -369,6 +372,7 @@ void ExperimentVarySplit(TestSetting ts) {
 
 void ExperimentSingle(TestSetting ts) {
   if (ts.getConfigBool("autoTestName")==true) {
+    ts.testName.insert(0,"_");
     ts.testName.insert(0,MatchEnumString(SPTYPE_ENUM, ts.testSPtype));
     ts.testName.insert(0,"v_single_");
     cout << "(auto) testName: " << ts.testName << endl;
