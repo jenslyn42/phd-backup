@@ -53,8 +53,8 @@ useConcisepath = false
 measureConcisepathdegrees = false
 
 
-testOptimaltype = original
-//choices: original, kskip, rand
+testOptimaltype = orderfill
+//choices: original, kskip, rand, orderfill
 
 optiNum = 40
 //pct of full path before stopping. 

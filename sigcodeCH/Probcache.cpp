@@ -537,6 +537,8 @@ void Probcache::buildRegionpair2NodepairVector() {
 intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random, int num){
   if(ts.testOptimaltype == OPTIMALTYPE_ORG)
     return optimalPath(stPair, vSeen, random);
+  if(ts.testOptimaltype == OPTIMALTYPE_ORDERFILL)
+    return optimalOrderedFill(stPair, vSeen, random);
   else if(ts.testOptimaltype == OPTIMALTYPE_KSKIP)
     return kskip(stPair, num);
   else if(ts.testOptimaltype == OPTIMALTYPE_RAND)
@@ -586,8 +588,7 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
       spResultIntermediate.insert(conciseIt+1, choice);
       intermediateScore = calcScore(spResultIntermediate, vSeen);
          
-      if(intermediateScore > bestScore)
-      {
+      if(intermediateScore > bestScore) {
 	bestScore=intermediateScore;
 	returnResult=spResultIntermediate;
       }
@@ -630,7 +631,7 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
 	choicePosIt = find(spDiff.begin(), spDiff.end(), curBestOption);
 	spDiff.erase(choicePosIt);
       }else{
-	///////////////////7
+	////////////////////
 	if(debugProbc) cout << "long/concise/optimal: " << spResultLong.size() << " / " << spResultShort.size() << " / " << spResultIntermediate.size() << endl;
 	ts.optiLength += spResultIntermediate.size();
 	ts.numOpti++;
@@ -640,10 +641,9 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
 	///////////////////
 	return spResultIntermediate;
       }      
-
       currentScore=currentBasescore;
     }
-	///////////////////7
+	////////////////////
 	if(debugProbc) cout << "long/concise/optimal: " << spResultLong.size() << " / " << spResultShort.size() << " / " << spResultIntermediate.size() << endl;
 	ts.optiLength += spResultIntermediate.size();
 	ts.numOpti++;
@@ -653,6 +653,76 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
 	///////////////////
     return spResultIntermediate;
   }
+}
+
+
+intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool random){
+  if(debugProbc) cout << "Probcache::optimalOrderedFill((" << stPair.first <<","<<stPair.second << "), " << random << ")" << endl;
+  intVector spResultShort, spResultLong, spResultIntermediate, spDiff, returnResult;
+  double longScore=0.0, conciseScore=0.0, intermediateScore=0.0;
+  int choice;
+  std::vector<int>::iterator originalIt, conciseIt, choicePosIt;
+  if(debugProbc) cout << "Probcache::optimalOrderedFill Q_01:(" << endl;
+  //Order is important! call setConcisePathUse false last!
+  RoadGraph::mapObject(ts)->setConcisePathUse(true);
+  spResultShort = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
+  conciseScore = calcScore(spResultShort, vSeen);  
+  RoadGraph::mapObject(ts)->setConcisePathUse(false);
+  spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
+  longScore = calcScore(spResultLong, vSeen);    
+  vector<bool> nodesWithBenefit(spResultLong.size(),false);
+  
+  intVector tempLong, tempConsise;
+  tempLong = spResultLong;
+  tempConsise = spResultShort;
+  std::sort (tempLong.begin(),tempLong.end());
+  std::sort (tempConsise.begin(),tempConsise.end());
+  
+  spResultIntermediate = spResultShort;
+
+  //find the set difference between concise and full path. This set is the candidate set for insertion when calculating optimalOrderedFill
+  std::set_symmetric_difference(tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), std::back_inserter(spDiff));
+  
+  if(debugProbc) cout << "Probcache::optimalOrderedFill Q_02:(" << stPair.first << "," << stPair.second << ") " << conciseScore << "/" << longScore << " /" << spResultLong.size() << " (" << tempConsise.size() << "," << tempLong.size() << "," << spDiff.size() << ")" << endl;
+
+  //For each node in the full path with a none-zero score or en entry in the concise path, 
+  //set the corrosponding entry in nodesWithBenefit to true
+  for(int cur=0;cur<spResultLong.size(); cur++){
+    spResultIntermediate.push_back(spResultLong[cur]);
+    intermediateScore = calcScore(spResultIntermediate, vSeen);  
+    spResultIntermediate.pop_back();
+//     if(intermediateScore != conciseScore) cout << "SC: " << intermediateScore << "," << conciseScore << endl;
+    if(conciseScore < intermediateScore)
+      nodesWithBenefit[cur] = true;
+    else{
+      for(int i=0; i<spResultShort.size(); i++){
+	if(spResultShort[i] == spResultLong[cur]) {
+	  nodesWithBenefit[cur] = true;
+	  break;
+	}
+      }
+    }
+  }
+
+  for(int j=0; j<nodesWithBenefit.size(); j++){
+    if(nodesWithBenefit[j]){
+      spResultIntermediate.push_back(spResultLong[j]);
+    }
+  }
+  
+//   for(int j=0; j<nodesWithBenefit.size(); j++){
+//      cout << nodesWithBenefit[j] << ",";
+//   }
+   
+  ////////////////////
+  if(debugProbc) cout << "long/concise/optimal: " << spResultLong.size() << " / " << spResultShort.size() << " / " << spResultIntermediate.size() << endl;
+  ts.optiLength += spResultIntermediate.size();
+  ts.numOpti++;
+  ts.longLength+= spResultLong.size();
+  ts.numLong++;
+  //cout << "Probcache::optimalOrderedFill Q_042:(" << ts.optiLength << ", " <<ts.numOpti << ") (" << ts.longLength << ", " << ts.numLong << ")" << endl;
+  ///////////////////
+   return spResultIntermediate;
 }
 
 

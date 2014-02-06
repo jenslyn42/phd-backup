@@ -66,7 +66,7 @@ enum SPTYPE_CHOICE {SPTYPE_FULL, SPTYPE_CONCISE, SPTYPE_OPTIMAL };
 enum CONCISETYPE_CHOICE {CONCISETYPE_A, CONCISETYPE_B };
 
 // Optimal calculation choice
-enum OPTIMALTYPE_CHOICE {OPTIMALTYPE_ORG, OPTIMALTYPE_KSKIP, OPTIMALTYPE_RAND };
+enum OPTIMALTYPE_CHOICE {OPTIMALTYPE_ORG, OPTIMALTYPE_KSKIP, OPTIMALTYPE_RAND, OPTIMALTYPE_ORDERFILL };
 
 // Important: 	for each "ENUM" type, there is a corresponding "LookupList" in "Setting.cpp"
 //		they follow a naming convention.
