@@ -60,8 +60,9 @@ private:
 	boost::unordered_map<int,Region> mapRegions; //holds all regions after a call to makePartitions()
 
 	double calcScore(intVector& sp, intPairSet& vSeen);
+	double calcScore(intVector& sp, intPairSet& vSeen, intVector& spConcise, intVectorMap& regToCandidates, intPairSet& benefitRegPairs, bool useStatArgs= true);
 	void extractStatistics();
-	
+
 	bool makePartitions(int splits);
 	void split(vector<Region>& regions, int axis);
 	int mapNodeid2RegionId(int nid);
