@@ -246,14 +246,30 @@ int Probcache::mapPoint2RegionId(Point coord) {
     return -1;
   }
 }
+/*
 
+intVectorMap regToCandidates; //for each region participating in a pair with non-zero benefit, store the nodes mapping to this region.
+intPairSet BenefitRegPairs; //store each region pair that has a non-zero benefit score.*/
 double Probcache::calcScore(intVector& spResult, intPairSet& vSeen) {
+  intVector placeholder;
+  intVectorMap placeholder2;
+  intPairSet placeholder3;
+  calcScore(spResult, vSeen, placeholder, placeholder2, placeholder3, false );
+}
+
+
+double Probcache::calcScore(intVector& spResult, intPairSet& vSeen, intVector& spConcise, intVectorMap& regToCandidates, intPairSet& benefitRegPairs, bool useStatArgs) {
   //cout << "Probcache::calcScore(spResult.size():" << spResult.size() << ", vSeen.size():" <<vSeen.size() << ")" << endl;
   double score = 0.0;
   bool isEmpty_vSeen=(vSeen.size()==0);
 
   calcScoreCounter++;
-
+  
+  boost::unordered_set<int> conciseRegions; //all the regions nodes in spConcise maps to
+  if(useStatArgs){
+    BOOST_FOREACH(int nid, spConcise) 
+      conciseRegions.insert(nodeid2regionid[nid]);
+  }
   // analyze the continuous region in the path
   int last_region=-2;
   vector<intPair> regionset;
@@ -265,15 +281,21 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen) {
       regionset.push_back(make_pair(rid,1));
     }else
       regionset.back().second++;
+    
+    //add nid to Rid->{Nid} map, if nid is not part of spConcise or some node in spConcise already maps to rid
+    if(useStatArgs && find(spConcise.begin(), spConcise.end(), nid) == spConcise.end() && conciseRegions.find(rid) == conciseRegions.end()){
+      if(regToCandidates.find(rid) == regToCandidates.end())
+	regToCandidates[rid] = vector<int>();
+      regToCandidates[rid].push_back(nid);
+    }     
   }
-
+    
   // do not repeat the same path
   int start_iter1=0;
   for (uint a=0;a<regionset.size();a++) {
     int r1=regionset[a].first;
     int length_iter1=regionset[a].second;
 
-  // incorrect to use "a" directly because of "wrong offset
     int start_iter2=0;
     for (uint b=0;b<regionset.size();b++) {// include "a" (different nodes in the same region)
       int r2=regionset[b].first;
@@ -283,6 +305,7 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen) {
 	continue;
       }
 
+      //Incorrect to use "a" directly because of wrong offset
       int temp_count=0; //incremented when a node-pair, not already in the cache, is found
       for (int i=0;i<length_iter1;i++) {
 	int nid1 = spResult[start_iter1+i];
@@ -305,6 +328,11 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen) {
 	if (trainingQueriesPerRegionPair.find(regionpair) != trainingQueriesPerRegionPair.end())
 	  temp_score = trainingQueriesPerRegionPair.at(regionpair);
 	score = score + temp_count*temp_score;
+	
+	//Identify those pairs of region ids with positive benefit, where neither region can contribute any benefit to the path alone.
+	if(useStatArgs && temp_score>0 && conciseRegions.find(r1) != conciseRegions.end() && conciseRegions.find(r2) != conciseRegions.end()){
+	  benefitRegPairs.insert(regionpair);
+	}
       }
     
       start_iter2+=length_iter2;
@@ -658,8 +686,11 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
 
 intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool random){
   if(debugProbc) cout << "Probcache::optimalOrderedFill((" << stPair.first <<","<<stPair.second << "), " << random << ")" << endl;
-  intVector spResultShort, spResultLong, spResultIntermediate, spDiff, returnResult;
+  intVector spResultShort, spResultLong, spResultIntermediate, spDiff;
   double longScore=0.0, conciseScore=0.0, intermediateScore=0.0;
+  intVectorMap regToCandidates;
+  intPairSet benefitRegPairs;
+  boost::unordered_set<int> extraNidToAdd;
   int choice;
   std::vector<int>::iterator originalIt, conciseIt, choicePosIt;
   if(debugProbc) cout << "Probcache::optimalOrderedFill Q_01:(" << endl;
@@ -669,21 +700,17 @@ intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool 
   conciseScore = calcScore(spResultShort, vSeen);  
   RoadGraph::mapObject(ts)->setConcisePathUse(false);
   spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
-  longScore = calcScore(spResultLong, vSeen);    
+  longScore = calcScore(spResultLong, vSeen, spResultShort, regToCandidates, benefitRegPairs);    
   vector<bool> nodesWithBenefit(spResultLong.size(),false);
   
-  intVector tempLong, tempConsise;
-  tempLong = spResultLong;
-  tempConsise = spResultShort;
-  std::sort (tempLong.begin(),tempLong.end());
-  std::sort (tempConsise.begin(),tempConsise.end());
+  BOOST_FOREACH(intPair regPair, benefitRegPairs){
+    BOOST_FOREACH(int candidate, regToCandidates[regPair.first])
+      extraNidToAdd.insert(candidate);
+    BOOST_FOREACH(int candidate, regToCandidates[regPair.second])
+      extraNidToAdd.insert(candidate);    
+  }
   
   spResultIntermediate = spResultShort;
-
-  //find the set difference between concise and full path. This set is the candidate set for insertion when calculating optimalOrderedFill
-  std::set_symmetric_difference(tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), std::back_inserter(spDiff));
-  
-  if(debugProbc) cout << "Probcache::optimalOrderedFill Q_02:(" << stPair.first << "," << stPair.second << ") " << conciseScore << "/" << longScore << " /" << spResultLong.size() << " (" << tempConsise.size() << "," << tempLong.size() << "," << spDiff.size() << ")" << endl;
 
   //For each node in the full path with a none-zero score or en entry in the concise path, 
   //set the corrosponding entry in nodesWithBenefit to true
@@ -692,7 +719,7 @@ intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool 
     intermediateScore = calcScore(spResultIntermediate, vSeen);  
     spResultIntermediate.pop_back();
 //     if(intermediateScore != conciseScore) cout << "SC: " << intermediateScore << "," << conciseScore << endl;
-    if(conciseScore < intermediateScore)
+    if(conciseScore < intermediateScore || extraNidToAdd.find(spResultLong[cur]) != extraNidToAdd.end())
       nodesWithBenefit[cur] = true;
     else{
       for(int i=0; i<spResultShort.size(); i++){
@@ -713,6 +740,8 @@ intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool 
 //   for(int j=0; j<nodesWithBenefit.size(); j++){
 //      cout << nodesWithBenefit[j] << ",";
 //   }
+// double Probcache::calcScore(intVector& spResult, intPairSet& vSeen, intVector& spConcise, intVectorMap& regToCandidates, intPairSet& benefitRegPairs, bool useStatArgs)   
+   
    
   ////////////////////
   if(debugProbc) cout << "long/concise/optimal: " << spResultLong.size() << " / " << spResultShort.size() << " / " << spResultIntermediate.size() << endl;
