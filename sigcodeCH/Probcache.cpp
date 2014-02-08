@@ -704,6 +704,7 @@ intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool 
   vector<bool> nodesWithBenefit(spResultLong.size(),false);
   
   BOOST_FOREACH(intPair regPair, benefitRegPairs){
+    cout << "VV: " << regPair.first << ", " << regPair.second << " (" << regToCandidates[regPair.first].size() << "," << regToCandidates[regPair.second].size() << ")" << endl;
     BOOST_FOREACH(int candidate, regToCandidates[regPair.first]){
       extraNidToAdd.insert(candidate);
       cout << "V1: " << candidate << "," << extraNidToAdd.size() << " - ";
