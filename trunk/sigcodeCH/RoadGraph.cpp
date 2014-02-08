@@ -672,8 +672,7 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
   bool addnext = true, doadd = false, equalMinAngle=false;
   vector<int> concisepath;
   concisepath.push_back(trace.back());
-//   if(conciseDebug) 
-    cout << "calcConsisePathA S: " << trace.size() << " (" << trace.front() << "," << trace.back() << ")"<< endl;
+   if(conciseDebug) cout << "calcConsisePathA S: " << trace.size() << " (" << trace.front() << "," << trace.back() << ")"<< endl;
   double angleToNextNode=0.0, minAngle=0.0, tmp;
   Point prev, curr;
   if(trace.empty()) cout << "EMPTY TRACE!!" << endl;

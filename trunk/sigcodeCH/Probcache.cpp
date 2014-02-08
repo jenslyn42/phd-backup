@@ -712,13 +712,13 @@ intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool 
   
   spResultIntermediate = spResultShort;
 
+  cout << "Probcache::optimalOrderedFill Q_02: " << extraNidToAdd.size() << endl;
   //For each node in the full path with a none-zero score or en entry in the concise path, 
   //set the corrosponding entry in nodesWithBenefit to true
   for(int cur=0;cur<spResultLong.size(); cur++){
     spResultIntermediate.push_back(spResultLong[cur]);
     intermediateScore = calcScore(spResultIntermediate, vSeen);  
     spResultIntermediate.pop_back();
-//     if(intermediateScore != conciseScore) cout << "SC: " << intermediateScore << "," << conciseScore << endl;
     if(conciseScore < intermediateScore || extraNidToAdd.find(spResultLong[cur]) != extraNidToAdd.end())
       nodesWithBenefit[cur] = true;
     else{
