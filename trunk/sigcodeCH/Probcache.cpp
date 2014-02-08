@@ -449,8 +449,13 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 	if (curscore>0) {
 	  if (cache.insertItemWithScore(tmpItem, curscore)) {
 	    num_cache_paths++;
+	    
+	    cout << "ADDED. Start fillCacheFromQueriesFileByStatistics " << tmpItem.id << ", " << tmpItem.size << ", " << num_cache_paths << ", " << curscore << endl;
+	    BOOST_FOREACH(int v1, tmpItem.item) {
+	     cout <<  v1 << " ";
+	    }
+	    cout << endl;
  
-	    //cout << " ADDED! Numpaths: " << num_cache_paths;
 	    BOOST_FOREACH(int v1, tmpItem.item) {
 	      BOOST_FOREACH(int v2, tmpItem.item) {
 		if (v1 < v2)
@@ -665,7 +670,7 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
 	ts.numOpti++;
 	ts.longLength+= spResultLong.size();
 	ts.numLong++;
-      cout << "Probcache::optimalPath Q_041:(" << ts.optiLength << ", " <<ts.numOpti << ") (" << ts.longLength << ", " << ts.numLong << ")" << endl;
+	if(debugProbc) cout << "Probcache::optimalPath Q_041:(" << ts.optiLength << ", " <<ts.numOpti << ") (" << ts.longLength << ", " << ts.numLong << ")" << endl;
 	///////////////////
 	return spResultIntermediate;
       }      
@@ -704,20 +709,20 @@ intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool 
   vector<bool> nodesWithBenefit(spResultLong.size(),false);
   
   BOOST_FOREACH(intPair regPair, benefitRegPairs){
-    cout << "VV: " << regPair.first << ", " << regPair.second << " (" << regToCandidates[regPair.first].size() << "," << regToCandidates[regPair.second].size() << ")" << endl;
+//     cout << "VV: " << regPair.first << ", " << regPair.second << " (" << regToCandidates[regPair.first].size() << "," << regToCandidates[regPair.second].size() << ")" << endl;
     BOOST_FOREACH(int candidate, regToCandidates[regPair.first]){
       extraNidToAdd.insert(candidate);
-      cout << "V1: " << candidate << "," << extraNidToAdd.size() << " - ";
+//       cout << "V1: " << candidate << "," << extraNidToAdd.size() << " - ";
     }
     BOOST_FOREACH(int candidate, regToCandidates[regPair.second]){
       extraNidToAdd.insert(candidate);    
-      cout << "V2: " << candidate << "," << extraNidToAdd.size() << " - " << endl;
+//       cout << "V2: " << candidate << "," << extraNidToAdd.size() << " - ";
     }
   }
   
   spResultIntermediate = spResultShort;
 
-  cout << "Probcache::optimalOrderedFill Q_02: " << benefitRegPairs.size() << ", " << regToCandidates.size() << ", " << extraNidToAdd.size() << endl;
+  //cout << "Probcache::optimalOrderedFill Q_02: " << benefitRegPairs.size() << ", " << regToCandidates.size() << ", " << extraNidToAdd.size() << endl;
   //For each node in the full path with a none-zero score or en entry in the concise path, 
   //set the corrosponding entry in nodesWithBenefit to true
   for(int cur=0;cur<spResultLong.size(); cur++){
@@ -742,12 +747,6 @@ intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool 
     }
   }
   
-//   for(int j=0; j<nodesWithBenefit.size(); j++){
-//      cout << nodesWithBenefit[j] << ",";
-//   }
-// double Probcache::calcScore(intVector& spResult, intPairSet& vSeen, intVector& spConcise, intVectorMap& regToCandidates, intPairSet& benefitRegPairs, bool useStatArgs)   
-   
-   
   ////////////////////
   if(debugProbc) cout << "long/concise/optimal: " << spResultLong.size() << " / " << spResultShort.size() << " / " << spResultIntermediate.size() << endl;
   ts.optiLength += spResultIntermediate.size();

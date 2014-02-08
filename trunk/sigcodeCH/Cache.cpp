@@ -320,11 +320,16 @@ bool CacheStorage::hasEnoughSpace(intVector& sp) {
       if (nodeIdsInCache.find(v) == nodeIdsInCache.end())  newNodes++;
     }
 
-    if ( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize ) 
-      return true;
+//     if(newNodes == 0) return false;
+    if ( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize ){ 
+      cout << "HES1: " << newNodes << endl;
+      return true;      
+    }
   } else if(testStorage == STORE_LIST) {
-    if ( cacheUsed + sp.size()*NODE_BITS < cacheSize ) 
+    if ( cacheUsed + sp.size()*NODE_BITS < cacheSize ) {
+      cout << "HES2: " << cacheUsed << ", " << sp.size() << ", " << cacheSize << ", " << NODE_BITS << ", " << sp.size()*NODE_BITS << endl;
       return true;
+    }
   } else if(testStorage == STORE_COMPRESS) {
     if ( cacheUsed < cacheSize )
       return true;
