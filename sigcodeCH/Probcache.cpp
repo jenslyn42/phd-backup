@@ -712,7 +712,7 @@ intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool 
   
   spResultIntermediate = spResultShort;
 
-  cout << "Probcache::optimalOrderedFill Q_02: " << extraNidToAdd.size() << endl;
+  cout << "Probcache::optimalOrderedFill Q_02: " << benefitRegPairs.size() << ", " << regToCandidates.size() << ", " << extraNidToAdd.size() << endl;
   //For each node in the full path with a none-zero score or en entry in the concise path, 
   //set the corrosponding entry in nodesWithBenefit to true
   for(int cur=0;cur<spResultLong.size(); cur++){
