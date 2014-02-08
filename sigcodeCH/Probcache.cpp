@@ -282,8 +282,8 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen, intVector& s
     }else
       regionset.back().second++;
     
-    //add nid to Rid->{Nid} map, if nid is not part of spConcise or some node in spConcise already maps to rid
-    if(useStatArgs && find(spConcise.begin(), spConcise.end(), nid) == spConcise.end() && conciseRegions.find(rid) == conciseRegions.end()){
+    //add nid to Rid->{Nid} map, if nid is not part of spConcise
+    if(useStatArgs && find(spConcise.begin(), spConcise.end(), nid) == spConcise.end()){
       if(regToCandidates.find(rid) == regToCandidates.end())
 	regToCandidates[rid] = vector<int>();
       regToCandidates[rid].push_back(nid);
