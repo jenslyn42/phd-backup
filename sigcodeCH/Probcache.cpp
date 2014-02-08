@@ -710,7 +710,7 @@ intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool 
     }
     BOOST_FOREACH(int candidate, regToCandidates[regPair.second]){
       extraNidToAdd.insert(candidate);    
-      cout << "V2: " << candidate << "," << extraNidToAdd.size() << " - ";
+      cout << "V2: " << candidate << "," << extraNidToAdd.size() << " - " << endl;
     }
   }
   
