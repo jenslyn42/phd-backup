@@ -747,6 +747,7 @@ intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool 
     }
   }
   
+  return spResultLong;
   ////////////////////
   if(debugProbc) cout << "long/concise/optimal: " << spResultLong.size() << " / " << spResultShort.size() << " / " << spResultIntermediate.size() << endl;
   ts.optiLength += spResultIntermediate.size();
