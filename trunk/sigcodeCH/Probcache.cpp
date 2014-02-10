@@ -311,13 +311,16 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen, intVector& s
 	int nid1 = spResult[start_iter1+i];
 	for (int j=0;j<length_iter2;j++){
 	  if (start_iter1+i<start_iter2+j){ // avoid duplicate check
-	    if (isEmpty_vSeen)
+	    if (isEmpty_vSeen){
 	      temp_count++;
-	    else {
+	      cout << "Probcache::calcScore1: " << isEmpty_vSeen << " " << temp_count << endl;
+	    } else {
 	      int nid2 = spResult[start_iter2+j];
 	      intPair nodepair = (nid1<nid2)? make_pair(nid1,nid2):make_pair(nid2,nid1);
-	      if (vSeen.find(nodepair)==vSeen.end())  // if not in cache
+	      if (vSeen.find(nodepair)==vSeen.end()) {  // if not in cache
 		temp_count++;
+		cout << "Probcache::calcScore2: (" << nodepair.first << "," << nodepair.second << ") " << temp_count << endl;
+	      }
 	    }
 	  }
 	}
@@ -413,7 +416,7 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
       tmp.pID = rp;
       tmp.dist = calcScore(spResult, vSeen);
 
-      if (tmp.dist>0) // new
+      if (tmp.dist>0) 
 	mhCache.push(tmp);
 
       if(debugProbc)
