@@ -319,7 +319,7 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen, intVector& s
 	      intPair nodepair = (nid1<nid2)? make_pair(nid1,nid2):make_pair(nid2,nid1);
 	      if (vSeen.find(nodepair)==vSeen.end()) {  // if not in cache
 		temp_count++;
-		cout << "Probcache::calcScore2: (" << nodepair.first << "," << nodepair.second << ") " << temp_count << endl;
+		cout << "Probcache::calcScore2: (" << nodepair.first << "," << nodepair.second << ") " << temp_count << " " << spResult.size() << endl;
 	      }
 	    }
 	  }
