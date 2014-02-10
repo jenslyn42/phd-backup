@@ -331,7 +331,7 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen, intVector& s
 	if (trainingQueriesPerRegionPair.find(regionpair) != trainingQueriesPerRegionPair.end())
 	  temp_score = trainingQueriesPerRegionPair.at(regionpair);
 	score = score + temp_count*temp_score;
-	cout << temp_score << endl;
+	cout << "TS: " << temp_score << score << endl;
 	//Identify those pairs of region ids with positive benefit, where neither region can contribute any benefit to the path alone.
 	if(useStatArgs && temp_score>0 && conciseRegions.find(r1) != conciseRegions.end() && conciseRegions.find(r2) != conciseRegions.end()){
 	  benefitRegPairs.insert(regionpair);
@@ -344,12 +344,15 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen, intVector& s
 
   // final update
   if (spResult.size()>0 && ts.devideScoreByLength) {
-    if (ts.testScenario == ARCH_SERVER)
+    if (ts.testScenario == ARCH_SERVER){
       score = score * pow(spResult.size(),2);
-    else
+      cout << "TS2: " << score << endl;      
+    }else{
       score = score / spResult.size();
+      cout << "TS3: " << score << endl;
+    }
   }
-  cout << score << endl;
+  cout << "TS4: " << score << endl;
   return score;
 }
 void Probcache::fillCache(){
