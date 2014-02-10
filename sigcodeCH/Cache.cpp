@@ -17,15 +17,15 @@ CacheItem::CacheItem(int key, intVector& item)
   this->accessKey = key;
   this->item = item;    // copy
   this->size = item.size();
-  
+
   this->s = -1;
   this->t = -1;
-  
+
   if (item.size()>0) {
     this->s = item.front();
     this->t = item.back();
   }
-  
+
   this->score = -1;
 };
 
@@ -84,7 +84,7 @@ void AbstractCache::plotCachePoints(vector<CacheItem>& cm) {
 
   cout << "Base::plotCachePoints start!";
   vector<int> sp;
-  
+
   ofstream of;
   string fn = testbasename;
   string app = "D" + boost::lexical_cast<std::string>(numSplits);
@@ -109,7 +109,7 @@ void AbstractCache::plotCachePoints(vector<CacheItem>& cm) {
     i++;
   }
   of.close();
-  
+
   cout << " ... Done!" << endl;
 }
 
@@ -118,7 +118,7 @@ bool AbstractCache::plotShortestPaths(QLOG_CHOICE qlog) {
   string testbasename=ts.getTestName();
   string app="";
   intPairVector* ptrPointPairs=NULL;
-  
+
   if (qlog==QLOG_TRAIN) {
     app = "TEST.cache";
     ptrPointPairs=&trainingSTPointPairs;
@@ -130,16 +130,16 @@ bool AbstractCache::plotShortestPaths(QLOG_CHOICE qlog) {
     exit(0);
     return false;
   }
-  
+
   cout << "Base::plotShortestPaths start!";
   intPairVector& stPointPairs=(*ptrPointPairs);
   string fn = testbasename;
   fn.replace ((fn.size()-5), 5, app); //change file extention from .test TEST.cache
   ifstream ifile(fn.c_str());
   if (ifile) { //file already exist
-    ifile.close(); 
+    ifile.close();
     return false;
-  } 
+  }
 
   ofstream of(fn.c_str(), ios::out | ios::ate | ios::app);
 
@@ -320,7 +320,7 @@ bool CacheStorage::hasEnoughSpace(intVector& sp) {
       if (nodeIdsInCache.find(v) == nodeIdsInCache.end())  newNodes++;
     }
 
-    //if(newNodes == 0) return false;
+//    if(newNodes == 0) return false;
     if ( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize ){ 
       cout << "HES1: " << newNodes << " (" << sp.front() <<  "," << sp.back() << ")" << endl;
       return true;
