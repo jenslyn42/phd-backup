@@ -43,7 +43,7 @@ cachesize = 2097152
 
 scacheQueryType = 3
 executeTrainingWorkload = false
-devideScoreByLength = true
+divideScoreByLength = true
 
 
 experiment = cachesize
@@ -54,7 +54,7 @@ useConcisepath = false
 measureConcisepathdegrees = false
 
 
-testOptimaltype = original
+testOptimaltype = orderfill
 //choices: original, kskip, rand, orderfill
 
 optiNum = 40
