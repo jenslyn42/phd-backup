@@ -189,7 +189,7 @@ public:
   
   double getAvgItemLength(){return (double)nodesInCache / (double) itemsInCache;}
 
-  double getNodesInCache(){return nodesInCache;}
+//   double getNodesInCache(){return nodesInCache;}
   void setNodesInCache(int numNodes){nodesInCache = numNodes;}
   
   long getUnusedCacheBits(){return unusedCacheBits;}
