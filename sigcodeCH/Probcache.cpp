@@ -319,25 +319,24 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen, intVector& s
 	      intPair nodepair = (nid1<nid2)? make_pair(nid1,nid2):make_pair(nid2,nid1);
 	      if (vSeen.find(nodepair)==vSeen.end()) {  // if not in cache
 		temp_count++;
-		cout << "Probcache::calcScore2: (" << nodepair.first << "," << nodepair.second << ") " << temp_count << " " << spResult.size() << endl;
+		cout << "Probcache::calcScore2: (" << nodepair.first << "," << nodepair.second << ") " << temp_count << " " << spResult.size() << " ";
 	      }
 	    }
 	  }
 	}
       }
-      if (temp_count>0) {
+      if(temp_count>0) {
 	intPair regionpair = (r1 < r2)? make_pair(r1,r2):make_pair(r2,r1);
 	double temp_score=0;
 	if (trainingQueriesPerRegionPair.find(regionpair) != trainingQueriesPerRegionPair.end())
 	  temp_score = trainingQueriesPerRegionPair.at(regionpair);
 	score = score + temp_count*temp_score;
-
+	cout << temp_score << " ";
 	//Identify those pairs of region ids with positive benefit, where neither region can contribute any benefit to the path alone.
 	if(useStatArgs && temp_score>0 && conciseRegions.find(r1) != conciseRegions.end() && conciseRegions.find(r2) != conciseRegions.end()){
 	  benefitRegPairs.insert(regionpair);
 	}
       }
-
       start_iter2+=length_iter2;
     }
     start_iter1+=length_iter1;
@@ -350,6 +349,7 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen, intVector& s
     else
       score = score / spResult.size();
   }
+  cout << score << endl;
   return score;
 }
 void Probcache::fillCache(){
