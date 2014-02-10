@@ -755,6 +755,10 @@ intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool 
     }
   }
 
+  //to prevent identical nodes in each end of the path.
+  if(spResultIntermediate.front() == spResultIntermediate.back())
+    spResultIntermediate.pop_back();
+  
   ////////////////////
   if(debugProbc) cout << "long/concise/optimal: " << spResultLong.size() << " / " << spResultShort.size() << " / " << spResultIntermediate.size() << endl;
   ts.optiLength += spResultIntermediate.size();
