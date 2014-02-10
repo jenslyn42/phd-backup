@@ -493,7 +493,7 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
     }
   }
 
-  printf("\n*** num_cache_paths: %d, numCacheBits left: %d\n",num_cache_paths, cache.getCachespaceleftBits());
+  printf("\n*** num_cache_paths: %d, numCacheBits left: %d, nodesInCache: %d\n",num_cache_paths, cache.getCachespaceleftBits(), ts.getNodesInCache());
   cout << " @@4 TIME: " << getElapsedTime(refTime) << endl;
 
   ts.setNodesInCache(cache.numberOfNodesInCache());

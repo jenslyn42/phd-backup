@@ -188,7 +188,8 @@ public:
   void setItemsInCache(double iic){itemsInCache = iic;}
   
   double getAvgItemLength(){return (double)nodesInCache / (double) itemsInCache;}
-  
+
+  double getNodesInCache(){return nodesInCache;}
   void setNodesInCache(int numNodes){nodesInCache = numNodes;}
   
   long getUnusedCacheBits(){return unusedCacheBits;}
