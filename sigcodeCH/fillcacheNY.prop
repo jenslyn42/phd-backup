@@ -11,7 +11,7 @@ testScenario = PROXY
 // choices: SERVER, PROXY
 
 
-testSPtype = full
+testSPtype = CONCISE
 // choices: FULL, CONCISE, OPTIMAL
 
 
@@ -47,7 +47,7 @@ cachesize = 65536
 
 scacheQueryType = 3
 executeTrainingWorkload = false
-devideScoreByLength = true
+divideScoreByLength = true
 
 experiment = cachesize
 // choices: single, split, cachesize, optimalpct
@@ -57,7 +57,7 @@ useConcisepath = false
 measureConcisepathdegrees = false
 
 
-testOptimaltype = orderfill
+testOptimaltype = kskip
 //choices: original, kskip, rand, orderfill
 
 optiNum = 40
