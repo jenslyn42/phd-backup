@@ -749,6 +749,7 @@ intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool 
     }
   }
 
+  spResultIntermediate.clear();
   for(int j=0; j<nodesWithBenefit.size(); j++){
     if(nodesWithBenefit[j]){
       spResultIntermediate.push_back(spResultLong[j]);
