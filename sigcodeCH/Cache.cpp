@@ -244,10 +244,10 @@ bool CacheStorage::insertItem(CacheItem ci) {
   if (!hasEnoughSpace(ci)) return false;
 
   int path_id = numberOfItemsInCache();
-  
+
   cache.push_back(ci);
   updateCacheUsed(ci);
-  
+
   // update inverted list
   // note that ci.id is not sorted (need to sort them later?)
   if (testStorage!=STORE_LIST) {
@@ -320,10 +320,10 @@ bool CacheStorage::hasEnoughSpace(intVector& sp) {
       if (nodeIdsInCache.find(v) == nodeIdsInCache.end())  newNodes++;
     }
 
-//     if(newNodes == 0) return false;
+    if(newNodes == 0) return false;
     if ( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize ){ 
       cout << "HES1: " << newNodes << endl;
-      return true;      
+      return true;
     }
   } else if(testStorage == STORE_LIST) {
     if ( cacheUsed + sp.size()*NODE_BITS < cacheSize ) {

@@ -27,7 +27,7 @@ Probcache::Probcache(TestSetting ts) {
   calcScoreCounter=0;
 }
 
-Probcache::~Probcache() { 
+Probcache::~Probcache() {
   trainingSTPointPairs.clear();
   testSTPointPairs.clear();
   points.clear();
@@ -48,7 +48,7 @@ void Probcache::runQueryList() {
   intVector spResult;
   unsigned long existingNodesvisited; // *1* used for keeping track of number of nodes visited by a SP call.
   RoadGraph::mapObject(ts)->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
-  BOOST_FOREACH(intPair q, testSTPointPairs) { 
+  BOOST_FOREACH(intPair q, testSTPointPairs) {
 
     numTotalQueries++;// track usage info
     if (debugProbc) cout << "one, Probcache::checkCache! :cacheSize:" << (int) cache.size() <<"::"<< endl;
@@ -58,18 +58,18 @@ void Probcache::runQueryList() {
     } else {
       if(debugProbc) cout << "three, Probcache::checkCache!" << endl;
       existingNodesvisited = RoadGraph::mapObject(ts)->numNodeVisits; // *1* nodes visited before call
-      
+
       if(ts.executeTrainingWorkload) spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);
       numDijkstraCalls++;
       //////////////////////////////////
 //       if(numTotalQueries > 9) exit(1);
      /* intVector spResultLong, spResultShort;
       RoadGraph::mapObject(ts)->setConcisePathUse(false);
-      spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);   
+      spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);
 
       RoadGraph::mapObject(ts)->setConcisePathUse(true);
       spResultShort = RoadGraph::mapObject(ts)->dijkstraSSSP(q.first, q.second);
-	
+
       cout << "full/concise - ratio: " << spResultLong.size() << " / " << spResultShort.size() << " - " << (double)spResultLong.size() / (double)spResultShort.size() << endl;
       if(numDijkstraCalls > 200) break;
       */ ////////////////////////////////
@@ -264,10 +264,10 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen, intVector& s
   bool isEmpty_vSeen=(vSeen.size()==0);
 
   calcScoreCounter++;
-  
+
   boost::unordered_set<int> conciseRegions; //all the regions nodes in spConcise maps to
   if(useStatArgs){
-    BOOST_FOREACH(int nid, spConcise) 
+    BOOST_FOREACH(int nid, spConcise)
       conciseRegions.insert(nodeid2regionid[nid]);
   }
   // analyze the continuous region in the path
@@ -328,13 +328,13 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen, intVector& s
 	if (trainingQueriesPerRegionPair.find(regionpair) != trainingQueriesPerRegionPair.end())
 	  temp_score = trainingQueriesPerRegionPair.at(regionpair);
 	score = score + temp_count*temp_score;
-	
+
 	//Identify those pairs of region ids with positive benefit, where neither region can contribute any benefit to the path alone.
 	if(useStatArgs && temp_score>0 && conciseRegions.find(r1) != conciseRegions.end() && conciseRegions.find(r2) != conciseRegions.end()){
 	  benefitRegPairs.insert(regionpair);
 	}
       }
-    
+
       start_iter2+=length_iter2;
     }
     start_iter1+=length_iter1;
@@ -349,7 +349,6 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen, intVector& s
   }
   return score;
 }
-	
 void Probcache::fillCache(){
 	fillCacheFromQueriesFileByStatistics();
 }
@@ -360,10 +359,10 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
   maxHeap mhCache;
   int cid=0;
   bool isPathFound = false;
-	
+
   double refTime = clock();
   cout << "One. Start fillCacheFromQueriesFileByStatistics" << endl;
-	
+
   buildRegionId2NodeidVector();
   buildRegionpair2NodepairVector();
 
@@ -371,7 +370,7 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
   RoadGraph* graph = RoadGraph::mapObject(ts);
   boost::unordered_map<intPair,CacheItem> bucketList;	// bucket list
   intPair stPair;
-	
+
   cout << " @@2 TIME: " << getElapsedTime(refTime) << endl;
 
   ts.setNonEmptyRegionPairs(trainingQueriesPerRegionPair.size());
@@ -395,7 +394,7 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
       if (debugProbc) cout << "3.2.1 rp: (" << rp.first << "," << rp.second << ") " << endl;
       if (spResult.size()>0) {
 	isPathFound = true;
-	break; 
+	break;
       }
     }
 
@@ -405,7 +404,7 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 
       //optimal path
       if(ts.testSPtype == SPTYPE_OPTIMAL) spResult = optiPath(stPair, vSeen, false, ts.optiNum);
-      
+
       //make new cache item
       bucketList[rp] = CacheItem(cid, spResult);
       cid++;
@@ -441,7 +440,7 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
    // cout << "hasEnoughSpace / item size: ";
    // (cache.hasEnoughSpace(tmpItem))? cout << "true / " : cout << "false / ";
    // cout << tmpItem.item.size();
-    
+
     if (cache.hasEnoughSpace(tmpItem)) {
       double curscore = calcScore(tmpItem.item, vSeen);
 
@@ -449,13 +448,13 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 	if (curscore>0) {
 	  if (cache.insertItemWithScore(tmpItem, curscore)) {
 	    num_cache_paths++;
-	    
+
 	    cout << "ADDED. Start fillCacheFromQueriesFileByStatistics " << tmpItem.id << ", " << tmpItem.size << ", " << num_cache_paths << ", " << curscore << endl;
 	    BOOST_FOREACH(int v1, tmpItem.item) {
 	     cout <<  v1 << " ";
 	    }
 	    cout << endl;
- 
+
 	    BOOST_FOREACH(int v1, tmpItem.item) {
 	      BOOST_FOREACH(int v2, tmpItem.item) {
 		if (v1 < v2)
@@ -470,13 +469,13 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 	  stPair = pickSTpair(tmp.pID);
 
 	  if(ts.testSPtype == SPTYPE_OPTIMAL) spResult = optiPath(stPair, vSeen, false, ts.optiNum);
-	  else 
+	  else
 	    spResult = graph->dijkstraSSSP(stPair.first, stPair.second);
-	  curscore = calcScore(spResult, vSeen); // update score  
+	  curscore = calcScore(spResult, vSeen); // update score
 
 	  if (curscore > 0)
-	    break;	    
-	}	
+	    break;
+	}
 	bucketList[tmp.pID] = CacheItem(cid, spResult);
 	cid++;
       }
@@ -514,7 +513,7 @@ intPair Probcache::pickSTpair(intPair regionPair) {
   vector<intPair>& nodePairVector = regionPair2nodePairVector[regionPair];
   if (debugProbc)
     cout << "Probcache::pickSTpair 1 nodepairVector size: " << nodePairVector.size() << endl;
-	
+
   if (nodePairVector.size()>0) { // pick path WITHOUT REPLACEMENT
     ///random choice
     int slot=(int)rand()%nodePairVector.size();
@@ -577,7 +576,7 @@ intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random, in
   else if(ts.testOptimaltype == OPTIMALTYPE_RAND)
     return Probcache::random(stPair, num);
 }
-  
+
 intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random){
   if(debugProbc) cout << "Probcache::optimalPath((" << stPair.first <<","<<stPair.second << "), " << random << ")" << endl;
   intVector spResultShort, spResultLong, spResultIntermediate, spDiff, returnResult;
@@ -588,25 +587,25 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
   //Order is important! call setConcisePathUse false last!
   RoadGraph::mapObject(ts)->setConcisePathUse(true);
   spResultShort = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
-  conciseScore = calcScore(spResultShort, vSeen);  
+  conciseScore = calcScore(spResultShort, vSeen);
   RoadGraph::mapObject(ts)->setConcisePathUse(false);
   spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
-  longScore = calcScore(spResultLong, vSeen);    
+  longScore = calcScore(spResultLong, vSeen);
 
   intVector tempLong, tempConsise;
   tempLong = spResultLong;
   tempConsise = spResultShort;
   std::sort (tempLong.begin(),tempLong.end());
   std::sort (tempConsise.begin(),tempConsise.end());
-  
+
   spResultIntermediate = spResultShort;
-	
+
   //find the set difference between concise and full path. This set is the candidate set for insertion when calculating optimalPath
   std::set_symmetric_difference(tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), std::back_inserter(spDiff));
-  
+
   if(debugProbc) cout << "Probcache::optimalPath Q_02:(" << stPair.first << "," << stPair.second << ") " << conciseScore << "/" << longScore << " " << spResultIntermediate.size() << "/" << spResultLong.size() << " (" << tempConsise.size() << "," << tempLong.size() << "," << spDiff.size() << ")" << endl;
 
-  //pick which node to insert randomly, used to show that random pick is sub optimal to score based version. 
+  //pick which node to insert randomly, used to show that random pick is sub optimal to score based version.
   if(random){
     double currentScore=conciseScore, bestScore=conciseScore;
     returnResult = spResultShort;
@@ -620,13 +619,13 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
       conciseIt = find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt);
       spResultIntermediate.insert(conciseIt+1, choice);
       intermediateScore = calcScore(spResultIntermediate, vSeen);
-         
+
       if(intermediateScore > bestScore) {
 	bestScore=intermediateScore;
 	returnResult=spResultIntermediate;
       }
       currentScore=intermediateScore;
-      spDiff.erase(choicePosIt);     
+      spDiff.erase(choicePosIt);
     }
     return returnResult;
   }else{
@@ -652,13 +651,13 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
 	originalIt--;
       }
       conciseIt = find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt);
-      
-      if(ts.devideScoreByLength) 
+
+      if(ts.devideScoreByLength)
 	currentBasescore = ((currentBasescore*(double)(spResultIntermediate.size())) + tmpBestScore)/(double)(spResultIntermediate.size()+1);
       else
 	currentBasescore = (currentBasescore*(double)(spResultIntermediate.size())) + tmpBestScore;
 //       cout << "Probcache::optiPath Q5_2:" << endl;
-      if(currentBasescore > currentScore) {     
+      if(currentBasescore > currentScore) {
 	spResultIntermediate.insert(conciseIt+1, curBestOption);
 
 	choicePosIt = find(spDiff.begin(), spDiff.end(), curBestOption);
@@ -673,7 +672,7 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
 	if(debugProbc) cout << "Probcache::optimalPath Q_041:(" << ts.optiLength << ", " <<ts.numOpti << ") (" << ts.longLength << ", " << ts.numLong << ")" << endl;
 	///////////////////
 	return spResultIntermediate;
-      }      
+      }
       currentScore=currentBasescore;
     }
 	////////////////////
@@ -702,12 +701,12 @@ intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool 
   //Order is important! call setConcisePathUse false last!
   RoadGraph::mapObject(ts)->setConcisePathUse(true);
   spResultShort = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
-  conciseScore = calcScore(spResultShort, vSeen);  
+  conciseScore = calcScore(spResultShort, vSeen);
   RoadGraph::mapObject(ts)->setConcisePathUse(false);
   spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
-  longScore = calcScore(spResultLong, vSeen, spResultShort, regToCandidates, benefitRegPairs);    
+  longScore = calcScore(spResultLong, vSeen, spResultShort, regToCandidates, benefitRegPairs);
   vector<bool> nodesWithBenefit(spResultLong.size(),false);
-  
+
   BOOST_FOREACH(intPair regPair, benefitRegPairs){
 //     cout << "VV: " << regPair.first << ", " << regPair.second << " (" << regToCandidates[regPair.first].size() << "," << regToCandidates[regPair.second].size() << ")" << endl;
     BOOST_FOREACH(int candidate, regToCandidates[regPair.first]){
@@ -719,7 +718,7 @@ intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool 
 //       cout << "V2: " << candidate << "," << extraNidToAdd.size() << " - ";
     }
   }
-  
+
   spResultIntermediate = spResultShort;
 
   //cout << "Probcache::optimalOrderedFill Q_02: " << benefitRegPairs.size() << ", " << regToCandidates.size() << ", " << extraNidToAdd.size() << endl;
@@ -746,8 +745,7 @@ intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool 
       spResultIntermediate.push_back(spResultLong[j]);
     }
   }
-  
-  return spResultLong;
+
   ////////////////////
   if(debugProbc) cout << "long/concise/optimal: " << spResultLong.size() << " / " << spResultShort.size() << " / " << spResultIntermediate.size() << endl;
   ts.optiLength += spResultIntermediate.size();
