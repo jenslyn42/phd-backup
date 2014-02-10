@@ -452,7 +452,7 @@ void Probcache::fillCacheFromQueriesFileByStatistics() {
 	  if (cache.insertItemWithScore(tmpItem, curscore)) {
 	    num_cache_paths++;
 
-	    cout << "ADDED. Start fillCacheFromQueriesFileByStatistics " << tmpItem.id << ", " << tmpItem.size << ", " << num_cache_paths << ", " << curscore << endl;
+	    cout << "ADDED. Start fillCacheFromQueriesFileByStatistics " << tmpItem.id << "(" << tmpItem.item.front() <<"," << tmpItem.item.back() << ") " << tmpItem.size << ", " << num_cache_paths << ", " << curscore << endl;
 	    BOOST_FOREACH(int v1, tmpItem.item) {
 	     cout <<  v1 << " ";
 	    }
