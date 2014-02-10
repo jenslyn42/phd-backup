@@ -322,12 +322,12 @@ bool CacheStorage::hasEnoughSpace(intVector& sp) {
 
 //    if(newNodes == 0) return false;
     if ( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize ){ 
-      cout << "HES1: " << newNodes << " (" << sp.front() <<  "," << sp.back() << ")" << endl;
+//       cout << "HES1: " << newNodes << " (" << sp.front() <<  "," << sp.back() << ")" << endl;
       return true;
     }
   } else if(testStorage == STORE_LIST) {
     if ( cacheUsed + sp.size()*NODE_BITS < cacheSize ) {
-      cout << "HES2: " << cacheUsed << ", " << sp.size() << ", " << cacheSize << ", " << NODE_BITS << ", " << sp.size()*NODE_BITS << endl;
+//       cout << "HES2: " << cacheUsed << ", " << sp.size() << ", " << cacheSize << ", " << NODE_BITS << ", " << sp.size()*NODE_BITS << endl;
       return true;
     }
   } else if(testStorage == STORE_COMPRESS) {
