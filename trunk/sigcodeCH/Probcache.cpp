@@ -313,13 +313,13 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen, intVector& s
 	  if (start_iter1+i<start_iter2+j){ // avoid duplicate check
 	    if (isEmpty_vSeen){
 	      temp_count++;
-	      cout << "Probcache::calcScore1: " << isEmpty_vSeen << " " << temp_count << endl;
+	      //cout << "Probcache::calcScore1: " << isEmpty_vSeen << " " << temp_count << endl;
 	    } else {
 	      int nid2 = spResult[start_iter2+j];
 	      intPair nodepair = (nid1<nid2)? make_pair(nid1,nid2):make_pair(nid2,nid1);
 	      if (vSeen.find(nodepair)==vSeen.end()) {  // if not in cache
 		temp_count++;
-		cout << "Probcache::calcScore2: (" << nodepair.first << "," << nodepair.second << ") " << temp_count << " " << spResult.size() << " " << endl;
+		//cout << "Probcache::calcScore2: (" << nodepair.first << "," << nodepair.second << ") " << temp_count << " " << spResult.size() << " " << endl;
 	      }
 	    }
 	  }
@@ -331,7 +331,7 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen, intVector& s
 	if (trainingQueriesPerRegionPair.find(regionpair) != trainingQueriesPerRegionPair.end())
 	  temp_score = trainingQueriesPerRegionPair.at(regionpair);
 	score = score + temp_count*temp_score;
-	cout << "TS: " << temp_count << ", " << temp_score << " " << score << endl;
+	//cout << "TS: " << temp_count << ", " << temp_score << " " << score << endl;
 	//Identify those pairs of region ids with positive benefit, where neither region can contribute any benefit to the path alone.
 	if(useStatArgs && temp_score>0 && conciseRegions.find(r1) != conciseRegions.end() && conciseRegions.find(r2) != conciseRegions.end()){
 	  benefitRegPairs.insert(regionpair);
@@ -346,13 +346,13 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen, intVector& s
   if (spResult.size()>0 && ts.divideScoreByLength) {
     if (ts.testScenario == ARCH_SERVER){
       score = score * pow(spResult.size(),2);
-      cout << "TS2: " << score << endl;      
+      //cout << "TS2: " << score << endl;      
     }else{
       score = score / spResult.size();
-      cout << "TS3: " << score << endl;
+      //cout << "TS3: " << score << endl;
     }
   }
-  cout << "TS4: " << spResult.front() << "," << spResult.back() << " " << score << endl;
+  //cout << "TS4: " << spResult.front() << "," << spResult.back() << " " << score << endl;
   return score;
 }
 void Probcache::fillCache(){
