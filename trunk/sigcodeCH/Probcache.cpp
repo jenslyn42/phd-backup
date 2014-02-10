@@ -343,7 +343,7 @@ double Probcache::calcScore(intVector& spResult, intPairSet& vSeen, intVector& s
   }
 
   // final update
-  if (spResult.size()>0 && ts.devideScoreByLength) {
+  if (spResult.size()>0 && ts.divideScoreByLength) {
     if (ts.testScenario == ARCH_SERVER){
       score = score * pow(spResult.size(),2);
       cout << "TS2: " << score << endl;      
@@ -658,7 +658,7 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
       }
       conciseIt = find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt);
 
-      if(ts.devideScoreByLength)
+      if(ts.divideScoreByLength)
 	currentBasescore = ((currentBasescore*(double)(spResultIntermediate.size())) + tmpBestScore)/(double)(spResultIntermediate.size()+1);
       else
 	currentBasescore = (currentBasescore*(double)(spResultIntermediate.size())) + tmpBestScore;
@@ -731,9 +731,12 @@ intVector Probcache::optimalOrderedFill(intPair stPair, intPairSet& vSeen, bool 
   //For each node in the full path with a none-zero score or en entry in the concise path, 
   //set the corrosponding entry in nodesWithBenefit to true
   for(int cur=0;cur<spResultLong.size(); cur++){
-    spResultIntermediate.push_back(spResultLong[cur]);
-    intermediateScore = calcScore(spResultIntermediate, vSeen);  
-    spResultIntermediate.pop_back();
+    intermediateScore = 0.0;
+    if(find(spResultIntermediate.begin(), spResultIntermediate.end(), spResultLong[cur]) == spResultIntermediate.end()){
+      spResultIntermediate.push_back(spResultLong[cur]);
+      intermediateScore = calcScore(spResultIntermediate, vSeen);  
+      spResultIntermediate.pop_back();
+    }
     if(conciseScore < intermediateScore || extraNidToAdd.find(spResultLong[cur]) != extraNidToAdd.end())
       nodesWithBenefit[cur] = true;
     else{

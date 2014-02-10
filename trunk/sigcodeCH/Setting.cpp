@@ -159,7 +159,7 @@ void TestSetting::printSetting() {
   cout << "scacheQueryType: " <<  scacheQueryType << endl;
   cout << "splits, itemsInCache, nonEmptyRegionPairs: " <<  splits << " " << itemsInCache << " " << nonEmptyRegionPairs << endl;
   cout << "fillCacheTime, buildStatisticsTime: " <<  fillCacheTime << " " << buildStatisticsTime << endl;
-  cout << "useConcisePath, measureConcisepathdegrees, devideScoreByLength: " << useConcisepath << " " << measureConcisepathdegrees << " " << devideScoreByLength << endl;
+  cout << "useConcisePath, measureConcisepathdegrees, divideScoreByLength: " << useConcisepath << " " << measureConcisepathdegrees << " " << divideScoreByLength << endl;
   cout << "--------------------------\n\n" << endl;
 }
 
