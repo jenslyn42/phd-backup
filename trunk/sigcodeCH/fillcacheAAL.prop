@@ -15,7 +15,7 @@ testSPtype = optimal
 // choices: FULL, CONCISE, OPTIMAL
 
 
-testName = cachesize_SPC_AAL.test
+testName = v_cachesize_SPCPLUS_aal_orfi.test
 
 
 autoTestName = true
@@ -45,6 +45,7 @@ scacheQueryType = 3
 executeTrainingWorkload = false
 devideScoreByLength = true
 
+
 experiment = cachesize
 // choices: single, split, cachesize, optimalpct
 
@@ -53,7 +54,7 @@ useConcisepath = false
 measureConcisepathdegrees = false
 
 
-testOptimaltype = orderfill
+testOptimaltype = original
 //choices: original, kskip, rand, orderfill
 
 optiNum = 40
@@ -61,8 +62,7 @@ optiNum = 40
 
 
 lowCacheSize = 1024
-highCacheSize = 419430400
-//lowCacheSize = 419430400
+highCacheSize = 536870912
 //highCacheSize = 274877906944
 // used for the varying cachesize experiment
 
