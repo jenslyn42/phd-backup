@@ -151,7 +151,7 @@ public:
   bool useConcisepath;
   bool measureConcisepathdegrees;
   bool executeTrainingWorkload;
-  bool devideScoreByLength;
+  bool divideScoreByLength;
   
   unsigned long optiLength, longLength;
   int numOpti, numLong;
