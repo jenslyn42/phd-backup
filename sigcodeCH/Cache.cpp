@@ -320,7 +320,6 @@ bool CacheStorage::hasEnoughSpace(intVector& sp) {
       if (nodeIdsInCache.find(v) == nodeIdsInCache.end())  newNodes++;
     }
 
-//    if(newNodes == 0) return false;
     if ( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize ){ 
 //       cout << "HES1: " << newNodes << " (" << sp.front() <<  "," << sp.back() << ")" << endl;
       return true;
