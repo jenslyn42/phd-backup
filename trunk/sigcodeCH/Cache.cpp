@@ -320,13 +320,13 @@ bool CacheStorage::hasEnoughSpace(intVector& sp) {
       if (nodeIdsInCache.find(v) == nodeIdsInCache.end())  newNodes++;
     }
 
-    if ( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize ){ 
-//       cout << "HES1: " << newNodes << " (" << sp.front() <<  "," << sp.back() << ")" << endl;
+//     if ( (nodeIdsInCache.size() + newNodes ) * ( NODE_BITS + BIT*(cache.size()+1)) <= cacheSize ){ 
+    if((numberOfNodes + sp.size()) * NODE_BITS * log2(cache.size()) <= cacheSize){
       return true;
+      cacheUsed = numberOfNodes * NODE_BITS * log2(cache.size());
     }
   } else if(testStorage == STORE_LIST) {
     if ( cacheUsed + sp.size()*NODE_BITS < cacheSize ) {
-//       cout << "HES2: " << cacheUsed << ", " << sp.size() << ", " << cacheSize << ", " << NODE_BITS << ", " << sp.size()*NODE_BITS << endl;
       return true;
     }
   } else if(testStorage == STORE_COMPRESS) {
@@ -358,9 +358,10 @@ void CacheStorage::updateCacheUsed(CacheItem ci) {
 	nodeIdsInCache[nid].push_back(0);
     }
     if(debugCache) cout << "cacheused: (" << cacheUsed <<") " << nodeIdsInCache.size() << " " << NODE_BITS  << " " << BIT << " " << cache.size() << " || ";
-    cacheUsed =  nodeIdsInCache.size() * (NODE_BITS + BIT*cache.size()) ;
+//     cacheUsed =  nodeIdsInCache.size() * (NODE_BITS + BIT*cache.size()) ;
     if(debugCache) cout << cacheUsed << " (" << cacheSize - cacheUsed << ")" << endl;
     numberOfNodes += ci.size;
+    cacheUsed = numberOfNodes * NODE_BITS * log2(cache.size());
   }else if (testStorage == STORE_LIST) {
     if(debugCache) cout << "cacheused: (" << cacheUsed <<") " << cacheUsed << "+" << ci.size << "*" << NODE_BITS << " = ";
     cacheUsed = cacheUsed + ci.size*NODE_BITS;
