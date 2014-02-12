@@ -68,7 +68,7 @@ class TestObject {
     ~TestObject() {
        delete test;
     };
-	  
+ 
    void runStaticTest();
    void printResults();
 
@@ -80,7 +80,6 @@ class TestObject {
 };
 
 
-
 TestObject::TestObject(TestSetting settings) {	
   ts = settings;
   
@@ -88,7 +87,7 @@ TestObject::TestObject(TestSetting settings) {
 
   cout << "TestObject::constructor: " << MatchEnumString(ALGO_ENUM,ts.testAlgo) << " test choosen" << endl;
   stats("mem.use", ss);
-	  
+ 
   switch( ts.testAlgo ){
     case ALGO_NONE:
       ts.cacheSize = 0;// a special case with 0 cacheSize
@@ -386,49 +385,47 @@ void ExperimentSingle(TestSetting ts) {
 
 int main(int argc, char *argv[]) {
 
-
-	InitEnumMappings();	// initialization
-	
-	srand(0);	srand48(0);
-	
+  InitEnumMappings();  // initialization
+  
+  srand(0);  srand48(0);
+  
 cout << "******************************************" << endl;
 cout << "BEGIN TESTS" << endl;
 cout << "******************************************" << endl;
 
-	//Test setting
-	///Load settings from config.prob
-	//TestSetting ts;
-	//ts.addConfigFromFile("config.prop");	// load dou parameter values
-	//ts.addConfigFromCmdLine(argc,argv);		// override parameter values
-	//ts.listConfig();		// list the content of the config
-	
-	///Load settings from commandline
-	TestSetting ts;
-	ts.addConfigFromCmdLine(argc,argv);    // get the "configName" parameter from command line
-	string configName= ts.getConfigString("configName");
+  //Test setting
+  ///Load settings from config.prob
+  //TestSetting ts;
+  //ts.addConfigFromFile("config.prop");  // load dou parameter values
+  //ts.addConfigFromCmdLine(argc,argv);    // override parameter values
+  //ts.listConfig();    // list the content of the config
+  
+  ///Load settings from commandline
+  TestSetting ts;
+  ts.addConfigFromCmdLine(argc,argv);    // get the "configName" parameter from command line
+  string configName= ts.getConfigString("configName");
 
-	ts.addConfigFromFile( configName.c_str() );    // load default parameter values
-	ts.addConfigFromCmdLine(argc,argv);     // override parameter values
+  ts.addConfigFromFile( configName.c_str() );    // load default parameter values
+  ts.addConfigFromCmdLine(argc,argv);     // override parameter values
+  
+  
+  extractTestParameters(ts);
+  ts.printSetting();
+  
+  string experiment = ts.getConfigString("experiment");
+  boost::to_upper(experiment);  
+  
+  cout << "HERE THE EXPERIMENTS SHOULD START!!\n" << endl;
+  
+  
+  if (experiment.compare("SINGLE")==0)
+    ExperimentSingle(ts);
+  else if (experiment.compare("SPLIT")==0)
+    ExperimentVarySplit(ts);
+  else if (experiment.compare("CACHESIZE")==0)
+    ExperimentVaryCacheSize(ts);
+  else if (experiment.compare("OPTIMALPCT")==0)
+    ExperimentVaryOptimalLengthPct(ts);
 
-	
-	
-	extractTestParameters(ts);
-	ts.printSetting();
-	
-	string experiment = ts.getConfigString("experiment");
-	boost::to_upper(experiment);	
-	
-	cout << "HERE THE EXPERIMENTS SHOULD START!!\n" << endl;
-	
-	
-	if (experiment.compare("SINGLE")==0)
-		ExperimentSingle(ts);
-	else if (experiment.compare("SPLIT")==0)
-		ExperimentVarySplit(ts);
-	else if (experiment.compare("CACHESIZE")==0)
-		ExperimentVaryCacheSize(ts);
-	else if (experiment.compare("OPTIMALPCT")==0)
-		ExperimentVaryOptimalLengthPct(ts);
-
-	return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 };
