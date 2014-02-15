@@ -2,7 +2,7 @@
 //	 both lower-case/upper-case choices are supported
 // while choices are case insensitive, the variables are NOT
 
-testAlgo = LRUPLUS
+testAlgo = SPCPLUS
 // choices: NONE, SPC, SPCPLUS, SPCSTAR, LRU, LRUPLUS, HQF, SCACHE, HQFLRU, ORACLE
 // Since '+','*' is not allowed in filename; we use SPCPLUS, SPCSTAR instead
 // note: no need to specify the "cache storage" type; it is decided by "testAlgo" directly
@@ -11,7 +11,7 @@ testScenario = PROXY
 // choices: SERVER, PROXY
 
 
-testSPtype = CONCISE
+testSPtype = full
 // choices: FULL, CONCISE, OPTIMAL
 
 
@@ -27,9 +27,9 @@ testFile = USA-road-d.NY.cedge
 // choices: aalborgNEW.cedge, beijingNEW.cedge, USA-road-d.COL.cedge, USA-road-d.NY.cedge
 
 
-//queryFileName = RAND00USA-road-d.NYGP10R16000Q1000000.qtest
+queryFileName = RAND00USA-road-d.NYGP10R16000Q1000000.qtest
 //queryFileName = MANUALUSA-road-d.NYGP10R32000Q1000000.qtest
-queryFileName = TWOPOINTUSA-road-d.NYGP2R32000Q1000000.qtest
+//queryFileName = TWOPOINTUSA-road-d.NYGP2R32000Q1000000.qtest
 
 
 inputFileType = 3
@@ -39,7 +39,6 @@ inputFileType = 3
 splits = 14	
 
 
-//cachesize = 419430400
 cachesize = 65536
 //cachesize = 0
 // note: the cache size is expressed as the number of "bits"
@@ -57,7 +56,7 @@ useConcisepath = false
 measureConcisepathdegrees = false
 
 
-testOptimaltype = kskip
+testOptimaltype = original
 //choices: original, kskip, rand, orderfill
 
 optiNum = 40
@@ -65,7 +64,7 @@ optiNum = 40
 
 
 lowCacheSize = 1024
-highCacheSize = 419430400
+highCacheSize = 8388608
 //lowCacheSize = 419430400
 //highCacheSize = 274877906944
 // used for the varying cachesize experiment
