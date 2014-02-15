@@ -413,8 +413,7 @@ void RoadGraph::readRoadNetworkFile(string fn)
     addEdge(atoi(tokens[0].c_str()),atoi(tokens[1].c_str()),atof(tokens[2].c_str()));
 
     int check = 0;
-    while(getline(in_data, str))
-    {
+    while(getline(in_data, str)) {
       if(rgDebug) cout << "five, readNetworkFile! getline:" << str  << " check: " << check++ << endl;
       boost::algorithm::split(tokens, str, boost::algorithm::is_space());
       if(rgDebug) cout << "five1, readNetworkFile! getline:" << str  << " check: "  << check << endl;
@@ -478,8 +477,8 @@ void RoadGraph::readCedgeNetworkFile(string fn)
     map=new EdgeList[mapSize+1]; //map can accomodate mapSize+1 nodes, with ids upto mapSize.
     if(rgDebug) cout << "three, readCedgeNetworkFile! map: " << mapSize << endl;
 
-    while(getline(in_data, str))
-    {
+    while(getline(in_data, str)) {
+      if(str.length == 0) break;
       boost::algorithm::split(tokens, str, boost::algorithm::is_space());
       if(rgDebug) cout << "five1, readCedgeNetworkFile! getline:" << str << endl;
       addEdge(atoi(tokens[1].c_str()),atoi(tokens[2].c_str()),atof(tokens[3].c_str()));
@@ -493,18 +492,17 @@ void RoadGraph::readCedgeNetworkFile(string fn)
   if(useConcisepath){
     if(rgDebug) cout << "seven, readCedgeNetworkFile!" << endl;
     ifstream in_nodedist (nodeFN.c_str(), ios::in);
-    if(in_nodedist.is_open())
-    {
-      while(getline(in_nodedist, str))
-      {
+    if(in_nodedist.is_open()) {
+      while(getline(in_nodedist, str)) {
+	if(str.length == 0) break;
 	boost::algorithm::split(tokens, str, boost::algorithm::is_space());
 	if(rgDebug) cout << "nine, readCedgeNetworkFile! getline:" << str << endl;
 	nid2Point[atoi(tokens[0].c_str())] = make_pair<double,double>(atoi(tokens[1].c_str()),atof(tokens[2].c_str()));
 	count++;
       }
       in_nodedist.close();
-      }
     }
+  }
   cout << "-| " << nid2Point.size() << " |- " << useConcisepath << " - " << mapSize << " - " << count << endl;
   findNode2degree();
 }

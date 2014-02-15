@@ -246,8 +246,7 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
       ordering.insert(std::make_pair<int,int>(*itr, numTotalQueries));
       tmpItem.updateKey(numTotalQueries);
       nodesInCache =+ tmpItem.size;
-//       if(debugCompet) cout << "LRUPLUS::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
-//
+
       if(debugCompet) cout << "LRU::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
       break;
     }
