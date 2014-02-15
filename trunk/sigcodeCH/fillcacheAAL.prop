@@ -11,7 +11,7 @@ testScenario = PROXY
 // choices: SERVER, PROXY
 
 
-testSPtype = optimal
+testSPtype = CONCISE
 // choices: FULL, CONCISE, OPTIMAL
 
 
@@ -54,7 +54,7 @@ useConcisepath = false
 measureConcisepathdegrees = false
 
 
-testOptimaltype = orderfill
+testOptimaltype = original
 //choices: original, kskip, rand, orderfill
 
 optiNum = 40
@@ -62,7 +62,7 @@ optiNum = 40
 
 
 lowCacheSize = 1024
-highCacheSize = 536870912
+highCacheSize = 8388608
 //highCacheSize = 274877906944
 // used for the varying cachesize experiment
 
