@@ -40,6 +40,7 @@ public:
   void buildCache();
   void runQueryList();
   void fillCache();
+  intVector kskip(intPair stPair, int pct);
 
 private:
   long nodesInCache; // keep track of total number of nodes in all cache items

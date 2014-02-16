@@ -90,10 +90,17 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts){
   return mapInstance;
 }
 
+
+vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {
+  if(useConcisepath)
+    return (conciseDijkstraSSSP(source, dest)).second;
+  return (conciseDijkstraSSSP(source, dest)).first;
+}
+
 // 	Dijkstra sp(updGraph);
 // 	Path path;
 // 	EdgeWeight spDist;
-vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {
+std::pair<intVector, intVector> RoadGraph::conciseDijkstraSSSP(int source, int dest) {
   std::vector<int> trace, trace2;
   std::vector<unsigned int> temp, temp2;
   Path path2;
@@ -117,9 +124,9 @@ vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {
   //////////////////
         
   if(useConcisepath)
-    return calcConsisePath(trace);
+    return make_pair<intVector, intVector>(trace, calcConsisePath(trace));
   else 
-    return trace;
+    return make_pair<intVector, intVector>(trace, trace2);
 }
 
 vector<int> RoadGraph::dijkstraSSSP2(int source, int dest) {
@@ -770,7 +777,7 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
     }
   }
   concisepath.push_back(trace[0]); //in the loop above we put a guard i != 0, which prevents the last node from being added to the concise path.
-   if(conciseDebug) cout << "5..0: [" << trace[0] << ", " << concisepath.size() << "] " << endl;
+  if(conciseDebug) cout << "5..0: [" << trace[0] << ", " << concisepath.size() << "] " << endl;
 
   outdegree= map[trace[0]].size();
   if(outdegree < 3){ degree2++; degree2Added++;}

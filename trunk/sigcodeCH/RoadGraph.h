@@ -39,6 +39,7 @@ class RoadGraph
 public:
 	static RoadGraph* mapObject(TestSetting& ts);
 	void setMapFile(string file);
+	std::pair<intVector, intVector> conciseDijkstraSSSP(int s, int t);
 	std::vector<int> dijkstraSSSP(int s, int t);
 	std::vector<int> dijkstraSSSP2(int s, int t);
 	int getMapsize();
