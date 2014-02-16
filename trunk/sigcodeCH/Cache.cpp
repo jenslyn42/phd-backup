@@ -61,9 +61,9 @@ void AbstractCache::readMapData() {
 
   //read in the mapping between Points and node ids from *.cnode file
   if (in_data.is_open()) {
-    for(int i = 0; i < mapSize; i++)
-    {
+    for(int i = 0; i < mapSize; i++) {
       getline(in_data, str);
+      if(str.length() == 0) break;
       boost::algorithm::split(tokens, str, boost::algorithm::is_space());
       tmpPair = std::make_pair(atof(tokens[1].c_str()),atof(tokens[2].c_str()));
       Point2Nodeid[tmpPair] = atoi(tokens[0].c_str());
