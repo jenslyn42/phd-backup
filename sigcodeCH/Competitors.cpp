@@ -1,5 +1,5 @@
-#define debugCompet true
-
+#define debugCompet false
+#define debugProbc false
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -264,7 +264,12 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
   }
 
   if(!cacheHit) {
-    vector<int> spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
+    vector<int> spResult;
+    if(ts.testOptimaltype == OPTIMALTYPE_ORG)
+      spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
+    else if(ts.testOptimaltype == OPTIMALTYPE_KSKIP)
+      spResult = kskip(query, ts.optiNum);
+    
     numDijkstraCalls++;
     int querySize = spResult.size();
 
@@ -374,6 +379,58 @@ void LRUPLUS::insertItem(intVector& sp) {
     cout << endl;
   }
 }
+
+
+intVector LRUPLUS::kskip(intPair stPair, int pct){
+  if(debugProbc) cout << "LRUPLUS::kskip((" << stPair.first <<","<< stPair.second << "), " << pct << ")" << endl;
+  intVector spResultIntermediate, spDiff;
+  pair<intVector, intVector> spaths;
+  std::vector<int>::iterator originalIt, conciseIt;
+  if(debugProbc) cout << "LRUPLUS::kskip Q_01:(" << endl;
+  //Order is important! call setConcisePathUse false last!
+  RoadGraph::mapObject(ts)->setConcisePathUse(true);
+  spaths = RoadGraph::mapObject(ts)->conciseDijkstraSSSP(stPair.first, stPair.second); 
+  intVector& spResultShort = spaths.second;
+  intVector& spResultLong = spaths.first;
+
+  if(debugProbc) cout << "LRUPLUS::kskip Q_02:(" << endl;
+  int nodesInOptimal = (double)spResultLong.size()*(double)((double)pct/(double)100.0); //calc number of nodes in optimal k-skip path
+  int diffSize = spResultLong.size() - spResultShort.size();
+  int kskip;
+  //if the optimal k-skip length is shorter than CONCISE, just return concise
+  if(nodesInOptimal-spResultShort.size() <= 0)
+    return spResultShort;
+  else
+     kskip = diffSize / (nodesInOptimal-spResultShort.size()); //calc k skip
+  
+  if(kskip < 1) return spResultShort;
+  
+  if(debugProbc) cout << "LRUPLUS::kskip Q_03:( " << nodesInOptimal << ", " << diffSize << ", " << kskip << ", " << pct << ", " << spResultLong.size() << "/" << spResultShort.size() << endl;
+  intVector tempLong, tempConsise;
+  tempLong = spResultLong;
+  tempConsise = spResultShort;
+  std::sort (tempLong.begin(),tempLong.end());
+  std::sort (tempConsise.begin(),tempConsise.end());
+  
+  spResultIntermediate = spResultShort;
+ 
+  //find the set difference between concise and full path. This set is the candidate set for insertion when calculating optimalPath
+  std::set_symmetric_difference(tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), std::back_inserter(spDiff));
+
+  for(int i=0; i < spDiff.size(); i +=kskip){
+    originalIt = find(spResultLong.begin(), spResultLong.end(), spDiff[i]);
+    
+    while(find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt) == spResultIntermediate.end()){
+      originalIt--;
+    }
+    conciseIt = find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt);
+   
+    spResultIntermediate.insert(conciseIt+1, spDiff[i]);
+  }
+  if(debugProbc) cout << "LRUPLUS::kskip Q_05:( " << spResultIntermediate.size() << endl;
+  return spResultIntermediate;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
