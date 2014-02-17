@@ -258,6 +258,7 @@ void extractTestParameters(TestSetting& ts) {
   ts.splits = ts.getConfigInt("splits");  // for Probcache (SPC)
   ts.scacheQueryType = ts.getConfigInt("scacheQueryType");  // for SCACHE
   ts.executeTrainingWorkload = ts.getConfigBool("executeTrainingWorkload");
+  ts.useLRUbitmap = ts.getConfigBool("useLRUbitmap");
   ts.divideScoreByLength = ts.getConfigBool("divideScoreByLength");
   ts.optiNum = ts.getConfigInt("optiNum");  
   ts.cacheSize = ts.getConfigLong("cachesize");  // as number of bits

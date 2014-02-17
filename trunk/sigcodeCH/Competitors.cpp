@@ -237,7 +237,8 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
   int cachehit;
   boost::unordered_set<int>::const_iterator got;
 
-  for (boost::unordered_set<int>::iterator itr = query1.begin(); itr != query1.end(); ++itr) {
+  int counter=0;
+  for (boost::unordered_set<int>::iterator itr = query1.begin(); itr != query1.end(); ++itr, counter++) {
     if((got = query2.find(*itr)) != query2.end()){
       numCacheHits++;
       cacheHit = true;
@@ -245,8 +246,11 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
       ordering.erase(std::make_pair<int,int>(*itr, tmpItem.key() ) );
       ordering.insert(std::make_pair<int,int>(*itr, numTotalQueries));
       tmpItem.updateKey(numTotalQueries);
-      nodesInCache =+ tmpItem.size;
-
+      nodesInCache += tmpItem.size;
+      if(ts.useLRUbitmap){
+	usefullParts[tmpItem.id][counter] = 1;
+	if(!usefullParts[tmpItem.id].test(counter)) cout << "DOES NOT WORK" << endl;
+      }
       if(debugCompet) cout << "LRU::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
       break;
     }
@@ -265,43 +269,37 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 
   if(!cacheHit) {
     vector<int> spResult;
-    if(ts.testOptimaltype == OPTIMALTYPE_ORG)
-      spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
-    else if(ts.testOptimaltype == OPTIMALTYPE_KSKIP)
+    pair<intVector, intVector> spaths;
+    if(ts.testOptimaltype == OPTIMALTYPE_ORG){
+      if(ts.useLRUbitmap){
+	RoadGraph::mapObject(ts)->setConcisePathUse(true);
+	spaths = RoadGraph::mapObject(ts)->conciseDijkstraSSSP(query.first, query.second);
+	spResult = spaths.first;
+      }else
+	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
+    }else if(ts.testOptimaltype == OPTIMALTYPE_KSKIP)
       spResult = kskip(query, ts.optiNum);
     
     numDijkstraCalls++;
     int querySize = spResult.size();
-
-    if(cache.size() != 0){
-//       if(debugCompet) cout << "LRUPLUS::checkAndUpdateCache 1, querySize: "<< querySize << endl;
-      if(debugCompet) cout << "LRU::checkAndUpdateCache 1, querySize: "<< querySize << endl;
+    
+    if(debugCompet) cout << "LRU::checkAndUpdateCache 1, querySize: "<< querySize << endl;
+    if(ts.useLRUbitmap)
+      insertItem(spResult, spaths.second);
+    else
       insertItem(spResult);
-    }else{
-//       if(debugCompet) cout << "LRUPLUS::checkAndUpdateCache 2, querySize: "<< querySize << endl;
-      if(debugCompet) cout << "LRU::checkAndUpdateCache 2, querySize: "<< querySize << endl;
-      CacheItem cItem (numTotalQueries, spResult);
-      cache[cItem.id] = cItem;
-      ordering.insert(std::make_pair<int,int>(cItem.id, cItem.key()));
-      nodesInCache =+ cItem.size;
-      //update inverted lists
-      for (vector<int>::iterator itr = spResult.begin(); itr != spResult.end(); ++itr) {
-	if(invList.find(*itr) == invList.end())
-	  invList[*itr] = boost::unordered_set<int>();
-
-	invList[*itr].insert(cItem.id);
-      }
-    }
-//     if(debugCompet) cout << "LRUPLUS::checkAndUpdateCache 3" << endl;
   }
 }
 
+int LRUPLUS::insertItem(intVector& sp) {
+  intVector placeholder;
+  return insertItem(sp, placeholder);  
+}
 
-void LRUPLUS::insertItem(intVector& sp) {
+int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
   int spSize = sp.size();
   bool notEnoughSpace = true;
-//   if(debugCompet){
-//     cout << "one, LRUPLUS::insertItem(" << spSize << ")" << endl;
+
   if(debugCompet){
     cout << "one, LRU::insertItem(" << spSize << ") - " << numTotalQueries << ", " << numCacheHits << endl;
     std::priority_queue<int> cacheQueue;
@@ -313,6 +311,7 @@ void LRUPLUS::insertItem(intVector& sp) {
     }
     cout << endl;
   }
+  
   //insert query into cache, will repeatedly remove items until there is enough space for the new item.
   do{
     if((cacheSize - cacheUsed) >= spSize*NODE_BITS) {
@@ -322,48 +321,106 @@ void LRUPLUS::insertItem(intVector& sp) {
         cout << "two1, LRU::insertItem INSERT (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed;
       CacheItem cItem (numTotalQueries, sp);
       cache[cItem.id] = cItem;
-      nodesInCache =+ cItem.size;
+      nodesInCache += cItem.size;
       ordering.insert(std::make_pair<int,int>(cItem.id, cItem.key()));
       //update inverted list
       for (vector<int>::iterator itr = sp.begin(); itr != sp.end(); ++itr) {
 	if(invList.find(*itr) == invList.end()){
 	  invList[*itr] = boost::unordered_set<int>();
-	  invList[*itr].insert(cItem.id);
-	}else{
-	  invList[*itr].insert(cItem.id);
+	invList[*itr].insert(cItem.id);
 	}
       }
 
       cacheUsed = cacheUsed + cItem.size*NODE_BITS;
       if(spSize != cItem.size) cout << "LRUPLUS::insertItem ERROR ERROR ERROR :: spSize != cItem.size" << endl;
 
+      //each path keeps a bitmap for tracking which nodes are used in CONCISE
+      //such information will be used to decide which concise path to use (before the actual eviction)
+      //Extract bitmap
+      uint curConsPos=0, curFullPos=0;
+      if(ts.useLRUbitmap){
+	concisePartsp[cItem.id] = boost::dynamic_bitset<>(cItem.size);
+	usefullParts[cItem.id] = boost::dynamic_bitset<>(cItem.size);
+	for (vector<int>::iterator itr = sp.begin(); itr != sp.end(); ++itr, curFullPos++) {
+	  if(*itr == conciseSp[curConsPos]) {
+	    concisePartsp[cItem.id].flip(curFullPos);
+	    curConsPos++;
+	  }
+	}
+      }
+      removalStatus[cItem.id] = 1;
       notEnoughSpace = false;
-      if (debugCompet)
-        cout << " TWO:(" << cacheSize <<"," << cacheUsed << ")"<<endl;
+      return cItem.id;     
 
     }else if ( spSize*NODE_BITS < cacheSize) {
-//       if (debugCompet)
-//         cout << "three1, LRUPLUS::insertItem REMOVE (node,size): " << (*(ordering.begin())).first << ", " << cache[(*(ordering.begin())).first].size <<endl;
+//       3 cases:
+//       1. full item -> reduce to CONCISE + node pairs where path has contributed to a cache hit
+//       2. reduced item -> reduce to CONCISE path
+//       3. CONCISE path -> remove path
+      
       if (debugCompet)
         cout << "three1, LRU::insertItem REMOVE (node,size): " << (*(ordering.begin())).first << ", " << cache[(*(ordering.begin())).first].size <<endl;
       intPair rID = *(ordering.begin()); // path to remove
       int rPid = rID.first;
       vector<int>& rItem = cache[rPid].item;
+      intVector tempItem;
+      boost::dynamic_bitset<> tempConsiseParts;
 
-      //update inverted list
-      for(vector<int>::iterator itr = rItem.begin(); itr != rItem.end(); ++itr){
-	invList[*itr].erase(rPid);
+      if(!ts.useLRUbitmap)
+	removalStatus[rPid] = 3; //remove path from cache, do not reduce path size
+	
+      switch(removalStatus[rPid]){
+	case 1: //reduce the path
+	  for (int i=0; i< rItem.size(); i++) {
+	    if(concisePartsp[rPid].test(i)){
+	      tempItem.push_back(rItem[i]);
+	      tempConsiseParts.push_back(1);
+	    }else if(usefullParts[rPid].test(i)) {
+	      tempItem.push_back(rItem[i]);
+	      tempConsiseParts.push_back(0);
+	    }else{
+	      tempConsiseParts.push_back(0);
+	      invList[rItem[i]].erase(rPid); //remove node -> path from inverted list
+	    }
+	  }
+	  
+	  nodesInCache -= (rItem.size() - tempItem.size());
+	  cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
+	  cache[rPid].item = tempItem;
+	  cache[rPid].size = tempItem.size();
+	  concisePartsp[rPid] = tempConsiseParts;
+	  usefullParts.erase(rPid);	  
+	  removalStatus[rPid] = 2;
+	  break;
+	case 2: //limit path to CONCISE
+	  for (int i=0; i< rItem.size(); i++) {
+	    if(concisePartsp[rPid].test(i)){
+	      tempItem.push_back(rItem[i]);
+	    }else
+	      invList[rItem[i]].erase(rPid); //remove node -> path from inverted list
+	  }
+	  nodesInCache -= (rItem.size() - tempItem.size());
+	  cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
+	  cache[rPid].item = tempItem;
+	  cache[rPid].size = tempItem.size();
+	  concisePartsp.erase(rPid);
+	  cacheUsed -= tempItem.size()*NODE_BITS;
+	  removalStatus[rPid] = 3;
+	  break;
+	case 3: //remove path
+	  //update inverted list
+	  for(vector<int>::iterator itr = rItem.begin(); itr != rItem.end(); ++itr){
+	    invList[*itr].erase(rPid);
+	  }
+
+	  int itemSize = cache[rPid].size;  // oldest item
+	  cache.erase(rPid);
+	  ordering.erase(ordering.begin());
+	  nodesInCache =- itemSize;
+
+	  cacheUsed = cacheUsed - itemSize*NODE_BITS;
+	  break;
       }
-
-      int itemSize = cache[rPid].size;  // oldest item
-      cache.erase(rPid);
-      ordering.erase(ordering.begin());
-      nodesInCache =- itemSize;
-
-      cacheUsed = cacheUsed - itemSize*NODE_BITS;
-//       if (debugCompet)
-//         cout << "three2, LRUPLUS::insertItem" <<endl;
-
     } else
       break;
   } while(notEnoughSpace);
@@ -377,6 +434,8 @@ void LRUPLUS::insertItem(intVector& sp) {
       cacheQueue.pop();
     }
     cout << endl;
+    cout << "ERROR - PATH TOO LONG FOR CACHE";
+    return -1;
   }
 }
 
