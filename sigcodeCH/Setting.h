@@ -152,6 +152,7 @@ public:
   bool measureConcisepathdegrees;
   bool executeTrainingWorkload;
   bool divideScoreByLength;
+  bool useLRUbitmap;
   
   unsigned long optiLength, longLength;
   int numOpti, numLong;
