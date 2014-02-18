@@ -1,4 +1,4 @@
-#define debugCompet true
+#define debugCompet false
 #define debugProbc false
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -317,7 +317,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
   
   //insert query into cache, will repeatedly remove items until there is enough space for the new item.
   do{
-    cout << "CALC: " << cacheSize <<"," << cacheUsed << " " << spSize << ":: " << (cacheSize - cacheUsed) << " " << spSize*NODE_BITS << endl;
+    if(debugCompet) cout << "CALC: " << cacheSize <<"," << cacheUsed << " " << spSize << ":: " << (cacheSize - cacheUsed) << " " << spSize*NODE_BITS << endl;
     if((cacheSize - cacheUsed) >= spSize*NODE_BITS) {
 //       if(debugCompet)
 //         cout << "two1, LRUPLUS::insertItem INSERT (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed;
@@ -381,7 +381,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	
       switch(removalStatus[rPid]){
 	case 1: //reduce the path
-	  cout << "case 1" << endl;
+	  if(debugCompet) cout << "case 1" << endl;
 	  for (int i=0; i< rItem.size(); i++) {
 	    if(concisePartsp[rPid].test(i)){
 	      tempItem.push_back(rItem[i]);
@@ -402,25 +402,25 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  concisePartsp[rPid] = tempConsiseParts;
 	  usefullParts.erase(rPid);	  
 	  removalStatus[rPid] = 2;
-	  cout << rPid << ", " << tempItem.size() << endl;
+	  if(debugCompet) cout << rPid << ", " << tempItem.size() << endl;
 	  break;
 	case 2: //limit path to CONCISE
-	  cout << "case 2" << endl;
+	  if(debugCompet) cout << "case 2" << endl;
 	  for (int i=0; i< rItem.size(); i++) {
 	    if(concisePartsp[rPid].test(i)){
 	      tempItem.push_back(rItem[i]);
 	    }else
 	      invList[rItem[i]].erase(rPid); //remove node -> path from inverted list
 	  }
-	  cout << "§ " << rItem.size() << " " << tempItem.size() << " - " << cacheUsed << " " << nodesInCache <<  endl;
+	  if(debugCompet) cout << "§ " << rItem.size() << " " << tempItem.size() << " - " << cacheUsed << " " << nodesInCache <<  endl;
 	  nodesInCache -= (rItem.size() - tempItem.size());
 	  cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
-	  cout << cacheUsed << " " << nodesInCache <<  endl;
+	  if(debugCompet) cout << cacheUsed << " " << nodesInCache <<  endl;
 	  cache[rPid].item = tempItem;
 	  cache[rPid].size = tempItem.size();
 	  concisePartsp.erase(rPid);
 	  removalStatus[rPid] = 3;
-	  cout << rPid << ", " << tempItem.size() << endl;
+	  if(debugCompet) cout << rPid << ", " << tempItem.size() << endl;
 	  break;
 	case 3: //remove path
 	  cout << "case 3" << endl;
