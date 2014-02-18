@@ -347,6 +347,36 @@ void ExperimentVaryCacheSize(TestSetting ts) {
   }
 }
 
+void ExperimentVaryCacheSizeFromFilesize(TestSetting ts) {
+  if (ts.getConfigBool("autoTestName")==true) {
+    ts.testName.insert(0,"_");
+    ts.testName.insert(0,MatchEnumString(SPTYPE_ENUM, ts.testSPtype));
+    ts.testName.insert(0,"v_cachesizeFile_");
+
+  cout << "(auto) testName: " << ts.testName << endl;
+  }
+  
+  unsigned long filesizeInBits = 8 * ts.getConfigLong("filesize"); //filesize assumed to be given in bytes
+
+  for (unsigned long csize = 0.05; csize <= 0.20 ; csize+=0.05) {
+    ts.cacheSize = filesizeInBits*csize;
+    cout << "*** Now using ts.cacheSize = " << ts.cacheSize << endl;
+
+    TestObject *expTest = new TestObject(ts);
+    expTest->runStaticTest();
+    delete expTest;
+  }
+  
+  for (unsigned long csize = 0.25; csize <= 1 ; csize+=0.25) {
+    ts.cacheSize = filesizeInBits*csize;
+    cout << "*** Now using ts.cacheSize = " << ts.cacheSize << endl;
+
+    TestObject *expTest = new TestObject(ts);
+    expTest->runStaticTest();
+    delete expTest;
+  }
+}
+
 
 void ExperimentVarySplit(TestSetting ts) {
   if (ts.getConfigBool("autoTestName")==true) {
@@ -426,6 +456,8 @@ cout << "******************************************" << endl;
   else if (experiment.compare("CACHESIZE")==0)
     ExperimentVaryCacheSize(ts);
   else if (experiment.compare("OPTIMALPCT")==0)
+    ExperimentVaryOptimalLengthPct(ts);
+  else if (experiment.compare("CACHESIZEFILE")==0)
     ExperimentVaryOptimalLengthPct(ts);
 
   return EXIT_SUCCESS;
