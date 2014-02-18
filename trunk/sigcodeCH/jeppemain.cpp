@@ -458,7 +458,7 @@ cout << "******************************************" << endl;
   else if (experiment.compare("OPTIMALPCT")==0)
     ExperimentVaryOptimalLengthPct(ts);
   else if (experiment.compare("CACHESIZEFILE")==0)
-    ExperimentVaryOptimalLengthPct(ts);
+    ExperimentVaryCacheSizeFromFilesize(ts);
 
   return EXIT_SUCCESS;
 };
