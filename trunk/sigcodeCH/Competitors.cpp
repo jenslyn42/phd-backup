@@ -352,7 +352,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  }
 	} cout << endl;
       }
-      cout << "/*/ " <<concisePartsp[cItem.id] << " /*/ " << usefullParts[cItem.id] << "///" << endl;
+      if(debugCompet) cout << "/*/ " <<concisePartsp[cItem.id] << " /*/ " << usefullParts[cItem.id] << "///" << endl;
       
       
       removalStatus[cItem.id] = 1;
@@ -374,7 +374,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       intVector tempItem;
       boost::dynamic_bitset<> tempConsiseParts;
 
-      cout << " * " <<concisePartsp[rPid] << " * " << usefullParts[rPid] << endl;
+      if(debugCompet) cout << " * " <<concisePartsp[rPid] << " * " << usefullParts[rPid] << endl;
       
       if(!ts.useLRUbitmap)
 	removalStatus[rPid] = 3; //remove path from cache, do not reduce path size
@@ -423,7 +423,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  if(debugCompet) cout << rPid << ", " << tempItem.size() << endl;
 	  break;
 	case 3: //remove path
-	  cout << "case 3" << endl;
+	  if(debugCompet) cout << "case 3" << endl;
 	  //update inverted list
 	  for(vector<int>::iterator itr = rItem.begin(); itr != rItem.end(); ++itr){
 	    invList[*itr].erase(rPid);
@@ -451,8 +451,8 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
     }
     cout << endl;
     cout << "ERROR - PATH TOO LONG FOR CACHE";
-    return -1;
   }
+  return -1;
 }
 
 
