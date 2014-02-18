@@ -356,9 +356,9 @@ void ExperimentVaryCacheSizeFromFilesize(TestSetting ts) {
   cout << "(auto) testName: " << ts.testName << endl;
   }
   
-  unsigned long filesizeInBits = 8 * ts.getConfigLong("filesize"); //filesize assumed to be given in bytes
+  double filesizeInBits = 8 * ts.getConfigLong("filesize"); //filesize assumed to be given in bytes
 
-  for (unsigned long csize = 0.05; csize <= 0.20 ; csize+=0.05) {
+  for (double csize = 0.05; csize <= 0.20 ; csize+=0.05) {
     ts.cacheSize = filesizeInBits*csize;
     cout << "*** Now using ts.cacheSize = " << ts.cacheSize << endl;
 
@@ -367,7 +367,7 @@ void ExperimentVaryCacheSizeFromFilesize(TestSetting ts) {
     delete expTest;
   }
   
-  for (unsigned long csize = 0.25; csize <= 1 ; csize+=0.25) {
+  for (double csize = 0.25; csize <= 1 ; csize+=0.25) {
     ts.cacheSize = filesizeInBits*csize;
     cout << "*** Now using ts.cacheSize = " << ts.cacheSize << endl;
 
