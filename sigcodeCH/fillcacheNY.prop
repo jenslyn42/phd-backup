@@ -11,7 +11,7 @@ testScenario = PROXY
 // choices: SERVER, PROXY
 
 
-testSPtype = full
+testSPtype = optimal
 // choices: FULL, CONCISE, OPTIMAL
 
 
@@ -46,7 +46,7 @@ cachesize = 65536
 
 scacheQueryType = 3
 executeTrainingWorkload = false
-divideScoreByLength = true
+divideScoreByLength = false
 useLRUbitmap = true
 
 experiment = cachesize
