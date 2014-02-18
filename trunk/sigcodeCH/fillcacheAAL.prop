@@ -52,7 +52,7 @@ experiment = cachesize
 
 useConcisepath = false
 measureConcisepathdegrees = false
-useLRUbitmap = false
+useLRUbitmap = true
 
 testOptimaltype = original
 //choices: original, kskip, rand, orderfill
