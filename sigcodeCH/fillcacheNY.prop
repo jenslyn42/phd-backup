@@ -64,7 +64,7 @@ optiNum = 40
 //pct of full path before stopping. 
 
 
-lowCacheSize = 1024
+lowCacheSize = 4096
 //highCacheSize = 8388608
 highCacheSize = 16777216
 //lowCacheSize = 419430400
