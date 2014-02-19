@@ -646,7 +646,7 @@ void HybridHQFLRU::runQueryList() {
   RoadGraph::mapObject(ts)->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
   cout<< "3.1 Done" << endl;
   BOOST_FOREACH(intPair q, testSTPointPairs ) { 
-    cout << "q: (" << q.first <<"," << q.second << ")" << endl;
+//     cout << "q: (" << q.first <<"," << q.second << ")" << endl;
     checkAndUpdateCache(q);
     numTotalQueries++;
   }
@@ -698,9 +698,8 @@ void HybridHQFLRU::fillCache()
     tmp.pID = rp;
     tmp.dist = coordinateStats.at(rp);
     mhCache.push(tmp);
-  }
 
-  cout << "fillCache loop start" << endl;
+    
   //Fill cache
   while(!mhCache.empty())
   {
