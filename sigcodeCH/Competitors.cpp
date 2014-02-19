@@ -700,22 +700,23 @@ void HybridHQFLRU::fillCache()
     mhCache.push(tmp);
 
     
-  //Fill cache
-  while(!mhCache.empty())
-  {
-    tmp= mhCache.top();
-    mhCache.pop();
+    //Fill cache
+    while(!mhCache.empty())
+    {
+      tmp= mhCache.top();
+      mhCache.pop();
 
-     if(bucketList.find(tmp.pID) != bucketList.end())
-     {
-      if(cache.hasEnoughSpace(bucketList.at(tmp.pID)))
-                if(cache.insertItem(bucketList.at(tmp.pID))){}
-    }else{
-      cout << "BLARG!! error occurred" << endl;
+      if(bucketList.find(tmp.pID) != bucketList.end())
+      {
+	if(cache.hasEnoughSpace(bucketList.at(tmp.pID)))
+		  if(cache.insertItem(bucketList.at(tmp.pID))){}
+      }else{
+	cout << "BLARG!! error occurred" << endl;
+      }
     }
+    ts.setItemsInCache(cache.numberOfItemsInCache());
+    plotCachePoints(cache.cache);
   }
-  ts.setItemsInCache(cache.numberOfItemsInCache());
-  plotCachePoints(cache.cache);
 }
 
 
