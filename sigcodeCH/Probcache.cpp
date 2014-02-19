@@ -598,8 +598,7 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
   RoadGraph::mapObject(ts)->setConcisePathUse(false);
   spResultLong = RoadGraph::mapObject(ts)->dijkstraSSSP(stPair.first, stPair.second);
   longScore = calcScore(spResultLong, vSeen);
-//   if(debugProbc) 
-    cout << "Probcache::optimalPath Q_01:(" << endl;
+//   if(debugProbc) cout << "Probcache::optimalPath Q_01:(" << endl;
   intVector tempLong, tempConsise;
   tempLong = spResultLong;
   tempConsise = spResultShort;
@@ -664,7 +663,7 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
 	currentBasescore = ((currentBasescore*(double)(spResultIntermediate.size())) + tmpBestScore)/(double)(spResultIntermediate.size()+1);
       else
 	currentBasescore = (currentBasescore*(double)(spResultIntermediate.size())) + tmpBestScore;
-       cout << "Probcache::optiPath Q5_2: " << spDiff.size() << endl;
+       //cout << "Probcache::optiPath Q5_2: " << spDiff.size() << endl;
       if(currentBasescore > currentScore) {
 	spResultIntermediate.insert(conciseIt+1, curBestOption);
 
@@ -689,7 +688,7 @@ intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random)
 	ts.numOpti++;
 	ts.longLength+= spResultLong.size();
 	ts.numLong++;
-      cout << "Probcache::optimalPath Q_042:(" << ts.optiLength << ", " <<ts.numOpti << ") (" << ts.longLength << ", " << ts.numLong << ")" << endl;
+      //cout << "Probcache::optimalPath Q_042:(" << ts.optiLength << ", " <<ts.numOpti << ") (" << ts.longLength << ", " << ts.numLong << ")" << endl;
 	///////////////////
     return spResultIntermediate;
   }
