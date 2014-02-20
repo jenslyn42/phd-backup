@@ -190,7 +190,7 @@ void TestObject::printResults() {
     resultfile << "QueryTime\tCacheHits\tDijkstraCalls\tSPcalls\tNodesVisited\t"
     << "Algorithm\tScenario\tCacheSize\tCacheItems\tAvg.ItemLength\tSplits\tQueryFile\t"
     << "NonEmptyRegions\tCalcStatTime\tFillCacheTime\tuseConcisepath\tmeasureConcisepathdegrees\t"
-    << "bitsInCache\tSPcalc\texecTrainWL\tConciseType\tOptimalType\tOptimalPct\tDivideScoreByLength" << endl;
+    << "bitsInCache\tSPcalc\texecTrainWL\tConciseType\tOptimalType\tOptimalPct\tDivideScoreByLength\tuseLRUbitmap" << endl;
   }
 
   // note: "typeid(*test).name()" no longer used
@@ -221,7 +221,8 @@ void TestObject::printResults() {
   << MatchEnumString(CONCISETYPE_ENUM,ts.testConcisetype) << "\t"
   << MatchEnumString(OPTIMALTYPE_ENUM, ts.testOptimaltype) << "\t"
   << ts.optiNum << "\t"
-  << ts.divideScoreByLength
+  << ts.divideScoreByLength << "\t"
+  << ts.useLRUbitmap
   << endl;
 
   resultfile.close();
