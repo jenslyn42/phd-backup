@@ -2,7 +2,7 @@
 //	 both lower-case/upper-case choices are supported
 // while choices are case insensitive, the variables are NOT
 
-testAlgo = SPCPLUS
+testAlgo = LRUPLUS
 // choices: NONE, SPC, SPCPLUS, SPCSTAR, LRU, LRUPLUS, HQF, SCACHE, HQFLRU, ORACLE
 // Since '+','*' is not allowed in filename; we use SPCPLUS, SPCSTAR instead
 // note: no need to specify the "cache storage" type; it is decided by "testAlgo" directly
@@ -27,7 +27,7 @@ testFile = USA-road-d.NY.cedge
 // choices: aalborgNEW.cedge, beijingNEW.cedge, USA-road-d.COL.cedge, USA-road-d.NY.cedge
 
 
-queryFileName = RAND00USA-road-d.NYGP10R16000Q100000.qtest
+queryFileName = USA-road-d.NYGP10R5000Q100000.qtest
 //queryFileName = MANUALUSA-road-d.NYGP10R32000Q1000000.qtest
 //queryFileName = TWOPOINTUSA-road-d.NYGP2R32000Q1000000.qtest
 
