@@ -49,7 +49,7 @@ Counter counter;
 
 #define debug false
 
-#include "mysql.h"
+//#include "mysql.h"
 #include "Setting.h"
 #include "RoadGraph.h"
 #include "Cache.h"
