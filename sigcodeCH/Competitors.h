@@ -43,6 +43,7 @@ public:
   intVector kskip(intPair stPair, int pct);
 
 private:
+  uint orderVal; //for LRU ordering. Lower=older item, higher=newer item
   long nodesInCache; // keep track of total number of nodes in all cache items
   boost::unordered_map<int, boost::dynamic_bitset<> > concisePartsp; // pid -> bitmap of which nodes are used by concise
   boost::unordered_map<int, boost::dynamic_bitset<> > usefullParts; // pid -> bitmap of which nodes are used when path contributes to a cache hit
