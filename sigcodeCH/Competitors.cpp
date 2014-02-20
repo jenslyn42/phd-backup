@@ -248,24 +248,19 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
       ordering.erase(std::make_pair<int,int>(*itr, tmpItem.key() ) );
       ordering.insert(std::make_pair<int,int>(*itr, orderVal));
       tmpItem.updateKey(orderVal);
-      cout << "*Z* " << orderVal << ", " << cache[*itr].key() << endl;
       nodesInCache += tmpItem.size;
       if(ts.useLRUbitmap){
-	if(!usefullParts[tmpItem.id].test(counter)) cout << "DOES NOT WORK" << endl;
 	usefullParts[tmpItem.id][counter] = 1;
-	cout << "FLUF " << tmpItem.id << ", " << counter << endl;
-
-	cout << "FLUFFY " << tmpItem.id << ", " << counter << endl;
-
+	if(!usefullParts[tmpItem.id].test(counter)) cout << "DOES NOT WORK" << endl;
       }
-//    if(debugCompet) 
+    if(debugCompet) 
 	cout << "LRU::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
       break;
     }
   }
 
 
- // if(debugCompet){
+  if(debugCompet){
     std::priority_queue<int> cacheQueue;
     BOOST_FOREACH(intCacheitemMap::value_type ca, cache){cacheQueue.push(ca.second.key());}
     cout << "*H* ";
@@ -274,7 +269,7 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
       cacheQueue.pop();
     }
     cout << endl;
-  //}
+  }
 
   if(!cacheHit) {
     vector<int> spResult;
@@ -311,7 +306,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
   bool notEnoughSpace = true;
    if(debugCompet)
      cout << "one, LRUPLUS::insertItem(" << spSize << ")" << endl;
-//  if(debugCompet){
+  if(debugCompet){
     cout << "one, LRU::insertItem(" << spSize << ") - " << numTotalQueries << ", " << numCacheHits << endl;
     std::priority_queue<int> cacheQueue;
     BOOST_FOREACH(intCacheitemMap::value_type ca, cache){cacheQueue.push(ca.second.key());}
@@ -321,11 +316,11 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       cacheQueue.pop();
     }
     cout << endl;
-//  }
+  }
   //insert query into cache, will repeatedly remove items until there is enough space for the new item.
   do{
     if((cacheSize - cacheUsed) >= spSize*NODE_BITS) {
-//       if(debugCompet)
+      if(debugCompet)
         cout << "two1, LRU::insertItem INSERT (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed << endl;
       orderVal++;
       CacheItem cItem (orderVal, sp);
@@ -357,7 +352,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  
 	}
       }
-//       if (debugCompet)
+      if (debugCompet)
         cout << " TWO:(" << cacheSize <<"," << cacheUsed << ")"<<endl;
       
       removalStatus[cItem.id] = 1;
@@ -370,7 +365,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 //       2. reduced item -> reduce to CONCISE path
 //       3. CONCISE path -> remove path
       
-//       if (debugCompet)
+      if (debugCompet)
         cout << "three1, LRU::insertItem REMOVE (node,size): " << (*(ordering.begin())).first << "(" << (*(ordering.begin())).second << "), " << cache[(*(ordering.begin())).first].size << endl;
       intPair rID = *(ordering.begin()); // path to remove
       int rPid = rID.first;
@@ -402,7 +397,6 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  ordering.erase(std::make_pair<int,int>(rPid, cache[rPid].key() ) );
 	  ordering.insert(std::make_pair<int,int>(rPid, orderVal));
 	  cache[rPid].updateKey(orderVal);
-	  cout << "*Z2* " << orderVal << ", " <<  cache[rPid].key() << endl;
 	  
 	  nodesInCache -= (rItem.size() - tempItem.size());
 	  cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
