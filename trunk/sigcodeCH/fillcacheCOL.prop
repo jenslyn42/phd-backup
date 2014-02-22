@@ -23,13 +23,11 @@ autoTestName = true
 // if true, override the testName automatically  "experiment"_"testAlgo"_"testFile (3 letters)"
 
 
-testFile = USA-road-d.NY.cedge
+testFile = USA-road-d.COL.cedge
 // choices: aalborgNEW.cedge, beijingNEW.cedge, USA-road-d.COL.cedge, USA-road-d.NY.cedge
 
 
-queryFileName = USA-road-d.NYGP10R5000Q100000.qtest
-//queryFileName = MANUALUSA-road-d.NYGP10R32000Q1000000.qtest
-//queryFileName = TWOPOINTUSA-road-d.NYGP2R32000Q1000000.qtest
+queryFileName = RAND00USA-road-d.COLGP10R16000Q100000.qtest
 
 
 inputFileType = 3
@@ -38,7 +36,8 @@ inputFileType = 3
 
 splits = 14	
 
-filesize = 6761890
+filesize = 11651877
+// in bytes
 
 cachesize = 65536
 //cachesize = 0
@@ -65,8 +64,7 @@ optiNum = 40
 //pct of full path before stopping. 
 
 
-lowCacheSize = 4096
-//highCacheSize = 8388608
+lowCacheSize = 1024
 highCacheSize = 16777216
 //lowCacheSize = 419430400
 //highCacheSize = 274877906944
