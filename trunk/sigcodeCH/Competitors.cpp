@@ -304,7 +304,7 @@ int LRUPLUS::insertItem(intVector& sp) {
 
 int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
   
-  if(ts.testSPtype == SPTYPE_CONCISE) 
+  if(ts.testSPtype == SPTYPE_CONCISE && ts.useLRUbitmap) 
     sp = conciseSp;
   
   int spSize = sp.size();
