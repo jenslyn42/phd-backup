@@ -303,9 +303,13 @@ int LRUPLUS::insertItem(intVector& sp) {
 }
 
 int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
+  
+  if(ts.testSPtype == SPTYPE_CONCISE) 
+    sp = conciseSp;
+  
   int spSize = sp.size();
   bool notEnoughSpace = true;
-   if(debugCompet)
+  if(debugCompet)
      cout << "one, LRUPLUS::insertItem(" << spSize << ")" << endl;
   if(debugCompet){
     cout << "one, LRU::insertItem(" << spSize << ") - " << numTotalQueries << ", " << numCacheHits << endl;
