@@ -274,15 +274,16 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
   if(!cacheHit) {
     vector<int> spResult;
     pair<intVector, intVector> spaths;
-    if(ts.testOptimaltype == OPTIMALTYPE_ORG){
+    if(ts.testOptimaltype == OPTIMALTYPE_KSKIP)
+      spResult = kskip(query, ts.optiNum);
+    else {
       if(ts.useLRUbitmap){
 	RoadGraph::mapObject(ts)->setConcisePathUse(true);
 	spaths = RoadGraph::mapObject(ts)->conciseDijkstraSSSP(query.first, query.second);
 	spResult = spaths.first;
       }else
 	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
-    }else if(ts.testOptimaltype == OPTIMALTYPE_KSKIP)
-      spResult = kskip(query, ts.optiNum);
+    }
     
     numDijkstraCalls++;
     int querySize = spResult.size();
