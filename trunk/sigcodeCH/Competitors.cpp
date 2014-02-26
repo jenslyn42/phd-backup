@@ -305,10 +305,9 @@ int LRUPLUS::insertItem(intVector& sp) {
 int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
   int spSize = sp.size();
   bool notEnoughSpace = true;
-  if(debugCompet)
-     cout << "one, LRUPLUS::insertItem(" << spSize << ")" << endl;
+
   if(debugCompet){
-    cout << "one, LRU::insertItem(" << spSize << ") - " << numTotalQueries << ", " << numCacheHits << endl;
+    cout << "two, LRUPLUS::insertItem(" << spSize << ") - " << numTotalQueries << ", " << numCacheHits << endl;
     std::priority_queue<int> cacheQueue;
     BOOST_FOREACH(intCacheitemMap::value_type ca, cache){cacheQueue.push(ca.second.key());}
     cout << "*B* ";
@@ -322,12 +321,14 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
   do{
     if((cacheSize - cacheUsed) >= spSize*NODE_BITS) {
       if(debugCompet)
-        cout << "two1, LRU::insertItem INSERT (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed << endl;
+        cout << "two1, LRUPLUS::insertItem INSERT (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed << endl;
       orderVal++;
       CacheItem cItem (orderVal, sp);
       cache[cItem.id] = cItem;
       nodesInCache += cItem.size;
+      cout << "three, LRUPLUS::insertItem INSERT (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed << endl;
       ordering.insert(std::make_pair<int,int>(cItem.id, cItem.key()));
+        cout << "four, LRUPLUS::insertItem INSERT (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed << endl;
       //update inverted list
       for (vector<int>::iterator itr = sp.begin(); itr != sp.end(); ++itr) {
 	if(invList.find(*itr) == invList.end())
