@@ -338,7 +338,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 
       cacheUsed = cacheUsed + cItem.size*NODE_BITS;
       if(spSize != cItem.size) cout << "LRUPLUS::insertItem ERROR ERROR ERROR :: spSize != cItem.size" << endl;
-
+        cout << "five, LRUPLUS::insertItem INSERT (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed << " " << ts.useLRUbitmap << endl;
       //each path keeps a bitmap for tracking which nodes are used in CONCISE
       //such information will be used to decide which concise path to use (before the actual eviction)
       //Extract bitmap
