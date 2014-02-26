@@ -214,9 +214,7 @@ void LRUPLUS::runQueryList()
   RoadGraph::mapObject(ts)->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
 
   BOOST_FOREACH(intPair q, testSTPointPairs ) {
-    cout << " BF " << endl;
-    checkAndUpdateCache(q);
-    cout << " AF " << endl;
+    checkAndUpdateCache(q);   
     numTotalQueries++;
   }
 
@@ -240,13 +238,10 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
   boost::unordered_set<int>& query2 = invList[query.second];
   int cachehit;
   boost::unordered_set<int>::const_iterator got;
-    if(debugCompet) 
-	cout << "LRUPLUS::checkAndUpdateCache BG1" << endl;
+
   int counter=0;
   for (boost::unordered_set<int>::iterator itr = query1.begin(); itr != query1.end(); ++itr, counter++) {
     if((got = query2.find(*itr)) != query2.end()){
-      if(debugCompet) 
-	cout << "LRUPLUS::checkAndUpdateCache BG2" << endl;
       numCacheHits++;
       orderVal++;
       cacheHit = true;
@@ -331,9 +326,8 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       CacheItem cItem (orderVal, sp);
       cache[cItem.id] = cItem;
       nodesInCache += cItem.size;
-      cout << "three, LRUPLUS::insertItem INSERT (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed << endl;
       ordering.insert(std::make_pair<int,int>(cItem.id, cItem.key()));
-        cout << "four, LRUPLUS::insertItem INSERT (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed << endl;
+
       //update inverted list
       for (vector<int>::iterator itr = sp.begin(); itr != sp.end(); ++itr) {
 	if(invList.find(*itr) == invList.end())
@@ -343,7 +337,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 
       cacheUsed = cacheUsed + cItem.size*NODE_BITS;
       if(spSize != cItem.size) cout << "LRUPLUS::insertItem ERROR ERROR ERROR :: spSize != cItem.size" << endl;
-        cout << "five, LRUPLUS::insertItem INSERT (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed << " " << ts.useLRUbitmap << endl;
+
       //each path keeps a bitmap for tracking which nodes are used in CONCISE
       //such information will be used to decide which concise path to use (before the actual eviction)
       //Extract bitmap
@@ -380,7 +374,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       intVector tempItem;
       boost::dynamic_bitset<> tempConsiseParts;
 
-      if(!ts.useLRUbitmap && ts.testSPtype != SPTYPE_CONCISE)
+      if(!ts.useLRUbitmap || ts.testSPtype == SPTYPE_CONCISE)
 	removalStatus[rPid] = 3; //remove path from cache, do not reduce path size
 	
       switch(removalStatus[rPid]){
