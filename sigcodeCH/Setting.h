@@ -174,6 +174,7 @@ public:
   void listConfig();
 
   float getConfigFloat(string key,bool required=true,float _default=0);
+  double getConfigDouble(string key,bool required=true,double _default=0);
   int getConfigInt(string key,bool required=true,int _default=0);
   long getConfigLong(string key,bool required=true,long _default=0);
   string getConfigString(string key,bool required=true,string _default="");
