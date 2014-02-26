@@ -343,7 +343,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       //such information will be used to decide which concise path to use (before the actual eviction)
       //Extract bitmap
       uint curConsPos=0, curFullPos=0;
-      if(ts.useLRUbitmap){
+      if(ts.useLRUbitmap&& ts.testSPtype != SPTYPE_CONCISE){
 	concisePartsp[cItem.id] = boost::dynamic_bitset<>(cItem.size);
 	usefullParts[cItem.id] = boost::dynamic_bitset<>(cItem.size);
 	for (vector<int>::iterator itr = sp.begin(); itr != sp.end(); ++itr, curFullPos++) {
