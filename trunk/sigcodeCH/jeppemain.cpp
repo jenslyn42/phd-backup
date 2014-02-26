@@ -357,7 +357,7 @@ void ExperimentVaryCacheSizeFromFilesize(TestSetting ts) {
   cout << "(auto) testName: " << ts.testName << endl;
   }
   
-  double filesizeInBits = 8 * ts.getConfigLong("filesize"); //filesize assumed to be given in bytes
+  double filesizeInBits = (double)8 * (double)ts.getConfigDouble("filesize"); //filesize assumed to be given in bytes
 
   for (double csize = 0.05; csize <= 0.20 ; csize+=0.05) {
     ts.cacheSize = filesizeInBits*csize;

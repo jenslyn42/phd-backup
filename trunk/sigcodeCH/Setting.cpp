@@ -246,6 +246,15 @@ float TestSetting::getConfigFloat(string key,bool required,float _default) {
   return value;
 }
 
+float TestSetting::getConfigDouble(string key,bool required,float _default) {
+  float value=_default;
+  if (cr.count(key))
+    value=atof(cr[key].c_str());
+  else 
+    printConfigError(key,required);
+  return value;
+}
+
 int TestSetting::getConfigInt(string key,bool required,int _default) {
   int value=_default;
   if (cr.count(key))

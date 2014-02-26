@@ -222,6 +222,7 @@ void LRUPLUS::runQueryList()
   ts.setNonEmptyRegionPairs(0);
   this->ts.setItemsInCache(cache.size());
   ts.setNodesInCache(nodesInCache);
+  ts.setUnusedCacheBits((cacheSize - cacheUsed)*NODE_BITS);
 }
 
 void LRUPLUS::checkAndUpdateCache(intPair query)
@@ -251,14 +252,13 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
       nodesInCache += tmpItem.size;
       if(ts.useLRUbitmap){
 	usefullParts[tmpItem.id][counter] = 1;
-	if(!usefullParts[tmpItem.id].test(counter)) cout << "DOES NOT WORK" << endl;
+	if(!usefullParts[tmpItem.id].test(counter)) cout << "LRUPLUS::checkAndUpdateCache::DOES NOT WORK" << endl;
       }
     if(debugCompet) 
 	cout << "LRU::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
       break;
     }
   }
-
 
   if(debugCompet){
     std::priority_queue<int> cacheQueue;
@@ -277,7 +277,7 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
     if(ts.testOptimaltype == OPTIMALTYPE_KSKIP)
       spResult = kskip(query, ts.optiNum);
     else {
-      if(ts.useLRUbitmap){
+      if(ts.useLRUbitmap && ts.testSPtype != SPTYPE_CONCISE){
 	RoadGraph::mapObject(ts)->setConcisePathUse(true);
 	spaths = RoadGraph::mapObject(ts)->conciseDijkstraSSSP(query.first, query.second);
 	spResult = spaths.first;
@@ -289,7 +289,7 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
     int querySize = spResult.size();
     
     if(debugCompet) cout << "LRU::checkAndUpdateCache 1, querySize: "<< querySize << endl;
-    if(ts.useLRUbitmap)
+    if(ts.useLRUbitmap && ts.testSPtype != SPTYPE_CONCISE)
       insertItem(spResult, spaths.second);
     else
       insertItem(spResult);
@@ -303,10 +303,6 @@ int LRUPLUS::insertItem(intVector& sp) {
 }
 
 int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
-  
-  if(ts.testSPtype == SPTYPE_CONCISE && ts.useLRUbitmap) 
-    sp = conciseSp;
-  
   int spSize = sp.size();
   bool notEnoughSpace = true;
   if(debugCompet)
