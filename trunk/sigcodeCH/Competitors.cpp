@@ -214,7 +214,9 @@ void LRUPLUS::runQueryList()
   RoadGraph::mapObject(ts)->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
 
   BOOST_FOREACH(intPair q, testSTPointPairs ) {
+    cout << " BF " << endl;
     checkAndUpdateCache(q);
+    cout << " AF " << endl;
     numTotalQueries++;
   }
 
@@ -238,7 +240,8 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
   boost::unordered_set<int>& query2 = invList[query.second];
   int cachehit;
   boost::unordered_set<int>::const_iterator got;
-
+    if(debugCompet) 
+	cout << "LRUPLUS::checkAndUpdateCache BG" << endl;
   int counter=0;
   for (boost::unordered_set<int>::iterator itr = query1.begin(); itr != query1.end(); ++itr, counter++) {
     if((got = query2.find(*itr)) != query2.end()){
@@ -254,8 +257,8 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 	usefullParts[tmpItem.id][counter] = 1;
 	if(!usefullParts[tmpItem.id].test(counter)) cout << "LRUPLUS::checkAndUpdateCache::DOES NOT WORK" << endl;
       }
-    if(debugCompet) 
-	cout << "LRU::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
+      if(debugCompet) 
+	cout << "LRUPLUS::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
       break;
     }
   }
@@ -343,7 +346,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       //such information will be used to decide which concise path to use (before the actual eviction)
       //Extract bitmap
       uint curConsPos=0, curFullPos=0;
-      if(ts.useLRUbitmap&& ts.testSPtype != SPTYPE_CONCISE){
+      if(ts.useLRUbitmap && ts.testSPtype != SPTYPE_CONCISE){
 	concisePartsp[cItem.id] = boost::dynamic_bitset<>(cItem.size);
 	usefullParts[cItem.id] = boost::dynamic_bitset<>(cItem.size);
 	for (vector<int>::iterator itr = sp.begin(); itr != sp.end(); ++itr, curFullPos++) {
@@ -375,7 +378,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       intVector tempItem;
       boost::dynamic_bitset<> tempConsiseParts;
 
-      if(!ts.useLRUbitmap)
+      if(!ts.useLRUbitmap && ts.testSPtype != SPTYPE_CONCISE)
 	removalStatus[rPid] = 3; //remove path from cache, do not reduce path size
 	
       switch(removalStatus[rPid]){
