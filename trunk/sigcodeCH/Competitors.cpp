@@ -255,7 +255,7 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
       ordering.insert(std::make_pair<int,int>(*itr, orderVal));
       tmpItem.updateKey(orderVal);
       nodesInCache += tmpItem.size;
-      if(ts.useLRUbitmap){
+      if(ts.useLRUbitmap && ts.testSPtype != SPTYPE_CONCISE){
 	usefullParts[tmpItem.id][counter] = 1;
 	if(!usefullParts[tmpItem.id].test(counter)) cout << "LRUPLUS::checkAndUpdateCache::DOES NOT WORK" << endl;
       }
