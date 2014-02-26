@@ -1,4 +1,4 @@
-#define debugCompet false
+#define debugCompet true
 #define debugProbc false
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -241,10 +241,12 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
   int cachehit;
   boost::unordered_set<int>::const_iterator got;
     if(debugCompet) 
-	cout << "LRUPLUS::checkAndUpdateCache BG" << endl;
+	cout << "LRUPLUS::checkAndUpdateCache BG1" << endl;
   int counter=0;
   for (boost::unordered_set<int>::iterator itr = query1.begin(); itr != query1.end(); ++itr, counter++) {
     if((got = query2.find(*itr)) != query2.end()){
+      if(debugCompet) 
+	cout << "LRUPLUS::checkAndUpdateCache BG2" << endl;
       numCacheHits++;
       orderVal++;
       cacheHit = true;
