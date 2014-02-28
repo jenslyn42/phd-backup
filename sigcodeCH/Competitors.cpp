@@ -189,9 +189,9 @@ void LRUPLUS::buildCache()
 {
   cout<< "2.0 done cachesize:" << cacheSize << endl;
   readQueryLogData(QLOG_TEST);
-//   cout<< "2.1 done" << endl;
-//   readQueryLogData(QLOG_TRAIN);
-//   cout<< "2.2 done" << endl;
+  cout<< "2.1 done" << endl;
+  readQueryLogData(QLOG_TRAIN);
+  cout<< "2.2 done" << endl;
   double refTime = clock();
   fillCache();
   ts.setFillCacheTime(getElapsedTime(refTime));
@@ -201,12 +201,12 @@ void LRUPLUS::buildCache()
 }
 
 void LRUPLUS::fillCache(){
-//   BOOST_FOREACH(intPair q, trainSTPointPairs ) {
-//     checkAndUpdateCache(q);
-//     numTotalQueries++;
-//
-//     numCacheHits=0;
-//   }
+  BOOST_FOREACH(intPair q, trainingSTPointPairs ) {
+    checkAndUpdateCache(q);
+    numTotalQueries++;
+
+    numCacheHits=0;
+  }
 }
 
 void LRUPLUS::runQueryList()
