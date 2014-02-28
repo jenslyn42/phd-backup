@@ -1,4 +1,4 @@
-#define debugCompet true
+#define debugCompet false
 #define debugProbc false
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -205,24 +205,17 @@ void LRUPLUS::buildCache()
 }
 
 void LRUPLUS::fillCache(){
-  
-    cout << "Z " << numTotalQueries << endl;
-
   BOOST_FOREACH(intPair q, trainingSTPointPairs ) {
-    cout << "A " << numTotalQueries << endl;
     checkAndUpdateCache(q);
-    cout << "B " << numTotalQueries << endl;
     numTotalQueries++;
   }
-
-    numCacheHits=0;
-
+  numCacheHits=0;
 }
 
 void LRUPLUS::runQueryList()
 {
   RoadGraph::mapObject(ts)->resetRoadGraph(); //as the roadgraph object has been used already we need to reset it to clear the statistics.
-
+  
   BOOST_FOREACH(intPair q, testSTPointPairs ) {
     checkAndUpdateCache(q);   
     numTotalQueries++;
@@ -354,16 +347,11 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       if(ts.useLRUbitmap){
 	concisePartsp[cItem.id] = boost::dynamic_bitset<>(cItem.size);
 	usefullParts[cItem.id] = boost::dynamic_bitset<>(cItem.size);
-cout << "two1, LRUPLUS::insertItem INSERT6 (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed << endl;
 	for (vector<int>::iterator itr = sp.begin(); itr != sp.end(); ++itr, curFullPos++) {
-cout << "two1, LRUPLUS::insertItem INSERT7 (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed << endl;	  
 	  if(*itr == conciseSp[curConsPos]) {
-cout << "two1, LRUPLUS::insertItem INSERT8 (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed << endl;
-         concisePartsp[cItem.id].flip(curFullPos);
-cout << "two1, LRUPLUS::insertItem INSERT19 (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed << endl;
-         curConsPos++;
+	    concisePartsp[cItem.id].flip(curFullPos);
+	    curConsPos++;
 	  }
-	  
 	}
       }
       if (debugCompet)
