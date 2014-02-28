@@ -1,4 +1,4 @@
-#define debugCompet false
+#define debugCompet true
 #define debugProbc false
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -176,15 +176,15 @@ LRUPLUS::LRUPLUS(TestSetting ts)
     this->ts.useLRUbitmap = false;
 }
 
-LRUPLUS::~ LRUPLUS()
-{
+LRUPLUS::~ LRUPLUS() {
+  cout << "LRUPLUS::~ LRUPLUS() S" << endl;
   trainingSTPointPairs.clear();
   testSTPointPairs.clear();
   points.clear();
   Point2Nodeid.clear();
   nodeid2Point.clear();
-
   cache.clear();
+  cout << "LRUPLUS::~ LRUPLUS() E" << endl;
 }
 
 

@@ -66,7 +66,9 @@ class TestObject {
     TestObject(TestSetting settings);
 	
     ~TestObject() {
+      cout << "~TestObject S" << endl;
        delete test;
+      cout << "~TestObject E" << endl;
     };
  
    void runStaticTest();
