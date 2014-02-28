@@ -1,4 +1,4 @@
-#define debugCompet false
+#define debugCompet true
 #define debugProbc false
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -171,6 +171,9 @@ LRUPLUS::LRUPLUS(TestSetting ts)
   cacheUsed = 0;
   numDijkstraCalls = 0;
   readMapData();
+  
+  if(this->ts.useLRUbitmap && (this->ts.testSPtype != SPTYPE_FULL || ts.testOptimaltype != OPTIMALTYPE_ORG))
+    this->ts.useLRUbitmap = false;
 }
 
 LRUPLUS::~ LRUPLUS()
@@ -193,6 +196,7 @@ void LRUPLUS::buildCache()
   readQueryLogData(QLOG_TRAIN);
   cout<< "2.2 done" << endl;
   double refTime = clock();
+  cout<< "2.3 done" << endl;
   fillCache();
   ts.setFillCacheTime(getElapsedTime(refTime));
 //   cout << "2.3 done, fillCache: " << ts.getFillCacheTime() << endl;
@@ -201,12 +205,18 @@ void LRUPLUS::buildCache()
 }
 
 void LRUPLUS::fillCache(){
+  
+    cout << "Z " << numTotalQueries << endl;
+
   BOOST_FOREACH(intPair q, trainingSTPointPairs ) {
+    cout << "A " << numTotalQueries << endl;
     checkAndUpdateCache(q);
+    cout << "B " << numTotalQueries << endl;
     numTotalQueries++;
+  }
 
     numCacheHits=0;
-  }
+
 }
 
 void LRUPLUS::runQueryList()
@@ -250,7 +260,7 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
       ordering.insert(std::make_pair<int,int>(*itr, orderVal));
       tmpItem.updateKey(orderVal);
       nodesInCache += tmpItem.size;
-      if(ts.useLRUbitmap && ts.testSPtype != SPTYPE_CONCISE){
+      if(ts.useLRUbitmap){
 	usefullParts[tmpItem.id][counter] = 1;
 	if(!usefullParts[tmpItem.id].test(counter)) cout << "LRUPLUS::checkAndUpdateCache::DOES NOT WORK" << endl;
       }
@@ -277,7 +287,7 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
     if(ts.testOptimaltype == OPTIMALTYPE_KSKIP)
       spResult = kskip(query, ts.optiNum);
     else {
-      if(ts.useLRUbitmap && ts.testSPtype != SPTYPE_CONCISE){
+      if(ts.useLRUbitmap){
 	RoadGraph::mapObject(ts)->setConcisePathUse(true);
 	spaths = RoadGraph::mapObject(ts)->conciseDijkstraSSSP(query.first, query.second);
 	spResult = spaths.first;
@@ -289,7 +299,7 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
     int querySize = spResult.size();
     
     if(debugCompet) cout << "LRU::checkAndUpdateCache 1, querySize: "<< querySize << endl;
-    if(ts.useLRUbitmap && ts.testSPtype != SPTYPE_CONCISE)
+    if(ts.useLRUbitmap)
       insertItem(spResult, spaths.second);
     else
       insertItem(spResult);
@@ -334,7 +344,6 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  invList[*itr] = boost::unordered_set<int>();
 	invList[*itr].insert(cItem.id);
       }
-
       cacheUsed = cacheUsed + cItem.size*NODE_BITS;
       if(spSize != cItem.size) cout << "LRUPLUS::insertItem ERROR ERROR ERROR :: spSize != cItem.size" << endl;
 
@@ -342,13 +351,17 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       //such information will be used to decide which concise path to use (before the actual eviction)
       //Extract bitmap
       uint curConsPos=0, curFullPos=0;
-      if(ts.useLRUbitmap && ts.testSPtype != SPTYPE_CONCISE){
+      if(ts.useLRUbitmap){
 	concisePartsp[cItem.id] = boost::dynamic_bitset<>(cItem.size);
 	usefullParts[cItem.id] = boost::dynamic_bitset<>(cItem.size);
+cout << "two1, LRUPLUS::insertItem INSERT6 (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed << endl;
 	for (vector<int>::iterator itr = sp.begin(); itr != sp.end(); ++itr, curFullPos++) {
+cout << "two1, LRUPLUS::insertItem INSERT7 (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed << endl;	  
 	  if(*itr == conciseSp[curConsPos]) {
-	    concisePartsp[cItem.id].flip(curFullPos);
-	    curConsPos++;
+cout << "two1, LRUPLUS::insertItem INSERT8 (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed << endl;
+         concisePartsp[cItem.id].flip(curFullPos);
+cout << "two1, LRUPLUS::insertItem INSERT19 (cacheSize,cacheUsed) " << cacheSize <<"," << cacheUsed << endl;
+         curConsPos++;
 	  }
 	  
 	}
@@ -362,7 +375,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       
     }else if ( spSize*NODE_BITS < cacheSize) {
 //       3 cases:
-//       1. full item -> reduce to CONCISE + node pairs where path has contributed to a cache hit
+//       1. full item -> reduce to CONCISE + node pairs  && ts.testSPtype == SPTYPE_CONCISEwhere path has contributed to a cache hit
 //       2. reduced item -> reduce to CONCISE path
 //       3. CONCISE path -> remove path
       
