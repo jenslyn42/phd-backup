@@ -15,7 +15,7 @@ localReduceEdges 1
 shortcutOriginalEdgeSumMult 600
 searchPathHopBorderOriginalEdges 0
 statsFile 
-node ordering time: 1.45667 s
+node ordering time: 1.36033 s
 max avg degree: 10.011
 #edges: 431920
 #total expanded shortcut edges: 572476
