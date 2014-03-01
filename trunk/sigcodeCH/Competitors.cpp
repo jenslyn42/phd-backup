@@ -366,6 +366,8 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	concisePartsp[cItem.id] = boost::dynamic_bitset<>(cItem.size);
 	usefullParts[cItem.id] = boost::dynamic_bitset<>(cItem.size);
 	for (vector<int>::iterator itr = sp.begin(); itr != sp.end(); ++itr, curFullPos++) {
+	  if(sp[0] != conciseSp[0]) //if sp and conciseSp are starting from oppisite ends, reverse conciseSp.
+	    std::reverse(conciseSp.begin(), conciseSp.end());
 	  if(*itr == conciseSp[curConsPos]) {
 	    concisePartsp[cItem.id].flip(curFullPos);
 	    curConsPos++;
@@ -410,9 +412,10 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	    }else{
 	      tempConsiseParts.push_back(0);
 	      invList[rItem[i]].erase(rPid); //remove node -> path from inverted list
+
 	    }
 	  }
-
+	  
 	  //update items LRU position, as if it had just been inserted or caused a cache hit
 	  orderVal++;
 	  ordering.erase(std::make_pair<int,int>(rPid, cache[rPid].key() ) );
@@ -427,9 +430,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  usefullParts.erase(rPid);
 	  usefullParts[rPid] = boost::dynamic_bitset<>(cache[rPid].size);
 	  removalStatus[rPid] = 3; //set to 3 to skip case 2, set to 2 to use case 2.
-cout << "A lrustats.second = " << lrustats[rPid].second << " (" << lrustats[rPid].first << "," << tempItem.size() << ") " << rPid << endl;
 	  lrustats[rPid].second = tempItem.size();
-cout << "B lrustats.second = " << lrustats[rPid].second << endl;
 	  break;
 	case 2: //limit path to CONCISE
 	  //cout << "Case 2:" << endl;
