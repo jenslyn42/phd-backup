@@ -225,6 +225,25 @@ void LRUPLUS::runQueryList()
   this->ts.setItemsInCache(cache.size());
   ts.setNodesInCache(nodesInCache);
   ts.setUnusedCacheBits((cacheSize - cacheUsed)*NODE_BITS);
+  
+  //// stats write out code ////
+  int reducedInCache=0, fullIncache=0;
+  string statfilename = "lrustats_";
+  statfilename.insert(0,ts.testFile);
+  statfilename.append(boost::lexical_cast<std::string>(ts.cacheSize));
+  statfilename.append(".stats");
+  ofstream statfile;
+  statfile.open((statfilename).c_str(), ios::out | ios::trunc);
+  BOOST_FOREACH(intPairMap::value_type stat, lrustats){
+    if(cache.find(stat.first) != cache.end()){
+      if(stat.second.second != -1) reducedInCache++;
+      else fullIncache++;
+    }
+    statfile << stat.first << "\t" << stat.second.first << "\t" << stat.second.second << endl;
+  }
+  statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\n*******" << endl;
+  statfile.close();
+  //////////////////////////////
 }
 
 void LRUPLUS::checkAndUpdateCache(intPair query)
@@ -358,6 +377,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 
       removalStatus[cItem.id] = 1;
       notEnoughSpace = false;
+      lrustats[cItem.id] = make_pair<int,int>(cItem.size,-1);
       return cItem.id;
 
     }else if ( spSize*NODE_BITS < cacheSize) {
@@ -407,6 +427,8 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  usefullParts.erase(rPid);
 	  usefullParts[rPid] = boost::dynamic_bitset<>(cache[rPid].size);
 	  removalStatus[rPid] = 3; //set to 3 to skip case 2, set to 2 to use case 2.
+	  
+	  lrustats[rPid].second = tempItem.size();
 	  break;
 	case 2: //limit path to CONCISE
 	  //cout << "Case 2:" << endl;

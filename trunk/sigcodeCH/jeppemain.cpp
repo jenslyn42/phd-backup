@@ -336,7 +336,7 @@ void ExperimentVaryCacheSize(TestSetting ts) {
 
   cout << "(auto) testName: " << ts.testName << endl;
   }
-  
+
   unsigned long lowCacheSize = ts.getConfigLong("lowCacheSize");
   unsigned long highCacheSize = ts.getConfigLong("highCacheSize");
 
