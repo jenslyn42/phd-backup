@@ -49,7 +49,8 @@ private:
   boost::unordered_map<int, boost::dynamic_bitset<> > usefullParts; // pid -> bitmap of which nodes are used when path contributes to a cache hit
   intMap removalStatus; // pid -> removal status: 1: full path, 2: reduced path, 3: concise path.
   boost::unordered_map<int, intPair> lrustats; // itemID -> (length before shrink, length after shrink)
-  
+  boost::unordered_map<intPair, int> hitstats; // itemID -> (length before shrink, length after shrink)
+
   void checkAndUpdateCache(intPair query);
   int insertItem(intVector& sp);
   int insertItem(intVector& sp, intVector&  conciseSp);

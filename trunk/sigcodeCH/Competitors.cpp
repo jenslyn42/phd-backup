@@ -244,6 +244,19 @@ void LRUPLUS::runQueryList()
   statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\n*******" << endl;
   statfile.close();
   //////////////////////////////
+  /// cache hit stats ///
+  //////////////////////////////
+  string statHITfilename = "lruHITstats_";
+  statHITfilename.insert(0,ts.testFile);
+  statHITfilename.append(boost::lexical_cast<std::string>(ts.cacheSize));
+  statHITfilename.append(".stats");
+  ofstream statHitfile;
+  statHitfile.open((statHITfilename).c_str(), ios::out | ios::trunc);
+  BOOST_FOREACH(intPairIntMap::value_type stat, hitstats){
+    statHitfile << "(" << stat.first.first << ", " << stat.first.second << ")\t" << stat.second << endl;
+  }
+  statHitfile.close();
+  //////////////////////////////
 }
 
 void LRUPLUS::checkAndUpdateCache(intPair query)
@@ -275,6 +288,8 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 	usefullParts[tmpItem.id][counter] = 1;
 	if(!usefullParts[tmpItem.id].test(counter)) cout << "LRUPLUS::checkAndUpdateCache::DOES NOT WORK" << endl;
       }
+      (tmpItem.s > tmpItem.t) ? (hitstats[make_pair<int,int>(tmpItem.t,tmpItem.s)] ++) : (hitstats[make_pair<int,int>(tmpItem.s,tmpItem.t)] ++);
+
       if(debugCompet) 
 	cout << "LRUPLUS::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
       break;
