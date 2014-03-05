@@ -18,8 +18,8 @@ CacheItem::CacheItem(int key, intVector& item)
   this->item = item;    // copy
   this->size = item.size();
 
-  this->s = -1;
-  this->t = -1;
+  this->s = item.front();
+  this->t = item.back();
 
   if (item.size()>0) {
     this->s = item.front();
