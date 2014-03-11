@@ -170,6 +170,9 @@ LRUPLUS::LRUPLUS(TestSetting ts)
   cacheUsed = 0;
   numDijkstraCalls = 0;
   readMapData();
+  
+  numEvicted =0;
+  numEvictedZeroBitmap =0;
 
   if(this->ts.useLRUbitmap && (this->ts.testSPtype != SPTYPE_FULL || ts.testOptimaltype != OPTIMALTYPE_ORG))
     this->ts.useLRUbitmap = false;
@@ -255,8 +258,9 @@ void LRUPLUS::runQueryList()
   BOOST_FOREACH(intPairIntMap::value_type stat, hitstats){
     statHitfile << "(" << stat.first.first << ", " << stat.first.second << ")\t" << stat.second << endl;
   }
+  /// Eviction stats ///
+  statHitfile << "\n*******\n" << numEvicted << "\t" << numEvictedZeroBitmap << "\n*******" << endl;
   statHitfile.close();
-  //////////////////////////////
 }
 
 void LRUPLUS::checkAndUpdateCache(intPair query)
@@ -271,11 +275,10 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
   boost::unordered_set<int>& query1 = invList[query.first];
   boost::unordered_set<int>& query2 = invList[query.second];
   int cachehit;
-  boost::unordered_set<int>::const_iterator got;
 
   int counter=0;
-  for (boost::unordered_set<int>::iterator itr = query1.begin(); itr != query1.end(); ++itr, counter++) {
-    if((got = query2.find(*itr)) != query2.end()){
+  for (boost::unordered_set<int>::iterator itr = query1.begin(); itr != query1.end(); ++itr) {
+    if((query2.find(*itr)) != query2.end()){
       numCacheHits++;
       orderVal++;
       cacheHit = true;
@@ -285,8 +288,20 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
       tmpItem.updateKey(orderVal);
       nodesInCache += tmpItem.size;
       if(ts.useLRUbitmap){
-	usefullParts[tmpItem.id][counter] = 1;
-	if(!usefullParts[tmpItem.id].test(counter)) cout << "LRUPLUS::checkAndUpdateCache::DOES NOT WORK" << endl;
+	vector<int>& path = tmpItem.item;
+	for(int i=0; i<path.size(); i++){
+	  if(path[i] == query.first || path[i] == query.second){
+	    usefullParts[tmpItem.id][i] = 1;
+	    counter=i;
+	    break;
+	  }
+	}
+	for(;counter<path.size(); counter++){
+	  if(path[counter] == query.first || path[counter] == query.second){
+	    usefullParts[tmpItem.id][counter] = 1;
+	    break;
+	  }
+	}
       }
       (tmpItem.s > tmpItem.t) ? (hitstats[make_pair<int,int>(tmpItem.t,tmpItem.s)] ++) : (hitstats[make_pair<int,int>(tmpItem.s,tmpItem.t)] ++);
 
@@ -388,6 +403,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	    curConsPos++;
 	  }
 	}
+	
       }
       if (debugCompet)
         cout << " TWO:(" << cacheSize <<"," << cacheUsed << ")"<<endl;
@@ -471,8 +487,10 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  removalStatus[rPid] = 3;
 	  break;
 	case 3: //remove path
+	  numEvicted++;
+	  if(ts.useLRUbitmap && !usefullParts[rPid].any())
+	    numEvictedZeroBitmap++;
 	  //update inverted list
-	  //cout << "Case 3:" << endl;
 	  for(vector<int>::iterator itr = rItem.begin(); itr != rItem.end(); ++itr){
 //cout << "case 3.01 " << rPid << " " << *itr << " " << invList[*itr].size() << endl;
 	    if(invList[*itr].find(rPid) != invList[*itr].end()) {  invList[*itr].erase(rPid);}
