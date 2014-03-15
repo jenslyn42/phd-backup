@@ -212,6 +212,7 @@ void LRUPLUS::fillCache(){
     numTotalQueries++;
   }
   numCacheHits=0;
+  this->resetDijkstraCalls();
 }
 
 void LRUPLUS::runQueryList()
@@ -261,6 +262,7 @@ void LRUPLUS::runQueryList()
   /// Eviction stats ///
   statHitfile << "\n*******\n" << numEvicted << "\t" << numEvictedZeroBitmap << "\n*******" << endl;
   statHitfile.close();
+  //////////////////////
 }
 
 void LRUPLUS::checkAndUpdateCache(intPair query)
