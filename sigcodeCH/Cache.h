@@ -60,6 +60,7 @@ public:
   int getCacheHits(){return numCacheHits;}
   int getTotalQueries(){return numTotalQueries;}
   int getTotalDijkstraCalls(){return numDijkstraCalls;}
+  void resetDijkstraCalls(){numDijkstraCalls=0;}
 
   void readMapData();
   void plotCachePoints(vector<CacheItem>& cm);
