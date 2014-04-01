@@ -499,7 +499,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  int itemSize = cache[rPid].size;  // oldest item
 	  cache.erase(rPid);
 	  ordering.erase(ordering.begin());
-	  nodesInCache =- itemSize;
+	  nodesInCache -= itemSize;
 
 	  cacheUsed = cacheUsed - itemSize*NODE_BITS;
 	  break;

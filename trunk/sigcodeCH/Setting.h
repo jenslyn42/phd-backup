@@ -132,7 +132,7 @@ struct Region {
 
 
 class TestSetting {
-  double fillCacheTime, buildStatisticsTime, nodesInCache;
+  double fillCacheTime, buildStatisticsTime, nodesInCache, itemsInCache;
   
   void printConfigError(string key,bool required);
   void trimSpace(char* str);
@@ -146,7 +146,7 @@ public:
 
   int inputFileType;    // used for RoadGraph
   int scacheQueryType;  // used for SCACHE only
-  int splits, itemsInCache, nonEmptyRegionPairs, optiNum;
+  int splits, nonEmptyRegionPairs, optiNum;
   
   bool useConcisepath;
   bool measureConcisepathdegrees;
@@ -189,7 +189,7 @@ public:
   double getItemsInCache(){return itemsInCache;}
   void setItemsInCache(double iic){itemsInCache = iic;}
   
-  double getAvgItemLength(){return (double)nodesInCache / (double) itemsInCache;}
+  double getAvgItemLength(){return nodesInCache / itemsInCache;}
 
 //   double getNodesInCache(){return nodesInCache;}
   void setNodesInCache(int numNodes){nodesInCache = numNodes;}
