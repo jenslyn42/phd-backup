@@ -230,6 +230,10 @@ void LRUPLUS::runQueryList()
   ts.setNodesInCache(nodesInCache);
   ts.setUnusedCacheBits((cacheSize - cacheUsed)*NODE_BITS);
   
+  cout << "nodesInCache: " << nodesInCache << endl;
+  cout << "itemsInCache: " << cache.size() << endl;
+  cout << "Avg. itemLength: " << nodesInCache / cache.size() << endl;
+  
   //// stats write out code ////
   int reducedInCache=0, fullIncache=0;
   string statfilename = "lrustats_";
