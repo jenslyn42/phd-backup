@@ -288,7 +288,6 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
       ordering.erase(std::make_pair<int,int>(*itr, tmpItem.key() ) );
       ordering.insert(std::make_pair<int,int>(*itr, orderVal));
       tmpItem.updateKey(orderVal);
-      nodesInCache += tmpItem.size;
       if(ts.useLRUbitmap){
 	vector<int>& path = tmpItem.item;
 	for(int i=0; i<path.size(); i++){
