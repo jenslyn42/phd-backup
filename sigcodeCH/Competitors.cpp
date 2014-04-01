@@ -174,6 +174,7 @@ LRUPLUS::LRUPLUS(TestSetting ts)
   numEvicted =0;
   numEvictedZeroBitmap =0;
   ts.setNodesInCache(0);
+  
 
   if(this->ts.useLRUbitmap && (this->ts.testSPtype != SPTYPE_FULL || ts.testOptimaltype != OPTIMALTYPE_ORG))
     this->ts.useLRUbitmap = false;
@@ -231,9 +232,9 @@ void LRUPLUS::runQueryList()
   ts.setNodesInCache(nodesInCache);
   ts.setUnusedCacheBits((cacheSize - cacheUsed)*NODE_BITS);
   
-  cout << "nodesInCache: " << nodesInCache << endl;
-  cout << "itemsInCache: " << cache.size() << endl;
-  cout << "Avg. itemLength: " << nodesInCache / cache.size() << endl;
+  cout << "nodesInCache: " << nodesInCache << " / " << ts.getNodesInCache() << endl;
+  cout << "itemsInCache: " << cache.size() << " / " << ts.getItemsInCache() << endl;
+  cout << "Avg. itemLength: " << nodesInCache / cache.size() << " / " << ts.getAvgItemLength() << endl;
   
   //// stats write out code ////
   int reducedInCache=0, fullIncache=0;
