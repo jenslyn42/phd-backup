@@ -173,6 +173,7 @@ LRUPLUS::LRUPLUS(TestSetting ts)
   
   numEvicted =0;
   numEvictedZeroBitmap =0;
+  ts.setNodesInCache(0);
 
   if(this->ts.useLRUbitmap && (this->ts.testSPtype != SPTYPE_FULL || ts.testOptimaltype != OPTIMALTYPE_ORG))
     this->ts.useLRUbitmap = false;
