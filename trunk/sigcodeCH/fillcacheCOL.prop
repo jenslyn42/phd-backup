@@ -39,7 +39,7 @@ splits = 14
 filesize = 11651877
 // in bytes
 
-cachesize = 65536
+cachesize = 2097152
 //cachesize = 0
 // note: the cache size is expressed as the number of "bits"
 
@@ -60,7 +60,7 @@ measureConcisepathdegrees = false
 testOptimaltype = original
 //choices: original, kskip, rand, orderfill
 
-optiNum = 40
+optiNum = 50
 //pct of full path before stopping. 
 
 

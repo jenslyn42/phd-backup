@@ -58,7 +58,7 @@ useLRUbitmap = true
 testOptimaltype = original
 //choices: original, kskip, rand, orderfill
 
-optiNum = 40
+optiNum = 50
 //pct of full path before stopping. 
 
 
