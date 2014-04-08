@@ -39,7 +39,7 @@ splits = 14
 filesize = 11651877
 // in bytes
 
-cachesize = 2097152
+cachesize = 46607508
 //cachesize = 0
 // note: the cache size is expressed as the number of "bits"
 
