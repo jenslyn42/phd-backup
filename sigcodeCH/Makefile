@@ -80,6 +80,9 @@ build_hcn_AAL:
 build_hcn_BEI:
 	./buildCHindex -s -p -f beijingNEW.ddsg -o beijingNEW.hcn -l beijingNEW.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
 
+build_hcn_BAY:
+	./buildCHindex -s -p -f USA-road-d.BAY.ddsg -o USA-road-d.BAY.hcn -l USA-road-d.BAY.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
+
 build_hcn_EX:
 	./buildCHindex -s -p -f exampleMap.ddsg -o exampleMap.hcn -l exampleMap.log -x 190 -y 1 -e 600 -k 1,3.3,2,10,3,10,5
 
