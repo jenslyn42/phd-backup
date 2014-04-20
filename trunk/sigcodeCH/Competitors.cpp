@@ -237,6 +237,7 @@ void LRUPLUS::runQueryList()
   cout << "Avg. itemLength: " << nodesInCache / cache.size() << " / " << ts.getAvgItemLength() << endl;
   
   //// stats write out code ////
+  /// pid org.size redux.size ////
   int reducedInCache=0, fullIncache=0;
   string statfilename = "lrustats_";
   statfilename.insert(0,ts.testFile);
@@ -244,12 +245,13 @@ void LRUPLUS::runQueryList()
   statfilename.append(".stats");
   ofstream statfile;
   statfile.open((statfilename).c_str(), ios::out | ios::trunc);
-  BOOST_FOREACH(intPairMap::value_type stat, lrustats){
+  BOOST_FOREACH(intIntintPairMap::value_type stat, lrustats){
     if(cache.find(stat.first) != cache.end()){
-      if(stat.second.second != -1) reducedInCache++;
+      if(stat.second.second.first != -1) reducedInCache++;
       else fullIncache++;
     }
-    statfile << stat.first << "\t" << stat.second.first << "\t" << stat.second.second << endl;
+    /// pid, org.size, redux.size, concise.size
+    statfile << stat.first << "\t" << stat.second.first << "\t" << stat.second.second.first << stat.second.second.second << endl;
   }
   statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\n*******" << endl;
   statfile.close();
@@ -417,7 +419,8 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 
       removalStatus[cItem.id] = 1;
       notEnoughSpace = false;
-      lrustats[cItem.id] = make_pair<int,int>(cItem.size,-1);
+      
+      lrustats[cItem.id] = make_pair<int, intPair >(cItem.size, make_pair<int,int>(-1,-1) );
       return cItem.id;
 
     }else if ( spSize*NODE_BITS < cacheSize) {
@@ -437,6 +440,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       if(!ts.useLRUbitmap || ts.testSPtype == SPTYPE_CONCISE)
 	removalStatus[rPid] = 3; //remove path from cache, do not reduce path size
 
+      int numConciseNodes = 0;
       switch(removalStatus[rPid]){
 	case 1: //reduce the path
 	  //cout << "Case 1:" << endl;
@@ -444,6 +448,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	    if(concisePartsp[rPid].test(i)){
 	      tempItem.push_back(rItem[i]);
 	      tempConsiseParts.push_back(1);
+	      numConciseNodes++;
 	    }else if(usefullParts[rPid].test(i)) {
 	      tempItem.push_back(rItem[i]);
 	      tempConsiseParts.push_back(0);
@@ -468,7 +473,8 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  usefullParts.erase(rPid);
 	  usefullParts[rPid] = boost::dynamic_bitset<>(cache[rPid].size);
 	  removalStatus[rPid] = 3; //set to 3 to skip case 2, set to 2 to use case 2.
-	  lrustats[rPid].second = tempItem.size();
+	  lrustats[rPid].second.first = tempItem.size();
+	  lrustats[rPid].second.second = numConciseNodes;
 	  break;
 	case 2: //limit path to CONCISE
 	  //cout << "Case 2:" << endl;
