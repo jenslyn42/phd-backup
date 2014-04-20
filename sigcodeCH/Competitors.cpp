@@ -251,7 +251,7 @@ void LRUPLUS::runQueryList()
       else fullIncache++;
     }
     /// pid, org.size, redux.size, concise.size
-    statfile << stat.first << "\t" << stat.second.first << "\t" << stat.second.second.first << stat.second.second.second << endl;
+    statfile << stat.first << "\t" << stat.second.first << "\t" << stat.second.second.first << "\t" << stat.second.second.second << endl;
   }
   statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\n*******" << endl;
   statfile.close();
