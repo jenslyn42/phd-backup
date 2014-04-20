@@ -474,7 +474,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  usefullParts[rPid] = boost::dynamic_bitset<>(cache[rPid].size);
 	  removalStatus[rPid] = 3; //set to 3 to skip case 2, set to 2 to use case 2.
 	  lrustats[rPid].second.first = tempItem.size();
-	  lrustats[rPid].second.second = numConciseNodes;
+	  lrustats[rPid].second.second = conciseSp.size();
 	  break;
 	case 2: //limit path to CONCISE
 	  //cout << "Case 2:" << endl;
