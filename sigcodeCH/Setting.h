@@ -98,7 +98,7 @@ typedef boost::unordered_map<int, Point> intPointMap;
 typedef boost::unordered_map<int, intVector > intVectorMap;
 typedef boost::unordered_map<int, boost::unordered_set<int> > intSetMap;
 
-typedef boost::unordered_map<int, std::pair<int, intPair > > intIntintPairMap;
+typedef boost::unordered_map<int, std::pair<int, intPairPairs > > intIntintPairPairsMap;
 typedef boost::unordered_map<int, std::pair<int, intVector > > intIntVectorMap;
 typedef boost::unordered_map<int, std::pair<intPair, intVector > > intIntPairVectorMap;
 
