@@ -245,13 +245,16 @@ void LRUPLUS::runQueryList()
   statfilename.append(".stats");
   ofstream statfile;
   statfile.open((statfilename).c_str(), ios::out | ios::trunc);
-  BOOST_FOREACH(intIntintPairMap::value_type stat, lrustats){
+  BOOST_FOREACH(intIntintPairPairsMap::value_type stat, lrustats){
     if(cache.find(stat.first) != cache.end()){
-      if(stat.second.second.first != -1) reducedInCache++;
+      if(stat.second.second.first.first != -1) reducedInCache++;
       else fullIncache++;
     }
     /// pid, org.size, redux.size, concise.size
-    statfile << stat.first << "\t" << stat.second.first << "\t" << stat.second.second.first << "\t" << stat.second.second.second;
+    statfile << stat.first << "\t" << stat.second.first << "\t" << stat.second.second.first.first << "\t" << stat.second.second.first.second;
+    /// sid, tid
+    statfile<< "\t(" << stat.second.second.second.first << "," << stat.second.second.second.second << ")";
+    /// if there is a difference between length of reduced and length of concise path. 
     if(stat.second.second.first != stat.second.second.second) statfile << "\t USED";
     statfile << endl;
   }
@@ -422,7 +425,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       removalStatus[cItem.id] = 1;
       notEnoughSpace = false;
       
-      lrustats[cItem.id] = make_pair<int, intPair >(cItem.size, make_pair<int,int>(-1,conciseSp.size()) );
+      lrustats[cItem.id] = make_pair<int, intPairPairs >(cItem.size, make_pair<intPair,intPair>(make_pair<int,int>(-1,conciseSp.size()), make_pair<int,int>(cItem.s,cItem.t)) );
       return cItem.id;
 
     }else if ( spSize*NODE_BITS < cacheSize) {
@@ -475,7 +478,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  usefullParts.erase(rPid);
 	  usefullParts[rPid] = boost::dynamic_bitset<>(cache[rPid].size);
 	  removalStatus[rPid] = 3; //set to 3 to skip case 2, set to 2 to use case 2.
-	  lrustats[rPid].second.first = tempItem.size();
+	  lrustats[rPid].first = tempItem.size();
 	  break;
 	case 2: //limit path to CONCISE
 	  //cout << "Case 2:" << endl;
