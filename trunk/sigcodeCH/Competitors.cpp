@@ -338,6 +338,9 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 
   if(!cacheHit) {
     vector<int> spResult;
+    
+    query = make_pair<int,int>(277316,127914);
+    
     pair<intVector, intVector> spaths;
     if(ts.testOptimaltype == OPTIMALTYPE_KSKIP)
       spResult = kskip(query, ts.optiNum);
