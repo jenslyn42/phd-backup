@@ -350,6 +350,9 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
     }
 
+    cout << "FIX? " << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << endl;
+    exit(0);
+    
     numDijkstraCalls++;
     int querySize = spResult.size();
 
@@ -424,8 +427,9 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 
       removalStatus[cItem.id] = 1;
       notEnoughSpace = false;
-      
-      lrustats[cItem.id] = make_pair<int, intPairPairs >(cItem.size, make_pair<intPair,intPair>(make_pair<int,int>(-1,conciseSp.size()), make_pair<int,int>(cItem.s,cItem.t)) );
+      intPair tmpCoordpair;
+      cItem.s>cItem.t? tmpCoordpair = make_pair<int,int>(cItem.s, cItem.t) : tmpCoordpair = make_pair<int,int>(cItem.t, cItem.s);
+      lrustats[cItem.id] = make_pair<int, intPairPairs >(sp.size(), make_pair<intPair,intPair>(make_pair<int,int>(-1,conciseSp.size()), tmpCoordpair) );
       return cItem.id;
 
     }else if ( spSize*NODE_BITS < cacheSize) {
