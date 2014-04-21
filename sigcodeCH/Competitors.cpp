@@ -252,7 +252,7 @@ void LRUPLUS::runQueryList()
     }
     /// pid, org.size, redux.size, concise.size
     statfile << stat.first << "\t" << stat.second.first << "\t" << stat.second.second.first << "\t" << stat.second.second.second;
-    if(stat.second.second.first == stat.second.second.second) statfile << "\t USED";
+    if(stat.second.second.first != stat.second.second.second) statfile << "\t USED";
     statfile << endl;
   }
   statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\n*******" << endl;
