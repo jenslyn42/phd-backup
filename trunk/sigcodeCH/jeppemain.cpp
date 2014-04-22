@@ -281,7 +281,10 @@ void extractTestParameters(TestSetting& ts) {
   switch(ts.testSPtype){
     case SPTYPE_FULL:
       ts.useConcisepath = false;
-      ts.measureConcisepathdegrees = false;
+      if(ts.useLRUbitmap)
+	ts.measureConcisepathdegrees = true;
+      else
+	ts.measureConcisepathdegrees = false;
       break;
     case SPTYPE_CONCISE:
       ts.useConcisepath = true;

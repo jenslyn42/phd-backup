@@ -52,6 +52,7 @@ public:
 	}
 	void transformTrainOrTestFile(string cnodeFn, string trainTestFn);
 	void setConcisePathUse(bool use){useConcisepath = use;} //cout << "***/" << useConcisepath << "/***" << endl; }
+	void setmeasureConcisepathdegrees(bool measure){measureConcisepathdegrees = measure;}
 	void testCH();
 	
 private:
