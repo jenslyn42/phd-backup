@@ -92,11 +92,8 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts){
 
 
 vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {
-  if(useConcisepath){
-    std::pair<intVector, intVector> result = (conciseDijkstraSSSP(source, dest));
-    cout << "X (" << result.first.size() << "," << result.second.size() << ")\t";
-    return result.second;
-  }
+  if(useConcisepath)
+    return (conciseDijkstraSSSP(source, dest)).second;
   return (conciseDijkstraSSSP(source, dest)).first;
 }
 
@@ -802,10 +799,10 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
 //  
     vector<int> tmpRecpath;
     ////////////////////////////////////
-//     if((tmpRecpath=recoverPath(concisepath)) != reverseTrace)
-//       cout << "NEQ! "<< concisepath.size() << " / " << tmpRecpath.size() << " - " << reverseTrace.size() << " D2:: (" << degree2Added <<") " << degree2 << endl;
-//     else
-//       cout << "EQ " << concisepath.size() << " / " << reverseTrace.size() << " D2.:  (" << degree2Added <<") " << degree2 << endl;
+     if((tmpRecpath=recoverPath(concisepath)) != reverseTrace)
+       cout << "NEQ! "<< concisepath.size() << " / " << tmpRecpath.size() << " - " << reverseTrace.size() << " D2:: (" << degree2Added <<") " << degree2 << endl;
+     else
+       cout << "EQ " << concisepath.size() << " / " << reverseTrace.size() << " D2.:  (" << degree2Added <<") " << degree2 << endl;
     
 //     for(std::vector<int>::size_type i = concisepath.size()-1; i != 0; i--){cout << concisepath[i] << " "; }
 //     cout << endl;
