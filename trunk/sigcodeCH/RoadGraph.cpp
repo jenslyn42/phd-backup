@@ -105,6 +105,7 @@ std::pair<intVector, intVector> RoadGraph::conciseDijkstraSSSP(int source, int d
   std::vector<unsigned int> temp, temp2;
   Path path2;
   (useConcisepath)? cout << "TRUE\t" : cout << "FALSE\t";
+  cout << "(" << source << "," << dest << ")\t";
   if (spDebug)    cout << "RoadGraph::dijkstraSSSP 1 " << endl;
 
   spDist = sp->bidirSearch(source, dest); //distance
