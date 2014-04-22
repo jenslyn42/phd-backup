@@ -129,9 +129,12 @@ std::pair<intVector, intVector> RoadGraph::conciseDijkstraSSSP(int source, int d
   sp->clear();
   //////////////////
         
-  if(useConcisepath)
-    return make_pair<intVector, intVector>(trace, calcConsisePath(trace));
-  else 
+  if(useConcisepath){
+    intVector conc = calcConsisePath(trace);
+    cout << "[" << trace.size() << "," << conc.size() << "]\t";
+    return make_pair<intVector, intVector>(trace,conc);    
+//     return make_pair<intVector, intVector>(trace, calcConsisePath(trace));
+  }else 
     return make_pair<intVector, intVector>(trace, trace2);
 }
 
