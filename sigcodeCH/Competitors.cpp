@@ -338,9 +338,6 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 
   if(!cacheHit) {
     vector<int> spResult;
-    
-    query = make_pair<int,int>(277316,127914);
-    
     pair<intVector, intVector> spaths;
     if(ts.testOptimaltype == OPTIMALTYPE_KSKIP)
       spResult = kskip(query, ts.optiNum);
@@ -353,9 +350,32 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
     }
 
-    cout << "FIX? " << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << endl;
-    exit(0);
+    ///////////////////////////////////////////
+    ////////////////////////////////////////////
     
+    query = make_pair<int,int>(277316,127914);
+    
+      if(ts.useLRUbitmap){
+	RoadGraph::mapObject(ts)->setConcisePathUse(true);
+	spaths = RoadGraph::mapObject(ts)->conciseDijkstraSSSP(query.first, query.second);
+	spResult = spaths.first;
+      }else
+	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
+    
+    cout << "FIX? " << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << endl;
+    query = make_pair<int,int>(127914,277316);
+    
+      if(ts.useLRUbitmap){
+	RoadGraph::mapObject(ts)->setConcisePathUse(true);
+	spaths = RoadGraph::mapObject(ts)->conciseDijkstraSSSP(query.first, query.second);
+	spResult = spaths.first;
+      }else
+	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
+    
+    cout << "FIX2? " << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << endl;
+    exit(0);
+    ///////////////////////////////////////////
+    ////////////////////////////////////////////
     numDijkstraCalls++;
     int querySize = spResult.size();
 
