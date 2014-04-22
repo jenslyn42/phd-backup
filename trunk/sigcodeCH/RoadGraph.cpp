@@ -92,8 +92,11 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts){
 
 
 vector<int> RoadGraph::dijkstraSSSP(int source, int dest) {
-  if(useConcisepath)
-    return (conciseDijkstraSSSP(source, dest)).second;
+  if(useConcisepath){
+    std::pair<intVector, intVector> result = (conciseDijkstraSSSP(source, dest));
+    cout << "X (" << result.first.size() << "," << result.second.size() << ")\t";
+    return result.second;
+  }
   return (conciseDijkstraSSSP(source, dest)).first;
 }
 
