@@ -739,8 +739,7 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
       }
       addnext = false;
 
-// // //       if(conciseDebug)	
-	cout << "1..0: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
+// // //       if(conciseDebug)		cout << "1..0: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
     }
     if(outdegree > 2){
       if(measureConcisepathdegrees){ //(testsetting) add nid to path based on the angle deviation from previous heading
@@ -750,8 +749,7 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
 	curr = nid2Point[trace[i]];
 	angleToNextNode=0.0;
 	minAngle=std::numeric_limits<double>::max();
-// // // 	if(conciseDebug) 
-	  cout << "prev/cur Node: " << prevNode << "/" << trace[i] << " +" << nid2Point.size() << "+ " << endl;
+// // // 	if(conciseDebug) 	  cout << "prev/cur Node: " << prevNode << "/" << trace[i] << " +" << nid2Point.size() << "+ " << endl;
 	BOOST_FOREACH(JEdge edge, edges){
 	  if(edge.first != prevNode){
 	    tmp=getAngle(prev, curr, nid2Point[edge.first]);
@@ -786,8 +784,7 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
     }
   }
   concisepath.push_back(trace[0]); //in the loop above we put a guard i != 0, which prevents the last node from being added to the concise path.
-// // //   if(conciseDebug) 
-    cout << "5..0: [" << trace[0] << ", " << concisepath.size() << "] " << endl;
+  if(conciseDebug) cout << "5..0: [" << trace[0] << ", " << concisepath.size() << "] " << endl;
 
   outdegree= map[trace[0]].size();
   if(outdegree < 3){ degree2++; degree2Added++;}
