@@ -336,6 +336,10 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 //    cout << endl;
 //  }
 
+//////////////////////////////////////////////////////////
+    query = make_pair<int,int>(277316,127914);
+    ///////////////////////////////////////////////////
+    
   if(!cacheHit) {
     vector<int> spResult;
     pair<intVector, intVector> spaths;
@@ -352,7 +356,8 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 
     ///////////////////////////////////////////
     ////////////////////////////////////////////
-    
+     cout << "FIX0\t" << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << "\t" << ts.useConcisepath << endl;
+     
     query = make_pair<int,int>(277316,127914);
     
       if(ts.useLRUbitmap){
