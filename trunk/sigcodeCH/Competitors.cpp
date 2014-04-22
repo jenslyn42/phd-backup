@@ -373,6 +373,27 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
     
     cout << "FIX2? " << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << endl;
+    
+    query = make_pair<int,int>(277316,127914);
+    
+      if(ts.useLRUbitmap){
+	RoadGraph::mapObject(ts)->setConcisePathUse(true);
+	spaths = RoadGraph::mapObject(ts)->conciseDijkstraSSSP(query.first, query.second);
+	spResult = spaths.first;
+      }else
+	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
+    
+    cout << "FIX3 " << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << endl;
+    query = make_pair<int,int>(127914,277316);
+    
+      if(ts.useLRUbitmap){
+	RoadGraph::mapObject(ts)->setConcisePathUse(true);
+	spaths = RoadGraph::mapObject(ts)->conciseDijkstraSSSP(query.first, query.second);
+	spResult = spaths.first;
+      }else
+	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
+    
+    cout << "FIX4? " << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << endl;
     exit(0);
     ///////////////////////////////////////////
     ////////////////////////////////////////////
