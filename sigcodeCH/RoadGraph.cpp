@@ -683,7 +683,8 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
   bool addnext = true, doadd = false, equalMinAngle=false;
   vector<int> concisepath;
   concisepath.push_back(trace.back());
-   if(conciseDebug) cout << "calcConsisePathA S: " << trace.size() << " (" << trace.front() << "," << trace.back() << ")"<< endl;
+// // //    if(conciseDebug) 
+     cout << "calcConsisePathA S: " << trace.size() << " (" << trace.front() << "," << trace.back() << ")"<< endl;
   double angleToNextNode=0.0, minAngle=0.0, tmp;
   Point prev, curr;
   if(trace.empty()) cout << "EMPTY TRACE!!" << endl;
@@ -738,7 +739,8 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
       }
       addnext = false;
 
-      if(conciseDebug)	cout << "1..0: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
+// // //       if(conciseDebug)	
+	cout << "1..0: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
     }
     if(outdegree > 2){
       if(measureConcisepathdegrees){ //(testsetting) add nid to path based on the angle deviation from previous heading
@@ -748,7 +750,8 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
 	curr = nid2Point[trace[i]];
 	angleToNextNode=0.0;
 	minAngle=std::numeric_limits<double>::max();
-	if(conciseDebug) cout << "prev/cur Node: " << prevNode << "/" << trace[i] << " +" << nid2Point.size() << "+ " << endl;
+// // // 	if(conciseDebug) 
+	  cout << "prev/cur Node: " << prevNode << "/" << trace[i] << " +" << nid2Point.size() << "+ " << endl;
 	BOOST_FOREACH(JEdge edge, edges){
 	  if(edge.first != prevNode){
 	    tmp=getAngle(prev, curr, nid2Point[edge.first]);
@@ -783,7 +786,8 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
     }
   }
   concisepath.push_back(trace[0]); //in the loop above we put a guard i != 0, which prevents the last node from being added to the concise path.
-  if(conciseDebug) cout << "5..0: [" << trace[0] << ", " << concisepath.size() << "] " << endl;
+// // //   if(conciseDebug) 
+    cout << "5..0: [" << trace[0] << ", " << concisepath.size() << "] " << endl;
 
   outdegree= map[trace[0]].size();
   if(outdegree < 3){ degree2++; degree2Added++;}
@@ -794,7 +798,7 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
   vector<int> reverseTrace;
   for(std::vector<int>::size_type k = trace.size()-1; k < trace.size(); k--){
     reverseTrace.push_back(trace[k]);
-    if(node2degree[trace[k]] < 3) originalDegree2++; //++
+    if(node2degree[trace[k]] < 3) originalDegree2++;
   }
 //  
     vector<int> tmpRecpath;
@@ -802,8 +806,8 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
 //      if((tmpRecpath=recoverPath(concisepath)) != reverseTrace)
 //        cout << "NEQ! "<< concisepath.size() << " / " << tmpRecpath.size() << " - " << reverseTrace.size() << " D2:: (" << degree2Added <<") " << degree2 << endl;
 //      else
-       cout << "EQ " << concisepath.size() << " / " << reverseTrace.size() << " D2.:  (" << degree2Added <<") " << degree2 << endl;
-    
+//        cout << "EQ " << concisepath.size() << " / " << reverseTrace.size() << " D2.:  (" << degree2Added <<") " << degree2 << endl;
+//     
 //     for(std::vector<int>::size_type i = concisepath.size()-1; i != 0; i--){cout << concisepath[i] << " "; }
 //     cout << endl;
     //////////////////////////////////////
