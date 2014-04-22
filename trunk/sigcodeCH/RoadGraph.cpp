@@ -112,10 +112,10 @@ std::pair<intVector, intVector> RoadGraph::conciseDijkstraSSSP(int source, int d
   path2 = sp->pathTo(path, dest, -1, false, true); //shortest path
   temp = path.getNodeVector();
   
-  cout << spDist << "," << (path2.getNodeVector()).size() << "," << temp.size() << "\t";
-  
   for (int i=0;i<temp.size();i++)
     trace.push_back((int)(temp[i]));
+  
+    cout << spDist << "," << (path2.getNodeVector()).size() << "," << temp.size() << ", " << trace.size() << "(" << trace.front() << "," << trace.back() << "\t";
   
   if (spDebug)    cout << "RoadGraph::dijkstraSSSP 6 " << useConcisepath << " " << trace.size() << " " << useConcisepath << endl;
 
