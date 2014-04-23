@@ -337,7 +337,22 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 //  }
 
 //////////////////////////////////////////////////////////
-//     query = make_pair<int,int>(277316,127914);
+query0 = make_pair<int,int>(127914,277316);
+query1 = make_pair<int,int>(1319, 230653);
+query2 = make_pair<int,int>(84397, 127871);
+query3 = make_pair<int,int>(241431,88989);
+query4 = make_pair<int,int>(1458, 84399);
+
+query00 = make_pair<int,int>(277316, 127914);
+query11 = make_pair<int,int>(230653,1319);
+query22 = make_pair<int,int>(127871, 84397);
+query33 = make_pair<int,int>(88989, 241431);
+query44 = make_pair<int,int>(84399, 1458);
+
+queryOne = query0
+queryTwo = query00
+///////////////////////////////////////////////////////////
+    query = queryOne
 /////////////////////////////////////////////////////////
     
   if(!cacheHit) {
@@ -356,53 +371,52 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 
     ///////////////////////////////////////////
     ////////////////////////////////////////////
-    cout << query.first << " " << query.second << endl;
-//      cout << "FIX0\t" << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << "\t" << ts.useConcisepath << endl;
-// 
-//     query = make_pair<int,int>(127914,277316);
-//     
-//       if(ts.useLRUbitmap){
-// 	RoadGraph::mapObject(ts)->setConcisePathUse(true);
-// 	spaths = RoadGraph::mapObject(ts)->conciseDijkstraSSSP(query.first, query.second);
-// 	spResult = spaths.first;
-//       }else
-// 	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
-//     
-//     cout << "FIX1\t" << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << "\t" << ts.useConcisepath << endl;
-//          
-//     query = make_pair<int,int>(277316,127914);
-//     
-//       if(ts.useLRUbitmap){
-// 	RoadGraph::mapObject(ts)->setConcisePathUse(true);
-// 	spaths = RoadGraph::mapObject(ts)->conciseDijkstraSSSP(query.first, query.second);
-// 	spResult = spaths.first;
-//       }else
-// 	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
-//     
-//     cout << "FIX2\t" << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << "\t" << ts.useConcisepath << endl;
-//     query = make_pair<int,int>(127914,277316);
-//     
-//       if(ts.useLRUbitmap){
-// 	RoadGraph::mapObject(ts)->setConcisePathUse(true);
-// 	spaths = RoadGraph::mapObject(ts)->conciseDijkstraSSSP(query.first, query.second);
-// 	spResult = spaths.first;
-//       }else
-// 	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
-//     
-//     cout << "FIX3\t" << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << "\t" << ts.useConcisepath << endl;
-//     
-//     query = make_pair<int,int>(277316,127914);
-//     
-//       if(ts.useLRUbitmap){
-// 	RoadGraph::mapObject(ts)->setConcisePathUse(true);
-// 	spaths = RoadGraph::mapObject(ts)->conciseDijkstraSSSP(query.first, query.second);
-// 	spResult = spaths.first;
-//       }else
-// 	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
-//     
-//     cout << "FIX4\t" << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << "\t" << ts.useConcisepath << endl;
-//     
-//     exit(0);
+     cout << "FIX0\t" << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << "\t" << ts.useConcisepath << endl;
+
+    query = queryTwo;
+    
+      if(ts.useLRUbitmap){
+	RoadGraph::mapObject(ts)->setConcisePathUse(true);
+	spaths = RoadGraph::mapObject(ts)->conciseDijkstraSSSP(query.first, query.second);
+	spResult = spaths.first;
+      }else
+	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
+    
+    cout << "FIX1\t" << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << "\t" << ts.useConcisepath << endl;
+         
+    query = queryOne;
+    
+      if(ts.useLRUbitmap){
+	RoadGraph::mapObject(ts)->setConcisePathUse(true);
+	spaths = RoadGraph::mapObject(ts)->conciseDijkstraSSSP(query.first, query.second);
+	spResult = spaths.first;
+      }else
+	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
+    
+    cout << "FIX2\t" << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << "\t" << ts.useConcisepath << endl;
+    query = queryTwo;
+    
+      if(ts.useLRUbitmap){
+	RoadGraph::mapObject(ts)->setConcisePathUse(true);
+	spaths = RoadGraph::mapObject(ts)->conciseDijkstraSSSP(query.first, query.second);
+	spResult = spaths.first;
+      }else
+	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
+    
+    cout << "FIX3\t" << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << "\t" << ts.useConcisepath << endl;
+    
+    query = queryOne;
+    
+      if(ts.useLRUbitmap){
+	RoadGraph::mapObject(ts)->setConcisePathUse(true);
+	spaths = RoadGraph::mapObject(ts)->conciseDijkstraSSSP(query.first, query.second);
+	spResult = spaths.first;
+      }else
+	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
+    
+    cout << "FIX4\t" << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << "\t" << ts.useConcisepath << endl;
+    
+    exit(0);
     ///////////////////////////////////////////
     ////////////////////////////////////////////
     numDijkstraCalls++;
