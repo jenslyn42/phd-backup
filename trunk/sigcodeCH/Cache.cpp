@@ -3,7 +3,17 @@
  *   jenslyn42@gmail.com								*
  *											*
  ***************************************************************************************/
+// intPair query00 = make_pair<int,int>(127914,277316);
+// intPair query01 = make_pair<int,int>(1319, 230653);
+// intPair query02 = make_pair<int,int>(84397, 127871);
+// intPair query03 = make_pair<int,int>(241431,88989);
+// intPair query04 = make_pair<int,int>(1458, 84399);
 
+// intPair query10 = make_pair<int,int>(277316, 127914);
+// intPair query11 = make_pair<int,int>(230653,1319);
+// intPair query12 = make_pair<int,int>(127871, 84397);
+// intPair query13 = make_pair<int,int>(88989, 241431);
+// intPair query14 = make_pair<int,int>(84399, 1458);
 
 #define debugCache (false)
 
