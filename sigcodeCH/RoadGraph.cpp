@@ -36,7 +36,7 @@
 //specifically for the dijkstraSSSP() method
 #define spDebug false
 
-#define conciseDebug false
+#define conciseDebug true
 #define recoverConciseDebug false
 
 boost::unordered_map<int, int*> RoadGraph::spTrace;
@@ -738,8 +738,7 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
 	doadd = false; //Special case can set doadd=true, but not set doadd=false after adding next node, leading to possible extra node added to concisepath.
       }
       addnext = false;
-
-// // //       if(conciseDebug)		cout << "1..0: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
+      if(conciseDebug)	cout << "1..0: (" << i << ") [" << trace[i] << ", " << concisepath.size() << "] " << outdegree << endl;
     }
     if(outdegree > 2){
       if(measureConcisepathdegrees){ //(testsetting) add nid to path based on the angle deviation from previous heading
@@ -749,7 +748,7 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
 	curr = nid2Point[trace[i]];
 	angleToNextNode=0.0;
 	minAngle=std::numeric_limits<double>::max();
-// // // 	if(conciseDebug) 	  cout << "prev/cur Node: " << prevNode << "/" << trace[i] << " +" << nid2Point.size() << "+ " << endl;
+ 	if(conciseDebug)  cout << "prev/cur Node: " << prevNode << "/" << trace[i] << " +" << nid2Point.size() << "+ " << endl;
 	BOOST_FOREACH(JEdge edge, edges){
 	  if(edge.first != prevNode){
 	    tmp=getAngle(prev, curr, nid2Point[edge.first]);
@@ -810,30 +809,30 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
     //////////////////////////////////////
 //    cout << "7..0: [" << originalDegree2 << ", " << reverseTrace.size() << "] " << endl;
   if(conciseDebug) {
-    if((tmpRecpath=recoverPath(concisepath)) != reverseTrace)
-      cout << "NEQ! " << concisepath.size() << " / " << reverseTrace.size() << " D2: (" << degree2Added <<") " << degree2 << endl;
-    else
+//     if((tmpRecpath=recoverPath(concisepath)) != reverseTrace)
+//       cout << "NEQ! " << concisepath.size() << " / " << reverseTrace.size() << " D2: (" << degree2Added <<") " << degree2 << endl;
+//     else
       cout << "EQ " << concisepath.size() << " / " << reverseTrace.size() << " D2.: (" << degree2Added <<") " << degree2 << endl;
       
     for(std::vector<int>::size_type i = 0; i != concisepath.size(); i++){
       cout << concisepath[i] << " ";
     }
 
-   cout << "\nORI: " << trace.size() << endl;
-   for(std::vector<int>::size_type k = trace.size()-1; k < trace.size(); k--){
-     cout << trace[k] << " ";
-   }   
+    cout << "\nORI: " << trace.size() << endl;
+    for(std::vector<int>::size_type k = trace.size()-1; k < trace.size(); k--){
+      cout << trace[k] << " ";
+    }   
  
     cout << "\nREC: " << tmpRecpath.size() << endl;
     for(std::vector<int>::size_type j = 0; j != tmpRecpath.size(); j++){
-     cout << tmpRecpath[j] << " ";
-   }
+      cout << tmpRecpath[j] << " ";
+    }
  
-   cout << "\nREVTRACE: " << reverseTrace.size() << endl;
-   for(std::vector<int>::size_type z = 0; z != reverseTrace.size(); z++){
-     cout << reverseTrace[z] << " ";
-   }
-   std::cin.ignore();
+    cout << "\nREVTRACE: " << reverseTrace.size() << endl;
+    for(std::vector<int>::size_type z = 0; z != reverseTrace.size(); z++){
+      cout << reverseTrace[z] << " ";
+    }
+    std::cin.ignore();
   }
   if(conciseDebug) cout << "calcConsisePath E " << concisepath.size() << endl;
   return concisepath;
