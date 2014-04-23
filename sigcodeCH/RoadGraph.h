@@ -78,7 +78,7 @@ private:
 //	static boost::unordered_map<int, int*> trackdist; //all the distances from any node to a source node
 	int countSuccess, countFail;
 	bool useConcisepath;
-	bool measureConcisepathdegrees;
+	bool measureConcisepathdegrees, useLRUbitmap;
 	intPointMap nid2Point;
 	intMap node2degree;
 	CONCISETYPE_CHOICE testconcisetype;
