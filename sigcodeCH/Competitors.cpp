@@ -352,7 +352,7 @@ intPair query14 = make_pair<int,int>(84399, 1458);
 intPair queryOne = make_pair<int,int>(127914,277316);
 intPair queryTwo = make_pair<int,int>(277316, 127914); 
 ///////////////////////////////////////////////////////////
-    query = queryOne;
+    query = make_pair<int,int>(127914,277316);;
 /////////////////////////////////////////////////////////
     
   if(!cacheHit) {
