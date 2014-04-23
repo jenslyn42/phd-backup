@@ -5,8 +5,8 @@ OPTIMIZER = -O6 #-finline-limit=1000
 
 CXXFLAGS = $(DEBUG) $(WARNING) $(OPTIMIZER) 
 # LIBS = /lib/libboost_regex-mt.dll.a /lib/libboost_iostreams-mt.dll.a #cygwin
- LIBS = /usr/lib/libboost_regex-mt.a /usr/lib/libboost_iostreams-mt.a #ubuntu machines
-#LIBS = /usr/lib64/libboost_regex-mt.a /usr/lib64/libboost_iostreams-mt.a #Fedora / Debian
+# LIBS = /usr/lib/libboost_regex-mt.a /usr/lib/libboost_iostreams-mt.a #ubuntu machines
+LIBS = /usr/lib64/libboost_regex-mt.a /usr/lib64/libboost_iostreams-mt.a #Fedora / Debian
 LINK = -lboost_regex-mt -lboost_iostreams-mt
 
 #CCOPTS   = -c -O
