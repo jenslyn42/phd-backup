@@ -350,8 +350,8 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 // intPair query04 = make_pair<int,int>(1458, 84399);
 
 
-//     query = make_pair<int,int>(277316,127914);
-       query = make_pair<int,int>(230653,1319);
+     query = make_pair<int,int>(277316,127914);
+//       query = make_pair<int,int>(230653,1319);
     ///////////////////////////////////////////////////
     
   if(!cacheHit) {
