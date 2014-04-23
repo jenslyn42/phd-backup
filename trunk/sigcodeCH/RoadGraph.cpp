@@ -52,6 +52,7 @@ RoadGraph* RoadGraph::mapObject(TestSetting& ts){
   if (mapInstance==NULL){
     mapInstance = new RoadGraph();
     mapInstance->useConcisepath = ts.useConcisepath;
+    mapInstance->useLRUbitmap = ts.useLRUbitmap;
     mapInstance->measureConcisepathdegrees = ts.measureConcisepathdegrees;
     mapInstance->parseFileType = pt;
     mapInstance->ssspCalls = 0;
@@ -502,7 +503,7 @@ void RoadGraph::readCedgeNetworkFile(string fn)
   }
 
   int count=0;
-  if(useConcisepath){
+  if(useConcisepath || useLRUbitmap){
     if(rgDebug) cout << "seven, readCedgeNetworkFile!" << endl;
     ifstream in_nodedist (nodeFN.c_str(), ios::in);
     if(in_nodedist.is_open()) {
