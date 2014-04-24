@@ -350,10 +350,9 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 // intPair query04 = make_pair<int,int>(1458, 84399);
 
 
-
 //      query = make_pair<int,int>(277316,127914);
 //      query = make_pair<int,int>(230653,1319);
-query = make_pair<int,int>(127871, 84397);
+// query = make_pair<int,int>(127871, 84397);
     ///////////////////////////////////////////////////
     
   if(!cacheHit) {
@@ -372,7 +371,7 @@ query = make_pair<int,int>(127871, 84397);
 
     ///////////////////////////////////////////
     ////////////////////////////////////////////
-       
+/*       
      cout << "DIX0\t" << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << "\t" << ts.useConcisepath << endl;
     query = make_pair<int,int>(84397, 127871);
     
@@ -505,7 +504,7 @@ query = make_pair<int,int>(127871, 84397);
     
     cout << "FIX4\t" << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << "\t" << ts.useConcisepath << endl;
 
-    exit(0);
+    exit(0);*/
     ///////////////////////////////////////////
     ////////////////////////////////////////////
     numDijkstraCalls++;

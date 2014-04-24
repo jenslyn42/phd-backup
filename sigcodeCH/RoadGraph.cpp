@@ -105,9 +105,9 @@ std::pair<intVector, intVector> RoadGraph::conciseDijkstraSSSP(int source, int d
   std::vector<int> trace, trace2;
   std::vector<unsigned int> temp, temp2;
   Path path2;
-  (useConcisepath)? cout << "TRUE\t" : cout << "FALSE\t";
-  cout << "(" << source << "," << dest << ")\t";
-  if (spDebug)    cout << "RoadGraph::dijkstraSSSP 1 " << endl;
+//   (useConcisepath)? cout << "TRUE\t" : cout << "FALSE\t";
+
+  if (spDebug)    cout << "RoadGraph::dijkstraSSSP 1  (" << source << "," << dest << ")\t";
 
   spDist = sp->bidirSearch(source, dest); //distance
   path2 = sp->pathTo(path, dest, -1, false, true); //shortest path
@@ -115,8 +115,6 @@ std::pair<intVector, intVector> RoadGraph::conciseDijkstraSSSP(int source, int d
   
   for (int i=0;i<temp.size();i++)
     trace.push_back((int)(temp[i]));
-  
-    cout << spDist << "," << (path2.getNodeVector()).size() << "," << temp.size() << ", " << trace.size() << "(" << trace.front() << "," << trace.back() << "\t";
   
   if (spDebug)    cout << "RoadGraph::dijkstraSSSP 6 " << useConcisepath << " " << trace.size() << " " << useConcisepath << endl;
 
@@ -129,7 +127,7 @@ std::pair<intVector, intVector> RoadGraph::conciseDijkstraSSSP(int source, int d
         
   if(useConcisepath){
     intVector conc = calcConsisePath(trace);
-    cout << "[" << trace.size() << "," << conc.size() << "]\t";
+//     cout << "[" << trace.size() << "," << conc.size() << "]\t";
     return make_pair<intVector, intVector>(trace,conc);    
 //     return make_pair<intVector, intVector>(trace, calcConsisePath(trace));
   }else 
@@ -150,7 +148,6 @@ vector<int> RoadGraph::dijkstraSSSP2(int source, int dest) {
     }else 
       return trace;
   }
-
 
   if (spDebug) 
     cout << "one, dijkstraSSSP! map:" << mapSize <<" s,t:" << source <<"," <<dest << endl;
@@ -584,7 +581,7 @@ void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
 //   prefixFn.replace ((prefixFn.size())-6, 6, "");
   string prefixFn = "VERIFYSecondRANDaalborgNEWGP10R3200";
   
-    int token1,token2,token3;
+  int token1,token2,token3;
   int curPoiNodeId=-1;
 
   string fn = ts.testFile;
@@ -599,9 +596,9 @@ void RoadGraph::readSPTreeFileBinary(TestSetting& ts){
         cout << "zero, readSPTreeFile! prefixFn: " << prefixFn << endl;
 
   if (sptFile.is_open()) {
-//    if(rgDebug)
-            cout << "one, readSPTreeFile! ";
-        cout<< "@TIME1: " << ts.getElapsedTime(refTime)<< endl;
+    if(rgDebug)
+      cout << "one, readSPTreeFile! ";
+    cout<< "@TIME1: " << ts.getElapsedTime(refTime)<< endl;
 
     while(!sptFile.eof()) {
       sptFile.read((char*)&token1, sizeof(int));
@@ -666,8 +663,7 @@ double RoadGraph::getAngle(Point prevNode, Point source, Point target){
     csquare = (diffx*diffx) + (diffy*diffy);
     
     angle = acos((bsquare + csquare - asquare)/(2*sqrt(bsquare*csquare)));
-    
-    
+
     return 180-(angle*180/PI);
 }
 
@@ -812,7 +808,7 @@ std::vector<int>  RoadGraph::calcConsisePathA(std::vector<int>& trace){
 //     if((tmpRecpath=recoverPath(concisepath)) != reverseTrace)
 //       cout << "NEQ! " << concisepath.size() << " / " << reverseTrace.size() << " D2: (" << degree2Added <<") " << degree2 << endl;
 //     else
-      cout << "EQ " << concisepath.size() << " / " << reverseTrace.size() << " D2.: (" << degree2Added <<") " << degree2 << endl;
+      cout << "-EQ " << concisepath.size() << " / " << reverseTrace.size() << " D2.: (" << degree2Added <<") " << degree2 << endl;
       
     for(std::vector<int>::size_type i = 0; i != concisepath.size(); i++){
       cout << concisepath[i] << " ";
