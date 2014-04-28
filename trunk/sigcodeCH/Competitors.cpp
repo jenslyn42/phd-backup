@@ -418,7 +418,7 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
     cout << "DIX4\t" << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << "\t" << ts.useConcisepath << endl;
     
 
-    query = make_pair<int,int>(277316,269000);
+    query = make_pair<int,int>(277316,1319);
     
       if(ts.useLRUbitmap){
 	RoadGraph::mapObject(ts)->setConcisePathUse(true);
@@ -429,7 +429,7 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
     
     cout << "EIX1\t" << spResult.size() << "\t" << spaths.second.size() << "\t" << ts.useLRUbitmap << "\t" << ts.useConcisepath << endl;
          
-    query = make_pair<int,int>(269000,277316);
+    query = make_pair<int,int>(269000,1319);
     
       if(ts.useLRUbitmap){
 	RoadGraph::mapObject(ts)->setConcisePathUse(true);
