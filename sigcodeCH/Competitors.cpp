@@ -205,6 +205,19 @@ void LRUPLUS::buildCache()
   ts.setFillCacheTime(getElapsedTime(refTime));
 //   cout << "2.3 done, fillCache: " << ts.getFillCacheTime() << endl;
 
+  cout << trainingSTPointPairs.size() << ", " << testSTPointPairs.size() << endl;
+  BOOST_FOREACH(intPair q, trainingSTPointPairs)
+    if(q.first > 264344 || q.second > 264344)
+      cout << "(" << q.first << "," << q.second << endl;
+ 
+  cout << "---------------------\n------------------------------" << endl;
+      
+  BOOST_FOREACH(intPair q, testSTPointPairs)
+    if(q.first > 264344 || q.second > 264344)
+      cout << "(" << q.first << "," << q.second << endl;
+  
+  exit(0);
+  
   cout << "test query pairs:" << testSTPointPairs.size() << endl;
 }
 
