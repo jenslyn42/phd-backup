@@ -242,6 +242,9 @@ void LRUPLUS::runQueryList()
   int reducedInCache=0, fullIncache=0;
   string statfilename = "lrustats_";
   statfilename.insert(0,ts.testFile);
+  statfilename.append(boost::lexical_cast<std::string>(ts.testSPtype));
+  statfilename.append("_");
+  statfilename.append(boost::lexical_cast<std::string>(ts.testOptimaltype));
   statfilename.append(boost::lexical_cast<std::string>(ts.cacheSize));
   statfilename.append(".stats");
   ofstream statfile;
@@ -262,10 +265,13 @@ void LRUPLUS::runQueryList()
   statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\n*******" << endl;
   statfile.close();
   //////////////////////////////
-  /// cache hit stats ///
+  /// cache hit stats /////////  
   //////////////////////////////
   string statHITfilename = "lruHITstats_";
   statHITfilename.insert(0,ts.testFile);
+    statfilename.append(boost::lexical_cast<std::string>(ts.testSPtype));
+  statfilename.append("_");
+  statfilename.append(boost::lexical_cast<std::string>(ts.testOptimaltype));
   statHITfilename.append(boost::lexical_cast<std::string>(ts.cacheSize));
   statHITfilename.append(".stats");
   ofstream statHitfile;
