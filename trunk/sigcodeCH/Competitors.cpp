@@ -218,6 +218,8 @@ void LRUPLUS::fillCache(){
   this->resetDijkstraCalls();
   lrustats.clear();
   hitstats.clear();
+  numEvicted=0;
+  numEvictedZeroBitmap=0;
 }
 
 void LRUPLUS::runQueryList()
@@ -244,9 +246,10 @@ void LRUPLUS::runQueryList()
   int reducedInCache=0, fullIncache=0;
   string statfilename = "lrustats_";
   statfilename.insert(0,ts.testFile);
-  statfilename.append(boost::lexical_cast<std::string>(ts.testSPtype));
+  statfilename.append(MatchEnumString(SPTYPE_ENUM, ts.testSPtype));
   statfilename.append("_");
-  statfilename.append(boost::lexical_cast<std::string>(ts.testOptimaltype));
+  statfilename.append(MatchEnumString(OPTIMALTYPE_ENUM, ts.testOptimaltype));
+  statfilename.append("_");
   statfilename.append(boost::lexical_cast<std::string>(ts.cacheSize));
   statfilename.append(".stats");
   ofstream statfile;
@@ -271,9 +274,10 @@ void LRUPLUS::runQueryList()
   //////////////////////////////
   string statHITfilename = "lruHITstats_";
   statHITfilename.insert(0,ts.testFile);
-    statfilename.append(boost::lexical_cast<std::string>(ts.testSPtype));
-  statfilename.append("_");
-  statfilename.append(boost::lexical_cast<std::string>(ts.testOptimaltype));
+  statHITfilename.append(MatchEnumString(SPTYPE_ENUM, ts.testSPtype));
+  statHITfilename.append("_");
+  statHITfilename.append(MatchEnumString(OPTIMALTYPE_ENUM, ts.testOptimaltype));
+  statHITfilename.append("_");
   statHITfilename.append(boost::lexical_cast<std::string>(ts.cacheSize));
   statHITfilename.append(".stats");
   ofstream statHitfile;
