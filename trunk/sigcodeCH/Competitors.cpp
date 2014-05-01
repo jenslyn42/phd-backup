@@ -216,6 +216,8 @@ void LRUPLUS::fillCache(){
   }
   numCacheHits=0;
   this->resetDijkstraCalls();
+  lrustats.clear();
+  hitstats.clear();
 }
 
 void LRUPLUS::runQueryList()
