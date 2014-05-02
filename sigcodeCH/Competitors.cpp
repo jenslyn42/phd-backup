@@ -217,6 +217,8 @@ void LRUPLUS::fillCache(){
   numCacheHits=0;
   this->resetDijkstraCalls();
   lrustats.clear();
+  BOOST_FOREACH(intIntintPairPairsMap::value_type stat, lrustats)
+    lrustats[stat.first].second.first.first = -1;
   hitstats.clear();
   numEvicted=0;
   numEvictedZeroBitmap=0;
@@ -330,7 +332,9 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 	  }
 	}
       }
-      (tmpItem.s > tmpItem.t) ? (hitstats[make_pair<int,int>(tmpItem.t,tmpItem.s)] ++) : (hitstats[make_pair<int,int>(tmpItem.s,tmpItem.t)] ++);
+      intPair tmpPair;
+      (tmpItem.s > tmpItem.t) ? tmpPair = make_pair<int,int>(tmpItem.t,tmpItem.s) : tmpPair = make_pair<int,int>(tmpItem.s,tmpItem.t); 
+      (hitstats.find(tmpPair) == hitstats.end()) ? hitstats[tmpPair] =1 : hitstats[tmpPair] ++;
 
       if(debugCompet) 
 	cout << "LRUPLUS::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
@@ -493,7 +497,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  usefullParts.erase(rPid);
 	  usefullParts[rPid] = boost::dynamic_bitset<>(cache[rPid].size);
 	  removalStatus[rPid] = 3; //set to 3 to skip case 2, set to 2 to use case 2.
-	  lrustats[rPid].first = tempItem.size();
+	  lrustats[rPid].second.first.first = tempItem.size();
 	  break;
 	case 2: //limit path to CONCISE
 	  //cout << "Case 2:" << endl;
@@ -576,29 +580,29 @@ intVector LRUPLUS::kskip(intPair stPair, int pct){
     return spResultShort;
   else
      kskip = diffSize / (nodesInOptimal-spResultShort.size()); //calc k skip
-  
+
   if(kskip < 1) return spResultShort;
-  
+
   if(debugProbc) cout << "LRUPLUS::kskip Q_03:( " << nodesInOptimal << ", " << diffSize << ", " << kskip << ", " << pct << ", " << spResultLong.size() << "/" << spResultShort.size() << endl;
   intVector tempLong, tempConsise;
   tempLong = spResultLong;
   tempConsise = spResultShort;
   std::sort (tempLong.begin(),tempLong.end());
   std::sort (tempConsise.begin(),tempConsise.end());
-  
+
   spResultIntermediate = spResultShort;
- 
+
   //find the set difference between concise and full path. This set is the candidate set for insertion when calculating optimalPath
   std::set_symmetric_difference(tempConsise.begin(), tempConsise.end(), tempLong.begin(), tempLong.end(), std::back_inserter(spDiff));
 
   for(int i=0; i < spDiff.size(); i +=kskip){
     originalIt = find(spResultLong.begin(), spResultLong.end(), spDiff[i]);
-    
+
     while(find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt) == spResultIntermediate.end()){
       originalIt--;
     }
     conciseIt = find(spResultIntermediate.begin(), spResultIntermediate.end(), *originalIt);
-   
+
     spResultIntermediate.insert(conciseIt+1, spDiff[i]);
   }
   if(debugProbc) cout << "LRUPLUS::kskip Q_05:( " << spResultIntermediate.size() << endl;
