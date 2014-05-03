@@ -268,7 +268,7 @@ void LRUPLUS::runQueryList()
     if(stat.second.second.first != stat.second.second.second) statfile << "\t USED";
     statfile << endl;
   }
-  statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\n*******" << endl;
+  statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\t" << lrustats.size() << "\n******" << endl;
   statfile.close();
   //////////////////////////////
   /// cache hit stats /////////  
@@ -287,7 +287,7 @@ void LRUPLUS::runQueryList()
     statHitfile << "(" << stat.first.first << ", " << stat.first.second << ")\t" << stat.second << endl;
   }
   /// Eviction stats ///
-  statHitfile << "\n*******\n" << numEvicted << "\t" << numEvictedZeroBitmap << "\n*******" << endl;
+  statHitfile << "\n*******\n" << numEvicted << "\t" << numEvictedZeroBitmap << "\n******" << endl;
   statHitfile.close();
   //////////////////////
 }
