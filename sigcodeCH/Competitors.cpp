@@ -216,7 +216,6 @@ void LRUPLUS::fillCache(){
   }
   numCacheHits=0;
   this->resetDijkstraCalls();
-  lrustats.clear();
   BOOST_FOREACH(intIntintPairPairsMap::value_type stat, lrustats)
     lrustats[stat.first].second.first.first = -1;
   hitstats.clear();
