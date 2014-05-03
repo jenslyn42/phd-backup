@@ -245,6 +245,7 @@ void LRUPLUS::runQueryList()
   //// stats write out code ////
   /// pid org.size redux.size ////
   int reducedInCache=0, fullIncache=0;
+  unsigned long totalReducedLength=0, totalFullLength=0;
   string statfilename = "lrustats_";
   statfilename.insert(0,ts.testFile);
   statfilename.append(MatchEnumString(SPTYPE_ENUM, ts.testSPtype));
@@ -257,8 +258,13 @@ void LRUPLUS::runQueryList()
   statfile.open((statfilename).c_str(), ios::out | ios::trunc);
   BOOST_FOREACH(intIntintPairPairsMap::value_type stat, lrustats){
     if(cache.find(stat.first) != cache.end()){
-      if(stat.second.second.first.first != -1) reducedInCache++;
-      else fullIncache++;
+      if(stat.second.second.first.first != -1){ 
+	reducedInCache++;
+	totalReducedLength += stat.second.second.first.first;
+      }else{
+	fullIncache++;
+	totalFullLength += stat.second.first;  
+      }
     }
     /// pid, org.size, redux.size, concise.size
     statfile << stat.first << "\t" << stat.second.first << "\t" << stat.second.second.first.first << "\t" << stat.second.second.first.second;
@@ -268,7 +274,7 @@ void LRUPLUS::runQueryList()
     if(stat.second.second.first != stat.second.second.second) statfile << "\t USED";
     statfile << endl;
   }
-  statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\t" << lrustats.size() << "\n******" << endl;
+  statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\t" << lrustats.size() << "\t" << totalFullLength/fullIncache << "\t" << totalReducedLength/reducedInCache << "\n******" << endl;
   statfile.close();
   //////////////////////////////
   /// cache hit stats /////////  
