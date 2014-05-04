@@ -274,7 +274,9 @@ void LRUPLUS::runQueryList()
     if(stat.second.second.first != stat.second.second.second) statfile << "\t USED";
     statfile << endl;
   }
-  statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\t" << lrustats.size() << "\t" << totalFullLength/fullIncache << "\t" << totalReducedLength/reducedInCache << "\n******" << endl;
+  statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\t" << lrustats.size() << "\t";
+  (reducedInCache == 0 )? cout << "NaN" : cout << totalFullLength/fullIncache << "\t" << totalReducedLength/reducedInCache;
+  cout << "\n******" << endl;
   statfile.close();
   //////////////////////////////
   /// cache hit stats /////////  
