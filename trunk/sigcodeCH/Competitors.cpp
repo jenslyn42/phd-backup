@@ -275,8 +275,8 @@ void LRUPLUS::runQueryList()
     statfile << endl;
   }
   statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\t" << lrustats.size() << "\t";
-  (reducedInCache == 0 )? cout << "NaN" : cout << totalFullLength/fullIncache << "\t" << totalReducedLength/reducedInCache;
-  cout << "\n******" << endl;
+  (reducedInCache == 0 )? statfile << "NaN\tNaN" : statfile << totalFullLength/fullIncache << "\t" << totalReducedLength/reducedInCache;
+  statfile << "\n******" << endl;
   statfile.close();
   //////////////////////////////
   /// cache hit stats /////////  
