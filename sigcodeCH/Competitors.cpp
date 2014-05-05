@@ -274,7 +274,7 @@ void LRUPLUS::runQueryList()
     if(stat.second.second.first != stat.second.second.second) statfile << "\t USED";
     statfile << endl;
   }
-  statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\t" << lrustats.size() << "\t";
+  statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\t" << lrustats.size() << "\t" << totalFullLength << "\t" << totalReducedLength << "\t";
   (reducedInCache == 0 )? statfile << "NaN\tNaN" : statfile << totalFullLength/fullIncache << "\t" << totalReducedLength/reducedInCache;
   statfile << "\n******" << endl;
   statfile.close();
