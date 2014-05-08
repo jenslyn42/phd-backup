@@ -52,6 +52,7 @@ private:
   intMap removalStatus; // pid -> removal status: 1: full path, 2: reduced path, 3: concise path.
   boost::unordered_map<int, std::pair<int, intPairPairs> > lrustats; // itemID -> (length before shrink, ((length after shrink, lenght of base concise path)(sid,tid)) )
   boost::unordered_map<intPair, int> hitstats; // itemID -> (length before shrink, length after shrink)
+  std::deque<int> window; //represents a sliding window with queries that has contributed to a cache hit <pid>
 
   void checkAndUpdateCache(intPair query);
   int insertItem(intVector& sp);

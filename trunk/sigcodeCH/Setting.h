@@ -147,7 +147,7 @@ public:
 
   int inputFileType;    // used for RoadGraph
   int scacheQueryType;  // used for SCACHE only
-  int splits, nonEmptyRegionPairs, optiNum;
+  int splits, nonEmptyRegionPairs, optiNum, windowsize;
   
   bool useConcisepath;
   bool measureConcisepathdegrees;
