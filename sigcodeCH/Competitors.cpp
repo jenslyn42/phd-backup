@@ -275,7 +275,8 @@ void LRUPLUS::runQueryList()
     statfile << endl;
   }
   statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\t" << lrustats.size() << "\t" << totalFullLength << "\t" << totalReducedLength << "\t";
-  (reducedInCache == 0 )? statfile << "NaN\tNaN" : statfile << totalFullLength/fullIncache << "\t" << totalReducedLength/reducedInCache;
+  (totalFullLength == 0 )? statfile << "NaN\t" : statfile << totalFullLength/fullIncache << "\t"; 
+  (reducedInCache == 0 )? statfile << "NaN\t" : statfile << totalReducedLength/reducedInCache;
   statfile << "\n******" << endl;
   statfile.close();
   //////////////////////////////
@@ -441,8 +442,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	    concisePartsp[cItem.id].flip(curFullPos);
 	    curConsPos++;
 	  }
-	}
-	
+	}	
       }
       if (debugCompet)
         cout << " TWO:(" << cacheSize <<"," << cacheUsed << ")"<<endl;
@@ -455,65 +455,75 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       return cItem.id;
 
     }else if ( spSize*NODE_BITS < cacheSize) {
-//       3 cases:
-//       1. full item -> reduce to CONCISE + node pairs  && ts.testSPtype == SPTYPE_CONCISEwhere path has contributed to a cache hit
-//       2. reduced item -> reduce to CONCISE path
-//       3. CONCISE path -> remove path
 
-      if (debugCompet)
+//       if (debugCompet)
         cout << "three1, LRU::insertItem REMOVE (node,size): " << (*(ordering.begin())).first << "(" << (*(ordering.begin())).second << "), " << cache[(*(ordering.begin())).first].size << endl;
+      if(ordering.size() > 4){
+	cout << "threeZZ: " << (*(ordering.begin()++)).first << "(" << (*(ordering.begin()++)).second << "), " << cache[(*(ordering.begin()++)).first].size << endl;
+// 	cout << "threeZ2: " << (*(ordering.begin()+2)).first << "(" << (*(ordering.begin()+2)).second << "), " << cache[(*(ordering.begin()+2)).first].size << endl;
+	cout << "threeZ3: " << (*(ordering.begin()--)).first << "(" << (*(ordering.begin()--)).second << "), " << cache[(*(ordering.begin()--)).first].size << endl;
+	exit(0);
+      }
       intPair rID = *(ordering.begin()); // path to remove
       int rPid = rID.first;
       vector<int>& rItem = cache[rPid].item;
       intVector tempItem;
       boost::dynamic_bitset<> tempConsiseParts;
 
-      if(!ts.useLRUbitmap || ts.testSPtype == SPTYPE_CONCISE)
-	removalStatus[rPid] = 3; //remove path from cache, do not reduce path size
+      if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
+	
+	
+      }else{	
+//       3 cases:
+//       1. full item -> reduce to CONCISE + node pairs  && ts.testSPtype == SPTYPE_CONCISEwhere path has contributed to a cache hit
+//       2. reduced item -> reduce to CONCISE path
+//       3. CONCISE path -> remove path
 
-      int numConciseNodes = 0;
-      switch(removalStatus[rPid]){
-	case 1: //reduce the path
-	  //cout << "Case 1:" << endl;
-	  for (int i=0; i< rItem.size(); i++) {
-	    if(concisePartsp[rPid].test(i)){
-	      tempItem.push_back(rItem[i]);
-	      tempConsiseParts.push_back(1);
-	      numConciseNodes++;
-	    }else if(usefullParts[rPid].test(i)) {
-	      tempItem.push_back(rItem[i]);
-	      tempConsiseParts.push_back(0);
-	    }else{
-	      tempConsiseParts.push_back(0);
-	      invList[rItem[i]].erase(rPid); //remove node -> path from inverted list
+	if(!ts.useLRUbitmap || ts.testSPtype == SPTYPE_CONCISE)
+	  removalStatus[rPid] = 3; //remove path from cache, do not reduce path size
 
+	int numConciseNodes = 0;
+	switch(removalStatus[rPid]){
+	  case 1: //reduce the path
+	    //cout << "Case 1:" << endl;
+	    for (int i=0; i< rItem.size(); i++) {
+	      if(concisePartsp[rPid].test(i)){
+		tempItem.push_back(rItem[i]);
+		tempConsiseParts.push_back(1);
+		numConciseNodes++;
+	      }else if(usefullParts[rPid].test(i)) {
+		tempItem.push_back(rItem[i]);
+		tempConsiseParts.push_back(0);
+	      }else{
+		tempConsiseParts.push_back(0);
+		invList[rItem[i]].erase(rPid); //remove node -> path from inverted list
+	      }
 	    }
-	  }
-	  
-	  //update items LRU position, as if it had just been inserted or caused a cache hit
-	  orderVal++;
-	  ordering.erase(std::make_pair<int,int>(rPid, cache[rPid].key() ) );
-	  ordering.insert(std::make_pair<int,int>(rPid, orderVal));
-	  cache[rPid].updateKey(orderVal);
+	    
+	    //update items LRU position, as if it had just been inserted or caused a cache hit
+	    orderVal++;
+	    ordering.erase(std::make_pair<int,int>(rPid, cache[rPid].key() ) );
+	    ordering.insert(std::make_pair<int,int>(rPid, orderVal));
+	    cache[rPid].updateKey(orderVal);
 
-	  nodesInCache -= (rItem.size() - tempItem.size());
-	  cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
-	  cache[rPid].item = tempItem;
-	  cache[rPid].size = tempItem.size();
-	  concisePartsp[rPid] = tempConsiseParts;
-	  usefullParts.erase(rPid);
-	  usefullParts[rPid] = boost::dynamic_bitset<>(cache[rPid].size);
-	  removalStatus[rPid] = 3; //set to 3 to skip case 2, set to 2 to use case 2.
-	  lrustats[rPid].second.first.first = tempItem.size();
-	  break;
-	case 2: //limit path to CONCISE
-	  //cout << "Case 2:" << endl;
-	  for (int i=0; i< rItem.size(); i++) {
-	    if(concisePartsp[rPid].test(i)){
-	      tempItem.push_back(rItem[i]);
-	    }else
-	      invList[rItem[i]].erase(rPid); //remove node -> path from inverted list
-	  }
+	    nodesInCache -= (rItem.size() - tempItem.size());
+	    cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
+	    cache[rPid].item = tempItem;
+	    cache[rPid].size = tempItem.size();
+	    concisePartsp[rPid] = tempConsiseParts;
+	    usefullParts.erase(rPid);
+	    usefullParts[rPid] = boost::dynamic_bitset<>(cache[rPid].size);
+	    removalStatus[rPid] = 3; //set to 3 to skip case 2, set to 2 to use case 2.
+	    lrustats[rPid].second.first.first = tempItem.size();
+	    break;
+	  case 2: //limit path to CONCISE
+	    //cout << "Case 2:" << endl;
+	    for (int i=0; i< rItem.size(); i++) {
+	      if(concisePartsp[rPid].test(i)){
+		tempItem.push_back(rItem[i]);
+	      }else
+		invList[rItem[i]].erase(rPid); //remove node -> path from inverted list
+	    }
 
 	  //update items LRU position, as if it had just been inserted or caused a cache hit
 // 	  orderVal++;
@@ -521,30 +531,31 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 // 	  ordering.insert(std::make_pair<int,int>(rPid, orderVal));
 // 	  cache[rPid].updateKey(orderVal);
 
-	  nodesInCache -= (rItem.size() - tempItem.size());
-	  cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
-	  cache[rPid].item = tempItem;
-	  cache[rPid].size = tempItem.size();
-	  concisePartsp.erase(rPid);
-	  cacheUsed -= tempItem.size()*NODE_BITS;
-	  removalStatus[rPid] = 3;
-	  break;
-	case 3: //remove path
-	  numEvicted++;
-	  if(ts.useLRUbitmap && !usefullParts[rPid].any())
-	    numEvictedZeroBitmap++;
-	  //update inverted list
-	  for(vector<int>::iterator itr = rItem.begin(); itr != rItem.end(); ++itr){
+	    nodesInCache -= (rItem.size() - tempItem.size());
+	    cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
+	    cache[rPid].item = tempItem;
+	    cache[rPid].size = tempItem.size();
+	    concisePartsp.erase(rPid);
+	    cacheUsed -= tempItem.size()*NODE_BITS;
+	    removalStatus[rPid] = 3;
+	    break;
+	  case 3: //remove path
+	    numEvicted++;
+	    if(ts.useLRUbitmap && !usefullParts[rPid].any())
+	      numEvictedZeroBitmap++;
+	    //update inverted list
+	    for(vector<int>::iterator itr = rItem.begin(); itr != rItem.end(); ++itr){
 //cout << "case 3.01 " << rPid << " " << *itr << " " << invList[*itr].size() << endl;
-	    if(invList[*itr].find(rPid) != invList[*itr].end()) {  invList[*itr].erase(rPid);}
-	  }
-	  int itemSize = cache[rPid].size;  // oldest item
-	  cache.erase(rPid);
-	  ordering.erase(ordering.begin());
-	  nodesInCache -= itemSize;
+	      if(invList[*itr].find(rPid) != invList[*itr].end()) {  invList[*itr].erase(rPid);}
+	    }
+	    int itemSize = cache[rPid].size;  // oldest item
+	    cache.erase(rPid);
+	    ordering.erase(ordering.begin());
+	    nodesInCache -= itemSize;
 
-	  cacheUsed = cacheUsed - itemSize*NODE_BITS;
-	  break;
+	    cacheUsed = cacheUsed - itemSize*NODE_BITS;
+	    break;
+	}
       }
     } else
       break;

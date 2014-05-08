@@ -34,7 +34,7 @@ public:
   };
   
   boost::unordered_map<int, CacheItem> cache;
-  std::set<intPair, priorityCompfunc> ordering; // pid, 'score'
+  std::set<intPair, priorityCompfunc> ordering; // pid, 'timestamp'
   intSetMap invList; //inveterted list. map int -> unordered_set. or simply: nid -> {pathID}
   
   void buildCache();
