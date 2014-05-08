@@ -270,6 +270,9 @@ void extractTestParameters(TestSetting& ts) {
   ts.testSPtype = (SPTYPE_CHOICE) ts.getEnumCode(SPTYPE_ENUM,"testSPtype");
   ts.testConcisetype = (CONCISETYPE_CHOICE) 0;
   ts.testOptimaltype = (OPTIMALTYPE_CHOICE) ts.getEnumCode(OPTIMALTYPE_ENUM, "testOptimaltype");
+  
+  if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN)
+    ts.windowsize = ts.getConfigInt("windowsize");
 
   // default storage method: the LIST cache 
   ts.testStorage = STORE_LIST;

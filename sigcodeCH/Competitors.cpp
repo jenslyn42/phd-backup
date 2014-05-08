@@ -309,7 +309,6 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
   if(debugCompet)
     cout << "cache size: " << cache.size() << " s,t: (" << query.first << "," << query.second << ")" << endl;
 
-
   boost::unordered_set<int>& query1 = invList[query.first];
   boost::unordered_set<int>& query2 = invList[query.second];
   int cachehit;
@@ -344,23 +343,18 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
       (tmpItem.s > tmpItem.t) ? tmpPair = make_pair<int,int>(tmpItem.t,tmpItem.s) : tmpPair = make_pair<int,int>(tmpItem.s,tmpItem.t); 
       (hitstats.find(tmpPair) == hitstats.end()) ? hitstats[tmpPair] =1 : hitstats[tmpPair] ++;
 
+      if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
+	while(window.size() >= ts.windowsize){
+	    window.pop_front();
+	}
+	window.push_back(*itr);
+      }
+      
       if(debugCompet) 
 	cout << "LRUPLUS::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
       break;
     }
   }
-
-//  if(debugCompet){
-//    std::priority_queue<int> cacheQueue;
-//    BOOST_FOREACH(intCacheitemMap::value_type ca, cache){cacheQueue.push(ca.second.key());}
-//    cout << "*H* ";
-//    while(!cacheQueue.empty()){
-//      cout << cacheQueue.top() << " ";
-//      cacheQueue.pop();
-//    }
-//    cout << endl;
-//  }
-
 
   if(!cacheHit) {
     vector<int> spResult;
@@ -457,115 +451,120 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
     }else if ( spSize*NODE_BITS < cacheSize) {
 
 //       if (debugCompet)
-        cout << "three1, LRU::insertItem REMOVE (node,size): " << (*(ordering.begin())).first << "(" << (*(ordering.begin())).second << "), " << cache[(*(ordering.begin())).first].size << endl;
+	cout << "three1, LRU::insertItem REMOVE (node,size): " << (*(ordering.begin())).first << "(" << (*(ordering.begin())).second << "), " << cache[(*(ordering.begin())).first].size << endl;
       if(ordering.size() > 6){
 	std::set<intPair, priorityCompfunc>::iterator iterating;
 	iterating=ordering.begin();
 	++iterating;
-	cout << "threeZZ: " << (*(iterating)).first << "(" << (*(iterating)).second << "), " << cache[(*(iterating)).first].size << endl;
+	cout << "threeZ01: " << (*(iterating)).first << "(" << (*(iterating)).second << "), " << cache[(*(iterating)).first].size << endl;
 	++iterating;
 	cout << "threeZ11: " << (*(iterating)).first << "(" << (*(iterating)).second << "), " << cache[(*(iterating)).first].size << endl;
 	++iterating;
 	cout << "threeZ12: " << (*(iterating)).first << "(" << (*(iterating)).second << "), " << cache[(*(iterating)).first].size << endl;
-// 	std::advance(iterating, 2)
-// 	cout << "threeZZ: " << (*(iterating)).first << "(" << (*(iterating)).second << "), " << cache[(*(iterating)).first].size << endl;
-// 	cout << "threeZ2: " << (*(ordering.begin()+2)).first << "(" << (*(ordering.begin()+2)).second << "), " << cache[(*(ordering.begin()+2)).first].size << endl;
 	--iterating;
 	cout << "threeZ30: " << (*(iterating)).first << "(" << (*(iterating)).second << "), " << cache[(*(iterating)).first].size << endl;
 	exit(0);
       }
+      
       intPair rID = *(ordering.begin()); // path to remove
+      
+      if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
+ 	if(find(window.begin(), window.end(), rID.first) != window.end()){
+	  std::set<intPair, priorityCompfunc>::iterator iterating;
+	  iterating=ordering.begin();
+	  do{
+	    ++iterating;
+	    rID = *(iterating);
+	  }while(find(window.begin(), window.end(), rID.first) != window.end());
+ 	}
+      }
+
       int rPid = rID.first;
       vector<int>& rItem = cache[rPid].item;
       intVector tempItem;
       boost::dynamic_bitset<> tempConsiseParts;
 
-      if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
-	
-	
-      }else{	
 //       3 cases:
 //       1. full item -> reduce to CONCISE + node pairs  && ts.testSPtype == SPTYPE_CONCISEwhere path has contributed to a cache hit
 //       2. reduced item -> reduce to CONCISE path
 //       3. CONCISE path -> remove path
 
-	if(!ts.useLRUbitmap || ts.testSPtype == SPTYPE_CONCISE)
-	  removalStatus[rPid] = 3; //remove path from cache, do not reduce path size
+      if(!ts.useLRUbitmap || ts.testSPtype == SPTYPE_CONCISE)
+	removalStatus[rPid] = 3; //remove path from cache, do not reduce path size
 
-	int numConciseNodes = 0;
-	switch(removalStatus[rPid]){
-	  case 1: //reduce the path
-	    //cout << "Case 1:" << endl;
-	    for (int i=0; i< rItem.size(); i++) {
-	      if(concisePartsp[rPid].test(i)){
-		tempItem.push_back(rItem[i]);
-		tempConsiseParts.push_back(1);
-		numConciseNodes++;
-	      }else if(usefullParts[rPid].test(i)) {
-		tempItem.push_back(rItem[i]);
-		tempConsiseParts.push_back(0);
-	      }else{
-		tempConsiseParts.push_back(0);
-		invList[rItem[i]].erase(rPid); //remove node -> path from inverted list
-	      }
-	    }
-	    
-	    //update items LRU position, as if it had just been inserted or caused a cache hit
-	    orderVal++;
-	    ordering.erase(std::make_pair<int,int>(rPid, cache[rPid].key() ) );
-	    ordering.insert(std::make_pair<int,int>(rPid, orderVal));
-	    cache[rPid].updateKey(orderVal);
+      int numConciseNodes = 0;
+      switch(removalStatus[rPid]){
+        case 1: //reduce the path
+          //cout << "Case 1:" << endl;
+          for (int i=0; i< rItem.size(); i++) {
+            if(concisePartsp[rPid].test(i)){
+	      tempItem.push_back(rItem[i]);
+	      tempConsiseParts.push_back(1);
+	      numConciseNodes++;
+            }else if(usefullParts[rPid].test(i)) {
+	      tempItem.push_back(rItem[i]);
+	      tempConsiseParts.push_back(0);
+            }else{
+	      tempConsiseParts.push_back(0);
+	      invList[rItem[i]].erase(rPid); //remove node -> path from inverted list
+            }
+          }
+          
+          //update items LRU position, as if it had just been inserted or caused a cache hit
+          orderVal++;
+          ordering.erase(std::make_pair<int,int>(rPid, cache[rPid].key() ) );
+          ordering.insert(std::make_pair<int,int>(rPid, orderVal));
+          cache[rPid].updateKey(orderVal);
 
-	    nodesInCache -= (rItem.size() - tempItem.size());
-	    cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
-	    cache[rPid].item = tempItem;
-	    cache[rPid].size = tempItem.size();
-	    concisePartsp[rPid] = tempConsiseParts;
-	    usefullParts.erase(rPid);
-	    usefullParts[rPid] = boost::dynamic_bitset<>(cache[rPid].size);
-	    removalStatus[rPid] = 3; //set to 3 to skip case 2, set to 2 to use case 2.
-	    lrustats[rPid].second.first.first = tempItem.size();
-	    break;
-	  case 2: //limit path to CONCISE
-	    //cout << "Case 2:" << endl;
-	    for (int i=0; i< rItem.size(); i++) {
-	      if(concisePartsp[rPid].test(i)){
-		tempItem.push_back(rItem[i]);
-	      }else
-		invList[rItem[i]].erase(rPid); //remove node -> path from inverted list
-	    }
+          nodesInCache -= (rItem.size() - tempItem.size());
+          cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
+          cache[rPid].item = tempItem;
+          cache[rPid].size = tempItem.size();
+          concisePartsp[rPid] = tempConsiseParts;
+          usefullParts.erase(rPid);
+          usefullParts[rPid] = boost::dynamic_bitset<>(cache[rPid].size);
+          removalStatus[rPid] = 3; //set to 3 to skip case 2, set to 2 to use case 2.
+          lrustats[rPid].second.first.first = tempItem.size();
+          break;
+        case 2: //limit path to CONCISE
+          //cout << "Case 2:" << endl;
+          for (int i=0; i< rItem.size(); i++) {
+            if(concisePartsp[rPid].test(i)){
+	      tempItem.push_back(rItem[i]);
+            }else
+	      invList[rItem[i]].erase(rPid); //remove node -> path from inverted list
+          }
 
-	  //update items LRU position, as if it had just been inserted or caused a cache hit
-// 	  orderVal++;
-// 	  ordering.erase(std::make_pair<int,int>(rPid, cache[rPid].key() ) );
-// 	  ordering.insert(std::make_pair<int,int>(rPid, orderVal));
-// 	  cache[rPid].updateKey(orderVal);
+        //update items LRU position, as if it had just been inserted or caused a cache hit
+//         orderVal++;
+//         ordering.erase(std::make_pair<int,int>(rPid, cache[rPid].key() ) );
+//         ordering.insert(std::make_pair<int,int>(rPid, orderVal));
+//         cache[rPid].updateKey(orderVal);
 
-	    nodesInCache -= (rItem.size() - tempItem.size());
-	    cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
-	    cache[rPid].item = tempItem;
-	    cache[rPid].size = tempItem.size();
-	    concisePartsp.erase(rPid);
-	    cacheUsed -= tempItem.size()*NODE_BITS;
-	    removalStatus[rPid] = 3;
-	    break;
-	  case 3: //remove path
-	    numEvicted++;
-	    if(ts.useLRUbitmap && !usefullParts[rPid].any())
-	      numEvictedZeroBitmap++;
-	    //update inverted list
-	    for(vector<int>::iterator itr = rItem.begin(); itr != rItem.end(); ++itr){
+          nodesInCache -= (rItem.size() - tempItem.size());
+          cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
+          cache[rPid].item = tempItem;
+          cache[rPid].size = tempItem.size();
+          concisePartsp.erase(rPid);
+          cacheUsed -= tempItem.size()*NODE_BITS;
+          removalStatus[rPid] = 3;
+          break;
+        case 3: //remove path
+          numEvicted++;
+          if(ts.useLRUbitmap && !usefullParts[rPid].any())
+            numEvictedZeroBitmap++;
+          //update inverted list
+          for(vector<int>::iterator itr = rItem.begin(); itr != rItem.end(); ++itr){
 //cout << "case 3.01 " << rPid << " " << *itr << " " << invList[*itr].size() << endl;
-	      if(invList[*itr].find(rPid) != invList[*itr].end()) {  invList[*itr].erase(rPid);}
-	    }
-	    int itemSize = cache[rPid].size;  // oldest item
-	    cache.erase(rPid);
-	    ordering.erase(ordering.begin());
-	    nodesInCache -= itemSize;
+            if(invList[*itr].find(rPid) != invList[*itr].end()) {  invList[*itr].erase(rPid);}
+          }
+          int itemSize = cache[rPid].size;  // oldest item
+          cache.erase(rPid);
+          ordering.erase(ordering.begin());
+          nodesInCache -= itemSize;
 
-	    cacheUsed = cacheUsed - itemSize*NODE_BITS;
-	    break;
-	}
+          cacheUsed = cacheUsed - itemSize*NODE_BITS;
+          break;
       }
     } else
       break;
