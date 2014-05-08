@@ -458,10 +458,17 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 
 //       if (debugCompet)
         cout << "three1, LRU::insertItem REMOVE (node,size): " << (*(ordering.begin())).first << "(" << (*(ordering.begin())).second << "), " << cache[(*(ordering.begin())).first].size << endl;
-      if(ordering.size() > 4){
-	cout << "threeZZ: " << (*(ordering.begin()++)).first << "(" << (*(ordering.begin()++)).second << "), " << cache[(*(ordering.begin()++)).first].size << endl;
+      if(ordering.size() > 6){
+	std::set<intPair, priorityCompfunc>::iterator iterating;
+	iterating=ordering.begin();
+	cout << "threeZZ: " << (*(++iterating)).first << "(" << (*(++iterating)).second << "), " << cache[(*(++iterating)).first].size << endl;
+	
+	cout << "threeZZ: " << (*(++iterating)).first << "(" << (*(++iterating)).second << "), " << cache[(*(++iterating)).first].size << endl;
+	cout << "threeZZ: " << (*(++iterating)).first << "(" << (*(++iterating)).second << "), " << cache[(*(++iterating)).first].size << endl;
+// 	std::advance(iterating, 2)
+// 	cout << "threeZZ: " << (*(iterating)).first << "(" << (*(iterating)).second << "), " << cache[(*(iterating)).first].size << endl;
 // 	cout << "threeZ2: " << (*(ordering.begin()+2)).first << "(" << (*(ordering.begin()+2)).second << "), " << cache[(*(ordering.begin()+2)).first].size << endl;
-	cout << "threeZ3: " << (*(ordering.begin()--)).first << "(" << (*(ordering.begin()--)).second << "), " << cache[(*(ordering.begin()--)).first].size << endl;
+	cout << "threeZ3: " << (*(--iterating)).first << "(" << (*(--iterating)).second << "), " << cache[(*(--iterating)).first].size << endl;
 	exit(0);
       }
       intPair rID = *(ordering.begin()); // path to remove
