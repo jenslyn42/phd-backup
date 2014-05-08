@@ -450,22 +450,9 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 
     }else if ( spSize*NODE_BITS < cacheSize) {
 
-//       if (debugCompet)
+       if (debugCompet)
 	cout << "three1, LRU::insertItem REMOVE (node,size): " << (*(ordering.begin())).first << "(" << (*(ordering.begin())).second << "), " << cache[(*(ordering.begin())).first].size << endl;
-      if(ordering.size() > 6){
-	std::set<intPair, priorityCompfunc>::iterator iterating;
-	iterating=ordering.begin();
-	++iterating;
-	cout << "threeZ01: " << (*(iterating)).first << "(" << (*(iterating)).second << "), " << cache[(*(iterating)).first].size << endl;
-	++iterating;
-	cout << "threeZ11: " << (*(iterating)).first << "(" << (*(iterating)).second << "), " << cache[(*(iterating)).first].size << endl;
-	++iterating;
-	cout << "threeZ12: " << (*(iterating)).first << "(" << (*(iterating)).second << "), " << cache[(*(iterating)).first].size << endl;
-	--iterating;
-	cout << "threeZ30: " << (*(iterating)).first << "(" << (*(iterating)).second << "), " << cache[(*(iterating)).first].size << endl;
-	exit(0);
-      }
-      
+	
       intPair rID = *(ordering.begin()); // path to remove
       
       if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
