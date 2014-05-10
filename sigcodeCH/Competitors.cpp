@@ -450,8 +450,8 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 
     }else if ( spSize*NODE_BITS < cacheSize) {
 
-       if (debugCompet)
-	cout << "three1, LRU::insertItem REMOVE (node,size): " << (*(ordering.begin())).first << "(" << (*(ordering.begin())).second << "), " << cache[(*(ordering.begin())).first].size << endl;
+//        if (debugCompet)
+	cout << "three1, LRU::insertItem REMOVE (node,size): " << window.size() << "\t" << (*(ordering.begin())).first << "(" << (*(ordering.begin())).second << "), " << cache[(*(ordering.begin())).first].size << endl;
 	
       intPair rID = *(ordering.begin()); // path to remove
       
@@ -460,12 +460,15 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  std::set<intPair, priorityCompfunc>::iterator iterating;
 	  iterating=ordering.begin();
 	  do{
+	    cout << ";" << window.size() << "/" << rID.first;
 	    ++iterating;
 	    rID = *(iterating);
+	    cout << "-" << window.size() << "/" << rID.first;
 	  }while(find(window.begin(), window.end(), rID.first) != window.end());
  	}
       }
-
+	cout << "\n:-: " << window.size() << "/" << rID.first << endl;
+      
       int rPid = rID.first;
       vector<int>& rItem = cache[rPid].item;
       intVector tempItem;
