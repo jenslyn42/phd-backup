@@ -455,18 +455,18 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	
       intPair rID = *(ordering.begin()); // path to remove
       
-      if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
- 	if(find(window.begin(), window.end(), rID.first) != window.end()){
-	  std::set<intPair, priorityCompfunc>::iterator iterating;
-	  iterating=ordering.begin();
+//       if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
+//  	if(find(window.begin(), window.end(), rID.first) != window.end()){
+// 	  std::set<intPair, priorityCompfunc>::iterator iterating;
+// 	  iterating=ordering.begin();
 // 	  do{
 // 	    cout << ";" << window.size() << "/" << rID.first;
 // 	    ++iterating;
 // 	    rID = *(iterating);
 // 	    cout << "-" << window.size() << "/" << rID.first;
 // 	  }while(find(window.begin(), window.end(), rID.first) != window.end());
- 	}
-      }
+//  	}
+//       }
 // 	cout << "\n:-: " << window.size() << "/" << rID.first << endl;
       
       int rPid = rID.first;
