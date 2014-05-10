@@ -275,6 +275,8 @@ void extractTestParameters(TestSetting& ts) {
   
   if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN)
     ts.windowsize = ts.getConfigInt("windowsize");
+  else
+    ts.windowsize = -1;
 
   // default storage method: the LIST cache 
   ts.testStorage = STORE_LIST;
