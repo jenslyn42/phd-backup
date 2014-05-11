@@ -344,10 +344,10 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
       (hitstats.find(tmpPair) == hitstats.end()) ? hitstats[tmpPair] =1 : hitstats[tmpPair] ++;
 
       if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
-	while(window.size() >= ts.windowsize){
-	    window.pop_front();
-	}
-	window.push_back(*itr);
+// 	while(window.size() >= ts.windowsize){
+// 	    window.pop_front();
+// 	}
+// 	window.push_back(*itr);
       }
       
       if(debugCompet) 
