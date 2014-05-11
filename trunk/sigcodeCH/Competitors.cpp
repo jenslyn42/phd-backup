@@ -175,15 +175,9 @@ LRUPLUS::LRUPLUS(TestSetting ts)
   numEvictedZeroBitmap =0;
   nodesInCache=0;
   ts.setNodesInCache(nodesInCache);
-  
-  cout << this->ts.useLRUbitmap << "\nVVVVVVVVVVVVVV\nVVVVVVVVVVVVVVVVVVVVVVVV\n";
 
   if(this->ts.useLRUbitmap && (this->ts.testSPtype != SPTYPE_FULL || ts.testOptimaltype != OPTIMALTYPE_ORG && ts.testOptimaltype != OPTIMALTYPE_SLIDINGWIN))
     this->ts.useLRUbitmap = false;
-
-  cout << this->ts.useLRUbitmap << "\nVVVVVVVVVVVVV\nVVVVVVVVVVVVVVVVVVVVVVVV\n";
-
-  
 }
 
 
@@ -351,10 +345,10 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
       (hitstats.find(tmpPair) == hitstats.end()) ? hitstats[tmpPair] =1 : hitstats[tmpPair] ++;
 
       if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
-// 	while(window.size() >= ts.windowsize){
-// 	    window.pop_front();
-// 	}
-// 	window.push_back(*itr);
+	while(window.size() >= ts.windowsize){
+	    window.pop_front();
+	}
+	window.push_back(*itr);
       }
       
       if(debugCompet) 
@@ -462,18 +456,18 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	
       intPair rID = *(ordering.begin()); // path to remove
       
-//       if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
-//  	if(find(window.begin(), window.end(), rID.first) != window.end()){
-// 	  std::set<intPair, priorityCompfunc>::iterator iterating;
-// 	  iterating=ordering.begin();
+      if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
+ 	if(find(window.begin(), window.end(), rID.first) != window.end()){
+	  std::set<intPair, priorityCompfunc>::iterator iterating;
+	  iterating=ordering.begin();
 // 	  do{
 // 	    cout << ";" << window.size() << "/" << rID.first;
 // 	    ++iterating;
 // 	    rID = *(iterating);
 // 	    cout << "-" << window.size() << "/" << rID.first;
 // 	  }while(find(window.begin(), window.end(), rID.first) != window.end());
-//  	}
-//       }
+ 	}
+      }
 // 	cout << "\n:-: " << window.size() << "/" << rID.first << endl;
       
       int rPid = rID.first;
