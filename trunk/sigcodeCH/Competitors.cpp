@@ -175,10 +175,17 @@ LRUPLUS::LRUPLUS(TestSetting ts)
   numEvictedZeroBitmap =0;
   nodesInCache=0;
   ts.setNodesInCache(nodesInCache);
+  
+  cout << this->ts.useLRUbitmap << "\nVVVVVVVVVVVVVV\nVVVVVVVVVVVVVVVVVVVVVVVV";
 
   if(this->ts.useLRUbitmap && (this->ts.testSPtype != SPTYPE_FULL || ts.testOptimaltype != OPTIMALTYPE_ORG || ts.testOptimaltype != OPTIMALTYPE_SLIDINGWIN))
     this->ts.useLRUbitmap = false;
+
+  cout << this->ts.useLRUbitmap << "\nVVVVVVVVVVVVV\nVVVVVVVVVVVVVVVVVVVVVVVV";
+
+  
 }
+
 
 LRUPLUS::~ LRUPLUS() {
   cout << "LRUPLUS::~ LRUPLUS() S" << endl;
