@@ -460,12 +460,12 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
  	if(find(window.begin(), window.end(), rID.first) != window.end()){
 	  std::set<intPair, priorityCompfunc>::iterator iterating;
 	  iterating=ordering.begin();
-// 	  do{
+	  do{
 // 	    cout << ";" << window.size() << "/" << rID.first;
-// 	    ++iterating;
-// 	    rID = *(iterating);
+	    ++iterating;
+	    rID = *(iterating);
 // 	    cout << "-" << window.size() << "/" << rID.first;
-// 	  }while(find(window.begin(), window.end(), rID.first) != window.end());
+	  }while(find(window.begin(), window.end(), rID.first) != window.end());
  	}
       }
 // 	cout << "\n:-: " << window.size() << "/" << rID.first << endl;
