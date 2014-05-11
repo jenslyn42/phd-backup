@@ -450,7 +450,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 
     }else if ( spSize*NODE_BITS < cacheSize) {
 
-//        if (debugCompet)
+      if (debugCompet)
 	cout << "three1, LRU::insertItem REMOVE (node,size): " << window.size() << "\t" << (*(ordering.begin())).first << "(" << (*(ordering.begin())).second << "), " << cache[(*(ordering.begin())).first].size << endl;
 	
       intPair rID = *(ordering.begin()); // path to remove
