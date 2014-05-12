@@ -455,12 +455,13 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	cout << "three1, LRU::insertItem REMOVE (node,size): " << window.size() << "\t" << (*(ordering.begin())).first << "(" << (*(ordering.begin())).second << "), " << cache[(*(ordering.begin())).first].size << endl;
       intPair rID = *(ordering.begin()); // path to remove
 
+      cout << ";" << window.size();
       if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
  	if(find(window.begin(), window.end(), rID.first) != window.end()){
 	  std::set<intPair, priorityCompfunc>::iterator iterating;
 	  iterating=ordering.begin();
 	  do{
- 	    cout << ";" << window.size() << "/(" << rID.first << "," << rID.second << ")";
+ 	    cout << "/(" << rID.first << "," << rID.second << ")";
 	    ++iterating;
 	    rID = *(iterating);
  	    cout << "-" << "/(" << rID.first << "," << rID.second << ")";
@@ -473,7 +474,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       intVector tempItem;
       boost::dynamic_bitset<> tempConsiseParts;
 
-      cout << " ::=:: " << "/(" << rID.first << "," << rID.second << ") " << numTotalQueries << " " << cacheSize << " " << cacheUsed << " " << spSize*NODE_BITS << endl;
+      cout << "\n::=::(" << rID.first << "," << rID.second << ") " << numTotalQueries << " " << cache.size() << " " << cacheSize << " " << cacheUsed << " " << spSize*NODE_BITS << endl;
 
 //       3 cases:
 //       1. full item -> reduce to CONCISE + node pairs  && ts.testSPtype == SPTYPE_CONCISEwhere path has contributed to a cache hit
