@@ -461,10 +461,10 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  std::set<intPair, priorityCompfunc>::iterator iterating;
 	  iterating=ordering.begin();
 	  do{
- 	    cout << "/(" << rID.first << "," << rID.second << ")";
+ 	    cout << "(" << rID.first << "," << rID.second << ")";
 	    ++iterating;
 	    rID = *(iterating);
- 	    cout << "-" << "/(" << rID.first << "," << rID.second << ")";
+ 	    cout << "-" << "(" << rID.first << "," << rID.second << ")";
 	  }while(find(window.begin(), window.end(), rID.first) != window.end());
  	}
       }
@@ -473,9 +473,26 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       vector<int>& rItem = cache[rPid].item;
       intVector tempItem;
       boost::dynamic_bitset<> tempConsiseParts;
+      
+//////////////////////////////////////////////////////////////////////////
+      unsigned long totalFullLength=0, totalReducedLength=0;
+      int reducedInCache=0, fullIncache=0;
+      BOOST_FOREACH(intIntintPairPairsMap::value_type stat, lrustats){
+	if(cache.find(stat.first) != cache.end()){
+	  if(stat.second.second.first.first != -1){ 
+	    reducedInCache++;
+	    totalReducedLength += stat.second.second.first.first;
+	  }else{
+	    fullIncache++;
+	    totalFullLength += stat.second.first;  
+	  }
+	}
+      }
 
-      cout << "\n::=::(" << rID.first << "," << rID.second << ") " << numTotalQueries << " " << cache.size() << " " << cacheSize << " " << cacheUsed << " " << spSize*NODE_BITS << endl;
-
+      cout << "\n::=::(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (" << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << spSize*NODE_BITS << endl;
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      
+      
 //       3 cases:
 //       1. full item -> reduce to CONCISE + node pairs  && ts.testSPtype == SPTYPE_CONCISEwhere path has contributed to a cache hit
 //       2. reduced item -> reduce to CONCISE path
