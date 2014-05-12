@@ -468,7 +468,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  }while(find(window.begin(), window.end(), rID.first) != window.end());
  	}
       }
- 	cout << " ::=:: " << window.size() << "/" << rID.first << numTotalQueries << " " << cacheSize << " " << cacheUsed << " " << spSize*NODE_BITS << endl;
+ 	cout << " ::=:: " << window.size() << "/" << rID.first << " " << numTotalQueries << " " << cacheSize << " " << cacheUsed << " " << spSize*NODE_BITS << endl;
       
       int rPid = rID.first;
       vector<int>& rItem = cache[rPid].item;
