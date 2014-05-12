@@ -461,14 +461,14 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  std::set<intPair, priorityCompfunc>::iterator iterating;
 	  iterating=ordering.begin();
 	  do{
-// 	    cout << ";" << window.size() << "/" << rID.first;
+ 	    cout << ";" << numTotalQueries << " " << window.size() << "/" << rID.first;
 	    ++iterating;
 	    rID = *(iterating);
-// 	    cout << "-" << window.size() << "/" << rID.first;
+ 	    cout << "-" << window.size() << "/" << rID.first;
 	  }while(find(window.begin(), window.end(), rID.first) != window.end());
  	}
       }
-// 	cout << "\n:-: " << window.size() << "/" << rID.first << endl;
+ 	cout << " ::=:: " << window.size() << "/" << rID.first << endl;
       
       int rPid = rID.first;
       vector<int>& rItem = cache[rPid].item;
