@@ -489,7 +489,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	}
       }
 
-      cout << "\n::=::(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (" << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << spSize*NODE_BITS << endl;
+      cout << "\n::=:1(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (" << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << spSize*NODE_BITS << endl;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       
       
@@ -534,6 +534,9 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
           usefullParts[rPid] = boost::dynamic_bitset<>(cache[rPid].size);
           removalStatus[rPid] = 3; //set to 3 to skip case 2, set to 2 to use case 2.
           lrustats[rPid].second.first.first = tempItem.size();
+	  ////////////////////////////////////////////////////////////
+	  cout << "<R>: " << rItem.size() - tempItem.size();
+	  ////////////////////////////////////////////////////////////
           break;
         case 2: //limit path to CONCISE
           //cout << "Case 2:" << endl;
@@ -575,6 +578,10 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
           cacheUsed = cacheUsed - itemSize*NODE_BITS;
           break;
       }
+      //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      cout << "\n::=:2(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (" << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << spSize*NODE_BITS << endl;
+      //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     } else
       break;
   } while(notEnoughSpace);
