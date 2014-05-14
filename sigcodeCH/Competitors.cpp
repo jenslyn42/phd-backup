@@ -535,7 +535,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
           removalStatus[rPid] = 3; //set to 3 to skip case 2, set to 2 to use case 2.
           lrustats[rPid].second.first.first = tempItem.size();
 	  ////////////////////////////////////////////////////////////
-	  cout << "<Rd>: (" << rItem.size() << "," << tempItem.size() << ") " << rItem.size() - tempItem.size();
+	  cout << "<Rd>: (" << rItem.size() << "," << tempItem.size() << ") " << rItem.size() - tempItem.size() << " -CS:" << cacheUsed;
 	  ////////////////////////////////////////////////////////////
           break;
         case 2: //limit path to CONCISE
@@ -577,7 +577,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 
           cacheUsed = cacheUsed - itemSize*NODE_BITS;
 	  ////////////////////////////////////////////////////////////
-	  cout << "<Rm>: (" << rItem.size() << "," << tempItem.size() << ") " << rItem.size() - tempItem.size();
+	  cout << "<Rm>: (" << rItem.size() << "," << tempItem.size() << ") " << rItem.size() - tempItem.size() << " -CS:" << cacheUsed;
 	  ////////////////////////////////////////////////////////////
 	  break;
       }
