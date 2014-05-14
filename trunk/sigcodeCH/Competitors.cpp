@@ -526,12 +526,9 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
           cache[rPid].updateKey(orderVal);
 
           nodesInCache -= (rItem.size() - tempItem.size());
-	  ////////////////////////////////////////////////////////////
-	  cout << "<Rdx>: (" << rItem.size() << "," << tempItem.size() << ")x";
-	  ////////////////////////////////////////////////////////////
           cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
 	  ////////////////////////////////////////////////////////////
-	  cout << "<Rdz>: (" << rItem.size() << "," << tempItem.size() << ")x" ;
+	  cout << "<Rd>: (" << rItem.size() << "," << tempItem.size() << ") " << rItem.size() - tempItem.size() << " -CS:" << cacheUsed;
 	  ////////////////////////////////////////////////////////////
           cache[rPid].item = tempItem;
           cache[rPid].size = tempItem.size();
@@ -540,9 +537,6 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
           usefullParts[rPid] = boost::dynamic_bitset<>(cache[rPid].size);
           removalStatus[rPid] = 3; //set to 3 to skip case 2, set to 2 to use case 2.
           lrustats[rPid].second.first.first = tempItem.size();
-	  ////////////////////////////////////////////////////////////
-	  cout << "<Rd>: (" << rItem.size() << "," << tempItem.size() << ") " << rItem.size() - tempItem.size() << " -CS:" << cacheUsed;
-	  ////////////////////////////////////////////////////////////
           break;
         case 2: //limit path to CONCISE
           //cout << "Case 2:" << endl;
