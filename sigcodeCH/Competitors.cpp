@@ -570,7 +570,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 //cout << "case 3.01 " << rPid << " " << *itr << " " << invList[*itr].size() << endl;
             if(invList[*itr].find(rPid) != invList[*itr].end()) {  invList[*itr].erase(rPid);}
           }
-          int itemSize = cache[rPid].size;  // oldest item
+          int itemSize = rItem.size();  // oldest item
           cache.erase(rPid);
           ordering.erase(ordering.begin());
           nodesInCache -= itemSize;
@@ -582,6 +582,21 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  break;
       }
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      totalFullLength=0; 
+      totalReducedLength=0;
+      reducedInCache=0;
+      fullIncache=0;
+      BOOST_FOREACH(intIntintPairPairsMap::value_type stat, lrustats){
+	if(cache.find(stat.first) != cache.end()){
+	  if(stat.second.second.first.first != -1){ 
+	    reducedInCache++;
+	    totalReducedLength += stat.second.second.first.first;
+	  }else{
+	    fullIncache++;
+	    totalFullLength += stat.second.first;  
+	  }
+	}
+      }
       cout << "\n::=:2(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (" << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << spSize*NODE_BITS << endl;
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
