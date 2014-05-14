@@ -455,16 +455,16 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	cout << "three1, LRU::insertItem REMOVE (node,size): " << window.size() << "\t" << (*(ordering.begin())).first << "(" << (*(ordering.begin())).second << "), " << cache[(*(ordering.begin())).first].size << endl;
       intPair rID = *(ordering.begin()); // path to remove
 
-      cout << ";" << window.size();
+      if(window.size() > 8) cout << ";" << window.size();
       if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
  	if(find(window.begin(), window.end(), rID.first) != window.end()){
 	  std::set<intPair, priorityCompfunc>::iterator iterating;
 	  iterating=ordering.begin();
 	  do{
-//  	    cout << "(" << rID.first << "," << rID.second << ")";
+if(window.size() > 8)   	    cout << "(" << rID.first << "," << rID.second << ")";
 	    ++iterating;
 	    rID = *(iterating);
-//  	    cout << "-" << "(" << rID.first << "," << rID.second << ")";
+if(window.size() > 8)   	    cout << "-" << "(" << rID.first << "," << rID.second << ")";
 	  }while(find(window.begin(), window.end(), rID.first) != window.end());
  	}
       }
@@ -488,7 +488,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  }
 	}
       }
-	if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed)
+	if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed || window.size() > 8 )
 	  cout << "\n::=:1(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (" << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << spSize*NODE_BITS << endl;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       
@@ -528,7 +528,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
           nodesInCache -= (rItem.size() - tempItem.size());
           cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
 	  ////////////////////////////////////////////////////////////
-// 	  cout << "<Rd>: (" << rItem.size() << "," << tempItem.size() << ") " << rItem.size() - tempItem.size() << " -CS:" << cacheUsed;
+if(window.size() > 8)  	  cout << "<Rd>: (" << rItem.size() << "," << tempItem.size() << ") " << rItem.size() - tempItem.size() << " -CS:" << cacheUsed;
 	  ////////////////////////////////////////////////////////////
           cache[rPid].item = tempItem;
           cache[rPid].size = tempItem.size();
@@ -577,7 +577,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 
           cacheUsed = cacheUsed - itemSize*NODE_BITS;
 	  ////////////////////////////////////////////////////////////
-// 	  cout << "<Rm>: (" << itemSize << ") -CS:" << cacheUsed;
+if(window.size() > 8)  	  cout << "<Rm>: (" << itemSize << ") -CS:" << cacheUsed;
 	  ////////////////////////////////////////////////////////////
 	  break;
       }
@@ -597,7 +597,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  }
 	}
       }
-	if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed)
+	if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed || window.size() > 8 )
 	  cout << "\n::=:2(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (" << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << spSize*NODE_BITS << endl;
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
