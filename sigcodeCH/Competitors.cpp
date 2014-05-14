@@ -441,7 +441,9 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       }
       if (debugCompet)
         cout << " TWO:(" << cacheSize <<"," << cacheUsed << ")"<<endl;
-
+//////////////////////      
+      if(window.size() > 8) cout << "<In> (" << spSize << ") -CS" << cacheUsed << "<\\>";
+//////////////////////7
       removalStatus[cItem.id] = 1;
       notEnoughSpace = false;
       intPair tmpCoordpair;
