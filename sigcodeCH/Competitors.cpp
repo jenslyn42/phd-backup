@@ -526,7 +526,13 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
           cache[rPid].updateKey(orderVal);
 
           nodesInCache -= (rItem.size() - tempItem.size());
+	  ////////////////////////////////////////////////////////////
+	  cout << "<Rdx>: (" << rItem.size() << "," << tempItem.size() << ")x";
+	  ////////////////////////////////////////////////////////////
           cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
+	  ////////////////////////////////////////////////////////////
+	  cout << "<Rdz>: (" << rItem.size() << "," << tempItem.size() << ")x" ;
+	  ////////////////////////////////////////////////////////////
           cache[rPid].item = tempItem;
           cache[rPid].size = tempItem.size();
           concisePartsp[rPid] = tempConsiseParts;
