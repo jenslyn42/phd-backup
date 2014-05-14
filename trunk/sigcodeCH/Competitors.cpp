@@ -576,10 +576,10 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
           nodesInCache -= itemSize;
 
           cacheUsed = cacheUsed - itemSize*NODE_BITS;
-          break;
 	  ////////////////////////////////////////////////////////////
 	  cout << "<Rm>: (" << rItem.size() << "," << tempItem.size() << ") " << rItem.size() - tempItem.size();
 	  ////////////////////////////////////////////////////////////
+	  break;
       }
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       cout << "\n::=:2(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (" << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << spSize*NODE_BITS << endl;
