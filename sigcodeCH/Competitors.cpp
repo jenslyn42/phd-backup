@@ -490,9 +490,10 @@ if(window.size() > 8)   cout << "-" << "(" << rID.first << "," << rID.second << 
 	  }
 	}
       }
-	if(window.size() > 8 )
+	if(window.size() > 8 ){
 	  cout << "\n::=:1(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (" << cacheSize;
 	  cout << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << rItem.size() << endl;
+	}
 	if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed)
 	  cout << "//////////////****************////////////////////" << endl;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
