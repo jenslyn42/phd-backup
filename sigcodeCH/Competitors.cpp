@@ -461,10 +461,10 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  std::set<intPair, priorityCompfunc>::iterator iterating;
 	  iterating=ordering.begin();
 	  do{
- 	    cout << "(" << rID.first << "," << rID.second << ")";
+//  	    cout << "(" << rID.first << "," << rID.second << ")";
 	    ++iterating;
 	    rID = *(iterating);
- 	    cout << "-" << "(" << rID.first << "," << rID.second << ")";
+//  	    cout << "-" << "(" << rID.first << "," << rID.second << ")";
 	  }while(find(window.begin(), window.end(), rID.first) != window.end());
  	}
       }
@@ -488,8 +488,8 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  }
 	}
       }
-
-      cout << "\n::=:1(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (" << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << spSize*NODE_BITS << endl;
+	if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed)
+	  cout << "\n::=:1(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (" << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << spSize*NODE_BITS << endl;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       
       
@@ -528,7 +528,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
           nodesInCache -= (rItem.size() - tempItem.size());
           cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
 	  ////////////////////////////////////////////////////////////
-	  cout << "<Rd>: (" << rItem.size() << "," << tempItem.size() << ") " << rItem.size() - tempItem.size() << " -CS:" << cacheUsed;
+// 	  cout << "<Rd>: (" << rItem.size() << "," << tempItem.size() << ") " << rItem.size() - tempItem.size() << " -CS:" << cacheUsed;
 	  ////////////////////////////////////////////////////////////
           cache[rPid].item = tempItem;
           cache[rPid].size = tempItem.size();
@@ -577,7 +577,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 
           cacheUsed = cacheUsed - itemSize*NODE_BITS;
 	  ////////////////////////////////////////////////////////////
-	  cout << "<Rm>: (" << itemSize << ") " << rItem.size() - tempItem.size() << " -CS:" << cacheUsed;
+// 	  cout << "<Rm>: (" << itemSize << ") -CS:" << cacheUsed;
 	  ////////////////////////////////////////////////////////////
 	  break;
       }
@@ -597,7 +597,8 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  }
 	}
       }
-      cout << "\n::=:2(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (" << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << spSize*NODE_BITS << endl;
+	if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed)
+	  cout << "\n::=:2(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (" << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << spSize*NODE_BITS << endl;
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     } else
