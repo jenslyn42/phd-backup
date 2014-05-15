@@ -508,7 +508,7 @@ if(window.size() > 8) cout << "*" << rItem.size() << "*";
       if(!ts.useLRUbitmap || ts.testSPtype == SPTYPE_CONCISE)
 	removalStatus[rPid] = 3; //remove path from cache, do not reduce path size
       cout << "%" << removalStatus[rPid] << "%";
-      if(removalStatus[rPid] == 0) removalStatus[rPid] = 3;
+      if(removalStatus[rPid] < 1) removalStatus[rPid] =3;
       cout << "¤" << removalStatus[rPid] << "¤";
       int numConciseNodes = 0;
       switch(removalStatus[rPid]){
@@ -572,14 +572,19 @@ if(window.size() > 8)
           removalStatus[rPid] = 3;
           break;
         case 3: //remove path
-          numEvicted++;
+	  cout << rPid << "# " << numEvicted << "# " << numEvictedZeroBitmap << "$";
+	  numEvicted++;
           if(ts.useLRUbitmap && !usefullParts[rPid].any())
             numEvictedZeroBitmap++;
+	  ////////////////////////
+	  cout << rPid << "# " << numEvicted << "# " << numEvictedZeroBitmap << endl;
+	  ///////////////////////////7
           //update inverted list
           for(vector<int>::iterator itr = rItem.begin(); itr != rItem.end(); ++itr){
 //cout << "case 3.01 " << rPid << " " << *itr << " " << invList[*itr].size() << endl;
             if(invList[*itr].find(rPid) != invList[*itr].end()) {  invList[*itr].erase(rPid);}
           }
+	  cout << rPid << "|| " << numEvicted << "|| " << numEvictedZeroBitmap << endl;
           int itemSize = rItem.size();  // oldest item
           cache.erase(rPid);
           ordering.erase(ordering.begin());
