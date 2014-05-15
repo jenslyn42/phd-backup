@@ -589,6 +589,8 @@ if(window.size() > 8)
 	  ordering.erase(std::make_pair<int,int>(rPid, cache[rPid].key() ) );
 //           ordering.erase(ordering.begin());
 	  cout << rPid << "|3| " << numEvicted << "|3| " << endl;
+	  if(cache.find(rPid) != cache.end()) cout << "WHUUUUUT";
+	  if(cache.find(rPid) == cache.end()) cout << "FUUUUUCK";
 	  cache.erase(rPid);
 	  cout << rPid << "|4| " << numEvicted << "|4| " << endl;
           nodesInCache -= itemSize;
