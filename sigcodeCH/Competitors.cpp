@@ -586,9 +586,10 @@ if(window.size() > 8)
 	  cout << rPid << "|| " << numEvicted << "|| " << numEvictedZeroBitmap << "||" << endl;
           int itemSize = rItem.size();  // oldest item
 	  cout << rPid << "|2| " << numEvicted << "|2| " << endl;
-	  cache.erase(rPid);
+	  ordering.erase(std::make_pair<int,int>(rPid, cache[rPid].key() ) );
+//           ordering.erase(ordering.begin());
 	  cout << rPid << "|3| " << numEvicted << "|3| " << endl;
-          ordering.erase(ordering.begin());
+	  cache.erase(rPid);
 	  cout << rPid << "|4| " << numEvicted << "|4| " << endl;
           nodesInCache -= itemSize;
 
