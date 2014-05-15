@@ -572,22 +572,24 @@ if(window.size() > 8)
           removalStatus[rPid] = 3;
           break;
         case 3: //remove path
-	  cout << rPid << "# " << numEvicted << "# " << numEvictedZeroBitmap << "$";
 	  numEvicted++;
           if(ts.useLRUbitmap && !usefullParts[rPid].any())
             numEvictedZeroBitmap++;
 	  ////////////////////////
-	  cout << rPid << "# " << numEvicted << "# " << numEvictedZeroBitmap << endl;
+	  cout << rPid << "# " << numEvicted << "# " << numEvictedZeroBitmap << "$";
 	  ///////////////////////////7
           //update inverted list
           for(vector<int>::iterator itr = rItem.begin(); itr != rItem.end(); ++itr){
 //cout << "case 3.01 " << rPid << " " << *itr << " " << invList[*itr].size() << endl;
             if(invList[*itr].find(rPid) != invList[*itr].end()) {  invList[*itr].erase(rPid);}
           }
-	  cout << rPid << "|| " << numEvicted << "|| " << numEvictedZeroBitmap << endl;
+	  cout << rPid << "|| " << numEvicted << "|| " << numEvictedZeroBitmap << "||" << endl;
           int itemSize = rItem.size();  // oldest item
-          cache.erase(rPid);
+	  cout << rPid << "|2| " << numEvicted << "|2| " << endl;
+	  cache.erase(rPid);
+	  cout << rPid << "|3| " << numEvicted << "|3| " << endl;
           ordering.erase(ordering.begin());
+	  cout << rPid << "|4| " << numEvicted << "|4| " << endl;
           nodesInCache -= itemSize;
 
           cacheUsed = cacheUsed - itemSize*NODE_BITS;
