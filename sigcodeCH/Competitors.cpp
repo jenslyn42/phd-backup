@@ -507,7 +507,7 @@ if(window.size() > 8) cout << "*" << rItem.size() << "*";
 
       if(!ts.useLRUbitmap || ts.testSPtype == SPTYPE_CONCISE)
 	removalStatus[rPid] = 3; //remove path from cache, do not reduce path size
-
+      cout << "%" << removalStatus[rPid] << "%";
       int numConciseNodes = 0;
       switch(removalStatus[rPid]){
         case 1: //reduce the path
@@ -607,7 +607,7 @@ if(window.size() > 8)  	  cout << "<Rm>: (" << itemSize << ") -CS:" << cacheUsed
       }
 	if(window.size() > 8 ){	  	  
 	  cout << "\n::=:2(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (";
-	  cout << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << rItem.size() << endl;
+	  cout << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << window.size() << endl;
 	}
 	if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed)
 	  cout << "//////////////****************////////////////////" << endl;
