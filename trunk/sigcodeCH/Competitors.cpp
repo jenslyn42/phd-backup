@@ -508,6 +508,8 @@ if(window.size() > 8) cout << "*" << rItem.size() << "*";
       if(!ts.useLRUbitmap || ts.testSPtype == SPTYPE_CONCISE)
 	removalStatus[rPid] = 3; //remove path from cache, do not reduce path size
       cout << "%" << removalStatus[rPid] << "%";
+      if(removalStatus[rPid] == 0) removalStatus[rPid] = 3;
+      cout << "¤" << removalStatus[rPid] << "¤";
       int numConciseNodes = 0;
       switch(removalStatus[rPid]){
         case 1: //reduce the path
