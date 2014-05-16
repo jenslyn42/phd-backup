@@ -592,6 +592,8 @@ if(window.size() > 8)
 	  if(cache.find(rPid) == cache.end()) cout << "FUUCK ";
 	  if(cache.find(rPid) != cache.end()) cout << "WHUUT ";
 	  cache.erase(rPid);
+	  if(cache.find(rPid) == cache.end()) cout << "WHUUT ";
+	  if(cache.find(rPid) != cache.end()) cout << "FUUCK ";	  
 	  cout << rPid << "|4| " << endl;
           nodesInCache -= itemSize;
 
