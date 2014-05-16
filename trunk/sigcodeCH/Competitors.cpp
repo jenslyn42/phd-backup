@@ -583,16 +583,15 @@ if(window.size() > 8)
 //cout << "case 3.01 " << rPid << " " << *itr << " " << invList[*itr].size() << endl;
             if(invList[*itr].find(rPid) != invList[*itr].end()) {  invList[*itr].erase(rPid);}
           }
-	  cout << rPid << "|| " << numEvicted << "|| " << numEvictedZeroBitmap << "||" << endl;
-          int itemSize = rItem.size();  // oldest item
-	  cout << rPid << "|2| " << numEvicted << "|2| " << endl;
+
+          int itemSize = rItem.size();  // oldest item, or item in window
 	  ordering.erase(std::make_pair<int,int>(rPid, cache[rPid].key() ) );
 //           ordering.erase(ordering.begin());
-	  cout << rPid << "|3| " << numEvicted << "|3| " << endl;
-	  if(cache.find(rPid) != cache.end()) cout << "WHUUUUUT";
-	  if(cache.find(rPid) == cache.end()) cout << "FUUUUUCK";
+	  cout << rPid << "|3| ";
+	  if(cache.find(rPid) == cache.end()) cout << "FUUCK ";
+	  if(cache.find(rPid) != cache.end()) cout << "WHUUT ";
 	  cache.erase(rPid);
-	  cout << rPid << "|4| " << numEvicted << "|4| " << endl;
+	  cout << rPid << "|4| " << endl;
           nodesInCache -= itemSize;
 
           cacheUsed = cacheUsed - itemSize*NODE_BITS;
