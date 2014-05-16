@@ -587,14 +587,13 @@ if(window.size() > 8)
 
           int itemSize = rItem.size();  // oldest item, or item in window
 	  ordering.erase(std::make_pair<int,int>(rPid, cache[rPid].key() ) );
-//           ordering.erase(ordering.begin());
-	  cout << rPid << "|3| ";
+	  cout << rPid << "|3| " << cache[rPid].key() << " |3| ";
 	  if(cache.find(rPid) == cache.end()) cout << "FUUCK ";
 	  if(cache.find(rPid) != cache.end()) cout << "WHUUT ";
 	  cache.erase(rPid);
 	  if(cache.find(rPid) == cache.end()) cout << "WHUUT ";
 	  if(cache.find(rPid) != cache.end()) cout << "FUUCK ";	  
-	  cout << rPid << "|4| " << endl;
+	  cout << rPid << "|4| " << cache[rPid].key() << " |4| " << endl;
           nodesInCache -= itemSize;
 
           cacheUsed = cacheUsed - itemSize*NODE_BITS;
