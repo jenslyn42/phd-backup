@@ -592,6 +592,7 @@ if(window.size() > 8)
 	  if(cache.find(rPid) != cache.end()) cout << "WHUUT ";
 	  int numItemsErased=0;
 	  numItemsErased = cache.erase(rPid);
+	  cout << cache.size() << " ";
 	  if(cache.find(rPid) == cache.end()) cout << "WHUUT ";
 	  if(cache.find(rPid) != cache.end()) cout << "FUUCK ";	  
 	  cout << rPid << "|4| " << cache[rPid].key() << " |4| " << endl;
