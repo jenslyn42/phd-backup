@@ -577,7 +577,7 @@ if(window.size() > 8)
           if(ts.useLRUbitmap && !usefullParts[rPid].any())
             numEvictedZeroBitmap++;
 	  ////////////////////////
-	  cout << rPid << "# " << numEvicted << "# " << numEvictedZeroBitmap << "$";
+	  cout << rPid << "# " << numEvicted << "# " << numEvictedZeroBitmap << "# " << ordering.size() << "# " << cache.size() << "$";
 	  ///////////////////////////7
           //update inverted list
           for(vector<int>::iterator itr = rItem.begin(); itr != rItem.end(); ++itr){
@@ -598,7 +598,7 @@ if(window.size() > 8)
 
           cacheUsed = cacheUsed - itemSize*NODE_BITS;
 	  ////////////////////////////////////////////////////////////
-if(window.size() > 8)  	  cout << "<Rm>: (" << itemSize << ") -CS:" << cacheUsed;
+if(window.size() > 8)  	  cout << "<Rm>: (" << itemSize << ") -CS:" << cacheUsed << " = " << ordering.size() << "# " << cache.size();
 	  ////////////////////////////////////////////////////////////
 	  break;
       }
