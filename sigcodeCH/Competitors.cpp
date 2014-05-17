@@ -590,7 +590,8 @@ if(window.size() > 8)
 	  cout << rPid << "|3| " << cache[rPid].key() << " |3| ";
 	  if(cache.find(rPid) == cache.end()) cout << "FUUCK ";
 	  if(cache.find(rPid) != cache.end()) cout << "WHUUT ";
-	  cache.erase(rPid);
+	  int numItemsErased=0;
+	  numItemsErased = cache.erase(rPid);
 	  if(cache.find(rPid) == cache.end()) cout << "WHUUT ";
 	  if(cache.find(rPid) != cache.end()) cout << "FUUCK ";	  
 	  cout << rPid << "|4| " << cache[rPid].key() << " |4| " << endl;
@@ -598,7 +599,7 @@ if(window.size() > 8)
 
           cacheUsed = cacheUsed - itemSize*NODE_BITS;
 	  ////////////////////////////////////////////////////////////
-if(window.size() > 8)  	  cout << "<Rm>: (" << itemSize << ") -CS:" << cacheUsed << " = " << ordering.size() << "# " << cache.size();
+if(window.size() > 8)  	  cout << "<Rm>: (" << itemSize << ") -CS:" << cacheUsed << " = " << ordering.size() << "# " << cache.size() << " " << numItemsErased;
 	  ////////////////////////////////////////////////////////////
 	  break;
       }
