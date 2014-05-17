@@ -599,6 +599,9 @@ if(window.size() > 8)
 // 	  cout << cache.size() << " ";
 // 	  cout << cache.size() << " ";
 // 	  cout << rPid << "|4| " << cache[rPid].key() << " |4| " << endl;
+	  cache.find(rPid);
+	  cout <<"bad bløe"<< cache.size() << " ";
+	  
 	  
           nodesInCache -= itemSize;
 
