@@ -493,7 +493,7 @@ if(window.size() > 8) cout << "*" << rItem.size() << "*";
       }
       if(window.size() > 8 ){
 	cout << "\n::=:1(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (" << cacheSize;
-	cout << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << rItem.size() << endl;
+	cout << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << ordering.size() << ", " << rItem.size() << endl;
       }
       if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed)
 	cout << "//////////////****************////////////////////" << endl;
@@ -622,7 +622,7 @@ if(window.size() > 8)  	  cout << "\n<Rm>: (" << itemSize << ") -CS:" << cacheUs
       }
 	if(window.size() > 8 ){	  	  
 	  cout << "\n::=:2(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (";
-	  cout << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << window.size() << endl;
+	  cout << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << ordering.size() << endl;
 	}
 	if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed)
 	  cout << "//////////////****************////////////////////" << endl;
