@@ -600,7 +600,7 @@ if(window.size() > 8)
 
           cacheUsed = cacheUsed - itemSize*NODE_BITS;
 	  ////////////////////////////////////////////////////////////
-if(window.size() > 8)  	  cout << "<Rm>: (" << itemSize << ") -CS:" << cacheUsed << " = " << ordering.size() << "# " << cache.size() << " " << numItemsErased;
+if(window.size() > 8)  	  cout << "\n<Rm>: (" << itemSize << ") -CS:" << cacheUsed << " = " << ordering.size() << "# " << cache.size() << " " << numItemsErased;
 	  ////////////////////////////////////////////////////////////
 	  break;
       }
