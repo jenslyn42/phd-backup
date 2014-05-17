@@ -593,12 +593,12 @@ if(window.size() > 8)
 	  int numItemsErased=0;
 	  numItemsErased = cache.erase(rPid);
 	  cout << cache.size() << " ";
-	  if(cache.find(rPid) == cache.end()) cout << "WHUUT ";
-	  cout << cache.size() << " ";
-	  if(cache.find(rPid) != cache.end()) cout << "FUUCK ";	  
-	  cout << cache.size() << " ";
-	  cout << rPid << "|4| " << cache[rPid].key() << " |4| " << endl;
-	  cout << cache.size() << " ";
+// 	  if(cache.find(rPid) == cache.end()) cout << "WHUUT ";
+// 	  cout << cache.size() << " ";
+// 	  if(cache.find(rPid) != cache.end()) cout << "FUUCK ";	  
+// 	  cout << cache.size() << " ";
+// 	  cout << cache.size() << " ";
+// 	  cout << rPid << "|4| " << cache[rPid].key() << " |4| " << endl;
 	  
           nodesInCache -= itemSize;
 
