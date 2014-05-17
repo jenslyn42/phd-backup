@@ -457,7 +457,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	cout << "three1, LRU::insertItem REMOVE (node,size): " << window.size() << "\t" << (*(ordering.begin())).first << "(" << (*(ordering.begin())).second << "), " << cache[(*(ordering.begin())).first].size << endl;
       intPair rID = *(ordering.begin()); // path to remove
 
-      if(window.size() > 8) cout << ";" << window.size() << "!! " << ordering.size();
+      if(window.size() > 8) cout << ";" << window.size() << "!!" << ordering.size() << "!/!" << cache.size() << " ";
       if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
  	if(find(window.begin(), window.end(), rID.first) != window.end()){
 	  std::set<intPair, priorityCompfunc>::iterator iterating;
@@ -476,7 +476,7 @@ if(window.size() > 8)   cout << "-" << "(" << rID.first << "," << rID.second << 
       intVector tempItem;
       boost::dynamic_bitset<> tempConsiseParts;
 
-if(window.size() > 8) cout << "*" << rItem.size() << "**" << ordering.size() << "*";
+if(window.size() > 8) cout << "\n*" << rItem.size() << "**" << ordering.size() << "*/*" << cache.size() << "*";
 //////////////////////////////////////////////////////////////////////////
       unsigned long totalFullLength=0, totalReducedLength=0;
       int reducedInCache=0, fullIncache=0;
@@ -577,7 +577,7 @@ if(window.size() > 8)
           if(ts.useLRUbitmap && !usefullParts[rPid].any())
             numEvictedZeroBitmap++;
 	  ////////////////////////
-	  cout << rPid << "# " << numEvicted << "# " << numEvictedZeroBitmap << "# " << ordering.size() << "# " << cache.size() << "$";
+	  cout << rPid << "#(" << numEvicted << "# " << numEvictedZeroBitmap << ") " << ordering.size() << "# " << cache.size() << "$";
 	  ///////////////////////////7
           //update inverted list
           for(vector<int>::iterator itr = rItem.begin(); itr != rItem.end(); ++itr){
