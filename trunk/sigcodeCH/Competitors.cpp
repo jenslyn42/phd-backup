@@ -472,6 +472,9 @@ if(window.size() > 8)   cout << "-" << "(" << rID.first << "," << rID.second << 
       }
 
       int rPid = rID.first;
+      if(cache.find(rPid) == cache.end()) //Ensure item from 'ordering' is in the cache, if not then delete it from 'ordering'
+	ordering.erase(std::make_pair<int,int>(rPid, rID.second ) );
+
       vector<int>& rItem = cache[rPid].item;
       intVector tempItem;
       boost::dynamic_bitset<> tempConsiseParts;
@@ -507,10 +510,10 @@ if(window.size() > 8) cout << "\n*"  << "**" << ordering.size() << "*/*" << cach
 
       if(!ts.useLRUbitmap || ts.testSPtype == SPTYPE_CONCISE)
 	removalStatus[rPid] = 3; //remove path from cache, do not reduce path size
-      if(removalStatus[rPid] < 1){ 
-	removalStatus[rPid] =3;
-	cout << "¤¤ ¤¤ ¤¤ ";
-      }
+//       if(removalStatus[rPid] < 1){ 
+// 	removalStatus[rPid] =3;
+// 	cout << "¤¤ ¤¤ ¤¤ ";
+//       }
       int numConciseNodes = 0;
       switch(removalStatus[rPid]){
         case 1: //reduce the path
