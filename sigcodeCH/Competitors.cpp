@@ -586,9 +586,9 @@ if(window.size() > 8)
           }
 
           int itemSize = rItem.size();  // oldest item, or item in window
-	  cout << "\n&:" << cache[rPid].key() << ", " << ordering.size() << " " << cache.size() << " ";
+	  cout << "\n&:" << ordering.size() << " " << cache.size() << " " << cache[rPid].key() << " ";
 	  ordering.erase(std::make_pair<int,int>(rPid, cache[rPid].key() ) );
-	  cout << "\n&:" << cache[rPid].key() << ", " << ordering.size() << " " << cache.size() << " ";
+	  cout << "\n&:" << ordering.size() << " " << cache.size() << " " << cache[rPid].key() << " ";
 	  if(cache.find(rPid) == cache.end()) cout << "FUUCK ";
 	  if(cache.find(rPid) != cache.end()) cout << "WHUUT ";
 	  int numItemsErased=0;
