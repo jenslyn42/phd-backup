@@ -474,7 +474,7 @@ if(window.size() > 8)   cout << "-" << "(" << rID.first << "," << rID.second << 
       int rPid = rID.first;
       if(cache.find(rPid) == cache.end()) //Ensure item from 'ordering' is in the cache, if not then delete it from 'ordering'
 	ordering.erase(std::make_pair<int,int>(rPid, rID.second ) );
-
+      if(window.size() > 8) cout << ";-;" << window.size() << "!!" << ordering.size() << "!/!" << cache.size() << " ";
       vector<int>& rItem = cache[rPid].item;
       intVector tempItem;
       boost::dynamic_bitset<> tempConsiseParts;
