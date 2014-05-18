@@ -476,7 +476,7 @@ if(window.size() > 8)   cout << "-" << "(" << rID.first << "," << rID.second << 
       intVector tempItem;
       boost::dynamic_bitset<> tempConsiseParts;
 
-if(window.size() > 8) cout << "\n*" << rItem.size() << "**" << ordering.size() << "*/*" << cache.size() << "*";
+if(window.size() > 8) cout << "\n*"  << "**" << ordering.size() << "*/*" << cache.size() << "*";
 //////////////////////////////////////////////////////////////////////////
       unsigned long totalFullLength=0, totalReducedLength=0;
       int reducedInCache=0, fullIncache=0;
