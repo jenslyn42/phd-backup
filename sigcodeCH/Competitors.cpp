@@ -473,10 +473,10 @@ if(window.size() > 8)   cout << "-" << "(" << rID.first << "," << rID.second << 
 
       int rPid = rID.first;
       if(cache.find(rPid) == cache.end()){ //Ensure item from 'ordering' is in the cache, if not then delete it from 'ordering'
-	if(ordering.find(rID) != ordering.end()) cout << "EXIST! ";
-	ordering.erase(rID);
-	if(ordering.find(rID) != ordering.end()) cout << "still.. -_-! ";
 	cout << "\nFLUF ";
+	if(ordering.find(rID) != ordering.end()) cout << "EXIST! "; else cout << "DON'T EXIST! ";
+	ordering.erase(rID);
+	if(ordering.find(rID) != ordering.end()) cout << "still.. -_-! "; else cout << "REALLY DON'T! ";
       }
       if(window.size() > 8) cout << ";-;" << window.size() << "!!" << ordering.size() << "!/!" << cache.size() << " ";
       vector<int>& rItem = cache[rPid].item;
