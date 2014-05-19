@@ -456,8 +456,6 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       if (debugCompet)
 	cout << "three1, LRU::insertItem REMOVE (node,size): " << window.size() << "\t" << (*(ordering.begin())).first << "(" << (*(ordering.begin())).second << "), " << cache[(*(ordering.begin())).first].size << endl;
       intPair rID = *(ordering.begin()); // path to remove
-
-      int tmpIntCount=0;
       
       if(window.size() > 8) cout << ";" << window.size() << "!!" << ordering.size() << "!/!" << cache.size() << " ";
       if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
@@ -469,15 +467,15 @@ if(window.size() > 8)   cout << "(" << rID.first << "," << rID.second << ")";
 	    ++iterating;
 	    rID = *(iterating);
 if(window.size() > 8)   cout << "-" << "(" << rID.first << "," << rID.second << ")";
-	    tmpIntCount++;
-	    cout << tmpIntCount << "[" << window.size() << "]";
 	  }while(find(window.begin(), window.end(), rID.first) != window.end());
  	}
       }
 
       int rPid = rID.first;
-      if(cache.find(rPid) == cache.end()) //Ensure item from 'ordering' is in the cache, if not then delete it from 'ordering'
-	ordering.erase(std::make_pair<int,int>(rPid, rID.second ) );
+      if(cache.find(rPid) == cache.end()){ //Ensure item from 'ordering' is in the cache, if not then delete it from 'ordering'
+	ordering.erase(rID);
+	cout << "\nFLUF ";
+      }
       if(window.size() > 8) cout << ";-;" << window.size() << "!!" << ordering.size() << "!/!" << cache.size() << " ";
       vector<int>& rItem = cache[rPid].item;
       intVector tempItem;
