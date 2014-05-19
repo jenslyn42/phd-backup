@@ -457,6 +457,8 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	cout << "three1, LRU::insertItem REMOVE (node,size): " << window.size() << "\t" << (*(ordering.begin())).first << "(" << (*(ordering.begin())).second << "), " << cache[(*(ordering.begin())).first].size << endl;
       intPair rID = *(ordering.begin()); // path to remove
 
+      int tmpIntCount=0;
+      
       if(window.size() > 8) cout << ";" << window.size() << "!!" << ordering.size() << "!/!" << cache.size() << " ";
       if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
  	if(find(window.begin(), window.end(), rID.first) != window.end()){
@@ -467,6 +469,8 @@ if(window.size() > 8)   cout << "(" << rID.first << "," << rID.second << ")";
 	    ++iterating;
 	    rID = *(iterating);
 if(window.size() > 8)   cout << "-" << "(" << rID.first << "," << rID.second << ")";
+	    tmpIntCount++;
+	    cout << tmpIntCount << "[" << window.size() << "]";
 	  }while(find(window.begin(), window.end(), rID.first) != window.end());
  	}
       }
