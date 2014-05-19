@@ -461,13 +461,16 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
  	if(find(window.begin(), window.end(), rID.first) != window.end()){
 	  std::set<intPair, priorityCompfunc>::iterator iterating;
-	  iterating=ordering.begin();
-	  do{
-if(window.size() > 8)   cout << "(" << rID.first << "," << rID.second << ")";
-	    ++iterating;
+
+	  for(iterating=ordering.begin(); iterating!=ordering.end(); ++iterating){
+	    if(find(window.begin(), window.end(), rID.first) == window.end()){
+	      break;
+	    }
 	    rID = *(iterating);
-if(window.size() > 8)   cout << "-" << "(" << rID.first << "," << rID.second << ")";
-	  }while(find(window.begin(), window.end(), rID.first) != window.end());
+	    cout << "-" << "(" << rID.first << "," << rID.second << ")";
+	  }
+
+
  	}
       }
 
