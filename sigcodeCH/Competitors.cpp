@@ -473,9 +473,9 @@ if(window.size() > 8)   cout << "-" << "(" << rID.first << "," << rID.second << 
 
       int rPid = rID.first;
       if(cache.find(rPid) == cache.end()){ //Ensure item from 'ordering' is in the cache, if not then delete it from 'ordering'
-	if(ordering.find(rID) cout << "EXIST! ";
+	if(ordering.find(rID) != ordering.end()) cout << "EXIST! ";
 	ordering.erase(rID);
-	if(ordering.find(rID) cout << "still.. -_-! ";
+	if(ordering.find(rID) != ordering.end()) cout << "still.. -_-! ";
 	cout << "\nFLUF ";
       }
       if(window.size() > 8) cout << ";-;" << window.size() << "!!" << ordering.size() << "!/!" << cache.size() << " ";
