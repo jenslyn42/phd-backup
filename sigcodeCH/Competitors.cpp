@@ -506,7 +506,7 @@ if(window.size() > 8) cout << "\n*"  << "**" << ordering.size() << "*/*" << cach
 	cout << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << ordering.size() << ", " << rItem.size() << endl;
       }
       if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed)
-	cout << "//////////////****************////////////////////" << endl;
+	cout << "//////////////*****NEQUAL*****////////////////////" << endl;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       
       
@@ -611,7 +611,7 @@ if(window.size() > 8)
 
           cacheUsed = cacheUsed - itemSize*NODE_BITS;
 	  ////////////////////////////////////////////////////////////
-if(window.size() > 8)  	  cout << "\n<Rm>: (" << itemSize << ") -CS:" << cacheUsed << " = " << ordering.size() << "# " << cache.size() << " " << numItemsErased;
+  	  cout << "\n<Rm>: (" << itemSize << ") -CS:" << cacheUsed << " = " << ordering.size() << "# " << cache.size() << " " << numItemsErased;
 	  ////////////////////////////////////////////////////////////
 	  break;
       }
@@ -636,7 +636,7 @@ if(window.size() > 8)  	  cout << "\n<Rm>: (" << itemSize << ") -CS:" << cacheUs
 	  cout << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << ordering.size() << endl;
 	}
 	if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed)
-	  cout << "//////////////****************////////////////////" << endl;
+	  cout << "//////////////*****NEQUAL*****////////////////////" << endl;
 // 	if(window.size() > 10) exit(0);
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
