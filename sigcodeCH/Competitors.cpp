@@ -217,8 +217,8 @@ void LRUPLUS::fillCache(){
   }
   numCacheHits=0;
   this->resetDijkstraCalls();
-  BOOST_FOREACH(intIntintPairPairsMap::value_type stat, lrustats)
-    lrustats[stat.first].second.first.first = -1;
+//   BOOST_FOREACH(intIntintPairPairsMap::value_type stat, lrustats)
+//     lrustats[stat.first].second.first.first = -1;
   hitstats.clear();
   numEvicted=0;
   numEvictedZeroBitmap=0;
@@ -599,11 +599,12 @@ if(window.size() > 8)
 	  cout << "\n&:" << ordering.size() << " " << cache.size() << " " << cache[rPid].key() << " ";
 	  ordering.erase(std::make_pair<int,int>(rPid, cache[rPid].key() ) );
 	  cout << "\n&:" << ordering.size() << " " << cache.size() << " " << cache[rPid].key() << " ";
+	  boost::unordered_map<int, CacheItem>::iterator debugIter;
 	  if(cache.find(rPid) == cache.end()) cout << "FUUCK ";
-	  if(cache.find(rPid) != cache.end()) cout << "WHUUT ";
+	  if((debugIter = cache.find(rPid)) != cache.end()) cout << "WHUUT ";
 	  int numItemsErased=0;
 	  numItemsErased = cache.erase(rPid);
-	  cout << cache.size() << " ";
+	  cout << cache.size() << " " << (*(debugIter)).second.size << " ";
 	  if(cache.find(rPid) == cache.end()) cout << "WHUUT ";
 	  if(cache.find(rPid) != cache.end()) cout << "FUUCK ";	  
 
