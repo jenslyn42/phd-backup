@@ -382,7 +382,6 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
   }
 }
 
-
 int LRUPLUS::insertItem(intVector& sp) {
   intVector placeholder;
   return insertItem(sp, placeholder);  
@@ -392,17 +391,6 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
   int spSize = sp.size();
   bool notEnoughSpace = true;
 
-/*  if(debugCompet){
-    cout << "two, LRUPLUS::insertItem(" << spSize << ") - " << numTotalQueries << ", " << numCacheHits << endl;
-    std::priority_queue<int> cacheQueue;
-    BOOST_FOREACH(intCacheitemMap::value_type ca, cache){cacheQueue.push(ca.second.key());}
-    cout << "*B* ";
-    while(!cacheQueue.empty()){
-      cout << cacheQueue.top() << " ";
-      cacheQueue.pop();
-    }
-    cout << endl;
-  }*/
   //insert query into cache, will repeatedly remove items until there is enough space for the new item.
   do{
     if((cacheSize - cacheUsed) >= spSize*NODE_BITS) {
@@ -467,33 +455,29 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	    }
 	    rID = *(iterating);
 	  }
-
-
  	}
       }
 
       int rPid = rID.first;
-
       vector<int>& rItem = cache[rPid].item;
       intVector tempItem;
       boost::dynamic_bitset<> tempConsiseParts;
 
-      unsigned long totalFullLength=0, totalReducedLength=0;
-      int reducedInCache=0, fullIncache=0;
-      BOOST_FOREACH(intIntintPairPairsMap::value_type stat, lrustats){
-	if(cache.find(stat.first) != cache.end()){
-	  if(stat.second.second.first.first != -1){ 
-	    reducedInCache++;
-	    totalReducedLength += stat.second.second.first.first;
-	  }else{
-	    fullIncache++;
-	    totalFullLength += stat.second.first;  
-	  }
-	}
-      }
-      if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed)
-	cout << "//////////////*****NEQUAL*****////////////////////" << endl;
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//       unsigned long totalFullLength=0, totalReducedLength=0;
+//       int reducedInCache=0, fullIncache=0;
+//       BOOST_FOREACH(intIntintPairPairsMap::value_type stat, lrustats){
+// 	if(cache.find(stat.first) != cache.end()){
+// 	  if(stat.second.second.first.first != -1){ 
+// 	    reducedInCache++;
+// 	    totalReducedLength += stat.second.second.first.first;
+// 	  }else{
+// 	    fullIncache++;
+// 	    totalFullLength += stat.second.first;  
+// 	  }
+// 	}
+//       }
+//       if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed)
+// 	cout << "//////////////*****NEQUAL*****////////////////////" << endl;
       
       
 //       3 cases:
@@ -549,12 +533,6 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
             }else
 	      invList[rItem[i]].erase(rPid); //remove node -> path from inverted list
           }
-
-        //update items LRU position, as if it had just been inserted or caused a cache hit
-//         orderVal++;
-//         ordering.erase(std::make_pair<int,int>(rPid, cache[rPid].key() ) );
-//         ordering.insert(std::make_pair<int,int>(rPid, orderVal));
-//         cache[rPid].updateKey(orderVal);
 
           nodesInCache -= (rItem.size() - tempItem.size());
           cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
@@ -619,7 +597,6 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
   } while(notEnoughSpace);
 }
 
-
 intVector LRUPLUS::kskip(intPair stPair, int pct){
   if(debugProbc) cout << "LRUPLUS::kskip((" << stPair.first <<","<< stPair.second << "), " << pct << ")" << endl;
   intVector spResultIntermediate, spDiff;
@@ -669,7 +646,6 @@ intVector LRUPLUS::kskip(intPair stPair, int pct){
   if(debugProbc) cout << "LRUPLUS::kskip Q_05:( " << spResultIntermediate.size() << endl;
   return spResultIntermediate;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
