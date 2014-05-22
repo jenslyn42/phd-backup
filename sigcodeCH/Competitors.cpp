@@ -439,11 +439,11 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	  }
 	}	
       }
-      if (debugCompet)
+      if (debugCompet){
         cout << " TWO:(" << cacheSize <<"," << cacheUsed << ")"<<endl;
-//////////////////////      
-      if(window.size() > 8) cout << "<In> (" << spSize << ") -CS:" << cacheUsed << "<\\>";
-//////////////////////7
+	if(window.size() > 8) cout << "<In> (" << spSize << ") -CS:" << cacheUsed << "<\\>";
+      }
+      
       removalStatus[cItem.id] = 1;
       notEnoughSpace = false;
       intPair tmpCoordpair;
@@ -457,7 +457,6 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	cout << "three1, LRU::insertItem REMOVE (node,size): " << window.size() << "\t" << (*(ordering.begin())).first << "(" << (*(ordering.begin())).second << "), " << cache[(*(ordering.begin())).first].size << endl;
       intPair rID = *(ordering.begin()); // path to remove
       
-      if(window.size() > 8) cout << ";" << window.size() << "!!" << ordering.size() << "!/!" << cache.size() << " ";
       if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
  	if(find(window.begin(), window.end(), rID.first) != window.end()){
 	  std::set<intPair, priorityCompfunc>::iterator iterating;
@@ -467,7 +466,6 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	      break;
 	    }
 	    rID = *(iterating);
-	    cout << "-" << "(" << rID.first << "," << rID.second << ")";
 	  }
 
 
@@ -475,19 +473,11 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       }
 
       int rPid = rID.first;
-      if(cache.find(rPid) == cache.end()){ //Ensure item from 'ordering' is in the cache, if not then delete it from 'ordering'
-	cout << "\nFLUF ";
-	if(ordering.find(rID) != ordering.end()) cout << "EXIST! "; else cout << "DON'T EXIST! ";
-	ordering.erase(rID);
-	if(ordering.find(rID) != ordering.end()) cout << "still.. -_-! "; else cout << "REALLY DON'T! ";
-      }
-      if(window.size() > 8) cout << ";-;" << window.size() << "!!" << ordering.size() << "!/!" << cache.size() << " ";
+
       vector<int>& rItem = cache[rPid].item;
       intVector tempItem;
       boost::dynamic_bitset<> tempConsiseParts;
 
-if(window.size() > 8) cout << "\n*"  << "**" << ordering.size() << "*/*" << cache.size() << "*";
-//////////////////////////////////////////////////////////////////////////
       unsigned long totalFullLength=0, totalReducedLength=0;
       int reducedInCache=0, fullIncache=0;
       BOOST_FOREACH(intIntintPairPairsMap::value_type stat, lrustats){
@@ -501,10 +491,6 @@ if(window.size() > 8) cout << "\n*"  << "**" << ordering.size() << "*/*" << cach
 	  }
 	}
       }
-      if(window.size() > 8 ){
-	cout << "\n::=:1(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (" << cacheSize;
-	cout << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << ordering.size() << ", " << rItem.size() << endl;
-      }
       if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed)
 	cout << "//////////////*****NEQUAL*****////////////////////" << endl;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -517,14 +503,10 @@ if(window.size() > 8) cout << "\n*"  << "**" << ordering.size() << "*/*" << cach
 
       if(!ts.useLRUbitmap || ts.testSPtype == SPTYPE_CONCISE)
 	removalStatus[rPid] = 3; //remove path from cache, do not reduce path size
-//       if(removalStatus[rPid] < 1){ 
-// 	removalStatus[rPid] =3;
-// 	cout << "¤¤ ¤¤ ¤¤ ";
-//       }
+
       int numConciseNodes = 0;
       switch(removalStatus[rPid]){
         case 1: //reduce the path
-          //cout << "Case 1:" << endl;
           for (int i=0; i< rItem.size(); i++) {
             if(concisePartsp[rPid].test(i)){
 	      tempItem.push_back(rItem[i]);
@@ -547,10 +529,10 @@ if(window.size() > 8) cout << "\n*"  << "**" << ordering.size() << "*/*" << cach
 
           nodesInCache -= (rItem.size() - tempItem.size());
           cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
-	  ////////////////////////////////////////////////////////////
-if(window.size() > 8)  
-  cout << "<Rd>: (" << rItem.size() << "," << tempItem.size() << ") " << rItem.size() - tempItem.size() << " -CS:" << cacheUsed;
-	  ////////////////////////////////////////////////////////////
+	  
+	  if (debugCompet)
+	    cout << "<Rd>: (" << rItem.size() << "," << tempItem.size() << ") " << rItem.size() - tempItem.size() << " -CS:" << cacheUsed;
+	  
           cache[rPid].item = tempItem;
           cache[rPid].size = tempItem.size();
           concisePartsp[rPid] = tempConsiseParts;
@@ -586,79 +568,56 @@ if(window.size() > 8)
 	  numEvicted++;
           if(ts.useLRUbitmap && !usefullParts[rPid].any())
             numEvictedZeroBitmap++;
-	  ////////////////////////
-	  cout << rPid << "#(" << numEvicted << "# " << numEvictedZeroBitmap << ") " << ordering.size() << "# " << cache.size() << "$";
-	  ///////////////////////////7
+
           //update inverted list
           for(vector<int>::iterator itr = rItem.begin(); itr != rItem.end(); ++itr){
-//cout << "case 3.01 " << rPid << " " << *itr << " " << invList[*itr].size() << endl;
             if(invList[*itr].find(rPid) != invList[*itr].end()) {  invList[*itr].erase(rPid);}
           }
 
           int itemSize = rItem.size();  // oldest item, or item in window
-	  cout << "\n&:" << ordering.size() << " " << cache.size() << " " << cache[rPid].key() << " ";
 	  ordering.erase(std::make_pair<int,int>(rPid, cache[rPid].key() ) );
-	  cout << "\n&:" << ordering.size() << " " << cache.size() << " " << cache[rPid].key() << " ";
 	  boost::unordered_map<int, CacheItem>::iterator debugIter;
 	  if(cache.find(rPid) == cache.end()) cout << "FUUCK ";
-	  if((debugIter = cache.find(rPid)) != cache.end()) cout << "WHUUT ";
 	  int numItemsErased=0;
 	  numItemsErased = cache.erase(rPid);
-	  cout << cache.size() << " " << (*(debugIter)).second.size << " ";
-	  if(cache.find(rPid) == cache.end()) cout << "WHUUT ";
 	  if(cache.find(rPid) != cache.end()) cout << "FUUCK ";	  
 
           nodesInCache -= itemSize;
 
           cacheUsed = cacheUsed - itemSize*NODE_BITS;
-	  ////////////////////////////////////////////////////////////
-  	  cout << "\n<Rm>: (" << itemSize << ") -CS:" << cacheUsed << " = " << ordering.size() << "# " << cache.size() << " " << numItemsErased;
-	  ////////////////////////////////////////////////////////////
+	  if (debugCompet)
+	    cout << "\n<Rm>: (" << itemSize << ") -CS:" << cacheUsed << " = " << ordering.size() << "# " << cache.size() << " " << numItemsErased;
+	  
 	  break;
       }
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      totalFullLength=0; 
-      totalReducedLength=0;
-      reducedInCache=0;
-      fullIncache=0;
-      BOOST_FOREACH(intIntintPairPairsMap::value_type stat, lrustats){
-	if(cache.find(stat.first) != cache.end()){
-	  if(stat.second.second.first.first != -1){ 
-	    reducedInCache++;
-	    totalReducedLength += stat.second.second.first.first;
-	  }else{
-	    fullIncache++;
-	    totalFullLength += stat.second.first;  
-	  }
-	}
-      }
-	if(window.size() > 8 ){	  	  
-	  cout << "\n::=:2(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (";
-	  cout << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << ordering.size() << endl;
-	}
-	if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed)
-	  cout << "//////////////*****NEQUAL*****////////////////////" << endl;
-// 	if(window.size() > 10) exit(0);
+//       totalFullLength=0; 
+//       totalReducedLength=0;
+//       reducedInCache=0;
+//       fullIncache=0;
+//       BOOST_FOREACH(intIntintPairPairsMap::value_type stat, lrustats){
+// 	if(cache.find(stat.first) != cache.end()){
+// 	  if(stat.second.second.first.first != -1){ 
+// 	    reducedInCache++;
+// 	    totalReducedLength += stat.second.second.first.first;
+// 	  }else{
+// 	    fullIncache++;
+// 	    totalFullLength += stat.second.first;  
+// 	  }
+// 	}
+//       }
+// 	if(window.size() > 8 ){	  	  
+// 	  cout << "\n::=:2(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (";
+// 	  cout << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << ordering.size() << endl;
+// 	}
+// 	if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed)
+// 	  cout << "//////////////*****NEQUAL*****////////////////////" << endl;
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     } else
       break;
   } while(notEnoughSpace);
-
-//  if(debugCompet){
-//    std::priority_queue<int> cacheQueue;
-//    BOOST_FOREACH(intCacheitemMap::value_type ca, cache){cacheQueue.push(ca.second.key());}
-//    cout << "*C* ";
-//    while(!cacheQueue.empty()){
-//      cout << cacheQueue.top() << " ";
-//      cacheQueue.pop();
-//    }
-//    cout << endl;
-//    cout << "ERROR - PATH TOO LONG FOR CACHE";
-//    return -1;
-//  }
 }
-
 
 
 intVector LRUPLUS::kskip(intPair stPair, int pct){
