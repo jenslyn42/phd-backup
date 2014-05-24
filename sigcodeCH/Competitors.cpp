@@ -176,7 +176,7 @@ LRUPLUS::LRUPLUS(TestSetting ts)
   nodesInCache=0;
   ts.setNodesInCache(nodesInCache);
 
-  if(this->ts.useLRUbitmap && (this->ts.testSPtype != SPTYPE_FULL || ts.testOptimaltype != OPTIMALTYPE_ORG && ts.testOptimaltype != OPTIMALTYPE_SLIDINGWIN || ts.testOptimaltype != OPTIMALTYPE_STATWIN))
+  if(this->ts.useLRUbitmap && (this->ts.testSPtype != SPTYPE_FULL || ts.testOptimaltype != OPTIMALTYPE_ORG && ts.testOptimaltype != OPTIMALTYPE_SLIDINGWIN && ts.testOptimaltype != OPTIMALTYPE_STATWIN))
     this->ts.useLRUbitmap = false;
 }
 
