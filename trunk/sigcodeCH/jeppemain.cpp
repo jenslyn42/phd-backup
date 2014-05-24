@@ -273,7 +273,7 @@ void extractTestParameters(TestSetting& ts) {
   ts.testConcisetype = (CONCISETYPE_CHOICE) 0;
   ts.testOptimaltype = (OPTIMALTYPE_CHOICE) ts.getEnumCode(OPTIMALTYPE_ENUM, "testOptimaltype");
   
-  if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN)
+  if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN || ts.testOptimaltype == OPTIMALTYPE_STATWIN)
     ts.windowsize = ts.getConfigInt("windowsize");
   else
     ts.windowsize = -1;

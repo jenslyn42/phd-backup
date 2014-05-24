@@ -53,10 +53,13 @@ private:
   boost::unordered_map<int, std::pair<int, intPairPairs> > lrustats; // itemID -> (length before shrink, ((length after shrink, lenght of base concise path)(sid,tid)) )
   boost::unordered_map<intPair, int> hitstats; // itemID -> (length before shrink, length after shrink)
   std::deque<int> window; //represents a sliding window with queries that has contributed to a cache hit <pid>
+  boost::unordered_map<int, int> statisticsWindow; //represents a sliding window with <nid, count> from the last <window size> number of queries
+  std::deque<intPair> statisticsWindowOrder; //represents a sliding window with the <window size> number of queries (s,t)
 
   void checkAndUpdateCache(intPair query);
   int insertItem(intVector& sp);
   int insertItem(intVector& sp, intVector&  conciseSp);
+  void writehitstats();
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
