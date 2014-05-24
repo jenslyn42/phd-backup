@@ -176,7 +176,7 @@ LRUPLUS::LRUPLUS(TestSetting ts)
   nodesInCache=0;
   ts.setNodesInCache(nodesInCache);
 
-  if(this->ts.useLRUbitmap && (this->ts.testSPtype != SPTYPE_FULL || ts.testOptimaltype != OPTIMALTYPE_ORG && ts.testOptimaltype != OPTIMALTYPE_SLIDINGWIN))
+  if(this->ts.useLRUbitmap && (this->ts.testSPtype != SPTYPE_FULL || ts.testOptimaltype != OPTIMALTYPE_ORG && ts.testOptimaltype != OPTIMALTYPE_SLIDINGWIN || ts.testOptimaltype != OPTIMALTYPE_STATWIN))
     this->ts.useLRUbitmap = false;
 }
 
@@ -243,69 +243,13 @@ void LRUPLUS::runQueryList()
   cout << "itemsInCache: " << cache.size() << " / " << ts.getItemsInCache() << endl;
   cout << "Avg. itemLength: " << nodesInCache / cache.size() << " / " << ts.getAvgItemLength() << endl;
   
-  //// stats write out code ////
-  /// pid org.size redux.size ////
-  int reducedInCache=0, fullIncache=0;
-  unsigned long totalReducedLength=0, totalFullLength=0;
-  string statfilename = "lrustats_";
-  statfilename.insert(0,ts.testFile);
-  statfilename.append(MatchEnumString(SPTYPE_ENUM, ts.testSPtype));
-  statfilename.append("_");
-  statfilename.append(MatchEnumString(OPTIMALTYPE_ENUM, ts.testOptimaltype));
-  statfilename.append("_");
-  statfilename.append(boost::lexical_cast<std::string>(ts.cacheSize));
-  statfilename.append(".stats");
-  ofstream statfile;
-  statfile.open((statfilename).c_str(), ios::out | ios::trunc);
-  BOOST_FOREACH(intIntintPairPairsMap::value_type stat, lrustats){
-    if(cache.find(stat.first) != cache.end()){
-      if(stat.second.second.first.first != -1){ 
-	reducedInCache++;
-	totalReducedLength += stat.second.second.first.first;
-      }else{
-	fullIncache++;
-	totalFullLength += stat.second.first;  
-      }
-    }
-    /// pid, org.size, redux.size, concise.size
-    statfile << stat.first << "\t" << stat.second.first << "\t" << stat.second.second.first.first << "\t" << stat.second.second.first.second;
-    /// sid, tid
-    statfile<< "\t(" << stat.second.second.second.first << "," << stat.second.second.second.second << ")";
-    /// if there is a difference between length of reduced and length of concise path. 
-    if(stat.second.second.first != stat.second.second.second) statfile << "\t USED";
-    statfile << endl;
-  }
-  statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\t" << lrustats.size() << "\t" << totalFullLength << "\t" << totalReducedLength << "\t";
-  (totalFullLength == 0 )? statfile << "NaN\t" : statfile << totalFullLength/fullIncache << "\t"; 
-  (reducedInCache == 0 )? statfile << "NaN\t" : statfile << totalReducedLength/reducedInCache;
-  statfile << "\n******" << endl;
-  statfile.close();
-  //////////////////////////////
-  /// cache hit stats /////////  
-  //////////////////////////////
-  string statHITfilename = "lruHITstats_";
-  statHITfilename.insert(0,ts.testFile);
-  statHITfilename.append(MatchEnumString(SPTYPE_ENUM, ts.testSPtype));
-  statHITfilename.append("_");
-  statHITfilename.append(MatchEnumString(OPTIMALTYPE_ENUM, ts.testOptimaltype));
-  statHITfilename.append("_");
-  statHITfilename.append(boost::lexical_cast<std::string>(ts.cacheSize));
-  statHITfilename.append(".stats");
-  ofstream statHitfile;
-  statHitfile.open((statHITfilename).c_str(), ios::out | ios::trunc);
-  BOOST_FOREACH(intPairIntMap::value_type stat, hitstats){
-    statHitfile << "(" << stat.first.first << ", " << stat.first.second << ")\t" << stat.second << endl;
-  }
-  /// Eviction stats ///
-  statHitfile << "\n*******\n" << numEvicted << "\t" << numEvictedZeroBitmap << "\n******" << endl;
-  statHitfile.close();
-  //////////////////////
+  //// stats write out
+  writehitstats();
 }
 
 void LRUPLUS::checkAndUpdateCache(intPair query)
 {
   bool cacheHit = false;
-  int tmpScore;
 
   if(debugCompet)
     cout << "cache size: " << cache.size() << " s,t: (" << query.first << "," << query.second << ")" << endl;
@@ -340,9 +284,9 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 	  }
 	}
       }
-      intPair tmpPair;
-      (tmpItem.s > tmpItem.t) ? tmpPair = make_pair<int,int>(tmpItem.t,tmpItem.s) : tmpPair = make_pair<int,int>(tmpItem.s,tmpItem.t); 
-      (hitstats.find(tmpPair) == hitstats.end()) ? hitstats[tmpPair] =1 : hitstats[tmpPair] ++;
+      intPair tmpDelPair;
+      (tmpItem.s > tmpItem.t) ? tmpDelPair = make_pair<int,int>(tmpItem.t,tmpItem.s) : tmpDelPair = make_pair<int,int>(tmpItem.s,tmpItem.t); 
+      (hitstats.find(tmpDelPair) == hitstats.end()) ? hitstats[tmpDelPair] =1 : hitstats[tmpDelPair] ++;
 
       if(ts.testOptimaltype == OPTIMALTYPE_SLIDINGWIN){
 	while(window.size() >= ts.windowsize){
@@ -350,7 +294,7 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 	}
 	window.push_back(*itr);
       }
-      
+
       if(debugCompet) 
 	cout << "LRUPLUS::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
       break;
@@ -374,6 +318,42 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
     numDijkstraCalls++;
     int querySize = spResult.size();
 
+    //Preshrink path based on nodes in stats window 
+    if(ts.testOptimaltype == OPTIMALTYPE_STATWIN){
+      vector<int>& conciseItem = spaths.second;
+      intVector tmpItem;
+
+      for (int i=0; i< querySize; i++) {
+	//if node in concise, don't remove
+	if(find(conciseItem.begin(), conciseItem.end(), spResult[i]) != conciseItem.end())
+	  tmpItem.push_back(spResult[i]);
+	//if node in statisticsWindow, don't remove
+	else if(statisticsWindow.find(spResult[i]) != statisticsWindow.end())  
+	  tmpItem.push_back(spResult[i]);
+      }
+      spResult = tmpItem;
+
+      //update queue.
+      intPair tmpDelPair;
+      while(statisticsWindowOrder.size() >= ts.windowsize){
+	tmpDelPair = statisticsWindowOrder.front();
+	statisticsWindowOrder.pop_front();
+	//update s/t count (decrease/delete)
+	statisticsWindow.at(tmpDelPair.first) -= 1;
+	statisticsWindow.at(tmpDelPair.second) -= 1;
+	if(statisticsWindow.at(tmpDelPair.first) < 1) statisticsWindow.erase(tmpDelPair.first);
+	if(statisticsWindow.at(tmpDelPair.second) < 1) statisticsWindow.erase(tmpDelPair.second);
+      }
+      if(query.first < query.second)
+	statisticsWindowOrder.push_back(query);
+      else
+	statisticsWindowOrder.push_back(std::make_pair<int,int>(query.second,query.first));
+
+      //update s/t count (insert/increase)
+	statisticsWindow.at(query.first) += 1;
+	statisticsWindow.at(query.second) += 1;
+    }
+    
     if(debugCompet) cout << "LRU::checkAndUpdateCache 1, querySize: "<< querySize << endl;
     if(ts.useLRUbitmap)
       insertItem(spResult, spaths.second);
@@ -429,7 +409,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
       }
       if (debugCompet){
         cout << " TWO:(" << cacheSize <<"," << cacheUsed << ")"<<endl;
-	if(window.size() > 8) cout << "<In> (" << spSize << ") -CS:" << cacheUsed << "<\\>";
+	cout << "<In> (" << spSize << ") -CS:" << cacheUsed << "<\\>";
       }
       
       removalStatus[cItem.id] = 1;
@@ -478,8 +458,8 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 //       }
 //       if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed)
 // 	cout << "//////////////*****NEQUAL*****////////////////////" << endl;
-      
-      
+
+
 //       3 cases:
 //       1. full item -> reduce to CONCISE + node pairs  && ts.testSPtype == SPTYPE_CONCISEwhere path has contributed to a cache hit
 //       2. reduced item -> reduce to CONCISE path
@@ -504,7 +484,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 	      invList[rItem[i]].erase(rPid); //remove node -> path from inverted list
             }
           }
-          
+ 
           //update items LRU position, as if it had just been inserted or caused a cache hit
           orderVal++;
           ordering.erase(std::make_pair<int,int>(rPid, cache[rPid].key() ) );
@@ -513,10 +493,10 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 
           nodesInCache -= (rItem.size() - tempItem.size());
           cacheUsed -= (rItem.size() - tempItem.size())*NODE_BITS;
-	  
+
 	  if (debugCompet)
 	    cout << "<Rd>: (" << rItem.size() << "," << tempItem.size() << ") " << rItem.size() - tempItem.size() << " -CS:" << cacheUsed;
-	  
+ 
           cache[rPid].item = tempItem;
           cache[rPid].size = tempItem.size();
           concisePartsp[rPid] = tempConsiseParts;
@@ -563,6 +543,7 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
           nodesInCache -= itemSize;
 
           cacheUsed = cacheUsed - itemSize*NODE_BITS;
+	  
 	  if (debugCompet)
 	    cout << "\n<Rm>: (" << itemSize << ") -CS:" << cacheUsed << " = " << ordering.size() << "# " << cache.size() << " " << numItemsErased;
 	  
@@ -574,20 +555,20 @@ int LRUPLUS::insertItem(intVector& sp, intVector& conciseSp) {
 //       reducedInCache=0;
 //       fullIncache=0;
 //       BOOST_FOREACH(intIntintPairPairsMap::value_type stat, lrustats){
-// 	if(cache.find(stat.first) != cache.end()){
-// 	  if(stat.second.second.first.first != -1){ 
-// 	    reducedInCache++;
-// 	    totalReducedLength += stat.second.second.first.first;
-// 	  }else{
-// 	    fullIncache++;
-// 	    totalFullLength += stat.second.first;  
-// 	  }
-// 	}
-//       }
-// 	if(window.size() > 8 ){	  	  
-// 	  cout << "\n::=:2(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (";
-// 	  cout << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << ordering.size() << endl;
-// 	}
+// 	   if(cache.find(stat.first) != cache.end()){
+// 	     if(stat.second.second.first.first != -1){ 
+// 	       reducedInCache++;
+// 	       totalReducedLength += stat.second.second.first.first;
+// 	     }else{
+// 	       fullIncache++;
+// 	       totalFullLength += stat.second.first;  
+// 	     }
+// 	   }
+//      }
+
+// 	cout << "\n::=:2(" << rID.first << "," << rID.second << ") " << numTotalQueries << "-" << cache.size() << " (";
+// 	cout << cacheSize << " " << cacheUsed << "): " << (totalFullLength+totalReducedLength)*NODE_BITS  << " " << ordering.size() << endl;
+// 	
 // 	if((totalFullLength+totalReducedLength)*NODE_BITS != cacheUsed)
 // 	  cout << "//////////////*****NEQUAL*****////////////////////" << endl;
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -645,6 +626,66 @@ intVector LRUPLUS::kskip(intPair stPair, int pct){
   }
   if(debugProbc) cout << "LRUPLUS::kskip Q_05:( " << spResultIntermediate.size() << endl;
   return spResultIntermediate;
+}
+
+void LRUPLUS::writehitstats()
+{
+  /// pid org.size redux.size ////
+  int reducedInCache=0, fullIncache=0;
+  unsigned long totalReducedLength=0, totalFullLength=0;
+  string statfilename = "lrustats_";
+  statfilename.insert(0,ts.testFile);
+  statfilename.append(MatchEnumString(SPTYPE_ENUM, ts.testSPtype));
+  statfilename.append("_");
+  statfilename.append(MatchEnumString(OPTIMALTYPE_ENUM, ts.testOptimaltype));
+  statfilename.append("_");
+  statfilename.append(boost::lexical_cast<std::string>(ts.cacheSize));
+  statfilename.append(".stats");
+  ofstream statfile;
+  statfile.open((statfilename).c_str(), ios::out | ios::trunc);
+  BOOST_FOREACH(intIntintPairPairsMap::value_type stat, lrustats){
+    if(cache.find(stat.first) != cache.end()){
+      if(stat.second.second.first.first != -1){ 
+	reducedInCache++;
+	totalReducedLength += stat.second.second.first.first;
+      }else{
+	fullIncache++;
+	totalFullLength += stat.second.first;  
+      }
+    }
+    /// pid, org.size, redux.size, concise.size
+    statfile << stat.first << "\t" << stat.second.first << "\t" << stat.second.second.first.first << "\t" << stat.second.second.first.second;
+    /// sid, tid
+    statfile<< "\t(" << stat.second.second.second.first << "," << stat.second.second.second.second << ")";
+    /// if there is a difference between length of reduced and length of concise path. 
+    if(stat.second.second.first != stat.second.second.second) statfile << "\t USED";
+    statfile << endl;
+  }
+  statfile << "\n*******\n" << fullIncache << "\t" << reducedInCache << "\t" << lrustats.size() << "\t" << totalFullLength << "\t" << totalReducedLength << "\t";
+  (totalFullLength == 0 )? statfile << "NaN\t" : statfile << totalFullLength/fullIncache << "\t"; 
+  (reducedInCache == 0 )? statfile << "NaN\t" : statfile << totalReducedLength/reducedInCache;
+  statfile << "\n******" << endl;
+  statfile.close();
+  //////////////////////////////
+  /// cache hit stats /////////  
+  //////////////////////////////
+  string statHITfilename = "lruHITstats_";
+  statHITfilename.insert(0,ts.testFile);
+  statHITfilename.append(MatchEnumString(SPTYPE_ENUM, ts.testSPtype));
+  statHITfilename.append("_");
+  statHITfilename.append(MatchEnumString(OPTIMALTYPE_ENUM, ts.testOptimaltype));
+  statHITfilename.append("_");
+  statHITfilename.append(boost::lexical_cast<std::string>(ts.cacheSize));
+  statHITfilename.append(".stats");
+  ofstream statHitfile;
+  statHitfile.open((statHITfilename).c_str(), ios::out | ios::trunc);
+  BOOST_FOREACH(intPairIntMap::value_type stat, hitstats){
+    statHitfile << "(" << stat.first.first << ", " << stat.first.second << ")\t" << stat.second << endl;
+  }
+  /// Eviction stats ///
+  statHitfile << "\n*******\n" << numEvicted << "\t" << numEvictedZeroBitmap << "\n******" << endl;
+  statHitfile.close();
+  //////////////////////
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
