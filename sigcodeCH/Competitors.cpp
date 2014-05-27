@@ -178,8 +178,6 @@ LRUPLUS::LRUPLUS(TestSetting ts)
 
   if(this->ts.useLRUbitmap && (this->ts.testSPtype != SPTYPE_FULL || ts.testOptimaltype != OPTIMALTYPE_ORG && ts.testOptimaltype != OPTIMALTYPE_SLIDINGWIN && ts.testOptimaltype != OPTIMALTYPE_STATWIN))
     this->ts.useLRUbitmap = false;
-
-    this->ts.useLRUbitmap = true;  
 }
 
 
