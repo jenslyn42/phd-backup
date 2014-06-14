@@ -136,7 +136,6 @@ else if(genChoice == 3){
       regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
       cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
       
-      if(i+1 >= numPoints) break;
       centers[i+1] = atoi(tokens[2].c_str());
       regionVerticelists[centers[i+1]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i+1], -1, constWeight, radius);
       cout << "Region " << i+1 << " size: " << regionVerticelists[centers[i+1]].size() << " S:(" << centers[i+1] << ")" <<  endl;
@@ -176,24 +175,28 @@ i=0;
 cout << "file writing started [" << filename << "]" << endl;
 for(;i<queriesToGenerate/2;i++)
 {
-	tmpPick1 =rand()%numPoints;
-	tempList1 =regionVerticelists.at(centers[tmpPick1]);
-
-	do{
-	tmpPick2=rand()%numPoints;
-	}while(tmpPick1 == tmpPick2);
-	tempList2 =regionVerticelists.at(centers[tmpPick2]);
-	sid = tempList1[rand()%tempList1.size()];
-	tid = tempList2[rand()%tempList2.size()];
-	resultfile << i << " " << sid << " " << tid << " ";
-	tmpPair = nodelist[sid];
-	resultfile << tmpPair.first << " "<< tmpPair.second << " ";
-	tmpPair = nodelist[tid];
-	resultfile << tmpPair.first << " "<< tmpPair.second << " " << endl;
-	int temp;
-	if(sid>tid){temp=sid; sid=tid; tid=temp;}
-	stats[make_pair<int,int>(sid,tid)] = stats[make_pair<int,int>(sid,tid)] + 1;
-	trainstats[make_pair<int,int>(sid,tid)] = trainstats[make_pair<int,int>(sid,tid)] + 1;
+  tmpPick1 =rand()%numPoints;
+  tempList1 =regionVerticelists.at(centers[tmpPick1]);
+  if(genChoice == 3){
+    if((tmpPick1+1)%2 == 0) tmpPick2 = tmpPick1-1;
+    else tmpPick2 = tmpPick1+1;
+  }else{
+    do{
+      tmpPick2=rand()%numPoints;
+    }while(tmpPick1 == tmpPick2);
+  }
+  tempList2 =regionVerticelists.at(centers[tmpPick2]);
+  sid = tempList1[rand()%tempList1.size()];
+  tid = tempList2[rand()%tempList2.size()];
+  resultfile << i << " " << sid << " " << tid << " ";
+  tmpPair = nodelist[sid];
+  resultfile << tmpPair.first << " "<< tmpPair.second << " ";
+  tmpPair = nodelist[tid];
+  resultfile << tmpPair.first << " "<< tmpPair.second << " " << endl;
+  int temp;
+  if(sid>tid){temp=sid; sid=tid; tid=temp;}
+  stats[make_pair<int,int>(sid,tid)] = stats[make_pair<int,int>(sid,tid)] + 1;
+  trainstats[make_pair<int,int>(sid,tid)] = trainstats[make_pair<int,int>(sid,tid)] + 1;
 }
 cout << "file writing ended" << endl;
 resultfile.close();
@@ -204,30 +207,29 @@ filename.replace ((filename.size())-5, 5, "test");
 resultfile.open(filename.c_str(), ios::out | ios::ate | ios::app);
 
 cout << "file writing started [" << filename << "]" << endl;
-for(;i<queriesToGenerate;i++)
-{
-	tmpPick1 =rand()%numPoints;
-	tempList1 =regionVerticelists.at(centers[tmpPick1]);
+for(;i<queriesToGenerate;i++){
+  tmpPick1 =rand()%numPoints;
+  tempList1 =regionVerticelists.at(centers[tmpPick1]);
 
-	do{
-	tmpPick2=rand()%numPoints;
-	}while(tmpPick1 == tmpPick2);
+  do{
+    tmpPick2=rand()%numPoints;
+  }while(tmpPick1 == tmpPick2);
 
-	tempList2 =regionVerticelists.at(centers[tmpPick2]);
+  tempList2 =regionVerticelists.at(centers[tmpPick2]);
 
-	sid = tempList1[rand()%tempList1.size()];
-	tid = tempList2[rand()%tempList2.size()];
+  sid = tempList1[rand()%tempList1.size()];
+  tid = tempList2[rand()%tempList2.size()];
 
-	resultfile << i << " " << sid << " " << tid << " ";
-	tmpPair = nodelist[sid];
-	resultfile << tmpPair.first << " " << tmpPair.second << " ";
-	tmpPair = nodelist[tid];
-	resultfile << tmpPair.first << " " << tmpPair.second << " " << endl;
+  resultfile << i << " " << sid << " " << tid << " ";
+  tmpPair = nodelist[sid];
+  resultfile << tmpPair.first << " " << tmpPair.second << " ";
+  tmpPair = nodelist[tid];
+  resultfile << tmpPair.first << " " << tmpPair.second << " " << endl;
 
-	int temp;
-	if(sid>tid){temp=sid; sid=tid; tid=temp;}
-	stats[make_pair<int,int>(sid,tid)] = stats[make_pair<int,int>(sid,tid)] + 1;
-	teststats[make_pair<int,int>(sid,tid)] = teststats[make_pair<int,int>(sid,tid)] + 1;
+  int temp;
+  if(sid>tid){temp=sid; sid=tid; tid=temp;}
+  stats[make_pair<int,int>(sid,tid)] = stats[make_pair<int,int>(sid,tid)] + 1;
+  teststats[make_pair<int,int>(sid,tid)] = teststats[make_pair<int,int>(sid,tid)] + 1;
 }
 cout << "file writing ended" << endl;
 resultfile.close();
@@ -259,5 +261,5 @@ if(WRITE_POI){
 // 		cout << "(" << stat.first.first << "," << stat.first.second << ") - " << stat.second << "/" << teststats.at(stat.first) << "/" << stats.at(stat.first) << "\t";
 // }
 
-	return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 };
