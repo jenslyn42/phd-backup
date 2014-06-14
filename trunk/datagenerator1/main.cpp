@@ -13,14 +13,17 @@
 int main(int argc, char *argv[]) {
 	srand(0);	srand48(0);
 
-if(argc != 5){
-  cout << "Wrong usage!\nUsage: " << argv[0] << "<mapname> <numQueries> <numPoints> <radius>" << endl;
+if(argc < 6){
+  cout << "Wrong usage!\nUsage: " << argv[0] << "<genChoice> <mapname> <numQueries> <numPoints> <radius> [<inputFn>]" << endl;
   exit(-1);
 }
-string fn = argv[1];
-int queriesToGenerate = atoi(argv[2]); //will be split into two files with half each
-int numPoints = atoi(argv[3]);
-int radius = atof(argv[4]);
+
+int genChoice = atoi(argv[1]); //1: manual clusters, 2: random clusters, 3:read cluster centers from file
+string fn = argv[2];
+int queriesToGenerate = atoi(argv[3]); //will be split into two files with half each
+int numPoints = atoi(argv[4]);
+int radius = atof(argv[5]);
+string inputFn = argv[6]; 
 bool constWeight = false;
 boost::unordered_map<int,vector<int> > regionVerticelists;
 
@@ -72,9 +75,9 @@ cout << "******************************************" << endl;
 //-------------------------------------------------
 //-------------------------------------------------
 //NY data
-//int centers [] = {190669, 218834, 207549, 48468, 22560, 111669, 217498, 253154, 152661, 157525, 129872, 63116, 139309, 90187, 59037, 78999, 61255, 82099, 95371, 235397};
-//int numCenters = numPoints;
-//if(numCenters > 20) numCenters = 20; //limit, we only have 20 points to work with
+int centers [] = {190669, 218834, 207549, 48468, 22560, 111669, 217498, 253154, 152661, 157525, 129872, 63116, 139309, 90187, 59037, 78999, 61255, 82099, 95371, 235397};
+int numCenters = numPoints;
+if(numCenters > 20) numCenters = 20; //limit, we only have 20 points to work with
 //-------------------------------------------------
 
 //-------------------------------------------------
@@ -90,33 +93,62 @@ cout << "******************************************" << endl;
 //int numCenters = 10;
 //-------------------------------------------------
 //
-//int i=0; //just because i is used later on
-//cout << RoadGraph::mapObject(fn)->getMapsize();
-//
-//while(i<numCenters){
-//	regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
-//	cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
-//	i++;
-//}
-//-------------------------------------------------
-//-------------------------------------------------
 
+int i;
+long mapsize = RoadGraph::mapObject(fn)->getMapsize(); 
 
-//**********************************************************
- int centers[numPoints];
- int i=0;
-cout << "init stuff" << endl;
- long mapsize = RoadGraph::mapObject(fn)->getMapsize();
+if(genChoice == 1){
+    //MANUAL - uncomment the dataset to be used!
+    i=0; //just because i is used later on
+    cout << mapsize;
 
- cout << "Calc regions" << endl;
- while(i<numPoints)
- {
- 	centers[i] = rand()% mapsize;
- 	regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
- 	cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
- 	i++;
- }
-//**********************************************************
+    while(i<numCenters){
+      regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
+      cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
+      i++;
+    }
+}
+else if(genChoice == 2){ //Random choice of cluster center placement
+    int centers[numPoints];
+    i=0;
+    cout << "init stuff" << endl;
+
+    cout << "Calc regions" << endl;
+    while(i<numPoints)
+    {
+	    centers[i] = rand()% mapsize;
+	    regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
+	    cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
+	    i++;
+    }
+}
+else if(genChoice == 3){  
+  ifstream in_data (inputFn.c_str(), ios::in);
+  std::vector<string> tokens;
+  string str;
+  int centers[numPoints];
+  i=0;
+  
+  if(in_data.is_open()) {
+    while(getline(in_data, str)){
+      boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+      
+      if(i >= numPoints) break;
+      centers[i] = atoi(tokens[1].c_str());
+      regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
+      cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
+      
+      if(i+1 >= numPoints) break;
+      centers[i+1] = atoi(tokens[2].c_str());
+      regionVerticelists[centers[i+1]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i+1], -1, constWeight, radius);
+      cout << "Region " << i+1 << " size: " << regionVerticelists[centers[i+1]].size() << " S:(" << centers[i+1] << ")" <<  endl;
+      
+      i = i+2;
+    }
+    in_data.close();
+  }
+}
+    
 cout << "regionVerticelists initialized" << endl;
 
 
@@ -147,22 +179,24 @@ cout << "file writing started [" << filename << "]" << endl;
 for(;i<queriesToGenerate/2;i++)
 {
 	tmpPick1 =rand()%numPoints;
+cout << tmpPick1 << " " << numPoints << " " << regionVerticelists.size() << " "  << centers[tmpPick1] << " " << mapsize << endl;
+cout << regionVerticelists.at(centers[tmpPick1]).size()  << endl;
 	tempList1 =regionVerticelists.at(centers[tmpPick1]);
-
+cout << "X " << tempList1.size() << endl;
 	do{
 	tmpPick2=rand()%numPoints;
 	}while(tmpPick1 == tmpPick2);
 	tempList2 =regionVerticelists.at(centers[tmpPick2]);
-
+cout << "Y " << tempList2.size() << endl;
 	sid = tempList1[rand()%tempList1.size()];
 	tid = tempList2[rand()%tempList2.size()];
-
+cout << "Z " << tempList2.size() << endl;
 	resultfile << i << " " << sid << " " << tid << " ";
 	tmpPair = nodelist[sid];
 	resultfile << tmpPair.first << " "<< tmpPair.second << " ";
 	tmpPair = nodelist[tid];
 	resultfile << tmpPair.first << " "<< tmpPair.second << " " << endl;
-
+cout << "A " << tempList2.size() << endl;
 	int temp;
 	if(sid>tid){temp=sid; sid=tid; tid=temp;}
 	stats[make_pair<int,int>(sid,tid)] = stats[make_pair<int,int>(sid,tid)] + 1;
