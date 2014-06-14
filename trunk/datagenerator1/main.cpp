@@ -23,7 +23,8 @@ string fn = argv[2];
 int queriesToGenerate = atoi(argv[3]); //will be split into two files with half each
 int numPoints = atoi(argv[4]);
 int radius = atof(argv[5]);
-string inputFn = argv[6]; 
+if(genChoice == 3)
+  string inputFn = argv[6]; 
 bool constWeight = false;
 boost::unordered_map<int,vector<int> > regionVerticelists;
 
