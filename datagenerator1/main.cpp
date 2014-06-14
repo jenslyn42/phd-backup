@@ -29,6 +29,10 @@ if(genChoice == 3)
 bool constWeight = false;
 boost::unordered_map<int,vector<int> > regionVerticelists;
 
+int i=0;
+long mapsize = RoadGraph::mapObject(fn)->getMapsize(); 
+int centers[numPoints];
+
 cout << "******************************************" << endl;
 cout << "Map/Clusters/Radius: " << fn << "/" << numPoints << "/" << radius << " " << sizeof(int) << " " << sizeof(char) << " " << sizeof(char*)  <<endl;
 cout << "******************************************" << endl;
@@ -74,62 +78,54 @@ cout << "******************************************" << endl;
 // 253154 -73788277 40911499
 // 235397 -74027525 41117092
 
-//-------------------------------------------------
-//-------------------------------------------------
-//NY data
-int centers [] = {190669, 218834, 207549, 48468, 22560, 111669, 217498, 253154, 152661, 157525, 129872, 63116, 139309, 90187, 59037, 78999, 61255, 82099, 95371, 235397};
-int numCenters = numPoints;
-if(numCenters > 20) numCenters = 20; //limit, we only have 20 points to work with
-//-------------------------------------------------
-
-//-------------------------------------------------
-//NY data - 2 point special set
-//int centers [] = {260952, 91408};
-//int numCenters = numPoints;
-//if(numCenters > 2) {cout << "INVALID points"; exit(1);} //limit, we only have 2 points to work with
-//-------------------------------------------------
-
-//-------------------------------------------------
-///Aalborg data
-//int centers [] = {17283, 9970, 18596, 17347, 127966, 94186, 119685, 24815, 31652, 33923};
-//int numCenters = 10;
-//-------------------------------------------------
-//
-
-int i;
-long mapsize = RoadGraph::mapObject(fn)->getMapsize(); 
 
 if(genChoice == 1){
-    //MANUAL - uncomment the dataset to be used!
-    i=0; //just because i is used later on
-    cout << mapsize;
+  //MANUAL - uncomment the dataset to be used!
+  //-------------------------------------------------
+  //NY data
+  int cent [] = {190669, 218834, 207549, 48468, 22560, 111669, 217498, 253154, 152661, 157525, 129872, 63116, 139309, 90187, 59037, 78999, 61255, 82099, 95371, 235397};
+  int numCenters = numPoints;
+  if(numCenters > 20) numCenters = 20; //limit, we only have 20 points to work with
+  //-------------------------------------------------
 
-    while(i<numCenters){
-      regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
-      cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
-      i++;
-    }
+  //-------------------------------------------------
+  //NY data - 2 point special set
+  //int cent [] = {260952, 91408};
+  //int numCenters = numPoints;
+  //if(numCenters > 2) {cout << "INVALID points"; exit(1);} //limit, we only have 2 points to work with
+  //-------------------------------------------------
+
+  //-------------------------------------------------
+  ///Aalborg data
+  //int cent [] = {17283, 9970, 18596, 17347, 127966, 94186, 119685, 24815, 31652, 33923};
+  //int numCenters = 10;
+  //-------------------------------------------------
+  //
+  cout << mapsize;
+  
+  BOOST_FOREACH(int c, cent){centers[i] = c; i++;}
+  i=0; //just because i is used later on
+
+  while(i<numCenters){
+    regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
+    cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
+    i++;
+  }
 }
 else if(genChoice == 2){ //Random choice of cluster center placement
-    int centers[numPoints];
-    i=0;
-    cout << "init stuff" << endl;
-
-    cout << "Calc regions" << endl;
-    while(i<numPoints)
-    {
-	    centers[i] = rand()% mapsize;
-	    regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
-	    cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
-	    i++;
-    }
+  cout << "Calc regions" << endl;
+  while(i<numPoints)
+  {
+    centers[i] = rand()% mapsize;
+    regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
+    cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
+    i++;
+  }
 }
 else if(genChoice == 3){  
   ifstream in_data (inputFn.c_str(), ios::in);
   std::vector<string> tokens;
   string str;
-  int centers[numPoints];
-  i=0;
   
   if(in_data.is_open()) {
     while(getline(in_data, str)){
@@ -181,24 +177,19 @@ cout << "file writing started [" << filename << "]" << endl;
 for(;i<queriesToGenerate/2;i++)
 {
 	tmpPick1 =rand()%numPoints;
-cout << tmpPick1 << " " << numPoints << " " << regionVerticelists.size() << " "  << centers[tmpPick1] << " " << mapsize << endl;
-cout << regionVerticelists.at(centers[tmpPick1]).size()  << endl;
 	tempList1 =regionVerticelists.at(centers[tmpPick1]);
-cout << "X " << tempList1.size() << endl;
+
 	do{
 	tmpPick2=rand()%numPoints;
 	}while(tmpPick1 == tmpPick2);
 	tempList2 =regionVerticelists.at(centers[tmpPick2]);
-cout << "Y " << tempList2.size() << endl;
 	sid = tempList1[rand()%tempList1.size()];
 	tid = tempList2[rand()%tempList2.size()];
-cout << "Z " << tempList2.size() << endl;
 	resultfile << i << " " << sid << " " << tid << " ";
 	tmpPair = nodelist[sid];
 	resultfile << tmpPair.first << " "<< tmpPair.second << " ";
 	tmpPair = nodelist[tid];
 	resultfile << tmpPair.first << " "<< tmpPair.second << " " << endl;
-cout << "A " << tempList2.size() << endl;
 	int temp;
 	if(sid>tid){temp=sid; sid=tid; tid=temp;}
 	stats[make_pair<int,int>(sid,tid)] = stats[make_pair<int,int>(sid,tid)] + 1;
