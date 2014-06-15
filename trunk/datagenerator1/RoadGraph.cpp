@@ -66,7 +66,7 @@ vector<int> RoadGraph::dijkstraSSSP(int source, int dest, bool constWeight, doub
   if (spDebug) cout << "one, dijkstraSSSP! map:" << mapSize <<" s,t:" << source <<"," <<dest << endl;
 
   if ( source<0 || source>=mapSize) {
-    cout << "Invalid src node, map\n";
+    cout << "Invalid src node, map " << source << ", " << mapSize << ", " << vertexlist.size() << endl;
     return vertexlist;
   }
 
