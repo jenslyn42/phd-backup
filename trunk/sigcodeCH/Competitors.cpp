@@ -212,8 +212,6 @@ void LRUPLUS::buildCache()
 
 void LRUPLUS::fillCache(){
   BOOST_FOREACH(intPair q, trainingSTPointPairs ) {
-    if(numTotalQueries >24550)
-      cout << "db: " << numTotalQueries << " " << q.first << ", " << q.second << endl;
     checkAndUpdateCache(q);
     numTotalQueries++;
   }
@@ -253,12 +251,12 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 {
   bool cacheHit = false;
 
-//  if(debugCompet)
-if(numTotalQueries >24550)    cout << "cache size: " << cache.size() << " s,t: (" << query.first << "," << query.second << ")" << endl;
+ if(debugCompet)
+   cout << "cache size: " << cache.size() << " s,t: (" << query.first << "," << query.second << ")" << endl;
 
   boost::unordered_set<int>& query1 = invList[query.first];
   boost::unordered_set<int>& query2 = invList[query.second];
-if(numTotalQueries >24550) cout << query1.size() << " " << query2.size() << endl;
+
   int cachehit;
 
   int counter=0;
@@ -298,8 +296,8 @@ if(numTotalQueries >24550) cout << query1.size() << " " << query2.size() << endl
 	window.push_back(*itr);
       }
 
-//      if(debugCompet) 
-if(numTotalQueries >24550)	cout << "LRUPLUS::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
+     if(debugCompet) 
+	cout << "LRUPLUS::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
       break;
     }
   }
@@ -321,15 +319,11 @@ if(numTotalQueries >24550)	cout << "LRUPLUS::checkAndUpdateCache CACHE HIT CACHE
     numDijkstraCalls++;
     int querySize = spResult.size();
 
-if(numTotalQueries >24550) cout << querySize << endl;
 
     //Preshrink path based on nodes in stats window 
     if(ts.testOptimaltype == OPTIMALTYPE_STATWIN){
       vector<int>& conciseItem = spaths.second;
       intVector tmpItem;
-
-if(numTotalQueries >24550) 
-  cout << spaths.first.size() << ", " << spaths.second.size() << " " << querySize << endl;
 
       for (int i=0; i< querySize; i++) {
 	//if node in concise, don't remove
@@ -338,30 +332,28 @@ if(numTotalQueries >24550)
 	//if node in statisticsWindow, don't remove
 	else if(statisticsWindow.find(spResult[i]) != statisticsWindow.end())  
 	  tmpItem.push_back(spResult[i]);
-if(numTotalQueries >24550) cout << i << ":" << spResult[i] << " " << flush;
       }
       spResult = tmpItem;
 
-if(numTotalQueries >24550) cout << "\nZ12 " << tmpItem.size() << " " << statisticsWindowOrder.size() << " " << ts.windowsize << endl;
       //update queue.
       intPair tmpDelPair;
       while(statisticsWindowOrder.size() >= ts.windowsize){
 	tmpDelPair = statisticsWindowOrder.front();
-if(numTotalQueries >24550) 	cout << "tmpDelPair: (" << tmpDelPair.first << "," << tmpDelPair.second << ")" << endl;
+// 	cout << "tmpDelPair: (" << tmpDelPair.first << "," << tmpDelPair.second << ")" << endl;
 	statisticsWindowOrder.pop_front();
 	//update s/t count (decrease/delete)
 	statisticsWindow.at(tmpDelPair.first) -= 1;
-if(numTotalQueries >24550) 	cout << "sW.f: " << statisticsWindow.at(tmpDelPair.first) << " " << statisticsWindowOrder.size() << endl;
+// 	cout << "sW.f: " << statisticsWindow.at(tmpDelPair.first) << " " << statisticsWindowOrder.size() << endl;
 	if(tmpDelPair.first != tmpDelPair.second)
 	  statisticsWindow.at(tmpDelPair.second) -= 1;
-if(numTotalQueries >24550) 	cout << "sW.s: " << statisticsWindow.at(tmpDelPair.second) << endl;
+// 	cout << "sW.s: " << statisticsWindow.at(tmpDelPair.second) << endl;
 	if(statisticsWindow.at(tmpDelPair.first) < 1) statisticsWindow.erase(tmpDelPair.first);
-if(numTotalQueries >24550)	cout << "FLUF1 " << endl;
+// 	cout << "FLUF1 " << endl;
 	if(tmpDelPair.first != tmpDelPair.second)
 	  if(statisticsWindow.at(tmpDelPair.second) < 1) statisticsWindow.erase(tmpDelPair.second);
-if(numTotalQueries >24550) 	cout << "BLIV2 " << endl;
+// 	cout << "BLIV2 " << endl;
       }
-if(numTotalQueries >24550) cout << "Z13 " << statisticsWindow.size() << endl;
+
       if(query.first < query.second)
 	statisticsWindowOrder.push_back(query);
       else
@@ -380,8 +372,8 @@ if(numTotalQueries >24550) cout << "Z13 " << statisticsWindow.size() << endl;
       }
     }
     
-//     if(debugCompet) 
-if(numTotalQueries >24550)      cout << "LRU::checkAndUpdateCache 1, querySize: "<< querySize << endl;
+    if(debugCompet) 
+      cout << "LRU::checkAndUpdateCache 1, querySize: "<< querySize << endl;
     if(ts.useLRUbitmap)
       insertItem(spResult, spaths.second);
     else
