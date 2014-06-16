@@ -347,17 +347,17 @@ if(numTotalQueries >24550) cout << "\nZ12 " << tmpItem.size() << " " << statisti
       intPair tmpDelPair;
       while(statisticsWindowOrder.size() >= ts.windowsize){
 	tmpDelPair = statisticsWindowOrder.front();
-	cout << "tmpDelPair: (" << tmpDelPair.first << "," << tmpDelPair.second << ")" << endl;
+if(numTotalQueries >24550) 	cout << "tmpDelPair: (" << tmpDelPair.first << "," << tmpDelPair.second << ")" << endl;
 	statisticsWindowOrder.pop_front();
 	//update s/t count (decrease/delete)
 	statisticsWindow.at(tmpDelPair.first) -= 1;
-	cout << "sW.f: " << statisticsWindow.at(tmpDelPair.first) << " " << statisticsWindowOrder.size() << endl;
+if(numTotalQueries >24550) 	cout << "sW.f: " << statisticsWindow.at(tmpDelPair.first) << " " << statisticsWindowOrder.size() << endl;
 	statisticsWindow.at(tmpDelPair.second) -= 1;
-	cout << "sW.s: " << statisticsWindow.at(tmpDelPair.second) << endl;
+if(numTotalQueries >24550) 	cout << "sW.s: " << statisticsWindow.at(tmpDelPair.second) << endl;
 	if(statisticsWindow.at(tmpDelPair.first) < 1) statisticsWindow.erase(tmpDelPair.first);
-	cout << "FLUF1 " << endl;
+if(numTotalQueries >24550) cout << "FLUF1 " << endl;
 	if(statisticsWindow.at(tmpDelPair.second) < 1) statisticsWindow.erase(tmpDelPair.second);
-	cout << "BLIV2 " << endl;
+if(numTotalQueries >24550) 	cout << "BLIV2 " << endl;
       }
 if(numTotalQueries >24550) cout << "Z13 " << statisticsWindow.size() << endl;
       if(query.first < query.second)
