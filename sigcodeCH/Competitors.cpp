@@ -342,7 +342,7 @@ if(numTotalQueries >24550) cout << i << ":" << spResult[i] << " " << flush;
       }
       spResult = tmpItem;
 
-if(numTotalQueries >24550) cout << tmpItem.size() << endl;
+if(numTotalQueries >24550) cout << "\nZ12 " << tmpItem.size() << " " << statisticsWindowOrder.size() << ts.windowsize << endl;
       //update queue.
       intPair tmpDelPair;
       while(statisticsWindowOrder.size() >= ts.windowsize){
@@ -359,7 +359,7 @@ if(numTotalQueries >24550) cout << tmpItem.size() << endl;
 	if(statisticsWindow.at(tmpDelPair.second) < 1) statisticsWindow.erase(tmpDelPair.second);
 // 	cout << "BLIV2 " << endl;
       }
-if(numTotalQueries >24550) cout << statisticsWindow.size() << endl;
+if(numTotalQueries >24550) cout << "Z13 " << statisticsWindow.size() << endl;
       if(query.first < query.second)
 	statisticsWindowOrder.push_back(query);
       else
