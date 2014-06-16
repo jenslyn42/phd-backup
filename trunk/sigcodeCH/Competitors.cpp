@@ -258,8 +258,7 @@ if(numTotalQueries >24550)    cout << "cache size: " << cache.size() << " s,t: (
 
   boost::unordered_set<int>& query1 = invList[query.first];
   boost::unordered_set<int>& query2 = invList[query.second];
-if(numTotalQueries >24550) cout << query1.size() << endl;
-if(numTotalQueries >24550) cout << query2.size() << endl;
+if(numTotalQueries >24550) cout << query1.size() << " " << query2.size() << endl;
   int cachehit;
 
   int counter=0;
@@ -318,9 +317,11 @@ if(numTotalQueries >24550)	cout << "LRUPLUS::checkAndUpdateCache CACHE HIT CACHE
       }else
 	spResult = RoadGraph::mapObject(ts)->dijkstraSSSP(query.first, query.second);
     }
-
+    
     numDijkstraCalls++;
     int querySize = spResult.size();
+
+if(numTotalQueries >24550) cout << querySize << endl;
 
     //Preshrink path based on nodes in stats window 
     if(ts.testOptimaltype == OPTIMALTYPE_STATWIN){
@@ -334,9 +335,11 @@ if(numTotalQueries >24550)	cout << "LRUPLUS::checkAndUpdateCache CACHE HIT CACHE
 	//if node in statisticsWindow, don't remove
 	else if(statisticsWindow.find(spResult[i]) != statisticsWindow.end())  
 	  tmpItem.push_back(spResult[i]);
+if(numTotalQueries >24550) cout << spResult[i] << " ";
       }
       spResult = tmpItem;
 
+if(numTotalQueries >24550) cout << tmpItem.size() << endl;
       //update queue.
       intPair tmpDelPair;
       while(statisticsWindowOrder.size() >= ts.windowsize){
@@ -353,6 +356,7 @@ if(numTotalQueries >24550)	cout << "LRUPLUS::checkAndUpdateCache CACHE HIT CACHE
 	if(statisticsWindow.at(tmpDelPair.second) < 1) statisticsWindow.erase(tmpDelPair.second);
 // 	cout << "BLIV2 " << endl;
       }
+if(numTotalQueries >24550) cout << statisticsWindow.size() << endl;
       if(query.first < query.second)
 	statisticsWindowOrder.push_back(query);
       else
@@ -369,7 +373,8 @@ if(numTotalQueries >24550)	cout << "LRUPLUS::checkAndUpdateCache CACHE HIT CACHE
 	statisticsWindow[query.second] += 1;
     }
     
-    if(debugCompet) cout << "LRU::checkAndUpdateCache 1, querySize: "<< querySize << endl;
+//     if(debugCompet) 
+if(numTotalQueries >24550)      cout << "LRU::checkAndUpdateCache 1, querySize: "<< querySize << endl;
     if(ts.useLRUbitmap)
       insertItem(spResult, spaths.second);
     else
