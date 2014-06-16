@@ -212,7 +212,8 @@ void LRUPLUS::buildCache()
 
 void LRUPLUS::fillCache(){
   BOOST_FOREACH(intPair q, trainingSTPointPairs ) {
-    cout << "db: " << numTotalQueries << " " << q.first << ", " << q.second << endl;
+    if(numTotalQueries >24550)
+      cout << "db: " << numTotalQueries << " " << q.first << ", " << q.second << endl;
     checkAndUpdateCache(q);
     numTotalQueries++;
   }
@@ -252,11 +253,13 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 {
   bool cacheHit = false;
 
-  if(debugCompet)
-    cout << "cache size: " << cache.size() << " s,t: (" << query.first << "," << query.second << ")" << endl;
+//  if(debugCompet)
+if(numTotalQueries >24550)    cout << "cache size: " << cache.size() << " s,t: (" << query.first << "," << query.second << ")" << endl;
 
   boost::unordered_set<int>& query1 = invList[query.first];
   boost::unordered_set<int>& query2 = invList[query.second];
+if(numTotalQueries >24550) cout << query1.size() << endl;
+if(numTotalQueries >24550) cout << query2.size() << endl;
   int cachehit;
 
   int counter=0;
@@ -296,8 +299,8 @@ void LRUPLUS::checkAndUpdateCache(intPair query)
 	window.push_back(*itr);
       }
 
-      if(debugCompet) 
-	cout << "LRUPLUS::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
+//      if(debugCompet) 
+if(numTotalQueries >24550)	cout << "LRUPLUS::checkAndUpdateCache CACHE HIT CACHE HIT CACHE HIT" << endl;
       break;
     }
   }
