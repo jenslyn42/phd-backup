@@ -328,6 +328,9 @@ if(numTotalQueries >24550) cout << querySize << endl;
       vector<int>& conciseItem = spaths.second;
       intVector tmpItem;
 
+if(numTotalQueries >24550) 
+  cout << spaths.first.size() << ", " << spaths.second.size() << querySize << endl;
+
       for (int i=0; i< querySize; i++) {
 	//if node in concise, don't remove
 	if(find(conciseItem.begin(), conciseItem.end(), spResult[i]) != conciseItem.end())
