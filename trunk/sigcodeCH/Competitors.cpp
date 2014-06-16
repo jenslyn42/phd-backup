@@ -329,7 +329,7 @@ if(numTotalQueries >24550) cout << querySize << endl;
       intVector tmpItem;
 
 if(numTotalQueries >24550) 
-  cout << spaths.first.size() << ", " << spaths.second.size() << querySize << endl;
+  cout << spaths.first.size() << ", " << spaths.second.size() << " " << querySize << endl;
 
       for (int i=0; i< querySize; i++) {
 	//if node in concise, don't remove
