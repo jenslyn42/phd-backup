@@ -352,11 +352,13 @@ if(numTotalQueries >24550) 	cout << "tmpDelPair: (" << tmpDelPair.first << "," <
 	//update s/t count (decrease/delete)
 	statisticsWindow.at(tmpDelPair.first) -= 1;
 if(numTotalQueries >24550) 	cout << "sW.f: " << statisticsWindow.at(tmpDelPair.first) << " " << statisticsWindowOrder.size() << endl;
-	statisticsWindow.at(tmpDelPair.second) -= 1;
+	if(tmpDelPair.first != tmpDelPair.second)
+	  statisticsWindow.at(tmpDelPair.second) -= 1;
 if(numTotalQueries >24550) 	cout << "sW.s: " << statisticsWindow.at(tmpDelPair.second) << endl;
 	if(statisticsWindow.at(tmpDelPair.first) < 1) statisticsWindow.erase(tmpDelPair.first);
-if(numTotalQueries >24550) cout << "FLUF1 " << endl;
-	if(statisticsWindow.at(tmpDelPair.second) < 1) statisticsWindow.erase(tmpDelPair.second);
+if(numTotalQueries >24550)	cout << "FLUF1 " << endl;
+	if(tmpDelPair.first != tmpDelPair.second)
+	  if(statisticsWindow.at(tmpDelPair.second) < 1) statisticsWindow.erase(tmpDelPair.second);
 if(numTotalQueries >24550) 	cout << "BLIV2 " << endl;
       }
 if(numTotalQueries >24550) cout << "Z13 " << statisticsWindow.size() << endl;
@@ -370,10 +372,12 @@ if(numTotalQueries >24550) cout << "Z13 " << statisticsWindow.size() << endl;
 	statisticsWindow[query.first] = 1;
       else
 	statisticsWindow[query.first] += 1;
-      if(statisticsWindow.find(query.second) == statisticsWindow.end())
-	statisticsWindow[query.second] = 1;
-      else
-	statisticsWindow[query.second] += 1;
+      if(query.first != query.second){
+	if(statisticsWindow.find(query.second) == statisticsWindow.end())
+	  statisticsWindow[query.second] = 1;
+	else
+	  statisticsWindow[query.second] += 1;
+      }
     }
     
 //     if(debugCompet) 
