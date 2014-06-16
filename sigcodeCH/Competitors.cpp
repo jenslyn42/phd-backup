@@ -212,6 +212,7 @@ void LRUPLUS::buildCache()
 
 void LRUPLUS::fillCache(){
   BOOST_FOREACH(intPair q, trainingSTPointPairs ) {
+    cout << "db: " << numTotalQueries << " " << q.first << ", " << q.second << endl;
     checkAndUpdateCache(q);
     numTotalQueries++;
   }
