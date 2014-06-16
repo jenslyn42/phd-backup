@@ -578,7 +578,7 @@ intVector Probcache::optiPath(intPair stPair, intPairSet& vSeen, bool random, in
 }
 
 intVector Probcache::optimalPath(intPair stPair, intPairSet& vSeen, bool random){
-//   if(debugProbc) 
+  if(debugProbc) 
     cout << "Probcache::optimalPath((" << stPair.first <<","<<stPair.second << "), " << random << ")" << endl;
   intVector spResultShort, spResultLong, spResultIntermediate, spDiff, returnResult;
   double longScore=0.0, conciseScore=0.0, intermediateScore=0.0;
