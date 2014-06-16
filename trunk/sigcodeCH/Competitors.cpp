@@ -338,7 +338,7 @@ if(numTotalQueries >24550)
 	//if node in statisticsWindow, don't remove
 	else if(statisticsWindow.find(spResult[i]) != statisticsWindow.end())  
 	  tmpItem.push_back(spResult[i]);
-if(numTotalQueries >24550) cout << spResult[i] << " ";
+if(numTotalQueries >24550) cout << i << ":" << spResult[i] << " " << flush;
       }
       spResult = tmpItem;
 
