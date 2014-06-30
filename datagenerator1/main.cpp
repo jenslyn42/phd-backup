@@ -21,6 +21,10 @@ if(atoi(argv[1]) == 3 && argc < 7){
   cout << "Wrong usage!\nUsage: " << argv[0] << "<genChoice> <mapname> <numQueries> <numPoints> <radius> <inputFn>" << endl;
   exit(-1);
 }
+if(atoi(argv[1]) == 4 && argc < 7){
+  cout << "Wrong usage!\nUsage: " << argv[0] << "<genChoice> <mapname> <numQueries> <numPoints> <radius> <inputFn>" << endl;
+  exit(-1);
+}
 
 int genChoice = atoi(argv[1]); //1: manual clusters, 2: random clusters, 3:read cluster centers from file
 string fn = argv[2];
@@ -28,7 +32,7 @@ int queriesToGenerate = atoi(argv[3]); //will be split into two files with half 
 int numPoints = atoi(argv[4]);
 int radius = atof(argv[5]);
 string inputFn;
-if(genChoice == 3)
+if(genChoice == 3 || genChoice == 4 )
   inputFn = argv[6]; 
 bool constWeight = false;
 boost::unordered_map<int,vector<int> > regionVerticelists;
@@ -150,6 +154,30 @@ else if(genChoice == 3){
     in_data.close();
   }
 }
+else if(genChoice == 4){  
+  ifstream in_data (inputFn.c_str(), ios::in);
+  std::vector<string> tokens;
+  string str;
+  
+  if(in_data.is_open()) {
+    while(getline(in_data, str)){
+      boost::algorithm::split(tokens, str, boost::algorithm::is_space());
+      
+      centers[i] = atoi(tokens[1].c_str());
+      regionVerticelists[centers[i]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i], -1, constWeight, radius);
+//       cout << "Region " << i << " size: " << regionVerticelists[centers[i]].size() << " S:(" << centers[i] << ")" <<  endl;
+      
+      centers[i+1] = atoi(tokens[2].c_str());
+      regionVerticelists[centers[i+1]] = RoadGraph::mapObject(fn)->dijkstraSSSP(centers[i+1], -1, constWeight, radius);
+//       cout << "Region " << i+1 << " size: " << regionVerticelists[centers[i+1]].size() << " S:(" << centers[i+1] << ")" <<  endl;
+      
+      if(regionVerticelists[centers[i+1]].size() != 0 && regionVerticelists[centers[i]].size() != 0)
+	i = i+2;
+      else cout << "*";
+    }
+    in_data.close();
+  }
+}
     
 cout << "regionVerticelists initialized" << endl;
 
@@ -181,9 +209,12 @@ cout << "file writing started [" << filename << "]" << endl;
 for(;i<queriesToGenerate/2;i++)
 {
   tmpPick1 =rand()%numPoints;
+  if(genChoice == 4){
+    tmpPick1 = rand()%regionVerticelists.size();
+  }
   tempList1 =regionVerticelists.at(centers[tmpPick1]);
   //make sure two clusters centers were chosen from the same query pair
-  if(genChoice == 3){
+  if(genChoice == 3 || genChoice == 4){
     if((tmpPick1+1)%2 == 0) tmpPick2 = tmpPick1-1;
     else tmpPick2 = tmpPick1+1;
   }else{
@@ -218,10 +249,13 @@ resultfile.open(filename.c_str(), ios::out | ios::ate | ios::app);
 cout << "file writing started [" << filename << "]" << endl;
 for(;i<queriesToGenerate;i++){
   tmpPick1 =rand()%numPoints;
+  if(genChoice == 4){
+    tmpPick1 = rand()%regionVerticelists.size();
+  }
   tempList1 =regionVerticelists.at(centers[tmpPick1]);
 
   //make sure two clusters centers were chosen from the same query pair
-  if(genChoice == 3){
+  if(genChoice == 3 || genChoice == 4){
     if((tmpPick1+1)%2 == 0) tmpPick2 = tmpPick1-1;
     else tmpPick2 = tmpPick1+1;
   }else{
