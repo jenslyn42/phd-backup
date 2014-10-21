@@ -1,0 +1,44 @@
+\documentclass[t,mathserif]{beamer}
+\setbeamertemplate{navigation symbols}{} %no nav symbols
+\usepackage{beamerthemeshadow}
+\usepackage{pgf,pgfarrows,pgfnodes}
+% \usepackage{listing}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{multirow}
+\usepackage{rotating} % rotate text
+
+\usetheme{Copenhagen} % Beamer theme v 3.0
+\usecolortheme{whale} % Beamer color theme
+
+\newcommand*\gitem{%
+  \item[\color{green}\scalebox{0.9}{\textbullet}]}
+\newcommand*\ritem{%
+  \item[\color{red}\scalebox{0.9}{\textbullet}]}
+
+\usepackage[boxed,linesnumbered,vlined,slide]{algorithm2eCustom}
+
+\newcommand{\spath}{SP\xspace}
+\newcommand{\zebox}[1]{$|\underline{\overline{#1}}|$}
+
+
+% \title[SIGSPATIAL 2012\hspace{15em}\insertframenumber/\inserttotalframenumber]{Concise Caching of Driving Instructions}
+\title[SIGSPATIAL 2014\hspace{17em}\insertframenumber]{Concise Caching of Driving Instructions}
+\author[Jeppe, Man Lung, Christian]{Jeppe Rishede Thomsen\inst{1}, Man Lung Yiu\inst{1}, Christian S. Jensen\inst{2}}%\\ \small{jenslyn@cs.aau.dk}}
+\institute{\inst{1} Department of Computing\\Hong Kong Polytechnic University
+\and \inst{2} Department of Computer Science \\Aarhus University }
+
+% \date{}
+\begin{document}
+\begin{frame}[plain] % Cover slide
+\titlepage
+\end{frame}
+% Instead, you can use \frame{\titlepage}} (Beamer v 2.2 macro)
+
+\input{introduction.tex}
+\input{contribution.tex}
+\input{results.tex}
+
+\end{document}
