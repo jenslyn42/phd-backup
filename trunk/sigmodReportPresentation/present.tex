@@ -1,0 +1,41 @@
+\documentclass[t,mathserif]{beamer}
+\setbeamertemplate{navigation symbols}{} %no nav symbols
+\usepackage{beamerthemeshadow}
+\usepackage{pgf,pgfarrows,pgfnodes}
+\usepackage{listing}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{multirow}
+\usepackage{rotating} % rotate text
+
+\usetheme{Copenhagen} % Beamer theme v 3.0
+\usecolortheme{whale} % Beamer color theme
+
+\newcommand*\gitem{%
+  \item[\color{green}\scalebox{0.9}{\textbullet}]}
+\newcommand*\ritem{%
+  \item[\color{red}\scalebox{0.9}{\textbullet}]}
+
+\usepackage[boxed,linesnumbered,vlined,slide]{algorithm2eCustom}
+
+\newcommand{\spath}{SP\xspace}
+\newcommand{\zebox}[1]{$|\underline{\overline{#1}}|$}
+
+
+\title[SIGMOD 2012\hspace{17em}\insertframenumber/\inserttotalframenumber]{SIGMOD 2012 Summary}
+\author[SIGMOD 2012]{Jeppe Rishede Thomsen}%\\ \small{jenslyn@cs.aau.dk}}
+
+% \date{}
+\begin{document}
+\begin{frame}[plain] % Cover slide
+\titlepage
+\end{frame}
+% Instead, you can use \frame{\titlepage}} (Beamer v 2.2 macro)
+
+\input{introduction.tex}
+\input{contribution.tex}
+\input{conclusion.tex}
+
+\end{document}

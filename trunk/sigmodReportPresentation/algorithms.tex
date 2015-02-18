@@ -1,0 +1,59 @@
+\section{Algorithms}
+
+\begin{frame}
+\frametitle{Algorithm}
+
+\begin{algorithm}[H]
+\dontprintsemicolon
+\SetVline
+
+\SetKwInOut{Input}{input}\SetKwInOut{Output}{output}\SetKw{Return}{return}
+
+% \Input
+% {
+% 
+% 	$\mathbf{T}$: The set of trajectories $t$ \;
+% 	$\mathbf{S}$: The set of privacy profiles $s$\;
+% 	$G(\mathbf{V,E})$: Roadnetwork Graph \;
+% 	$D \in \mathbb{R}$: Tolerance for how much a modified trajectory is allowed to diveate from original trajectory. \;
+% 	$n \in \mathbb{N}$: Factor on how finegrained the road difference calculations should be \;
+% 	{PS:} the set of all PSR \;
+% }
+
+%$\alpha \leftarrow t | t \in \mathbf{T} \wedge psr.p_{edges} \cap t \neq \emptyset $
+\While{$ $Sensitive unanonymized edges exist}
+{
+	$\alpha \leftarrow {\bf Choose\_\alpha(\mathbf{T}, PS)}$ \;
+	$PSRcand \leftarrow {\bf FindCand(\alpha, PS)}$ \;
+	$calcCand~\leftarrow~{\bf CalcCand}(PSRcand, \alpha, D, n)$ \;
+	$sortCand \leftarrow$  Sort $calcCand$ using ordering given by {\bf CompareCand()} \;
+	$anonData \leftarrow anonData \cup {\bf AnonCand}(sortCand, \alpha$) \;
+}
+\(anonData \cup \{\forall t_i  \in t  | t \in \mathbf{T}\}, t_i \) is a subtrajectory that has not been modified or otherwise included during anonymization.
+
+% \funcc{Choose$\_\alpha$}{\mathbf{T}, PS}
+% {
+% 	Choose a 4-tuple $\alpha: (t, t_{se}, d_{t}, d_{s})$. $\alpha.t$ is at least partially covered by the PSR $psr \in PS$. $PS$ is ordered by protection schemes from top to bottom. Within a protection scheme grouping $PS$ is sorted by the highest sensitivity, using ordering from {\bf CompareCand()}. If more than one candidate for $\alpha$ is found the first found will be chosen. \; 
+% 
+% 	\Return{$\alpha$}
+% }
+
+
+\end{algorithm}
+\end{frame}
+
+\begin{frame}
+\frametitle{TrajecoriesPSR}
+
+\begin{algorithm}[H]
+{\bf TrajectoriesPSR}({$P, \mathbf{T}, \alpha$})
+
+	$u \leftarrow$ {\bf PSRtoUser}(P) \tcp{\emph{user $(id,s,\{t\})$ where $P \in s.\{PSR\}$}}
+ 
+ 	$tSet \leftarrow \{(t, t_{se}, d_t, d_s) | \forall t \in \mathbf{T} \wedge t \cap \alpha.t \neq \emptyset \wedge P.p_{edges} \cup t \neq \emptyset \wedge t_{se} = \alpha.t \cap t \wedge t \in u.t, d_t = P.d_t, d_s = P.d_s \wedge \forall i,j | \alpha.t_{se}[i]_{\tau_{s}}-\frac{\alpha.d_t}{2} \leq t_{se}[j]_{\tau_{s}} \leq \alpha.t_{se}[i]_{\tau_{s}}+\frac{\alpha.d_t}{2} \}$
+
+ 	%$t \in \mathbf{T}$. At least one edge in $t$ is covered by P.$p_{edges}$ and $t \bigcap \alpha \neq \emptyset$. The returned tuple include $d_t,d_s,$ and $t_{se} = \alpha \bigcap t$.
+ 	\Return {$tSet$}
+
+\end{algorithm}
+\end{frame}
