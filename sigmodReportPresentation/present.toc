@@ -1,0 +1,8 @@
+\beamer@endinputifotherversion {3.10pt}
+\beamer@sectionintoc {1}{Overview}{2}{0}{1}
+\beamer@subsectionintoc {1}{1}{SIGMOD At a Glance}{2}{0}{1}
+\beamer@subsectionintoc {1}{2}{Topics}{4}{0}{1}
+\beamer@sectionintoc {2}{Sessions}{5}{0}{2}
+\beamer@subsectionintoc {2}{1}{Research Sessions}{5}{0}{2}
+\beamer@subsectionintoc {2}{2}{Industry Sessions}{11}{0}{2}
+\beamer@sectionintoc {3}{Conclusion}{18}{0}{3}
